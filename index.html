@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#fbfbfd">
-<title>CollaboHub · Razem Demokracja · v17</title>
+<title>CollaboHub · Razem Demokracja · v24</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -584,8 +584,8 @@ html.theme-dark .cdrop-btn{background:var(--surf)!important;border-color:var(--b
 .itab.on{color:var(--txt);border-bottom-color:var(--p600);font-weight:500}
 .itab .cnt.warn{background:var(--amber);color:var(--ambertx)}
 .tab-intro{font-size:14px;color:var(--txm);background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:13px 16px;margin-bottom:16px;line-height:1.6}
-.tab-info-wrap{position:relative;min-height:4px;margin-bottom:6px}
-.info-corner{position:absolute;top:-2px;right:0;width:30px;height:30px;border-radius:50%;border:1px solid var(--bdr);background:var(--surf);color:var(--txf);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .13s;z-index:2}
+.tab-info-wrap{position:relative;min-height:34px;margin-bottom:8px}
+.info-corner{position:absolute;top:0;right:0;width:30px;height:30px;border-radius:50%;border:1px solid var(--bdr);background:var(--surf);color:var(--txf);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .13s;z-index:12}
 .info-corner:hover{color:var(--p700);border-color:var(--p300);background:var(--p50)}
 .info-corner .mi{width:16px;height:16px;opacity:.85}
 .tab-info-wrap .tab-intro{margin-top:34px}
@@ -1210,7 +1210,14 @@ nav{height:76px!important;padding:0 2rem!important;gap:18px!important;border-bot
 .team-needs-tools{margin-left:auto}.team-needs-head .team-add-actions{display:block;width:auto;grid-template-columns:none}
 .need-group{border:1px solid var(--bdr);border-radius:20px;overflow:visible;background:#fff;margin-bottom:12px}.need-group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;background:var(--surf);border-radius:20px 20px 0 0}.need-group-heading{display:flex;align-items:baseline;gap:9px}.need-group-kicker{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txs)}.need-group-title{font-size:17px;font-weight:700;color:var(--txt)}.need-group-count{font-size:12px;color:var(--txs)}.need-group .role-req{border-top:1px solid var(--bdr);border-right:0;border-bottom:0;border-left:3px solid transparent;border-radius:0;margin:0}.need-group .role-req:last-child{border-radius:0 0 20px 20px}.need-group .role-req.need-ok{border-left-color:var(--greentx)}.need-group .role-req.need-candidate{border-left-color:var(--bluetx)}.need-group .role-req.need-missing{border-left-color:#d99000}.need-cap-level{display:inline-flex;margin-left:7px;font-size:11px;font-weight:600;color:var(--p700);background:var(--p100);border-radius:999px;padding:2px 7px;vertical-align:2px}.need-tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:7px}.need-tile{border:1.5px solid var(--bdr);border-radius:13px;background:#fff;color:var(--txm);padding:11px 12px;text-align:left;font:600 13px 'DM Sans',sans-serif;cursor:pointer}.need-tile:hover{border-color:var(--p300);background:var(--surf)}.need-tile.on{border-color:var(--p500);background:var(--p100);color:var(--p800);box-shadow:0 0 0 2px var(--p100)}.need-picker-block{margin-bottom:14px}.need-picker-label{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:3px}.need-level-wrap{margin-top:10px}.need-level-wrap select{width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:12px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif}.need-binary-note{font-size:13px;color:var(--txs);background:var(--surf);border-radius:10px;padding:9px 11px}
 .idea-page{padding-bottom:420px}.team-needs-card,.team-needs-card .role-req,.team-needs-card .role-filled-row,.team-needs-card .role-mode-row{overflow:visible}.team-needs-card{position:relative;z-index:5}.team-needs-card .kwrap{z-index:20}.team-needs-card .kmenu{top:calc(100% + 7px);z-index:1000;min-width:250px}
+.hero-btn.join-project{background:#fff;border-color:var(--bdr);color:var(--txt)}.hero-btn.join-project:hover{background:var(--surf2);border-color:var(--p300);color:var(--txt)}.hero-btn.join-pending{background:var(--blue);border-color:#b8d5ff;color:var(--bluetx)}.hero-btn.joined-project{background:var(--green);border-color:#b8e4c9;color:var(--greentx);cursor:default}.join-cap-list{display:grid;gap:9px;margin-top:8px}.join-cap-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:12px 13px;border:1.5px solid var(--bdr);border-radius:14px;background:#fff}.join-cap-card:has(.join-skill-check:checked){border-color:var(--p400);background:var(--p50)}.join-cap-card input{accent-color:var(--p600);margin-top:3px}.join-cap-main b{display:flex;align-items:center;gap:7px;font-size:14px}.join-cap-main small{display:block;color:var(--txs);font-size:12px;margin-top:3px}.join-match{display:inline-flex;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--green);color:var(--greentx)}.join-new-need-row{display:flex;align-items:center;gap:7px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--bdr);font-size:12px;color:var(--txm)}.join-summary-note{padding:10px 12px;border-radius:12px;background:var(--surf);color:var(--txs);font-size:12px;line-height:1.55}.member-contribution{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px}.member-contribution span{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--green);color:var(--greentx)}
+.join-sections{display:grid;gap:18px}.join-section{display:grid;gap:9px}.join-section-head h4{font-size:15px;color:var(--txt);margin-bottom:3px}.join-section-head p{font-size:12px;color:var(--txs);line-height:1.5}.join-cap-select{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;cursor:pointer}.join-extra-confirm{display:none;grid-column:1/-1;margin-top:3px;padding:11px 12px;border-radius:12px;background:var(--surf);border:1px solid var(--bdr)}.join-extra-confirm.on{display:block}.join-extra-confirm p{font-size:12px;color:var(--txs);line-height:1.5;margin-bottom:8px}.join-extra-confirm textarea{width:100%;min-height:62px;resize:vertical;padding:9px 10px;border:1px solid var(--bdr);border-radius:10px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif}.join-cap-card.extra:has(.join-skill-check:checked){border-color:var(--blue);background:#f7faff}.join-section-empty{font-size:12px;color:var(--txs);padding:10px 12px;background:var(--surf);border-radius:12px}
+.join-project-modal .modal-form-grid label.join-cap-select{display:grid!important;grid-template-columns:20px minmax(0,1fr)!important;flex-direction:initial!important;align-items:start!important;gap:11px!important;font-weight:400!important;color:var(--txt)!important}.join-project-modal .modal-form-grid input.join-skill-check{width:18px!important;height:18px!important;min-width:18px!important;padding:0!important;margin:2px 0 0!important;border-radius:5px!important;box-shadow:none!important}.join-project-modal .join-cap-card{display:block;padding:13px 14px}.join-project-modal .join-cap-main b{flex-wrap:wrap;line-height:1.35}.join-project-modal .join-cap-main small{line-height:1.45}.join-project-modal .join-extra-confirm textarea{width:100%!important}.join-profile-source{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}.join-profile-source b{display:block;font-size:13px;color:var(--txt);margin-bottom:3px}.join-profile-source p{font-size:12px!important;line-height:1.5!important;margin:0!important;color:var(--txs)!important}.join-profile-source button{flex:0 0 auto;border:1px solid var(--bdr);border-radius:10px;background:#fff;color:var(--txt);padding:8px 11px;font:12px 'DM Sans',sans-serif;cursor:pointer}.join-profile-source button:hover{border-color:var(--p300);background:var(--p50)}
+.join-transition{display:flex;align-items:flex-start;gap:11px;margin:6px 0 2px;padding-top:16px;border-top:1px solid var(--bdr)}.join-transition>span{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--p700);background:var(--p100);border-radius:999px;padding:4px 8px}.join-transition h4{font-size:16px;color:var(--txt);margin:0 0 3px}.join-transition p{font-size:12px!important;color:var(--txs)!important;line-height:1.5!important;margin:0!important}.member-managed-needs{margin:12px 0 14px;padding:12px 14px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}.member-managed-needs>b{display:block;font-size:13px;margin-bottom:2px}.member-managed-needs>span{display:block;font-size:12px;color:var(--txs);line-height:1.45}.member-managed-needs .member-contribution{margin-top:9px}.member-managed-needs .member-contribution span{display:inline-flex}
+.join-transition.first{margin-top:0;padding-top:0;border-top:0}
+html.theme-dark .join-project-modal .form-action-modal,html.theme-dark .join-project-modal .form-action-main,html.theme-dark .join-project-modal .join-cap-card,html.theme-dark .join-project-modal .join-profile-source,html.theme-dark .join-project-modal .join-extra-confirm,html.theme-dark .member-managed-needs{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-project-modal .form-action-side,html.theme-dark .join-project-modal .join-section-empty,html.theme-dark .join-project-modal .join-summary-note{background:var(--surf2)!important;color:var(--txs)!important}html.theme-dark .join-project-modal .join-cap-card.extra:has(.join-skill-check:checked),html.theme-dark .join-project-modal .join-cap-card:has(.join-skill-check:checked){background:var(--surf2)!important;border-color:var(--p400)!important}html.theme-dark .join-project-modal .join-profile-source button,html.theme-dark .join-project-modal .join-extra-confirm textarea{background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-transition>span{background:var(--p200)!important;color:var(--p800)!important}
 @media(max-width:680px){.idea-page{padding-bottom:320px}}
+@media(max-width:680px){.join-profile-source{flex-direction:column}.join-profile-source button{width:100%}}
 html.theme-dark .need-group,html.theme-dark .need-tile,html.theme-dark .need-level-wrap select{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}.theme-dark .need-group-head{background:var(--surf2)}
 html.theme-dark .cap-toolbar input,html.theme-dark .cap-toolbar select,html.theme-dark .cap-item{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}
 @media(max-width:760px){.register-tools{grid-template-columns:1fr}.now-item{grid-template-columns:30px 1fr}.now-link{grid-column:2;justify-self:start}.register-head{grid-template-columns:32px 1fr}.register-meta{grid-column:2;text-align:left}.register-detail{padding:12px 18px}.stage-track{grid-template-columns:1fr!important}}
@@ -1821,6 +1828,171 @@ html.theme-dark .urgent-line b{color:var(--txt)!important}
 html.theme-dark .slot-note{background:#35260d!important;color:var(--ambertx)!important}
 html.theme-dark .pledge-status.pending{background:#35260d!important;color:var(--ambertx)!important}
 
+/* Budget v2 — money first, governance and contribution states stay separate */
+.budget-shell{display:flex;flex-direction:column;gap:14px}
+.budget-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding-bottom:14px;border-bottom:1px solid var(--bdr)}
+.budget-total{font-size:26px;line-height:1.15;font-weight:700;color:var(--txt);letter-spacing:-.02em}
+.budget-missing{font-size:13px;color:var(--ambertx);margin-top:4px}
+.budget-add{border:1px dashed var(--p300);background:transparent;color:var(--p700);border-radius:12px;padding:9px 13px;font:500 13px 'DM Sans',sans-serif;cursor:pointer;white-space:nowrap}
+.budget-add:hover{background:var(--p50);border-style:solid}
+.budget-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.budget-question{border:1px solid var(--bdr);border-radius:14px;padding:13px 14px;background:var(--surf)}
+.budget-question-title{font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.055em;margin-bottom:8px}
+.budget-question-value{font-size:13px;color:var(--txs);margin-top:7px}
+.budget-cost-track{height:8px;border-radius:3px;background:var(--surf2);overflow:hidden}
+.budget-cost-fill{height:100%;background:var(--p500);border-radius:3px}
+.budget-funding-track{height:12px;border-radius:7px;background:#f7dfad;overflow:hidden}
+.budget-funding-fill{height:100%;background:#69b77a;border-radius:7px}
+.budget-card{border:1px solid var(--bdr);border-radius:17px;background:#fff;padding:16px 18px;position:relative}
+.budget-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.budget-card-title{font-size:16px;font-weight:700;color:var(--txt)}
+.budget-card-amount{font-size:14px;color:var(--txm);margin-top:2px}
+.budget-card-side{display:flex;align-items:center;gap:8px}
+.budget-cost-state{display:inline-flex;align-items:center;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:700;white-space:nowrap}
+.budget-cost-state.proponowana{background:var(--surf2);color:var(--txs)}
+.budget-cost-state.w_glosowaniu{background:var(--p100);color:var(--p700)}
+.budget-cost-state.zatwierdzona{background:var(--green);color:var(--greentx)}
+.budget-cost-state.odrzucona{background:var(--red);color:var(--redtx)}
+.budget-governance{font-size:12px;color:var(--txs);margin-top:9px}
+.budget-funding{margin-top:14px}
+.budget-funding-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--txs);margin-bottom:6px}
+.budget-funding-label b{color:var(--txt)}
+.budget-declarations{margin-top:14px;border-top:1px solid var(--bdr)}
+.budget-decl-row{display:grid;grid-template-columns:minmax(140px,1fr) auto minmax(120px,.7fr) auto 28px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--txs);cursor:pointer}
+.budget-decl-row:last-child{border-bottom:0}
+.budget-decl-row:hover{color:var(--txt)}
+.budget-decl-person{font-weight:600;color:var(--txt)}
+.budget-decl-amount{font-weight:700;color:var(--txt);white-space:nowrap}
+.budget-decl-source{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.budget-decl-empty{padding:12px 0 2px;font-size:12px;color:var(--txf)}
+.budget-decl-state{display:inline-flex;border-radius:20px;padding:4px 8px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.budget-decl-state.zadeklarowana{background:var(--amber);color:var(--ambertx)}
+.budget-decl-state.przyjeta{background:var(--p100);color:var(--p700)}
+.budget-decl-state.wplacona{background:var(--green);color:var(--greentx)}
+.budget-detail{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:12px 13px;margin:10px 0 14px}
+.budget-detail-row{display:grid;grid-template-columns:145px 1fr;gap:10px;padding:6px 0;font-size:13px}
+.budget-detail-row span:first-child{color:var(--txs)}
+.budget-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.budget-form-grid .full{grid-column:1/-1}
+.budget-form-grid label{font-size:12px;font-weight:700;color:var(--txm);display:block}
+.budget-form-grid input,.budget-form-grid select,.budget-form-grid textarea{display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;font:13px 'DM Sans',sans-serif;background:#fff;color:var(--txt)}
+.budget-form-grid textarea{min-height:86px;resize:vertical}
+.budget-modal-note{font-size:12px;color:var(--txs);line-height:1.55;background:var(--surf);border:1px solid var(--bdr);border-radius:11px;padding:10px 12px;margin-top:10px}
+html.theme-dark .budget-card,html.theme-dark .budget-question{background:var(--surf2)!important;border-color:var(--bdr)!important}
+html.theme-dark .budget-funding-track{background:#493718!important}
+html.theme-dark .budget-detail,html.theme-dark .budget-modal-note{background:#171321!important;border-color:#3a3358!important}
+@media(max-width:700px){.budget-overview-grid,.budget-form-grid{grid-template-columns:1fr}.budget-form-grid .full{grid-column:auto}.budget-decl-row{grid-template-columns:1fr auto}.budget-decl-source,.budget-decl-row>.budget-decl-state{grid-column:1}.budget-head{align-items:center}.budget-total{font-size:22px}}
+
+/* Tasks v2 — phased work lives in a dedicated detail modal */
+.task-card-v2{border:1px solid var(--bdr);border-radius:16px;padding:16px 18px;margin-bottom:10px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.task-card-v2:hover{border-color:var(--p300);box-shadow:0 8px 24px rgba(35,29,55,.06)}
+.task-card-v2-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.task-card-v2-title{font-size:15px;font-weight:700;color:var(--txt)}
+.task-card-v2-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;color:var(--txs);margin-top:6px}
+.task-progress{height:6px;background:var(--surf2);border-radius:4px;overflow:hidden;margin-top:13px}
+.task-progress>span{display:block;height:100%;background:var(--p500);border-radius:4px}
+.task-progress-label{font-size:11px;color:var(--txf);margin-top:5px}
+.task-contributors{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px}
+.task-contributors-label{font-size:11px;color:var(--txf);margin-right:3px}
+.app-modal.task-detail-modal{width:min(1120px,calc(100vw - 28px));max-width:none;height:min(900px,calc(100vh - 28px));padding:0;overflow:hidden}
+.task-detail-shell{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);background:#fff}
+.task-detail-head{padding:22px 26px 18px;border-bottom:1px solid var(--bdr);position:relative}
+.task-detail-head h3{font-family:'DM Sans',sans-serif;font-size:23px;margin:0 48px 6px 0;color:var(--txt)}
+.task-detail-sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--txs)}
+.task-detail-body{overflow:auto;padding:22px 26px 70px}
+.task-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txf);margin:0 0 10px}
+.task-phase-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.task-phase{position:relative;border:1px solid var(--bdr);border-radius:14px;background:#fff;margin-bottom:10px;overflow:visible}
+.task-phase.take-ready{border-color:#e4b64d;background:#fffdf8}
+.task-phase-dot{position:absolute;left:15px;top:18px;width:13px;height:13px;border:3px solid #fff;border-radius:50%;background:var(--txf);box-shadow:0 0 0 1px var(--bdr)}
+.task-phase-dot.w_toku{background:var(--p500)}.task-phase-dot.zrobiona{background:#58aa70}.task-phase-dot.nieobsadzona{background:#d9a123}
+.task-phase-summary{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 15px 14px 40px;cursor:pointer;min-height:82px}
+.task-phase-title{font-size:14px;font-weight:700;color:var(--txt)}
+.task-phase-meta{font-size:12px;color:var(--txs);margin-top:3px}
+.task-phase-counts{font-size:11px;color:var(--txf);white-space:nowrap}
+.task-phase-content{border-top:1px solid var(--bdr);padding:14px 15px}
+.task-phase-single{padding:0;margin-bottom:12px}
+.task-phase-single-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.task-file-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.task-file-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bdr);border-radius:999px;background:var(--surf);padding:6px 10px;font-size:11px;color:var(--txm);cursor:pointer}
+.task-file-chip:hover{border-color:var(--p300);color:var(--p700)}
+.task-phase-empty{font-size:12px;color:var(--txf);padding:4px 0 11px}
+.task-phase-comments{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.task-phase-comment{background:var(--surf);border-radius:11px;padding:9px 11px;font-size:12px;color:var(--txm);line-height:1.45}
+.task-phase-comment b{color:var(--txt);margin-right:5px}.task-phase-comment small{display:block;color:var(--txf);margin-top:3px}
+.task-phase-quiet{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.task-phase-quiet button{border:0;background:transparent;color:var(--txs);font:500 12px 'DM Sans',sans-serif;padding:4px 0;cursor:pointer}
+.task-phase-quiet button:hover{color:var(--p700)}
+.task-add-tile{grid-column:1/-1;border:1.5px dashed var(--p300);border-radius:12px;background:transparent;color:var(--p700);font:500 13px 'DM Sans',sans-serif;cursor:pointer;padding:11px;text-align:center}
+.task-add-tile:hover{background:var(--p50);border-style:solid}
+.task-phase-add-card{grid-column:1/-1;border:1.5px solid var(--p300);border-radius:14px;background:var(--surf);padding:14px;display:flex;flex-direction:column;gap:9px}
+.task-phase-add-card input,.task-phase-add-card select{width:100%;padding:9px 10px;border:1px solid var(--bdr);border-radius:9px;background:#fff;color:var(--txt);font:12px 'DM Sans',sans-serif}
+.task-phase-add-actions{display:flex;justify-content:flex-end;gap:7px}.task-phase-add-actions button{border:1px solid var(--bdr);border-radius:9px;background:#fff;color:var(--txm);font:500 11px 'DM Sans',sans-serif;padding:7px 9px;cursor:pointer}.task-phase-add-actions button:last-child{border-color:var(--p300);color:var(--p700)}
+.task-activity{border-top:1px solid var(--bdr);padding-top:15px;margin-top:8px}
+.task-activity summary{font-size:12px;font-weight:600;color:var(--txs);cursor:pointer}
+.task-activity-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--txm)}
+.task-form-compact{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.task-form-compact .full{grid-column:1/-1}.task-form-compact label{font-size:12px;font-weight:700;color:var(--txm)}.task-form-compact input,.task-form-compact select,.task-form-compact textarea{display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;font:13px 'DM Sans',sans-serif;background:#fff;color:var(--txt)}
+.tphase-card{border:1px solid var(--bdr);border-radius:16px;background:#fff;padding:15px 16px;transition:border-color .15s,background .15s}
+.tphase-card.done{border-color:#bfe3c8;background:#f3fbf5}
+.tphase-card.active{border-color:var(--p400);box-shadow:0 0 0 1px var(--p300) inset}
+.tphase-card.ready{border-color:#e4b64d;background:#fffdf6}
+.tphase-card.open .tphase-card-head{cursor:default}
+.tphase-card-head{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.tphase-circle{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 13px 'DM Sans',sans-serif;background:var(--surf);color:var(--txs);border:1px solid var(--bdr)}
+.tphase-circle.done{background:#58aa70;color:#fff;border-color:#58aa70}
+.tphase-circle.active{background:var(--p500);color:#fff;border-color:var(--p500)}
+.tphase-circle.ready{background:#f3e2bb;color:#8a6516;border-color:#e4b64d}
+.tphase-card-headmain{flex:1;min-width:0}
+.tphase-card-title{font-size:14px;font-weight:700;color:var(--txt);line-height:1.3}
+.tphase-owners{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px}
+.tphase-empty-owner{font-size:12px;color:var(--txf)}
+.tphase-card-counts{font-size:11px;color:var(--txf);margin-top:6px}
+.tphase-card-headside{display:flex;align-items:center;gap:8px;flex:none}
+.tphase-pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.tphase-pill.done{background:#e3f5e8;color:#2f7a45}
+.tphase-pill.active{background:var(--p50);color:var(--p700)}
+.tphase-pill.ready{background:#fbeccb;color:#8a6516}
+.tphase-pill.idle{background:var(--surf);color:var(--txs)}
+.tphase-body{margin-top:14px;border-top:1px solid var(--bdr);padding-top:14px;display:flex;flex-direction:column;gap:16px}
+.tphase-block-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txf);margin-bottom:8px}
+.tphase-log{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.tphase-log-item{display:flex;gap:10px}
+.tphase-log-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--p400);margin-top:5px}
+.tphase-log-text{font-size:13px;color:var(--txm);line-height:1.5}
+.tphase-log-meta{font-size:11px;color:var(--txf);margin-top:2px}
+.tphase-inline-add{border:0;background:transparent;color:var(--p700);font:500 12px 'DM Sans',sans-serif;padding:2px 0;cursor:pointer}
+.tphase-inline-add:hover{text-decoration:underline}
+.tphase-check{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 13px 'DM Sans',sans-serif;background:var(--surf);color:var(--txs);border:1px solid var(--bdr);cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+.tphase-check:hover{border-color:#58aa70;color:#3b8c54}
+.tphase-check.done{background:#58aa70;color:#fff;border-color:#58aa70}
+.tphase-check.done:hover{background:#4d9963}
+.tphase-check.active{border-color:var(--p400)}
+.tphase-check.ready{background:#f3e2bb;color:#8a6516;border-color:#e4b64d}
+.task-done-check{display:inline-flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--bdr);background:#fff;border-radius:999px;padding:6px 14px 6px 7px;font:600 12px 'DM Sans',sans-serif;color:var(--txm);cursor:pointer}
+.task-done-check:hover{border-color:#58aa70;color:#3b8c54}
+.task-done-check .tdc-box{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:12px}
+.task-done-check.on{background:#eef8f0;border-color:#9cd3ad;color:#2f7a45}
+.task-done-check.on .tdc-box{background:#58aa70;border-color:#58aa70;color:#fff}
+html.theme-dark .tphase-check{background:#1b1726!important;border-color:#3a3358!important;color:var(--txs)!important}
+html.theme-dark .tphase-check.done{background:#3f7a52!important;border-color:#3f7a52!important;color:#fff!important}
+html.theme-dark .task-done-check{background:var(--surf2)!important;border-color:#3a3358!important;color:var(--txm)!important}
+html.theme-dark .task-done-check.on{background:#16241a!important;border-color:#2f5538!important;color:#9fe1cb!important}
+html.theme-dark .task-done-check .tdc-box{border-color:#3a3358!important}
+html.theme-dark .task-done-check.on .tdc-box{background:#3f7a52!important;border-color:#3f7a52!important}
+html.theme-dark .tphase-card{background:var(--surf2)!important;border-color:var(--bdr)!important}
+html.theme-dark .tphase-card.done{background:#16241a!important;border-color:#2f5538!important}
+html.theme-dark .tphase-card.ready{background:#2c2517!important;border-color:#725d2b!important}
+html.theme-dark .tphase-card.active{box-shadow:0 0 0 1px var(--p500) inset!important}
+html.theme-dark .tphase-circle{background:#1b1726!important;border-color:#3a3358!important;color:var(--txs)!important}
+html.theme-dark .tphase-pill.idle{background:#1b1726!important}
+html.theme-dark .task-card-v2,html.theme-dark .task-detail-shell,html.theme-dark .task-phase{background:var(--surf2)!important;border-color:var(--bdr)!important}
+html.theme-dark .task-phase.take-ready{background:#2c2517!important;border-color:#725d2b!important}
+html.theme-dark .task-phase-dot{border-color:var(--surf2)!important}
+html.theme-dark .task-phase-comment{background:#171321!important}
+html.theme-dark .task-phase-add-card{background:#171321!important;border-color:#59437e!important}
+html.theme-dark .task-phase-add-card input,html.theme-dark .task-phase-add-card select,html.theme-dark .task-phase-add-actions button{background:#1b1726!important;border-color:#3a3358!important;color:var(--txt)!important}
+@media(max-width:700px){.app-modal.task-detail-modal{width:100vw;height:100vh;border-radius:0}.task-detail-head,.task-detail-body{padding-left:18px;padding-right:18px}.task-form-compact{grid-template-columns:1fr}.task-form-compact .full{grid-column:auto}.task-phase-list{grid-template-columns:1fr}.task-phase-summary{align-items:flex-start}.task-phase-counts{white-space:normal}}
+
 </style>
 </head>
 <body>
@@ -2405,7 +2577,7 @@ const WORK_MODES={
   signatures:{label:'Wymaga podpisów',hint:'Start zależy od konkretnych osób, podpisów lub uprawnień organizacyjnych.'}
 };
 const MY_NAME='Patrycja Kowalska';
-let myProfile={name:MY_NAME,ini:'PK',since:'marzec 2022',roles:['Członek','Aktywista lokalny'],skills:['Grafik','Social media','Copywriting'],skillLevels:{'Grafik':3,'Social media':2,'Copywriting':2},platRoles:['Koordynator projektu'],platRoleLevels:{'Koordynator projektu':2},bio:'Aktywistka lokalna. Najchętniej pomagam przy komunikacji wizualnej, tekstach i kampaniach, gdzie widać konkretny efekt pracy.',looking:'Szukam pomysłu związanego z komunikacją wizualną lub kampanią lokalną. Chcę się zaangażować w coś, co jest już w fazie budowania.',contact:'@patrycja',portfolio:[{type:'Grafika',title:'Identyfikacja kampanii lokalnej',desc:'Logo, plakaty i szablony social media dla sekcji.',link:'behance.net/patrycja'},{type:'Social media',title:'Cykl #RazemMoże',desc:'Posty i stories prowadzone dla sekcji lokalnej.',link:'instagram.com'}]};
+let myProfile={name:MY_NAME,ini:'PK',since:'marzec 2022',roles:['Członek','Aktywista lokalny'],skills:['Grafik','Social media','Copywriting','Analiza prawna'],skillLevels:{'Grafik':3,'Social media':2,'Copywriting':2,'Analiza prawna':2},platRoles:['Koordynator projektu'],platRoleLevels:{'Koordynator projektu':2},bio:'Aktywistka lokalna. Najchętniej pomagam przy komunikacji wizualnej, tekstach i kampaniach, gdzie widać konkretny efekt pracy.',looking:'Szukam pomysłu związanego z komunikacją wizualną lub kampanią lokalną. Chcę się zaangażować w coś, co jest już w fazie budowania.',contact:'@patrycja',portfolio:[{type:'Grafika',title:'Identyfikacja kampanii lokalnej',desc:'Logo, plakaty i szablony social media dla sekcji.',link:'behance.net/patrycja'},{type:'Social media',title:'Cykl #RazemMoże',desc:'Posty i stories prowadzone dla sekcji lokalnej.',link:'instagram.com'}]};
 function normNeed(v){return String(v||'').toLowerCase().replace(/[()/,;:–—-]+/g,' ').replace(/\s+/g,' ').trim();}
 function textNeedMatch(need,have){
   const n=normNeed(need), h=normNeed(have);
@@ -2579,6 +2751,7 @@ function renderRoleRequirements(idea,ideaId){
         opts.push({label:'Zgłoś się',run:`startJoinRole(${ideaId},${idx})`});
         opts.push({label:'Zaproś osobę',run:`startInviteRole(${ideaId},${idx})`});
       }
+      if((r.filledBy||[]).includes(MY_NAME)) opts.push({label:'Wycofaj moje użyczenie',run:`withdrawNeedContribution(${ideaId},${idx})`});
       (r.filledBy||[]).filter(n=>n!==MY_NAME).forEach(n=>opts.push({label:`Odwołaj osobę: ${n}`,run:`startRecall(${ideaId},'${escAttr(n)}')`,kind:'danger'}));
       opts.push({label:'Zmień wymagania',run:`startEditRole(${ideaId},${idx})`});
       opts.push({label:'Usuń potrzebę',run:`startRevokeRole(${ideaId},${idx})`,kind:'danger'});
@@ -2663,6 +2836,10 @@ function platformSkillMultiPicker(inputId,value=''){
 function platformCapabilityMultiPicker(inputId,value=''){
   const list=platformCapabilities().map(c=>({name:c.name,meta:c.cat}));
   return dictionaryPicker(inputId,list,{placeholder:'Dodaj kompetencję lub możliwość',multi:true,value,kind:'capability'});
+}
+function platformCapabilityPicker(inputId,value=''){
+  const list=platformCapabilities().map(c=>({name:c.name,meta:c.cat}));
+  return dictionaryPicker(inputId,list,{placeholder:'Wybierz kompetencję lub możliwość',value,kind:'capability'});
 }
 function personPicker(inputId,value=''){
   return dictionaryPicker(inputId,members.map(m=>({name:m.name,meta:(m.skills||[]).slice(0,3).join(', ')})),{placeholder:'Wybierz osobę',value,kind:'person'});
@@ -2971,7 +3148,7 @@ function openIdea(id,preserveScroll=false){
   document.getElementById('idea-eyebrow').textContent=`${idea.cat} · zgłoszono ${idea.date}`;
   {const isF=followedIdeas.has(id);
    const ha=document.getElementById('idea-hero-actions');
-   if(ha) ha.innerHTML=`<button class="hero-btn${isF?' on':''}" onclick="toggleFollowIdea(${id})">${isF?'Obserwujesz':'Obserwuj'}</button><button class="hero-btn" onclick="saveAsTemplate(${id})">⊞ Wariant / szablon</button>`;}
+   if(ha) ha.innerHTML=`<button class="hero-btn${isF?' on':''}" onclick="toggleFollowIdea(${id})">${isF?'Obserwujesz':'Obserwuj'}</button>${projectJoinButton(idea,id)}<button class="hero-btn" onclick="saveAsTemplate(${id})">⊞ Wariant / szablon</button>`;}
   document.getElementById('idea-ph-title').innerHTML=idea.title;
 
   const stTrack=path.map((step,i)=>{
@@ -3026,6 +3203,7 @@ function openIdea(id,preserveScroll=false){
     </div>`;}).join('');
 
   // TASKS with comment threads
+  (idea.tasks||[]).forEach(migrateTaskModel);
   const renderTaskItem=(t)=>{
     t.comments=t.comments||[];
     const stClass={'otwarte':'ts-otwarte','oczekuje':'ts-oczekuje','w toku':'ts-wtoku','wstrzymane':'ts-wstrzymane','wstrzymane-sprzeciw':'ts-odrzucone','usunięte':'ts-odrzucone','zrobione':'ts-zrobione','odrzucone':'ts-odrzucone'}[t.status]||'ts-otwarte';
@@ -3083,11 +3261,8 @@ function openIdea(id,preserveScroll=false){
       ${thread}
     </div>`;
   };
-  const activeTasks=idea.tasks.filter(t=>t.status!=='usunięte');
-  const closedTasks=idea.tasks.filter(t=>t.status==='wstrzymane-sprzeciw'||t.status==='usunięte');
-  const liveTasks=idea.tasks.filter(t=>t.status!=='usunięte'&&t.status!=='wstrzymane-sprzeciw');
-  const tasksHTML=liveTasks.map(renderTaskItem).join('');
-  const closedHTML=closedTasks.length?`<details class="closed-tasks"${idea.showClosedTasks?' open':''}><summary>Zamknięte i usunięte zadania (${closedTasks.length})</summary>${closedTasks.map(renderTaskItem).join('')}</details>`:'';
+  const tasksHTML=idea.tasks.map(t=>renderTaskCardV2(idea,id,t)).join('');
+  const closedHTML='';
 
   // VOTES with quorum + link to subpage
   const parts=activeParticipants(idea);
@@ -3176,7 +3351,7 @@ function openIdea(id,preserveScroll=false){
 
   const tabZadania=`
       <div class="task-tab-head"><div><div class="task-tab-title">Zadania</div><div class="task-tab-sub">Konkretne kroki pracy, odpowiedzialność i terminy. Nowe zadanie może wejść jako robocze ustalenie zespołu.</div></div><div class="task-add-launch"><button type="button" class="prop-btn task-plus" title="Dodaj zadanie" onclick="openTaskModal(${id})">+ Dodaj zadanie</button></div></div>
-      ${idea.tasks.length?`<div class="task-summary">${[['otwarte','t-open','otwarte'],['oczekuje','t-open','zaproszenia'],['w toku','t-prog','w toku'],['wstrzymane','t-paused','wstrzymane'],['zrobione','t-done','zrobione']].map(([st,cls,lbl])=>{const n=idea.tasks.filter(x=>x.status===st).length;return n?`<span class="tsum ${cls}">${lbl}: ${n}</span>`:'';}).join('')}</div>`:''}
+      ${idea.tasks.length?`<div class="task-summary">${[['otwarte','t-open','otwarte'],['w_toku','t-prog','w toku'],['zrobione','t-done','zrobione']].map(([st,cls,lbl])=>{const n=idea.tasks.filter(x=>taskComputedStatus(x)===st).length;return n?`<span class="tsum ${cls}">${lbl}: ${n}</span>`:'';}).join('')}</div>`:''}
       ${tasksHTML||'<div style="font-size:13px;color:var(--txf);margin-bottom:6px">Brak aktywnych zadań. Rozbij realizację na konkretne kroki z odpowiedzialnymi osobami.</div>'}
       ${closedHTML}`;
 
@@ -3222,7 +3397,7 @@ function openIdea(id,preserveScroll=false){
       </div>`;
 
   const partsBlock=`
-    <div class="sc team-needs-card" style="margin-bottom:14px">
+    <div class="sc" style="margin-bottom:14px">
       <div class="sc-title">Autor</div>
       <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openMember(${auth.id})">
         <div class="av" style="background:${av.bg};color:${av.tx};width:36px;height:36px;font-size:13px">${auth.ini}</div>
@@ -3240,15 +3415,16 @@ function openIdea(id,preserveScroll=false){
   const tabZespol=`
     <div class="tab-info-wrap"><button class="info-corner" title="Co to za sekcja?" onclick="toggleTabInfo(${id},'zespol')">${IC.info}</button>${idea._tabInfo==='zespol'?`<div class="tab-intro"><b>Zespół i potrzeby.</b> W jednym miejscu widać, czego projekt potrzebuje, czego brakuje i kto może to wnieść. Konkretna praca nadal trafia do zakładki Zadania.</div>`:''}</div>
     ${partsBlock}
-    <div class="sc" style="margin-bottom:14px">
+    ${renderProjectJoinApplications(idea,id)}
+    <div class="sc team-needs-card" style="margin-bottom:14px">
       <div class="team-needs-head"><div><div class="sc-title" style="margin-bottom:4px">Potrzeby zespołu</div><div class="hint">Kompetencje, doświadczenie i możliwości potrzebne do realizacji projektu.</div></div><div class="team-needs-tools">${(()=>{const c=teamNeedCounts(idea);return `<div class="team-needs-summary"><span class="need-summary-chip ok" title="Zapewnione">${c.ok}</span><span class="need-summary-chip candidate" title="Jest kandydatura">${c.candidate}</span><span class="need-summary-chip missing" title="Bez kandydatury">${c.missing}</span></div>`;})()}${renderTeamAddActions(id)}</div></div>
       ${renderRoleRequirements(idea,id)}
     </div>`;
 
   const tabBudzet=`
-    <div class="tab-info-wrap"><button class="info-corner" title="Co to za sekcja?" onclick="toggleTabInfo(${id},'budzet')">${IC.info}</button>${idea._tabInfo==='budzet'?`<div class="tab-intro"><b>Budżet.</b> Każda potrzeba finansowa to osobna pozycja — kwota i cel. Pozycje zatwierdza się i kwestionuje głosowaniem; deklaracje wpłat sumują się do puli.</div>`:''}</div>
+    <div class="tab-info-wrap"><button class="info-corner" title="Co to za sekcja?" onclick="toggleTabInfo(${id},'budzet')">${IC.info}</button>${idea._tabInfo==='budzet'?`<div class="tab-intro"><b>Budżet.</b> Koszt mówi, na jaki wydatek zgadza się zespół. Finansowanie pokazuje osobno, ile pieniędzy rzeczywiście przyjęto lub wpłacono. Dodanie, zmiana i usunięcie pozycji wymagają głosowania.</div>`:''}</div>
     <div class="sc">
-      <div class="sc-title">Budżet ${(()=>{const T=budgetTotals(idea);return T.items.length?`(${T.pledged} / ${T.total} zł)`:'(brak potrzeb)';})()}</div>
+      <div class="sc-title">Budżet</div>
       ${renderBudget(idea,id)}
     </div>`;
 
@@ -3495,7 +3671,16 @@ function acceptProposal(ideaId,pid){
   openIdea(ideaId,true);
 }
 function leaveProject(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea.openPartMenu=null;idea.leaveConfirm=!idea.leaveConfirm;openIdea(ideaId,true);}
-function confirmLeaveProject(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;(idea.tasks||[]).forEach(t=>{if(t.assignedTo===MY_NAME&&t.status!=='zrobione'){t.assignedTo=null;t.status='otwarte';t.history.push({text:'Patrycja Kowalska opuściła projekt — zadanie wraca do puli',date:TODAY});}});(idea.skillsNeeded||[]).forEach(sk=>{if(sk.person===MY_NAME){sk.filled=false;sk.person=null;}});(idea.roleRequirements||[]).forEach(r=>{r.filledBy=(r.filledBy||[]).filter(n=>n!==MY_NAME);});removeProjectMember(idea,MY_NAME,'dobrowolne odejście');idea.log.push({text:'Patrycja Kowalska opuściła projekt (dobrowolnie)',date:TODAY,time:NOW_TIME(),type:'zespół',detail:'Odejście z projektu jest zawsze wolne i nie wymaga niczyjej zgody. Historia wkładu zostaje w projekcie.'});idea.leaveConfirm=false;toast('Opuściłaś projekt. Zadania wróciły do puli.','ok');openIdea(ideaId,true);}
+function confirmLeaveProject(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  (idea.tasks||[]).forEach(t=>{if(t.assignedTo===MY_NAME&&t.status!=='zrobione'){t.assignedTo=null;t.status='otwarte';t.history.push({text:'Patrycja Kowalska opuściła projekt — zadanie wraca do puli',date:TODAY});}});
+  (idea.skillsNeeded||[]).forEach(sk=>{if(sk.person===MY_NAME){sk.filled=false;sk.person=null;}});
+  (idea.roleRequirements||[]).forEach(r=>{r.filledBy=(r.filledBy||[]).filter(n=>n!==MY_NAME);});
+  (idea.memberContributions||[]).filter(x=>x.person===MY_NAME&&x.active!==false).forEach(x=>{x.active=false;x.withdrawn=TODAY;});
+  removeProjectMember(idea,MY_NAME,'dobrowolne odejście');
+  idea.log.push({text:'Patrycja Kowalska opuściła projekt (dobrowolnie)',date:TODAY,time:NOW_TIME(),type:'zespół',detail:'Odejście z projektu jest zawsze wolne i nie wymaga niczyjej zgody. Wszystkie użyczenia kompetencji zostały wycofane, a historia wkładu zostaje w projekcie.'});
+  idea.leaveConfirm=false;toast('Opuściłaś projekt. Zadania wróciły do puli.','ok');openIdea(ideaId,true);
+}
 function cancelLeaveProject(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(idea){idea.leaveConfirm=false;openIdea(ideaId,true);}}
 
 function docFragmentList(d){
@@ -4078,19 +4263,113 @@ function pickDate(inputId,iso){
   if(pop)pop.innerHTML=renderDateCalendar(inputId,iso);
   document.getElementById(inputId+'-wrap')?.classList.remove('open');
 }
+
+// ===== TASK PHASES V2 =====
+function migrateTaskModel(t){
+  t.tytul=t.tytul||t.title||'Zadanie';t.title=t.tytul;
+  t.umiejetnosc=t.umiejetnosc||t.skill||'';t.skill=t.umiejetnosc;
+  t.aktywnosc=t.aktywnosc||t.history||[];t.history=t.aktywnosc;
+  if(!Array.isArray(t.fazy)||!t.fazy.length){
+    const legacyState=t.status==='zrobione'?'zrobiona':(['w toku','wstrzymane','oczekuje'].includes(t.status)?'w_toku':'nieobsadzona');
+    const comments=(t.comments||[]).map(c=>({osoba:c.who||c.osoba||'Nieznana osoba',tekst:c.text||c.tekst||'',kiedy:[c.date,c.time].filter(Boolean).join(' ')}));
+    t.fazy=[{id:'ph-'+t.id+'-1',tytul:t.deliverable||'Realizacja zadania',kolejnosc:1,wlasciciel:t.assignedTo||null,wlasciciele:t.assignedTo?[t.assignedTo]:[],stan:legacyState,ruszyla:legacyState!=='nieobsadzona',pliki:[],komentarze:comments,postep:[]}];
+  }
+  t.fazy.forEach((f,i)=>{f.id=f.id||'ph-'+t.id+'-'+(i+1);f.tytul=f.tytul||`Faza ${i+1}`;f.kolejnosc=Number(f.kolejnosc||i+1);if(!Array.isArray(f.wlasciciele))f.wlasciciele=f.wlasciciel?[f.wlasciciel]:[];f.wlasciciel=f.wlasciciele[0]||null;f.stan=['nieobsadzona','w_toku','zrobiona'].includes(f.stan)?f.stan:'nieobsadzona';f.pliki=f.pliki||[];f.komentarze=f.komentarze||[];f.postep=f.postep||[];});
+  t.fazy.sort((a,b)=>a.kolejnosc-b.kolejnosc).forEach((f,i)=>f.kolejnosc=i+1);
+  t.status=taskComputedStatus(t);
+  return t;
+}
+function taskComputedStatus(t){const phases=t.fazy||[];if(phases.length&&phases.every(f=>f.stan==='zrobiona'))return 'zrobione';if(phases.some(f=>f.stan==='w_toku'))return 'w_toku';return 'otwarte';}
+function taskContributors(t){return [...new Set((t.fazy||[]).flatMap(f=>f.wlasciciele||(f.wlasciciel?[f.wlasciciel]:[])))];}
+function taskPhaseReady(t,f){if(f.stan!=='nieobsadzona')return false;return (t.fazy||[]).filter(x=>x.kolejnosc<f.kolejnosc).some(x=>x.ruszyla||x.stan==='w_toku'||x.stan==='zrobiona');}
+function taskActivity(t,text){t.aktywnosc=t.aktywnosc||[];t.aktywnosc.push({text,date:TODAY,time:NOW_TIME()});t.history=t.aktywnosc;t.status=taskComputedStatus(t);}
+function taskStatusLabel(st){return st==='w_toku'?'w toku':st;}
+function renderTaskCardV2(idea,ideaId,t){
+  migrateTaskModel(t);const status=taskComputedStatus(t),done=t.fazy.filter(f=>f.stan==='zrobiona').length,pct=Math.round(done/t.fazy.length*100),people=taskContributors(t);
+  const stClass=status==='zrobione'?'ts-zrobione':status==='w_toku'?'ts-wtoku':'ts-otwarte';
+  return `<div class="task-card-v2" onclick="openTaskDetail(${ideaId},'${t.id}')"><div class="task-card-v2-top"><div><div class="task-card-v2-title">${escHtml(t.tytul)}</div><div class="task-card-v2-meta">${t.umiejetnosc?`<span>${escHtml(formatLeveledValue(t.umiejetnosc)||t.umiejetnosc)}</span>`:'<span>Bez wymaganej umiejętności</span>'}<span>·</span><span>${t.fazy.length} ${t.fazy.length===1?'faza':'fazy'}</span></div></div><span class="task-status ${stClass}">${taskStatusLabel(status)}</span></div><div class="task-progress"><span style="width:${pct}%"></span></div><div class="task-progress-label">${done}/${t.fazy.length} faz ukończonych</div>${people.length?`<div class="task-contributors"><span class="task-contributors-label">Kontrybutorzy</span>${people.map(personChip).join('')}</div>`:''}</div>`;
+}
+function taskPhaseMenu(ideaId,t,f){
+  const actions=[],mine=(f.wlasciciele||[]).includes(MY_NAME);
+  if(f.stan!=='zrobiona'&&!mine)actions.push({label:'Dołącz do fazy',run:`joinTaskPhase(${ideaId},'${t.id}','${f.id}')`,kind:'go'});
+  if(mine)actions.push({label:'Dodaj postęp',run:`openTaskProgressModal(${ideaId},'${t.id}','${f.id}')`,kind:'go'});
+  if(mine&&f.stan!=='zrobiona')actions.push({label:'Oznacz jako zrobioną',run:`completeTaskPhase(${ideaId},'${t.id}','${f.id}')`,kind:'go'});
+  if(mine)actions.push({label:'Opuść fazę',run:`leaveTaskPhase(${ideaId},'${t.id}','${f.id}')`});
+  actions.push({label:'Załącz plik / dokument',run:`openTaskFileModal(${ideaId},'${t.id}','${f.id}')`});
+  actions.push({label:'Skomentuj',run:`openTaskCommentModal(${ideaId},'${t.id}','${f.id}')`});
+  actions.push({label:'Edytuj fazę',run:`openTaskPhaseModal(${ideaId},'${t.id}','${f.id}')`});
+  actions.push({label:'Usuń fazę',run:`removeTaskPhase(${ideaId},'${t.id}','${f.id}')`,kind:'danger'});
+  return renderActionMenu(`phase-menu-${t.id}-${f.id}`,'Akcje dotyczą wyłącznie tej fazy.',actions,{title:'Akcje fazy',buttonHtml:`<button type="button" class="role-more" aria-label="Akcje fazy" onclick="event.stopPropagation();toggleKebab('phase-menu-${t.id}-${f.id}')">⋮</button>`});
+}
+function renderTaskPhaseContent(ideaId,t,f){
+  const prog=(f.postep||[]).map(p=>`<div class="tphase-log-item"><div class="tphase-log-dot"></div><div><div class="tphase-log-text">${escHtml(p.tekst)}</div><div class="tphase-log-meta">${escHtml(p.osoba)} · ${escHtml(p.kiedy||'')}</div></div></div>`).join('');
+  const files=(f.pliki||[]).map(p=>p.ref?`<button class="task-file-chip" type="button" onclick="openPhaseRef(${ideaId},'${escAttr(p.ref)}')">${IC.link||'🔗'} ${escHtml(p.nazwa)} <span>· z projektu</span></button>`:`<button class="task-file-chip" type="button" onclick="downloadTaskPhaseFile(${ideaId},'${t.id}','${f.id}','${p.id}')">${IC.file||'↧'} ${escHtml(p.nazwa)} <span>· ${escHtml(p.kto)}</span></button>`).join('');
+  const comments=(f.komentarze||[]).map(c=>`<div class="task-phase-comment"><b>${escHtml(c.osoba)}</b>${escHtml(c.tekst)}<small>${escHtml(c.kiedy||'')}</small></div>`).join('');
+  return `<div class="tphase-body">`
+    +`<div class="tphase-block"><div class="tphase-block-label">Postęp — co zrobiono</div>${prog?`<div class="tphase-log">${prog}</div>`:'<div class="task-phase-empty">Brak wpisów postępu.</div>'}<button type="button" class="tphase-inline-add" onclick="openTaskProgressModal(${ideaId},'${t.id}','${f.id}')">+ dodaj postęp</button></div>`
+    +`<div class="tphase-block"><div class="tphase-block-label">Pliki i dokumenty</div>${files?`<div class="task-file-chips">${files}</div>`:'<div class="task-phase-empty">Brak załączników.</div>'}<button type="button" class="tphase-inline-add" onclick="openTaskFileModal(${ideaId},'${t.id}','${f.id}')">+ załącz plik lub dokument z projektu</button></div>`
+    +`<div class="tphase-block"><div class="tphase-block-label">Komentarze</div>${comments?`<div class="task-phase-comments">${comments}</div>`:'<div class="task-phase-empty">Brak komentarzy.</div>'}<button type="button" class="tphase-inline-add" onclick="openTaskCommentModal(${ideaId},'${t.id}','${f.id}')">+ skomentuj</button></div>`
+    +`</div>`;
+}
+function renderTaskPhase(ideaId,t,f,multi){
+  const ready=taskPhaseReady(t,f),owners=f.wlasciciele||[],open=t._openPhase===f.id,mine=owners.includes(MY_NAME),done=f.stan==='zrobiona';
+  const stClass=done?'done':f.stan==='w_toku'?'active':(ready?'ready':'idle');
+  const circle=mine
+    ? `<button type="button" class="tphase-check ${stClass}" onclick="event.stopPropagation();toggleTaskPhaseDone(${ideaId},'${t.id}','${f.id}')" title="${done?'Cofnij ukończenie':'Oznacz fazę jako zrobioną'}">${done?'✓':f.kolejnosc}</button>`
+    : `<div class="tphase-circle ${stClass}">${done?'✓':f.kolejnosc}</div>`;
+  const ownerLine=owners.length?owners.map(personChip).join(''):`<span class="tphase-empty-owner">${ready?'do przejęcia · dołącz':'nieobsadzona'}</span>`;
+  const statusPill=done?'<span class="tphase-pill done">zrobiona</span>':f.stan==='w_toku'?'<span class="tphase-pill active">w toku</span>':ready?'<span class="tphase-pill ready">do przejęcia</span>':'<span class="tphase-pill idle">czeka</span>';
+  const counts=`${(f.postep||[]).length} postęp · ${(f.pliki||[]).length} plików · ${(f.komentarze||[]).length} komentarzy`;
+  const head=`<div class="tphase-card-head"${multi?` onclick="toggleTaskPhase(${ideaId},'${t.id}','${f.id}')"`:''}>${circle}<div class="tphase-card-headmain"><div class="tphase-card-title">${escHtml(f.tytul)}</div><div class="tphase-owners" onclick="event.stopPropagation()">${ownerLine}</div>${multi&&!open?`<div class="tphase-card-counts">${counts}</div>`:''}</div><div class="tphase-card-headside">${statusPill}${taskPhaseMenu(ideaId,t,f)}</div></div>`;
+  if(!multi)return `<div class="tphase-card ${stClass} open" style="grid-column:1/-1">${head}${renderTaskPhaseContent(ideaId,t,f)}</div>`;
+  return `<div class="tphase-card ${stClass}${open?' open':''}"${open?' style="grid-column:1/-1"':''}>${head}${open?renderTaskPhaseContent(ideaId,t,f):''}</div>`;
+}
+function renderTaskAddPhaseTile(ideaId,t){
+  if(!t._addingPhase)return `<button type="button" class="task-add-tile" onclick="toggleInlineTaskPhaseForm(${ideaId},'${t.id}')">+ Dodaj fazę</button>`;
+  return `<div class="task-phase-add-card"><div class="task-phase-title">Nowa faza</div><input id="inline-phase-title-${t.id}" placeholder="Tytuł fazy"><select id="inline-phase-order-${t.id}">${Array.from({length:t.fazy.length+1},(_,i)=>`<option value="${i+1}"${i===t.fazy.length?' selected':''}>Pozycja ${i+1}</option>`).join('')}</select><div class="task-phase-add-actions"><button type="button" onclick="toggleInlineTaskPhaseForm(${ideaId},'${t.id}')">Anuluj</button><button type="button" onclick="saveInlineTaskPhase(${ideaId},'${t.id}')">Dodaj</button></div></div>`;
+}
+function taskDoneCheck(ideaId,t,status){const on=status==='zrobione';return `<button type="button" class="task-done-check${on?' on':''}" onclick="toggleTaskDone(${ideaId},'${t.id}')"><span class="tdc-box">${on?'✓':''}</span>${on?'Zadanie zrobione':'Oznacz całe zadanie jako zrobione'}</button>`;}
+function openTaskDetail(ideaId,tid){
+  const {idea,t}=findTask(ideaId,tid);if(!idea||!t)return;migrateTaskModel(t);const status=taskComputedStatus(t),people=taskContributors(t),multi=t.fazy.length>1;
+  if(multi&&!t._openPhase)t._openPhase=(t.fazy.find(f=>f.stan==='w_toku')||t.fazy[0]).id;
+  const phases=t.fazy.map(f=>renderTaskPhase(ideaId,t,f,multi)).join('');
+  const activity=[...(t.aktywnosc||[])].reverse().map(a=>`<div class="task-activity-row"><span>${escHtml(a.text||String(a))}</span><span>${escHtml([a.date,a.time].filter(Boolean).join(' '))}</span></div>`).join('');
+  appModal(`<div class="task-detail-shell"><div class="task-detail-head"><button type="button" class="member-action-close" onclick="closeAppModal()">×</button><h3>${escHtml(t.tytul)}</h3><div class="task-detail-sub">${t.umiejetnosc?`<span>${escHtml(formatLeveledValue(t.umiejetnosc)||t.umiejetnosc)}</span><span>·</span>`:''}<span class="task-status ${status==='zrobione'?'ts-zrobione':status==='w_toku'?'ts-wtoku':'ts-otwarte'}">${taskStatusLabel(status)}</span>${people.length?`<span>·</span><span>${people.length} ${people.length===1?'kontrybutor':'kontrybutorów'}: ${escHtml(people.join(', '))}</span>`:''}</div>${taskDoneCheck(ideaId,t,status)}</div><div class="task-detail-body"><div class="task-section-label">Fazy · do każdej może dołączyć kilka osób, każdą może też przejąć ktoś inny</div><div class="task-phase-list">${phases}${renderTaskAddPhaseTile(ideaId,t)}</div><details class="task-activity"><summary>Aktywność (${(t.aktywnosc||[]).length})</summary>${activity||'<div class="task-phase-empty">Brak aktywności.</div>'}</details></div></div>`,'task-detail-modal');
+}
+function toggleTaskPhase(ideaId,tid,pid){const {t}=findTask(ideaId,tid);if(!t)return;t._openPhase=t._openPhase===pid?null:pid;openTaskDetail(ideaId,tid);}
+function toggleInlineTaskPhaseForm(ideaId,tid){const {t}=findTask(ideaId,tid);if(!t)return;t._addingPhase=!t._addingPhase;openTaskDetail(ideaId,tid);setTimeout(()=>document.getElementById('inline-phase-title-'+tid)?.focus(),40);}
+function saveInlineTaskPhase(ideaId,tid){const {t}=findTask(ideaId,tid);if(!t)return;migrateTaskModel(t);const title=(document.getElementById('inline-phase-title-'+tid)?.value||'').trim(),order=Math.max(1,Number(document.getElementById('inline-phase-order-'+tid)?.value||t.fazy.length+1));if(!title){toast('Podaj tytuł fazy.','warn');return;}t.fazy.push({id:'ph'+Date.now(),tytul:title,kolejnosc:order,wlasciciel:null,wlasciciele:[],stan:'nieobsadzona',ruszyla:false,pliki:[],komentarze:[],postep:[]});t.fazy.sort((a,b)=>a.kolejnosc-b.kolejnosc).forEach((x,i)=>x.kolejnosc=i+1);t._addingPhase=false;taskActivity(t,`${MY_NAME} dodała fazę „${title}"`);toast('Faza dodana.','ok');openTaskDetail(ideaId,tid);}
+function openTaskPhaseModal(ideaId,tid,pid=''){const {t}=findTask(ideaId,tid);if(!t)return;migrateTaskModel(t);const f=pid?t.fazy.find(x=>x.id===pid):null;actionModal({sideTitle:f?'Edytuj fazę':'Nowa faza',sideText:'Fazy porządkują pracę. Dodanie fazy nie wymaga głosowania.',steps:['Tytuł','Pozycja'],title:f?'Edytuj fazę zadania':'Dodaj fazę zadania',intro:t.tytul,body:`<div class="task-form-compact"><label class="full">Tytuł fazy<input id="task-phase-title" value="${escAttr(f?.tytul||'')}" placeholder="np. Weryfikacja prawna"></label><label>Pozycja w kolejności<input id="task-phase-order" type="number" min="1" max="${t.fazy.length+(f?0:1)}" value="${f?.kolejnosc||t.fazy.length+1}"></label></div><div class="app-modal-actions" style="margin-top:16px"><button class="vbtn" onclick="openTaskDetail(${ideaId},'${tid}')">Anuluj</button><button class="vbtn voted-yes" onclick="saveTaskPhase(${ideaId},'${tid}','${pid}')">Zapisz fazę</button></div>`});}
+function saveTaskPhase(ideaId,tid,pid=''){const {t}=findTask(ideaId,tid);if(!t)return;migrateTaskModel(t);const title=(document.getElementById('task-phase-title')?.value||'').trim(),order=Math.max(1,Number(document.getElementById('task-phase-order')?.value||t.fazy.length+1));if(!title){toast('Podaj tytuł fazy.','warn');return;}let f=pid?t.fazy.find(x=>x.id===pid):null;if(f){f.tytul=title;f.kolejnosc=order;taskActivity(t,`${MY_NAME} zmieniła fazę „${title}"`);}else{f={id:'ph'+Date.now(),tytul:title,kolejnosc:order,wlasciciel:null,wlasciciele:[],stan:'nieobsadzona',ruszyla:false,pliki:[],komentarze:[],postep:[]};t.fazy.push(f);taskActivity(t,`${MY_NAME} dodała fazę „${title}"`);}t.fazy.sort((a,b)=>a.kolejnosc-b.kolejnosc).forEach((x,i)=>x.kolejnosc=i+1);toast('Faza zapisana.','ok');openTaskDetail(ideaId,tid);}
+function joinTaskPhase(ideaId,tid,pid){const {t}=findTask(ideaId,tid);const f=t?.fazy?.find(x=>x.id===pid);if(!f)return;f.wlasciciele=f.wlasciciele||[];if(!f.wlasciciele.includes(MY_NAME))f.wlasciciele.push(MY_NAME);f.wlasciciel=f.wlasciciele[0];if(f.stan!=='zrobiona')f.stan='w_toku';f.ruszyla=true;taskActivity(t,`${MY_NAME} dołączyła do fazy „${f.tytul}"`);toast('Dołączyłaś do fazy.','ok');openTaskDetail(ideaId,tid);}
+function leaveTaskPhase(ideaId,tid,pid){const {t}=findTask(ideaId,tid);const f=t?.fazy?.find(x=>x.id===pid);if(!f)return;f.wlasciciele=(f.wlasciciele||[]).filter(n=>n!==MY_NAME);f.wlasciciel=f.wlasciciele[0]||null;if(!f.wlasciciele.length&&f.stan==='w_toku')f.stan='nieobsadzona';taskActivity(t,`${MY_NAME} opuściła fazę „${f.tytul}"`);toast('Opuściłaś fazę.','warn');openTaskDetail(ideaId,tid);}
+function completeTaskPhase(ideaId,tid,pid){const {t}=findTask(ideaId,tid);const f=t?.fazy?.find(x=>x.id===pid);if(!f||!(f.wlasciciele||[]).includes(MY_NAME))return;f.stan='zrobiona';f.ruszyla=true;taskActivity(t,`${MY_NAME} oznaczyła fazę „${f.tytul}" jako zrobioną`);toast('Faza ukończona.','ok');openTaskDetail(ideaId,tid);}
+function toggleTaskPhaseDone(ideaId,tid,pid){const {t}=findTask(ideaId,tid);const f=t?.fazy?.find(x=>x.id===pid);if(!f||!(f.wlasciciele||[]).includes(MY_NAME))return;if(f.stan==='zrobiona'){f.stan='w_toku';taskActivity(t,`${MY_NAME} cofnęła ukończenie fazy „${f.tytul}"`);toast('Faza znów w toku.','warn');}else{f.stan='zrobiona';f.ruszyla=true;taskActivity(t,`${MY_NAME} oznaczyła fazę „${f.tytul}" jako zrobioną`);toast('Faza ukończona.','ok');}openTaskDetail(ideaId,tid);}
+function toggleTaskDone(ideaId,tid){const {t}=findTask(ideaId,tid);if(!t)return;migrateTaskModel(t);const allDone=t.fazy.length&&t.fazy.every(f=>f.stan==='zrobiona');if(allDone){t.fazy.forEach(f=>{f.stan=(f.wlasciciele&&f.wlasciciele.length)?'w_toku':'nieobsadzona';});taskActivity(t,`${MY_NAME} odznaczyła całe zadanie`);toast('Zadanie znów otwarte.','warn');}else{t.fazy.forEach(f=>{f.stan='zrobiona';f.ruszyla=true;});taskActivity(t,`${MY_NAME} oznaczyła całe zadanie jako zrobione`);toast('Całe zadanie zrobione.','ok');}openTaskDetail(ideaId,tid);}
+function removeTaskPhase(ideaId,tid,pid){const {t}=findTask(ideaId,tid);if(!t)return;migrateTaskModel(t);if(t.fazy.length<=1){toast('Zadanie musi mieć co najmniej jedną fazę.','warn');return;}const i=t.fazy.findIndex(x=>x.id===pid);if(i<0)return;const f=t.fazy.splice(i,1)[0];t.fazy.forEach((x,j)=>x.kolejnosc=j+1);taskActivity(t,`${MY_NAME} usunęła fazę „${f.tytul}"`);toast('Faza usunięta.','warn');openTaskDetail(ideaId,tid);}
+function openTaskFileModal(ideaId,tid,pid){const {idea,t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!f)return;const opts=`${(idea.docs||[]).map(d=>`<option value="doc:${d.did}">dokument: ${escHtml(d.title)}</option>`).join('')}${(idea.files||[]).map((ff,i)=>`<option value="file:${i}">plik: ${escHtml(ff.name)}</option>`).join('')}`;actionModal({sideTitle:'Załącznik fazy',sideText:'Wgraj nowy plik albo podepnij dokument lub plik z innej sekcji projektu.',steps:['Wybór','Zapis'],title:'Załącz do fazy',intro:f.tytul,body:`<div class="task-form-compact"><label class="full">Podepnij z projektu${opts?`<select id="task-phase-ref">${'<option value="">— nie podpinaj —</option>'+opts}</select>`:'<div class="task-phase-empty">Brak dokumentów i plików w projekcie.</div>'}</label><label class="full">albo wgraj nowy plik<input id="task-phase-file" type="file"></label></div><div class="app-modal-actions" style="margin-top:16px"><button class="vbtn" onclick="openTaskDetail(${ideaId},'${tid}')">Anuluj</button><button class="vbtn voted-yes" onclick="saveTaskPhaseFile(${ideaId},'${tid}','${pid}')">Załącz</button></div>`});}
+function saveTaskPhaseFile(ideaId,tid,pid){const {idea,t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!f)return;const ref=document.getElementById('task-phase-ref')?.value||'',file=document.getElementById('task-phase-file')?.files?.[0];
+  if(ref){let nazwa=ref;if(ref.startsWith('doc:')){const d=(idea.docs||[]).find(x=>x.did===ref.slice(4));nazwa=d?d.title:'dokument';}else if(ref.startsWith('file:')){const ff=(idea.files||[])[Number(ref.slice(5))];nazwa=ff?ff.name:'plik';}f.pliki.push({id:'tpf'+Date.now(),ref,nazwa,kto:MY_NAME,kiedy:TODAY});taskActivity(t,`${MY_NAME} podpięła „${nazwa}" do fazy „${f.tytul}"`);toast('Załącznik podpięty.','ok');openTaskDetail(ideaId,tid);return;}
+  if(!file){toast('Wybierz plik albo dokument.','warn');return;}const r=new FileReader();r.onload=()=>{f.pliki.push({id:'tpf'+Date.now(),nazwa:file.name,dane:r.result,kto:MY_NAME,kiedy:TODAY});taskActivity(t,`${MY_NAME} dodała plik „${file.name}" do fazy „${f.tytul}"`);toast('Plik dodany do fazy.','ok');openTaskDetail(ideaId,tid);};r.readAsDataURL(file);}
+function openPhaseRef(ideaId,ref){if(ref.startsWith('doc:')){closeAppModal();openDoc(ideaId,ref.slice(4));}else if(ref.startsWith('file:')){closeAppModal();switchIdeaTab(ideaId,'pliki');}}
+function openTaskProgressModal(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!f)return;actionModal({sideTitle:'Postęp fazy',sideText:'Krótki wpis: co konkretnie zrobiono. Widzą go wszyscy.',steps:['Treść','Zapis'],title:'Dodaj postęp',intro:f.tytul,body:`<div class="task-form-compact"><label class="full">Co zrobiono?<textarea id="task-phase-progress" placeholder="np. Zrobiłam szkielet endpointów /wydatki i /umowy, brakuje walidacji."></textarea></label></div><div class="app-modal-actions" style="margin-top:16px"><button class="vbtn" onclick="openTaskDetail(${ideaId},'${tid}')">Anuluj</button><button class="vbtn voted-yes" onclick="saveTaskProgress(${ideaId},'${tid}','${pid}')">Dodaj wpis</button></div>`});}
+function saveTaskProgress(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid),text=(document.getElementById('task-phase-progress')?.value||'').trim();if(!f||!text){toast('Wpisz treść postępu.','warn');return;}f.postep=f.postep||[];f.postep.push({osoba:MY_NAME,tekst:text,kiedy:TODAY+' '+NOW_TIME()});if((f.wlasciciele||[]).length&&f.stan==='nieobsadzona')f.stan='w_toku';f.ruszyla=true;taskActivity(t,`${MY_NAME} dodała postęp w fazie „${f.tytul}"`);toast('Postęp dodany.','ok');openTaskDetail(ideaId,tid);}
+function downloadTaskPhaseFile(ideaId,tid,pid,fileId){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid),p=f?.pliki?.find(x=>x.id===fileId);if(!p)return;const a=document.createElement('a');a.href=p.dane;a.download=p.nazwa;document.body.appendChild(a);a.click();a.remove();}
+function openTaskCommentModal(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!f)return;actionModal({sideTitle:'Komentarz',sideText:'Komentarz dotyczy wyłącznie tej fazy.',steps:['Treść','Publikacja'],title:'Skomentuj fazę',intro:f.tytul,body:`<div class="task-form-compact"><label class="full">Komentarz<textarea id="task-phase-comment" placeholder="Napisz komentarz..."></textarea></label></div><div class="app-modal-actions" style="margin-top:16px"><button class="vbtn" onclick="openTaskDetail(${ideaId},'${tid}')">Anuluj</button><button class="vbtn voted-yes" onclick="saveTaskPhaseComment(${ideaId},'${tid}','${pid}')">Dodaj komentarz</button></div>`});}
+function saveTaskPhaseComment(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid),text=(document.getElementById('task-phase-comment')?.value||'').trim();if(!f||!text){toast('Wpisz komentarz.','warn');return;}f.komentarze.push({osoba:MY_NAME,tekst:text,kiedy:TODAY+' '+NOW_TIME()});taskActivity(t,`${MY_NAME} skomentowała fazę „${f.tytul}"`);toast('Komentarz dodany.','ok');openTaskDetail(ideaId,tid);}
+
 function openTaskModal(id){
   const idea=ideas.find(i=>i.id===id);if(!idea)return;
   actionModal({
     sideTitle:'Dodaj zadanie',
     sideText:'',
-    steps:['Treść zadania','Wymagania i poziomy','Osoba i efekt'],
+    steps:['Treść zadania','Kompetencja','Osoba i efekt'],
     title:'Nowe zadanie',
     intro:'',
     body:`<div class="modal-form-grid">
       <label>Tytuł zadania <span class="req-star">*</span><input type="text" id="task-title-${id}" placeholder="Co trzeba zrobić?" /></label>
       <label>Opis zadania <span class="req-star">*</span><textarea id="task-desc-${id}" placeholder="Szczegóły, kontekst, oczekiwany efekt" style="min-height:74px"></textarea></label>
-      <label>Umiejętność i poziom${platformLeveledPicker('skill',`task-skill-${id}`)}</label>
-      <label>Rola i poziom${platformLeveledPicker('role',`task-role-${id}`)}</label>
+      <label>Kompetencja lub możliwość${platformCapabilityPicker(`task-skill-${id}`)}</label>
       <label>Termin${taskDatePicker(`task-deadline-${id}`)}</label>
       <label>Produkt zadania<input type="text" id="task-deliverable-${id}" placeholder="Np. gotowy szablon raportu, makieta strony, analiza porównawcza..." /></label>
       <label>Zaproś osobę (opcjonalnie)${personPicker(`task-assign-${id}`)}</label>
@@ -4108,7 +4387,7 @@ function addTask(id){
   const desc=(document.getElementById('task-desc-'+id)?.value||'').trim();
   if(!desc){toast('Podaj opis zadania.','warn');return;}
   const skill=(document.getElementById('task-skill-'+id)?.value||'').trim();
-  const role=(document.getElementById('task-role-'+id)?.value||'').trim();
+  const role='';
   const deadline=document.getElementById('task-deadline-'+id)?.value||'';
   const deliverable=(document.getElementById('task-deliverable-'+id)?.value||'').trim();
   const assign=document.getElementById('task-assign-'+id)?.value||'';
@@ -4118,8 +4397,11 @@ function addTask(id){
     assignedTo:assign||null,
     status:assign?'oczekuje':'otwarte',
     date:TODAY,
-    history:[{text:assign?`Zadanie utworzone; ${assign} zaproszona/y — sama zdecyduje, czy je przyjąć`:'Zadanie utworzone — czeka na osobę',date:TODAY}]
+    fazy:[{id:'ph'+Date.now(),tytul:deliverable||'Realizacja zadania',kolejnosc:1,wlasciciel:assign||null,wlasciciele:assign?[assign]:[],stan:assign?'w_toku':'nieobsadzona',ruszyla:!!assign,pliki:[],komentarze:[],postep:[]}],
+    aktywnosc:[{text:assign?`Zadanie utworzone; pierwsza faza przypisana do ${assign}`:'Zadanie utworzone — pierwsza faza czeka na przejęcie',date:TODAY,time:NOW_TIME()}],
+    history:[]
   };
+  payload.history=payload.aktywnosc;
   const solo=activeParticipants(idea).length<=1;
   if(solo){
     idea.tasks.push(payload);
@@ -4585,8 +4867,10 @@ function projectMemberStatusText(idea,m){
   return 'aktywny uczestnik';
 }
 function projectMemberRolesText(idea,name){
-  const roles=(idea.roleRequirements||[]).filter(r=>(r.filledBy||[]).includes(name)).map(r=>r.role);
-  return roles.length?roles.join(', '):'bez roli w projekcie';
+  const needs=(idea.roleRequirements||[]).filter(r=>(r.filledBy||[]).includes(name)).map(r=>needPrimaryCapability(r).name);
+  const offered=(idea.memberContributions||[]).filter(x=>x.person===name&&x.active!==false).map(x=>x.skill);
+  const all=Array.from(new Set([...needs,...offered]));
+  return all.length?all.join(', '):'brak przypisanych potrzeb';
 }
 function projectMemberJoinedText(idea,m){
   return m.joined||m.date||idea.date||'brak daty';
@@ -4602,7 +4886,8 @@ function openPartManager(id,name){
       <span class="member-pick-main"><b>${escHtml(m.name)}</b><span>${projectMemberStatusText(idea,m)}</span></span>
     </button>`).join('');
   const actions=memberActionButtons(id,selected);
-  const meta=`<div class="member-meta-grid"><div class="member-meta-card"><span>Ostatnia aktywność</span><b>${dmyDate(lastProjectActivityOf(idea,selected.name))}</b></div><div class="member-meta-card"><span>Dołączył/a</span><b>${escHtml(projectMemberJoinedText(idea,selected))}</b></div><div class="member-meta-card"><span>Role w projekcie</span><b>${escHtml(projectMemberRolesText(idea,selected.name))}</b></div></div>`;
+  const meta=`<div class="member-meta-grid"><div class="member-meta-card"><span>Ostatnia aktywność</span><b>${dmyDate(lastProjectActivityOf(idea,selected.name))}</b></div><div class="member-meta-card"><span>Dołączył/a</span><b>${escHtml(projectMemberJoinedText(idea,selected))}</b></div><div class="member-meta-card"><span>Potrzeby zespołu</span><b>${escHtml(projectMemberRolesText(idea,selected.name))}</b></div></div>`;
+  const contributions=memberContributionChips(idea,selected.name);
   appModal(`
     <div class="member-action-modal">
       <div class="member-action-side">
@@ -4619,6 +4904,7 @@ function openPartManager(id,name){
           <div><b>${escHtml(selected.name)}</b><span>${projectMemberStatusText(idea,selected)}</span></div>
         </div>
         ${meta}
+        ${contributions?`<div class="member-managed-needs"><b>Użyczone kompetencje</b><span>To tutaj widać kompetencje wniesione przez tę osobę do projektu.</span>${contributions}</div>`:''}
         <div class="member-action-list">${actions}</div>
       </div>
     </div>`,
@@ -4643,7 +4929,7 @@ function memberActionButtons(id,m){
     if(me) return `<button type="button" class="member-action-btn" onclick="closeAppModal();requestReturn(${id},'${nm}')"><span><b>Poproś o przywrócenie</b><span>Zespół zobaczy wniosek o powrót. Przywrócenie nadal wymaga jawnej decyzji.</span></span><span class="member-action-arrow">›</span></button>`;
     return `<button type="button" class="member-action-btn" onclick="closeAppModal();startReadmit(${id},'${nm}')"><span><b>Zaproś ponownie</b><span>Grupa stawia pod głosowanie ponowne przyjęcie tej osoby.</span></span><span class="member-action-arrow">›</span></button>`;
   }
-  if(me) return `<button type="button" class="member-action-btn danger" onclick="closeAppModal();leaveProject(${id})"><span><b>Opuść projekt</b><span>Twoje otwarte zadania wrócą do puli, a role zostaną zwolnione.</span></span><span class="member-action-arrow">›</span></button>`;
+  if(me) return `<button type="button" class="member-action-btn danger" onclick="closeAppModal();leaveProject(${id})"><span><b>Opuść projekt</b><span>Twoje otwarte zadania wrócą do puli, a użyczenia kompetencji zostaną wycofane.</span></span><span class="member-action-arrow">›</span></button>`;
   return `<button type="button" class="member-action-btn danger" onclick="closeAppModal();startRecall(${id},'${nm}')"><span><b>Odwołaj z projektu</b><span>Tworzy głosowanie zespołu. Historia wkładu tej osoby zostaje w rejestrze.</span></span><span class="member-action-arrow">›</span></button>`;
 }
 function renderPartRow(id,m,removed,last){
@@ -4704,6 +4990,78 @@ function startRecallUndo(ideaId,name){
   notifyVote(idea);
   openIdea(ideaId,true);
 }
+
+function renderProjectJoinApplications(idea,ideaId){
+  const rows=(idea.votes||[]).filter(v=>v.open&&v.kind==='project-join');
+  if(!rows.length)return '';
+  return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Kandydatury do zespołu (${rows.length})</div>${rows.map(v=>`<div class="invite-row"><div class="invite-info">${personChip(v.person,true)}<div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Chcę dołączyć do projektu.')}<br><span class="dt">Kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`).join('')}</div>`;
+}
+function projectJoinVote(idea){return (idea.votes||[]).find(v=>v.open&&v.kind==='project-join'&&v.person===MY_NAME);}
+function projectJoinButton(idea,ideaId){
+  if(participantsOf(idea).includes(MY_NAME)) return `<button type="button" class="hero-btn joined-project" disabled>✓ Jesteś w projekcie</button>`;
+  const pending=projectJoinVote(idea);
+  if(pending) return `<button type="button" class="hero-btn join-pending" onclick="openVote(${ideaId},'${pending.id}')">Kandydatura w toku</button>`;
+  return `<button type="button" class="hero-btn join-project" onclick="openJoinProjectModal(${ideaId})">Dołącz do projektu</button>`;
+}
+function joinSkillMatches(idea,skill){
+  const out=[];
+  (idea.roleRequirements||[]).forEach((r,idx)=>{const cap=needPrimaryCapability(r);if(textNeedMatch(cap.name,skill)&&roleHasVacancy(r))out.push({idx,r,cap});});
+  return out;
+}
+function joinSkillCategory(skill){const c=platformCapabilities().find(x=>textNeedMatch(x.name,skill));return c?.cat||'Inne';}
+function toggleJoinExtra(ideaId,idx,on){
+  const panel=document.getElementById(`join-extra-confirm-${ideaId}-${idx}`);if(panel)panel.classList.toggle('on',on);
+  if(on)setTimeout(()=>document.getElementById(`join-extra-reason-${ideaId}-${idx}`)?.focus(),40);
+}
+function openJoinProjectModal(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  if(participantsOf(idea).includes(MY_NAME)){toast('Jesteś już w tym projekcie.','ok');return;}
+  if(projectJoinVote(idea)){toast('Twoja kandydatura już czeka na decyzję zespołu.','warn');return;}
+  const skills=(myProfile.skills||[]).map((name,idx)=>{const lvl=myProfile.skillLevels?.[name]||1;const matches=joinSkillMatches(idea,name);return {name,lvl,idx,matches,cat:joinSkillCategory(name)};});
+  const existing=skills.filter(s=>s.matches.length).map(s=>`<div class="join-cap-card"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-skill="${escAttr(s.name)}" data-level="${s.lvl}"><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · pokrywa: ${escHtml(s.matches.map(x=>needPrimaryCapability(x.r).name).join(', '))}</small></span></label></div>`).join('');
+  const additional=skills.filter(s=>!s.matches.length).map(s=>`<div class="join-cap-card extra"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-extra="1" data-idx="${s.idx}" data-skill="${escAttr(s.name)}" data-level="${s.lvl}" onchange="toggleJoinExtra(${ideaId},${s.idx},this.checked)"><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · tej potrzeby nie ma jeszcze w projekcie</small></span></label><div class="join-extra-confirm" id="join-extra-confirm-${ideaId}-${s.idx}"><p>Ta kompetencja utworzy propozycję nowej potrzeby zespołu. Napisz krótko, dlaczego przyda się w tym projekcie.</p><textarea id="join-extra-reason-${ideaId}-${s.idx}" placeholder="Np. przyda się do przygotowania czytelnych materiałów wyjaśniających ustawę"></textarea></div></div>`).join('');
+  const profileSource=`<div class="join-profile-source"><div><b>To są kompetencje zapisane na Twoim profilu</b><p>Jeśli masz inną kompetencję, najpierw dodaj ją w katalogu Platformy. Nie musisz robić tego teraz — profil i użyczenia możesz uzupełnić także po dołączeniu do projektu.</p></div><button type="button" onclick="closeAppModal();platformTab='skills';go('platform')">Przejdź do Platformy</button></div>`;
+  actionModal({
+    sideTitle:'Dołącz do projektu',
+    sideText:'Wybierasz kompetencje ze swojego profilu. Każde użyczenie możesz później wycofać.',
+    steps:['Motywacja','Istniejące potrzeby','Dodatkowa pomoc'],
+    title:'Kandydatura do zespołu',
+    intro:'Zespół podejmie decyzję o przyjęciu Cię do projektu. Zacznij od krótkiej motywacji.',
+    body:`<div class="modal-form-grid"><label>Krótka motywacja <span class="req-star">*</span><textarea id="join-motivation-${ideaId}" placeholder="Dlaczego chcesz dołączyć i jak chcesz pomóc?" style="min-height:82px"></textarea></label><div class="join-transition"><span>Krok 2</span><div><h4>Kompetencje, które chcesz wnieść</h4><p>Teraz wybierz, w których potrzebach projektu możesz pomóc i co dodatkowo chcesz zaoferować.</p></div></div><div class="join-sections"><section class="join-section"><div class="join-section-head"><h4>Potrzebne już w projekcie</h4><p>Po przyjęciu do zespołu wybrane kompetencje zostaną przypisane automatycznie.</p></div><div class="join-cap-list">${existing||'<div class="join-section-empty">Żadna z kompetencji na Twoim profilu nie pasuje obecnie do otwartych potrzeb.</div>'}</div></section><section class="join-section"><div class="join-section-head"><h4>Możesz zaoferować dodatkowo</h4><p>Po zaznaczeniu wyjaśnisz, dlaczego projekt powinien dodać nową potrzebę.</p></div><div class="join-cap-list">${additional||'<div class="join-section-empty">Wszystkie Twoje kompetencje są już potrzebne w projekcie.</div>'}</div></section></div>${profileSource}<div class="join-summary-note">Przyjęcie Ciebie do zespołu i dodanie każdej nowej potrzeby to osobne decyzje.</div><div class="role-actions"><button class="vbtn voted-yes" onclick="submitProjectJoin(${ideaId})">Wyślij kandydaturę</button><button class="vbtn" onclick="closeAppModal()">Anuluj</button></div></div>`,
+    cls:'task-form-app-modal join-project-modal'
+  });
+  const joinGrid=document.querySelector('.join-project-modal .modal-form-grid');
+  if(joinGrid)joinGrid.insertAdjacentHTML('afterbegin','<div class="join-transition first"><span>Krok 1</span><div><h4>Motywacja</h4><p>Napisz krótko, dlaczego chcesz dołączyć do tego projektu.</p></div></div>');
+  setTimeout(()=>document.getElementById('join-motivation-'+ideaId)?.focus(),60);
+}
+function submitProjectJoin(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  const motivation=(document.getElementById('join-motivation-'+ideaId)?.value||'').trim();if(!motivation){toast('Napisz krótką motywację.','warn');return;}
+  const selected=[...document.querySelectorAll('.join-skill-check:checked')].map(x=>({name:x.dataset.skill,lvl:Number(x.dataset.level||1)}));
+  if(!selected.length){toast('Wybierz przynajmniej jedną kompetencję.','warn');return;}
+  const proposed=[];
+  for(const x of document.querySelectorAll('.join-skill-check[data-extra="1"]:checked')){
+    const reason=(document.getElementById(`join-extra-reason-${ideaId}-${x.dataset.idx}`)?.value||'').trim();
+    if(!reason){toast(`Wyjaśnij, dlaczego kompetencja „${x.dataset.skill}” przyda się w projekcie.`,'warn');document.getElementById(`join-extra-reason-${ideaId}-${x.dataset.idx}`)?.focus();return;}
+    proposed.push({name:x.dataset.skill,lvl:Number(x.dataset.level||1),cat:joinSkillCategory(x.dataset.skill),reason});
+  }
+  const matched=Array.from(new Set(selected.flatMap(s=>joinSkillMatches(idea,s.name).map(x=>x.idx))));
+  const vId='v'+Date.now();
+  idea.votes.push({id:vId,kind:'project-join',person:MY_NAME,joinSkills:selected,matchedNeeds:matched,prop:`Przyjąć ${MY_NAME} do projektu`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:motivation,date:TODAY,supporters:[],debunks:[]}]});
+  proposed.forEach((s,n)=>{const roleData={role:s.cat,task:s.reason,min:1,max:1,exclusive:false,critical:false,skills:[{name:s.name,lvl:s.lvl}],filledBy:[],status:'open',offeredBy:MY_NAME};idea.votes.push({id:'v'+Date.now()+'n'+n,kind:'role',roleData,prop:`Dodać potrzebę zespołu: ${s.name} P${s.lvl}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now()+'n'+n,stance:'za',author:MY_NAME,text:s.reason,date:TODAY,supporters:[],debunks:[]}]});});
+  idea.log.push({text:`${MY_NAME} zgłosiła kandydaturę do zespołu`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:`<b>Motywacja:</b> ${escHtml(motivation)}<br><b>Oferowane kompetencje:</b> ${escHtml(selected.map(s=>s.name+' P'+s.lvl).join(', '))}${proposed.length?'<br><b>Nowe potrzeby do decyzji:</b> '+escHtml(proposed.map(s=>s.name).join(', ')):''}`});
+  notifyVote(idea);maybeNotify(idea,'Nowa kandydatura do zespołu: '+MY_NAME);closeAppModal();openIdea(ideaId,true);
+}
+function withdrawNeedContribution(ideaId,idx){
+  const idea=ideas.find(i=>i.id===ideaId);const r=idea?.roleRequirements?.[idx];if(!idea||!r)return;
+  r.filledBy=(r.filledBy||[]).filter(n=>n!==MY_NAME);r.status='open';
+  const skill=needPrimaryCapability(r).name;
+  (idea.memberContributions||[]).filter(x=>x.person===MY_NAME&&textNeedMatch(x.skill,skill)&&x.active!==false).forEach(x=>{x.active=false;x.withdrawn=TODAY;});
+  (idea.skillsNeeded||[]).forEach(s=>{if(s.person===MY_NAME&&textNeedMatch(s.skill,skill)){s.filled=false;s.person=null;}});
+  idea.log.push({text:`${MY_NAME} wycofała użyczenie kompetencji: ${skill}`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:'Potrzeba pozostaje w projekcie i ponownie czeka na osobę.'});
+  toast('Wycofano użyczenie. Potrzeba ponownie jest otwarta.','ok');openIdea(ideaId,true);
+}
+function memberContributionChips(idea,name){const rows=(idea.memberContributions||[]).filter(x=>x.person===name&&x.active!==false);return rows.length?`<span class="member-contribution">${rows.map(x=>`<span>${escHtml(x.skill)}${x.lvl?' · P'+x.lvl:''}</span>`).join('')}</span>`:'';}
 
 function needCategoryTiles(ideaId){
   const cats=Array.from(new Set(platformCapabilities().map(c=>c.cat||'Inne')));
@@ -4968,8 +5326,8 @@ function checkQuorum(idea,v){
     v.open=false;v.accepted=false;v.ui=null;
     const voters=participantsOf(idea).length;
     if(v.fromProposal){const pr=(idea.proposals||[]).find(x=>x.pid===v.fromProposal);if(pr)pr.status='rejected';}
-    if(v.kind==='budget-approve'&&v.bid){const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb)bb.pendingVote=false;}
-    if(v.kind==='pledge-accept'&&v.pledgeId){const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.status='rejected';fp.p.pendingVote=false;}}
+    if(v.kind==='budget-approve'&&v.bid){const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb){bb.pendingVote=false;bb.stanKosztu=bb.costState='odrzucona';}}
+    if(v.kind==='pledge-accept'&&v.pledgeId){const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.pendingVote=false;}}
     if(v.kind==='pledge-location'&&v.pledgeId){const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.pendingVote=false;}}
     if(v.kind==='pledge-dispute'&&v.pledgeId){const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.pendingVote=false;}}
     idea.log.push({text:`Głosowanie odrzucone (${v.no} przeciw): ${v.prop.slice(0,60)}`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Wynik:</b> ${v.yes} za, ${v.no} przeciw. Decyzja nie przeszła${(v.yes===v.no&&v.no>0)?' (remis = status quo)':''}.`});
@@ -5027,8 +5385,20 @@ function checkQuorum(idea,v){
       (idea.tasks||[]).forEach(t=>{if(t.assignedTo===v.person&&t.status!=='zrobione'){t.assignedTo=null;t.status='otwarte';t.history.push({text:`${v.person} usunięty/a z idei — zadanie wraca do puli`,date:TODAY});}});
       (idea.skillsNeeded||[]).forEach(sk=>{if(sk.person===v.person){sk.filled=false;sk.person=null;}});
       (idea.roleRequirements||[]).forEach(r=>{r.filledBy=(r.filledBy||[]).filter(n=>n!==v.person);});
+      (idea.memberContributions||[]).filter(x=>x.person===v.person&&x.active!==false).forEach(x=>{x.active=false;x.withdrawn=TODAY;});
       removeProjectMember(idea,v.person,'usunięcie głosowaniem');
       idea.log.push({text:`${v.person} usunięty/a z idei głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:'Zadania tej osoby wróciły do puli, obsadzone umiejętności i role otwarte ponownie. Historia wkładu zostaje w projekcie.'});
+    } else if(v.kind==='project-join'&&v.person){
+      markProjectMember(idea,v.person,'przyjęcie do projektu');
+      idea.memberContributions=idea.memberContributions||[];
+      (v.joinSkills||[]).forEach(s=>{
+        let attached=false;
+        (idea.roleRequirements||[]).forEach(r=>{if(textNeedMatch(needPrimaryCapability(r).name,s.name)&&roleHasVacancy(r)){r.filledBy=r.filledBy||[];if(!r.filledBy.includes(v.person))r.filledBy.push(v.person);if(roleStatus(r))r.status='filled';attached=true;}});
+        const old=idea.memberContributions.find(x=>x.person===v.person&&textNeedMatch(x.skill,s.name));
+        if(old){old.active=true;old.lvl=s.lvl;old.date=TODAY;old.attached=attached;}else idea.memberContributions.push({person:v.person,skill:s.name,lvl:s.lvl,date:TODAY,active:true,attached});
+      });
+      idea.log.push({text:`${v.person} przyjęta/y do projektu głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:`Użyczone kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', ')||'brak')}. Kompetencje pasujące do istniejących potrzeb przypisano automatycznie.`});
+      notify(`Przyjęto Cię do projektu: ${idea.title}`,idea.id);maybeNotify(idea,'Nowa osoba w zespole: '+v.person);
     } else if((v.kind==='readmit'||v.kind==='recall-undo')&&v.person){
       markProjectMember(idea,v.person,v.kind==='recall-undo'?'cofnięcie odwołania':'ponowne przyjęcie');
       idea.returnRequests=(idea.returnRequests||[]).filter(n=>n!==v.person);
@@ -5038,8 +5408,9 @@ function checkQuorum(idea,v){
       maybeNotify(idea,'Osoba wróciła do projektu: '+v.person);
     } else if(v.kind==='role'&&v.roleData){
       idea.roleRequirements=idea.roleRequirements||[];
+      if(v.roleData.offeredBy&&participantsOf(idea).includes(v.roleData.offeredBy)){v.roleData.filledBy=v.roleData.filledBy||[];if(!v.roleData.filledBy.includes(v.roleData.offeredBy))v.roleData.filledBy.push(v.roleData.offeredBy);v.roleData.status='filled';}
       idea.roleRequirements.push(v.roleData);
-      idea.log.push({text:`Dodano rolę niezbędną: ${v.roleData.role}`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Wynik:</b> ${v.yes} za, ${v.no} przeciw. Rola pojawiła się w panelu ról.`});
+      idea.log.push({text:`Dodano potrzebę zespołu: ${needPrimaryCapability(v.roleData).name}`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Wynik:</b> ${v.yes} za, ${v.no} przeciw. Potrzeba pojawiła się w panelu zespołu.${v.roleData.offeredBy&&v.roleData.filledBy?.includes(v.roleData.offeredBy)?' Kompetencję od razu przypisano do osoby, która ją zaoferowała.':''}`});
     } else if(v.kind==='role-edit'&&typeof v.roleIndex==='number'){
       const r=(idea.roleRequirements||[])[v.roleIndex];
       if(r){
@@ -5106,8 +5477,8 @@ function checkQuorum(idea,v){
       }
       idea.log.push({text:`Rola „${nm}" odwołana głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:'Rola usunięta ze struktury projektu wraz z jej obsadzeniem. Ślad pozostaje w rejestrze.'});
     } else if(v.kind==='pledge-accept'&&v.pledgeId){
-      const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.status='accepted';fp.p.pendingVote=false;}
-      idea.log.push({text:`Deklaracja pieniędzy przyjęta głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:fp.p?`Przyjęto ${fp.p.amount} zł od ${fp.p.who}. Lokalizacja: ${escHtml(fp.p.location||'do ustalenia')}.`:''});
+      const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.stan=fp.p.state='przyjeta';fp.p.status='accepted';fp.p.pendingVote=false;}
+      idea.log.push({text:`Deklaracja pieniędzy przyjęta głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:fp.p?`Przyjęto ${fp.p.amount} zł od ${fp.p.person}. Lokalizacja/opiekun: ${escHtml(fp.p.custodian||'do ustalenia')}.`:''});
     } else if(v.kind==='pledge-location'&&v.pledgeId){
       const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p){fp.p.location=v.newLocation;fp.p.pendingVote=false;}
       idea.log.push({text:`Zaktualizowano lokalizację środków głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:'Nowa lokalizacja: '+escHtml(v.newLocation||'')});
@@ -5118,8 +5489,23 @@ function checkQuorum(idea,v){
       {const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb){bb.pendingVote=false;bb.disputed=true;}}
       idea.log.push({text:`Sprzeciw wobec budżetu przyjęty (${v.yes} za) — pozycja do rewizji`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:'Zespół zakwestionował kwotę lub cel. Pozycja wymaga ponownego ustalenia.'});
     } else if(v.kind==='budget-approve'){
-      {const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb){bb.approved=true;bb.pendingVote=false;}}
+      {const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb){bb.approved=true;bb.pendingVote=false;bb.stanKosztu=bb.costState='zatwierdzona';}}
       idea.log.push({text:`Pozycja budżetu zatwierdzona głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:'Kwota i cel mają teraz mandat zespołu. Zmiana wymaga nowej decyzji.'});
+    } else if(v.kind==='budget-item-edit'&&v.bid){
+      const bb=(idea.budgetItems||[]).find(x=>x.bid===v.bid);if(bb){bb.nazwa=bb.name=bb.desc=v.newName;bb.kwota=bb.amount=Number(v.newAmount||bb.amount);}
+      idea.log.push({text:`Pozycja budżetowa zmieniona głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:bb?`${escHtml(bb.name)} · ${bb.amount} zł`:''});
+    } else if(v.kind==='budget-item-remove'&&v.bid){
+      const bi=(idea.budgetItems||[]).findIndex(x=>x.bid===v.bid),bb=bi>=0?idea.budgetItems.splice(bi,1)[0]:null;
+      idea.log.push({text:`Pozycja budżetowa usunięta głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:bb?escHtml(bb.name):''});
+    } else if(v.kind==='pledge-state'&&v.pledgeId){
+      const fp=findBudgetPledge(idea,v.pledgeId);if(fp.p)fp.p.stan=fp.p.state=v.newState;
+      idea.log.push({text:`Stan wpłaty zmieniony głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:fp.p?`${fp.p.amount} zł od ${escHtml(fp.p.person)} · ${escHtml(v.newState)}`:''});
+    } else if(v.kind==='pledge-edit'&&v.pledgeId){
+      const fp=findBudgetPledge(idea,v.pledgeId),d=v.newDeclaration||{};if(fp.p){fp.p.kwota=fp.p.amount=Number(d.amount||fp.p.amount);fp.p.zrodlo=fp.p.source=d.source||fp.p.source;fp.p.lokalizacjaOpiekun=fp.p.custodian=d.custodian||fp.p.custodian;fp.p.notatka=fp.p.note=d.note??fp.p.note;}
+      idea.log.push({text:`Deklaracja zmieniona głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:fp.p?`${fp.p.amount} zł od ${escHtml(fp.p.person)}`:''});
+    } else if(v.kind==='pledge-remove'&&v.pledgeId){
+      const fp=findBudgetPledge(idea,v.pledgeId);if(fp.b&&fp.p){fp.b.deklaracje=fp.b.declarations=fp.b.declarations.filter(x=>x.pid!==v.pledgeId);fp.b.pledges=fp.b.declarations;}
+      idea.log.push({text:`Deklaracja wycofana głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:fp.p?`${fp.p.amount} zł od ${escHtml(fp.p.person)}`:''});
     } else if(v.kind==='frag-approve'&&v.did!=null){
       const okm=mutateDocFragment(idea,v.did,v.fragIndex,el=>{el.classList.remove('locked-mine','locked-other');el.classList.add('approved-frag');el.setAttribute('contenteditable','false');el.removeAttribute('data-lock');});
       idea.log.push({text:`Fragment zatwierdzony głosowaniem (${v.yes} za) — treść zamrożona`,date:TODAY,time:NOW_TIME(),type:'dokument',detail:okm?'Od teraz zmiana fragmentu wymaga osobnej decyzji zespołu.':'Nie znaleziono fragmentu — mógł zostać zmieniony.'});
@@ -5143,101 +5529,75 @@ function checkQuorum(idea,v){
 
 
 
+const BUDGET_GOVERNANCE='vote';
+const BUDGET_SOURCE_LABELS={budzet_sekcji:'Budżet sekcji',wplata_osobista:'Wpłata osobista',grant:'Grant',zbiorka:'Zbiórka',inne:'Inne'};
 function migrateBudget(idea){
-  if(idea.budgetItems) return;
-  idea.budgetItems=[];
-  if(idea.budget){
-    idea.budgetItems.push({
-      bid:'b'+(idea.budget.bid||Date.now()),
-      amount:idea.budget.amount, desc:idea.budget.desc||'',
-      pledges:idea.budget.pledges||[],
-      approved:!!idea.budget.approved, pendingVote:!!idea.budget.pendingVote, disputed:!!idea.budget.disputed,
-      by:idea.budget.by||MY_NAME, date:idea.budget.date||TODAY
-    });
+  if(!idea.budgetItems){
+    idea.budgetItems=[];
+    if(idea.budget) idea.budgetItems.push({bid:'b'+(idea.budget.bid||Date.now()),amount:idea.budget.amount,desc:idea.budget.desc||'',pledges:idea.budget.pledges||[],approved:!!idea.budget.approved,pendingVote:!!idea.budget.pendingVote,disputed:!!idea.budget.disputed,by:idea.budget.by||MY_NAME,date:idea.budget.date||TODAY});
+    delete idea.budget;
   }
-  delete idea.budget;
-}
-function acceptedPledgesOf(b){return (b.pledges||[]).filter(p=>p.status==='accepted');}
-function budgetTotals(idea){
-  (idea.budgetItems||[]).forEach(migrateBudgetItem);
-  const items=idea.budgetItems||[];
-  let approved=0,proposed=0,pledged=0,pendingPledged=0;
-  items.forEach(b=>{
-    if(b.approved) approved+=Number(b.amount||0); else proposed+=Number(b.amount||0);
-    pledged+=acceptedPledgesOf(b).reduce((a,p)=>a+Number(p.amount||0),0);
-    pendingPledged+=(b.pledges||[]).filter(p=>!p.status||p.status==='pending').reduce((a,p)=>a+Number(p.amount||0),0);
-  });
-  return {approved,proposed,pledged,pendingPledged,total:approved+proposed,items};
+  idea.budgetItems.forEach(migrateBudgetItem);
 }
 function migrateBudgetItem(b){
-  b.pledges=b.pledges||[];
-  b.pledges.forEach((p,i)=>{if(!p.pid)p.pid='pl'+Date.now()+'_'+i;if(!p.status)p.status='accepted';if(!p.location)p.location=p.note||'nieokreślona lokalizacja';});
+  b.nazwa=b.nazwa||b.name||b.desc||'Pozycja budżetowa';b.name=b.nazwa;
+  b.kwota=Number(b.kwota??b.amount??0);b.amount=b.kwota;
+  b.stanKosztu=b.stanKosztu||b.costState||(b.approved?'zatwierdzona':b.disputed?'odrzucona':b.pendingVote?'w_glosowaniu':'proponowana');b.costState=b.stanKosztu;
+  b.governance=b.governance||{mode:BUDGET_GOVERNANCE,objections:[],deadline:b.deadline||DEADLINE()};
+  b.governance.mode=BUDGET_GOVERNANCE;b.governance.objections=b.governance.objections||[];
+  b.deklaracje=b.deklaracje||b.declarations||b.pledges||[];b.declarations=b.deklaracje;
+  b.declarations.forEach((p,i)=>{
+    p.pid=p.pid||'pl'+Date.now()+'_'+i;p.osoba=p.osoba||p.person||p.who||'Nieznana osoba';p.person=p.osoba;
+    p.kwota=Number(p.kwota??p.amount??0);p.amount=p.kwota;
+    p.zrodlo=p.zrodlo||p.source||(/sekcji/i.test(p.note||'')?'budzet_sekcji':'inne');p.source=p.zrodlo;
+    p.lokalizacjaOpiekun=p.lokalizacjaOpiekun||p.custodian||p.location||'do ustalenia';p.custodian=p.lokalizacjaOpiekun;
+    p.notatka=p.notatka??p.note??'';p.note=p.notatka;
+    p.stan=p.stan||p.state||(p.status==='accepted'?'przyjeta':p.status==='paid'?'wplacona':'zadeklarowana');p.state=p.stan;
+  });
+  b.pledges=b.declarations;
 }
-function pledgeStatusChip(p){
-  const st=p.status||'pending';
-  const label=st==='accepted'?'przyjęta':st==='rejected'?'odrzucona':st==='disputed'?'zakwestionowana':'w głosowaniu';
-  return `<span class="pledge-status ${st}">${label}</span>`;
+function acceptedPledgesOf(b){migrateBudgetItem(b);return b.declarations.filter(p=>p.state==='przyjeta'||p.state==='wplacona');}
+function budgetTotals(idea){
+  migrateBudget(idea);const items=idea.budgetItems||[];
+  const total=items.reduce((s,b)=>s+Number(b.amount||0),0);
+  const approved=items.filter(b=>b.costState==='zatwierdzona').reduce((s,b)=>s+Number(b.amount||0),0);
+  const pledged=items.reduce((s,b)=>s+acceptedPledgesOf(b).reduce((x,p)=>x+Number(p.amount||0),0),0);
+  return {need:total,total,approved,approvedCost:approved,pledged,collected:pledged,missing:Math.max(0,total-pledged),items};
 }
-function findBudgetPledge(idea,pid){
-  migrateBudget(idea);
-  for(const b of (idea.budgetItems||[])){const p=(b.pledges||[]).find(x=>x.pid===pid);if(p)return {b,p};}
-  return {};
+function pledgeStatusChip(p){const st=p.stan||p.state||'zadeklarowana';const label={zadeklarowana:'deklaracja: zgłoszona',przyjeta:'wpłata: przyjęta',wplacona:'wpłata: wpłacona'}[st]||st;return `<span class="budget-decl-state ${st}">${label}</span>`;}
+function findBudgetPledge(idea,pid){migrateBudget(idea);for(const b of idea.budgetItems){const p=b.declarations.find(x=>x.pid===pid);if(p)return {b,p};}return {};}
+function budgetCostChip(b){const label={proponowana:'koszt: proponowany',w_glosowaniu:'koszt: w głosowaniu',zatwierdzona:'koszt: przyjęty',odrzucona:'koszt: odrzucony'}[b.costState]||b.costState;return `<span class="budget-cost-state ${b.costState}">${label}</span>`;}
+function budgetVoteOf(idea,bid){return [...(idea.votes||[])].reverse().find(v=>v.bid===bid&&['budget-approve','budget-item-edit','budget-item-remove'].includes(v.kind));}
+function budgetGovernanceText(idea,b){
+  const v=budgetVoteOf(idea,b.bid),voters=Math.max(1,participantsOf(idea).length);
+  if(v?.open&&v.kind==='budget-item-edit') return `Obecny koszt pozostaje w mocy · zmiana ${v.yes||0}/${voters} za`;
+  if(v?.open&&v.kind==='budget-item-remove') return `Obecny koszt pozostaje w mocy · usunięcie ${v.yes||0}/${voters} za`;
+  if(b.costState==='w_glosowaniu'&&v) return `${v.yes||0}/${voters} za · głosowanie trwa do ${escHtml(v.deadline||'ustalenia')}`;
+  if(b.costState==='zatwierdzona') return v?`Koszt przyjęty · ${v.yes||0}/${voters} za`:'Koszt przyjęty przez zespół';
+  if(b.costState==='odrzucona') return v?`Koszt odrzucony · ${v.no||0}/${voters} przeciw`:'Koszt odrzucony przez zespół';
+  return 'Koszt nie został jeszcze poddany pod głosowanie';
 }
+function budgetFundingBar(collected,need){const pct=Math.min(100,Math.round(collected/Math.max(need,1)*100));return `<div class="budget-funding-track"><div class="budget-funding-fill" style="width:${pct}%"></div></div>`;}
 function renderBudget(idea,ideaId){
-  migrateBudget(idea);
-  (idea.budgetItems||[]).forEach(migrateBudgetItem);
-  const items=idea.budgetItems||[];
-  const addForm=idea.budgetForm?`<div class="inline-form"><div class="hint">Każda potrzeba budżetowa to osobna pozycja — kwota i cel. Kwotę i opis można potem kwestionować osobno.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="budget-amount-${ideaId}" type="number" min="1" placeholder="kwota w zł" style="max-width:140px"><input id="budget-desc-${ideaId}" placeholder="Na co?" style="flex:1;min-width:160px"></div><div class="role-actions"><button class="vbtn voted-yes" onclick="submitBudget(${ideaId})">Dodaj pozycję</button><button class="vbtn" onclick="toggleBudgetForm(${ideaId})">Anuluj</button></div></div>`:`<button type="button" class="prop-btn" onclick="toggleBudgetForm(${ideaId})">+ Dodaj pozycję budżetową</button>`;
-  if(!items.length){return `<div style="font-size:13px;color:var(--txf);margin-bottom:4px">Ten pomysł nie deklaruje potrzeb finansowych.</div>${addForm}`;}
-  const T=budgetTotals(idea);
-  const denom=Math.max(T.total,1);
-  const apPct=Math.round(T.approved/denom*100);
-  const propPct=Math.max(0,100-apPct);
-  const fundPct=Math.min(100,Math.round(T.pledged/denom*100));
-  const fundShort=Math.max(0,T.total-T.pledged);
-  const overview=`<div class="bud-overview">
-    <div class="bud-bar-label">Z czego składa się potrzeba <span>${T.total} zł łącznie</span></div>
-    <div class="bud-stack"><div class="bud-seg ap" style="width:${apPct}%" title="zatwierdzone"></div><div class="bud-seg prop" style="width:${propPct}%" title="proponowane"></div></div>
-    <div class="bud-legend"><span><i class="dot ap"></i>zatwierdzone <b>${T.approved} zł</b></span><span><i class="dot prop"></i>proponowane <b>${T.proposed} zł</b></span></div>
-    <div class="bud-bar-label" style="margin-top:11px">Finansowanie <span>${fundPct}% pokryte przyjętymi deklaracjami</span></div>
-    <div class="bud-stack"><div class="bud-seg pld" style="width:${fundPct}%" title="przyjęte deklaracje"></div></div>
-    <div class="bud-legend"><span><i class="dot pld"></i>przyjęte <b>${T.pledged} zł</b></span>${T.pendingPledged?`<span><i class="dot prop"></i>czeka na przyjęcie <b>${T.pendingPledged} zł</b></span>`:''}${fundShort>0?`<span><i class="dot gap"></i>brakuje <b>${fundShort} zł</b></span>`:'<span style="color:var(--greentx);font-weight:600">✓ w pełni pokryte</span>'}</div>
-  </div>`;
-  const itemHtml=items.map((b,bi)=>{
-    migrateBudgetItem(b);
-    const raised=acceptedPledgesOf(b).reduce((a,p)=>a+Number(p.amount||0),0);
-    const pending=(b.pledges||[]).filter(p=>!p.status||p.status==='pending').reduce((a,p)=>a+Number(p.amount||0),0);
-    const pct=Math.min(100,Math.round(raised/Math.max(b.amount,1)*100));
-    const statusChip=b.approved?'<span class="cs cs-y">zatwierdzona</span>':b.pendingVote?'<span class="cs cs-p">w głosowaniu</span>':b.disputed?'<span class="cs cs-n">do rewizji</span>':'<span class="cs cs-p">propozycja</span>';
-    const pledgeRows=(b.pledges||[]).map((p,pi)=>{
-      const canObject=p.status==='accepted'||p.status==='pending';
-      const locPanel=(idea.pledgeLocFor===p.pid)?`<div class="inline-form"><input id="pledge-loc-${ideaId}" placeholder="Gdzie są środki? konto, kasa, deklaracja przelewu..." value="${escAttr(p.location||'')}"><div class="role-actions"><button class="vbtn voted-yes" onclick="submitPledgeLocation(${ideaId},'${p.pid}')">Wyślij zmianę lokalizacji</button><button class="vbtn" onclick="cancelPledgePanels(${ideaId})">Anuluj</button></div></div>`:'';
-      const objPanel=(idea.pledgeDisputeFor===p.pid)?`<div class="prop-object-panel"><div class="hint">Sprzeciw wobec przyjęcia pieniędzy: źródło, warunki, konflikt interesów albo brak jasnej lokalizacji środków.</div><textarea id="pledge-dispute-${ideaId}" placeholder="Dlaczego nie powinniśmy przyjąć tej deklaracji?"></textarea><div class="role-actions"><button class="vbtn voted-no" onclick="submitPledgeDispute(${ideaId},'${p.pid}')">Wyślij sprzeciw</button><button class="vbtn" onclick="cancelPledgePanels(${ideaId})">Anuluj</button></div></div>`:'';
-      return `<div class="fb-row"><span>${personChip(p.who)}</span><span><b>${p.amount} zł</b>${p.note?' — '+escHtml(p.note):''}<div class="pledge-loc">lokalizacja: ${escHtml(p.location||'nieokreślona')}</div></span>${pledgeStatusChip(p)}<span class="dt" style="margin-left:auto">${p.date||''}</span>${canObject?`<button type="button" class="tiny-action" onclick="startPledgeDispute(${ideaId},'${p.pid}')">sprzeciw</button><button type="button" class="tiny-action" onclick="startPledgeLocation(${ideaId},'${p.pid}')">lokalizacja</button>`:''}${p.who===MY_NAME&&p.status==='pending'?`<button type="button" class="tiny-action" onclick="withdrawPledge(${ideaId},${bi},${pi})">wycofaj</button>`:''}${locPanel}${objPanel}</div>`;
-    }).join('');
-    const pledgeForm=(idea.pledgeFor===b.bid)?`<div class="inline-form"><div class="hint">Deklaracja nie jest przyjmowana automatycznie. Tworzy głosowanie: zespół może ją przyjąć albo zgłosić sprzeciw wobec źródła/warunków pieniędzy.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="pledge-amount-${ideaId}" type="number" min="1" placeholder="zł" style="max-width:110px"><input id="pledge-note-${ideaId}" placeholder="Źródło / warunki (opcjonalnie)" style="flex:1;min-width:150px"><input id="pledge-location-${ideaId}" placeholder="Gdzie będą środki?" style="flex:1;min-width:150px"></div><div class="role-actions"><button class="vbtn voted-yes" onclick="submitPledge(${ideaId},'${b.bid}')">Zgłoś deklarację do przyjęcia</button><button class="vbtn" onclick="togglePledgeForm(${ideaId},'${b.bid}')">Anuluj</button></div></div>`:`<button type="button" class="tiny-action" onclick="togglePledgeForm(${ideaId},'${b.bid}')">+ zgłoś deklarację pieniędzy</button>`;
-    const opts=[];
-    if(!b.approved&&!b.pendingVote) opts.push({label:'Zatwierdź pozycję głosowaniem',run:`sendBudgetToVote(${ideaId},'${b.bid}','całość')`,kind:'go'});
-    opts.push({label:'Głosuj samą kwotę',run:`sendBudgetToVote(${ideaId},'${b.bid}','kwota')`});
-    opts.push({label:'Głosuj sam opis/cel',run:`sendBudgetToVote(${ideaId},'${b.bid}','opis')`});
-    opts.push({label:'Zakwestionuj kwotę',run:`startBudgetDispute(${ideaId},'${b.bid}','kwota')`});
-    opts.push({label:'Zakwestionuj cel',run:`startBudgetDispute(${ideaId},'${b.bid}','cel')`});
-    if(b.by===MY_NAME&&!b.approved) opts.push({label:'Usuń pozycję',run:`removeBudgetItem(${ideaId},'${b.bid}')`,kind:'danger'});
-    const kebab=renderActionMenu(`bkm-${ideaId}-${bi}`,'Kwota, opis/cel i przyjęcie pieniędzy mogą być osobnymi decyzjami.',opts,{title:'Opcje budżetu',buttonHtml:`<button type="button" class="role-more" onclick="toggleKebab('bkm-${ideaId}-${bi}')">⋮ opcje</button>`});
-    const disputePanel=(idea.budgetDisputeFor===b.bid)?`<div class="prop-object-panel"><div class="hint">${idea.budgetDisputeKind==='cel'?'Kwestionujesz cel wydatku — czy te pieniądze powinny iść właśnie na to.':'Kwestionujesz kwotę — czy ta suma jest zasadna.'}</div><textarea id="budget-dispute-${ideaId}" placeholder="${idea.budgetDisputeKind==='cel'?'Dlaczego ten cel jest problematyczny?':'Dlaczego ta kwota jest problematyczna?'}"></textarea><div class="role-actions"><button class="vbtn voted-no" onclick="submitBudgetDispute(${ideaId},'${b.bid}')">Wyślij</button><button class="vbtn" onclick="cancelBudgetDispute(${ideaId})">Anuluj</button></div></div>`:'';
-    return `<div class="bud-item"><div class="bud-item-top"><div class="bud-item-name">${escHtml(b.desc||'Pozycja budżetowa')} <span class="bud-amount">${b.amount} zł</span></div>${statusChip}</div>
-      <div class="cbar-track" style="margin:7px 0 5px"><div class="cbar-fill" style="width:${pct}%"></div></div>
-      <div style="font-size:12px;color:var(--txm);margin-bottom:6px"><b>${raised} zł</b> przyjęte z ${b.amount} zł (${pct}%)${pending?` · ${pending} zł czeka na decyzję`:''}</div>
-      ${pledgeRows}
-      <div class="bud-item-actions">${pledgeForm}${kebab}</div>
-      ${disputePanel}</div>`;
+  migrateBudget(idea);const items=idea.budgetItems||[];const T=budgetTotals(idea);
+  const head=`<div class="budget-head"><div><div class="budget-total">${T.collected} / ${T.need} zł</div><div class="budget-missing">brakuje ${T.missing} zł</div></div><button type="button" class="budget-add" onclick="openBudgetItemModal(${ideaId})">+ Dodaj pozycję</button></div>`;
+  if(!items.length) return `<div class="budget-shell">${head}<div class="empty-inline"><b>Brak pozycji budżetowych.</b> Dodaj pierwszy konkretny koszt projektu.</div></div>`;
+  const overview=items.length>1?`<div class="budget-overview-grid"><div class="budget-question"><div class="budget-question-title">Koszt – ile uzgodnione</div><div class="budget-cost-track"><div class="budget-cost-fill" style="width:${Math.min(100,Math.round(T.approvedCost/Math.max(T.need,1)*100))}%"></div></div><div class="budget-question-value"><b>${T.approvedCost} / ${T.need} zł</b> kosztów uzgodnionych</div></div><div class="budget-question"><div class="budget-question-title">Finansowanie – ile zebrane</div>${budgetFundingBar(T.collected,T.need)}<div class="budget-question-value"><b>${T.collected} / ${T.need} zł</b> przyjętych lub wpłaconych</div></div></div>`:`<div class="budget-question"><div class="budget-question-title">Finansowanie – ile zebrane</div>${budgetFundingBar(T.collected,T.need)}<div class="budget-question-value"><b>${T.collected} / ${T.need} zł</b> · brakuje ${T.missing} zł</div></div>`;
+  const cards=items.map((b,bi)=>{
+    const raised=acceptedPledgesOf(b).reduce((s,p)=>s+p.amount,0),pct=Math.min(100,Math.round(raised/Math.max(b.amount,1)*100));
+    const rows=b.declarations.map(p=>`<div class="budget-decl-row" onclick="openDeclarationDetails(${ideaId},'${b.bid}','${p.pid}')"><span class="budget-decl-person">${escHtml(p.person)}</span><span class="budget-decl-amount">${p.amount} zł</span><span class="budget-decl-source">${escHtml(BUDGET_SOURCE_LABELS[p.source]||p.source)}</span>${pledgeStatusChip(p)}<span aria-hidden="true">›</span></div>`).join('')||'<div class="budget-decl-empty">Brak deklaracji finansowania.</div>';
+    const opts=[{label:'Zgłoś deklarację',run:`openPledgeModal(${ideaId},'${b.bid}')`}];
+    if(b.costState==='proponowana'||b.costState==='odrzucona') opts.push({label:'Rozpocznij głosowanie nad kosztem',run:`sendBudgetToVote(${ideaId},'${b.bid}','całość')`,kind:'go'});
+    opts.push({label:'Edytuj',run:`openBudgetItemModal(${ideaId},'${b.bid}')`},{label:'Usuń',run:`removeBudgetItem(${ideaId},'${b.bid}')`,kind:'danger'});
+    const menu=renderActionMenu(`budget-menu-${ideaId}-${bi}`,'Akcje dotyczą tej pozycji kosztowej.',opts,{title:'Akcje pozycji',buttonHtml:`<button type="button" class="role-more" aria-label="Akcje pozycji" onclick="toggleKebab('budget-menu-${ideaId}-${bi}')">⋮</button>`});
+    return `<div class="budget-card"><div class="budget-card-top"><div><div class="budget-card-title">${escHtml(b.name)}</div><div class="budget-card-amount">${b.amount} zł</div></div><div class="budget-card-side">${budgetCostChip(b)}${menu}</div></div><div class="budget-governance">${budgetGovernanceText(idea,b)}</div><div class="budget-funding"><div class="budget-funding-label"><span>Finansowanie pozycji</span><b>${raised}/${b.amount} zł (${pct}%)</b></div>${budgetFundingBar(raised,b.amount)}</div><div class="budget-declarations">${rows}</div></div>`;
   }).join('');
-  return `${overview}${itemHtml}${addForm}`;
+  return `<div class="budget-shell">${head}${overview}${cards}</div>`;
 }
 function sendBudgetToVote(ideaId,bid,scope='całość'){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);
   const b=(idea.budgetItems||[]).find(x=>x.bid===bid);if(!b)return;
-  b.pendingVote=true;b.disputed=false;
+  b.pendingVote=true;b.disputed=false;b.stanKosztu=b.costState='w_glosowaniu';b.governance.mode='vote';
   const vId='v'+Date.now();
   idea.votes.push({id:vId,kind:'budget-approve',bid,budgetScope:scope,prop:`${scope==='kwota'?'Zatwierdzić kwotę pozycji budżetu':scope==='opis'?'Zatwierdzić opis/cel pozycji budżetu':'Zatwierdzić pozycję budżetu'}: ${b.desc||''} (${b.amount} zł)`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:(scope==='opis'?'Opis/cel: '+(b.desc||'cele projektu'):(b.amount)+' zł na: '+(b.desc||'cele projektu')),date:TODAY,supporters:[],debunks:[]}]});
   idea.log.push({text:`Pod głosowanie: pozycja budżetu ${b.amount} zł`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:b.desc?escHtml(b.desc):''});
@@ -5329,6 +5689,48 @@ function submitPledgeDispute(ideaId,pid){
   idea.votes.push({id:vId,kind:'pledge-dispute',pledgeId:pid,prop:`Sprzeciw wobec przyjęcia pieniędzy: ${p.amount} zł od ${p.who}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'przeciw',author:MY_NAME,text:why,date:TODAY,supporters:[],debunks:[]}]});
   notifyVote(idea);maybeNotify(idea,'Sprzeciw wobec przyjęcia pieniędzy');openIdea(ideaId,true);
 }
+
+// Budget v2 actions — all changes are proposed through the shared vote simulation.
+function openBudgetItemModal(ideaId,bid=''){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);
+  const b=bid?idea.budgetItems.find(x=>x.bid===bid):null;
+  actionModal({sideTitle:b?'Edytuj koszt':'Nowy koszt',sideText:'Pozycja opisuje potrzebę finansową. Stan kosztu jest osobny od zebranych pieniędzy.',steps:['Nazwa i kwota','Głosowanie zespołu'],title:b?'Zaproponuj zmianę pozycji':'Dodaj pozycję budżetową',intro:'Zapisanie tworzy głosowanie zespołu. Widok budżetu zmieni się dopiero po przyjęciu decyzji.',body:`<div class="budget-form-grid"><label class="full">Nazwa kosztu<input id="budget-item-name" value="${escAttr(b?.name||'')}" placeholder="np. Hosting i domena"></label><label>Potrzebna kwota (zł)<input id="budget-item-amount" type="number" min="1" value="${b?.amount||''}" placeholder="1200"></label><label>Termin głosowania<input id="budget-item-deadline" value="${escAttr(b?.governance?.deadline||DEADLINE())}" placeholder="np. 18 cze 2026"></label></div><div class="budget-modal-note">Nowa pozycja pojawi się jako „koszt: uzgadniany”. Edycja istniejącej pozycji zostanie zastosowana dopiero po przyjęciu głosowania.</div><div class="app-modal-actions" style="margin-top:15px"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="saveBudgetItem(${ideaId},'${bid}')">Wyślij pod głosowanie</button></div>`});
+}
+function saveBudgetItem(ideaId,bid=''){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);
+  const name=(document.getElementById('budget-item-name')?.value||'').trim();
+  const amount=Number(document.getElementById('budget-item-amount')?.value||0);
+  const deadline=(document.getElementById('budget-item-deadline')?.value||'').trim()||DEADLINE();
+  if(!name||amount<1){toast('Podaj nazwę i kwotę większą od zera.','warn');return;}
+  let b=bid?idea.budgetItems.find(x=>x.bid===bid):null;
+  if(b){
+    const vId='v'+Date.now();idea.votes.push({id:vId,kind:'budget-item-edit',bid,newName:name,newAmount:amount,prop:`Zmienić pozycję budżetu: ${b.name} → ${name} (${amount} zł)`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline,reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:`Proponowana nazwa: ${name}; kwota: ${amount} zł.`,date:TODAY,supporters:[],debunks:[]}]});
+    idea.log.push({text:`Zaproponowano zmianę pozycji budżetowej: ${b.name}`,date:TODAY,time:NOW_TIME(),type:'budżet'});
+  } else {
+    b={bid:'b'+Date.now(),nazwa:name,name,desc:name,kwota:amount,amount,stanKosztu:'proponowana',costState:'proponowana',governance:{mode:BUDGET_GOVERNANCE,objections:[],deadline},deklaracje:[],declarations:[],pledges:[],by:MY_NAME,date:TODAY};b.declarations=b.deklaracje;b.pledges=b.deklaracje;idea.budgetItems.push(b);sendBudgetToVote(ideaId,b.bid,'całość');
+  }
+  closeAppModal();notifyVote(idea);toast('Propozycja trafiła do głosowania.','ok');openIdea(ideaId,true);
+}
+function startBudgetConsensus(ideaId,bid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;b.stanKosztu=b.costState='w_glosowaniu';b.governance.objections=[];idea.log.push({text:`Rozpoczęto uzgodnienie kosztu: ${b.name}`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:`Lazy consensus · termin ${escHtml(b.governance.deadline)}`});toast('Rozpoczęto uzgodnienie przez brak sprzeciwu.','ok');openIdea(ideaId,true);}
+function closeBudgetConsensus(ideaId,bid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;const objections=b.governance.objections.length;b.stanKosztu=b.costState=objections?'odrzucona':'zatwierdzona';idea.log.push({text:`Zamknięto uzgodnienie kosztu: ${b.name}`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:objections?`Koszt odrzucony · sprzeciwów ${objections}`:'Koszt uzgodniony bez sprzeciwu'});toast(objections?'Koszt odrzucony z powodu sprzeciwu.':'Koszt uzgodniony bez sprzeciwu.',objections?'warn':'ok');openIdea(ideaId,true);}
+function openBudgetObjectionModal(ideaId,bid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;actionModal({sideTitle:'Sprzeciw',sideText:'Sprzeciw zatrzymuje automatyczne uzgodnienie kosztu i pozostaje w rejestrze.',steps:['Powód','Rejestr'],title:'Zgłoś sprzeciw wobec kosztu',intro:`${b.name} · ${b.amount} zł`,body:`<div class="budget-form-grid"><label class="full">Uzasadnienie<textarea id="budget-objection-reason" placeholder="Co należy zmienić w kwocie lub celu?"></textarea></label></div><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-no" onclick="saveBudgetObjection(${ideaId},'${bid}')">Zgłoś sprzeciw</button></div>`});}
+function saveBudgetObjection(ideaId,bid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;const b=idea.budgetItems.find(x=>x.bid===bid);const reason=(document.getElementById('budget-objection-reason')?.value||'').trim();if(!b||!reason){toast('Sprzeciw wymaga uzasadnienia.','warn');return;}b.governance.objections.push({person:MY_NAME,reason,date:TODAY});idea.log.push({text:`Sprzeciw wobec kosztu: ${b.name}`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:escHtml(reason)});closeAppModal();toast('Sprzeciw zapisany.','warn');openIdea(ideaId,true);}
+function removeBudgetItem(ideaId,bid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;const vId='v'+Date.now();idea.votes.push({id:vId,kind:'budget-item-remove',bid,prop:`Usunąć pozycję budżetu: ${b.name} (${b.amount} zł)`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:'Ta pozycja nie powinna dłużej należeć do budżetu projektu.',date:TODAY,supporters:[],debunks:[]}]});idea.log.push({text:`Zaproponowano usunięcie pozycji budżetowej: ${b.name}`,date:TODAY,time:NOW_TIME(),type:'budżet'});notifyVote(idea);toast('Usunięcie trafiło do głosowania.','ok');openIdea(ideaId,true);}
+function openPledgeModal(ideaId,bid,pid=''){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;const p=pid?b.declarations.find(x=>x.pid===pid):null;
+  const sources=Object.entries(BUDGET_SOURCE_LABELS).map(([v,l])=>`<option value="${v}"${p?.source===v?' selected':''}>${l}</option>`).join('');
+  actionModal({sideTitle:p?'Edytuj deklarację':'Deklaracja pieniędzy',sideText:'Źródło mówi skąd pochodzą środki. Lokalizacja i opiekun mówią gdzie są teraz i kto ich pilnuje.',steps:['Kwota i źródło','Miejsce i opiekun'],title:p?'Zaproponuj zmianę deklaracji':'Zgłoś deklarację pieniędzy',intro:`Finansowanie pozycji: ${b.name}`,body:`<div class="budget-form-grid"><label>Kwota (zł)<input id="budget-pledge-amount" type="number" min="1" value="${p?.amount||''}" placeholder="300"></label><label>Źródło<select id="budget-pledge-source">${sources}</select></label><label class="full">Lokalizacja / opiekun<input id="budget-pledge-custodian" value="${escAttr(p?.custodian||'')}" placeholder="np. konto sekcji – Anna W."></label><label class="full">Notatka (opcjonalnie)<textarea id="budget-pledge-note" placeholder="Warunki, termin albo dodatkowy kontekst">${escHtml(p?.note||'')}</textarea></label></div><div class="budget-modal-note">${p?'Zmiana istniejącej deklaracji zostanie zastosowana dopiero po przyjęciu jej przez zespół w głosowaniu.':'Po zapisaniu wpłata ma stan „deklaracja: zgłoszona” i nie jest jeszcze liczona jako zebrane pieniądze.'}</div><div class="app-modal-actions" style="margin-top:15px"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="saveBudgetDeclaration(${ideaId},'${bid}','${pid}')">${p?'Wyślij pod głosowanie':'Zapisz deklarację'}</button></div>`});
+}
+function saveBudgetDeclaration(ideaId,bid,pid=''){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;migrateBudget(idea);const b=idea.budgetItems.find(x=>x.bid===bid);if(!b)return;
+  const amount=Number(document.getElementById('budget-pledge-amount')?.value||0),source=document.getElementById('budget-pledge-source')?.value||'inne',custodian=(document.getElementById('budget-pledge-custodian')?.value||'').trim(),note=(document.getElementById('budget-pledge-note')?.value||'').trim();
+  if(amount<1||!custodian){toast('Podaj kwotę oraz lokalizację/opiekuna.','warn');return;}
+  let p=pid?b.declarations.find(x=>x.pid===pid):null;if(p){const vId='v'+Date.now();idea.votes.push({id:vId,kind:'pledge-edit',bid,pledgeId:pid,newDeclaration:{amount,source,custodian,note},prop:`Zmienić deklarację ${p.amount} zł od ${p.person}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:`Nowa kwota: ${amount} zł; źródło: ${BUDGET_SOURCE_LABELS[source]}; lokalizacja/opiekun: ${custodian}.`,date:TODAY,supporters:[],debunks:[]}]});notifyVote(idea);}else{p={pid:'pl'+Date.now(),osoba:MY_NAME,person:MY_NAME,who:MY_NAME,kwota:amount,amount,zrodlo:source,source,lokalizacjaOpiekun:custodian,custodian,notatka:note,note,stan:'zadeklarowana',state:'zadeklarowana',date:TODAY};b.deklaracje.push(p);}
+  b.declarations=b.deklaracje;b.pledges=b.deklaracje;idea.log.push({text:`${MY_NAME} ${pid?'zaproponowała zmianę':'zgłosiła'} deklaracji: ${amount} zł`,date:TODAY,time:NOW_TIME(),type:'budżet',detail:`Źródło: ${escHtml(BUDGET_SOURCE_LABELS[source])} · lokalizacja/opiekun: ${escHtml(custodian)}`});closeAppModal();toast(pid?'Zmiana deklaracji trafiła do głosowania.':'Deklaracja zapisana jako zgłoszona.','ok');openIdea(ideaId,true);
+}
+function openDeclarationDetails(ideaId,bid,pid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;const {b,p}=findBudgetPledge(idea,pid);if(!b||!p)return;const actions=[];if(p.state==='zadeklarowana')actions.push({label:'Przyjmij wpłatę',run:`setDeclarationState(${ideaId},'${bid}','${pid}','przyjeta')`,kind:'go'});if(p.state==='przyjeta')actions.push({label:'Oznacz jako wpłaconą',run:`setDeclarationState(${ideaId},'${bid}','${pid}','wplacona')`,kind:'go'});actions.push({label:'Edytuj',run:`openPledgeModal(${ideaId},'${bid}','${pid}')`},{label:'Wycofaj deklarację',run:`removeDeclaration(${ideaId},'${bid}','${pid}')`,kind:'danger'});const menu=renderActionMenu(`decl-detail-${pid}`,'Zmiana stanu wpłaty nie zmienia stanu uzgodnienia kosztu.',actions,{title:'Akcje deklaracji'});appModal(`<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>Deklaracja pieniędzy</h3><p>${escHtml(b.name)}</p></div>${menu}</div><div class="budget-detail"><div class="budget-detail-row"><span>Osoba</span><b>${escHtml(p.person)}</b></div><div class="budget-detail-row"><span>Kwota</span><b>${p.amount} zł</b></div><div class="budget-detail-row"><span>Źródło</span><b>${escHtml(BUDGET_SOURCE_LABELS[p.source]||p.source)}</b></div><div class="budget-detail-row"><span>Lokalizacja / opiekun</span><b>${escHtml(p.custodian)}</b></div><div class="budget-detail-row"><span>Stan wpłaty</span><div>${pledgeStatusChip(p)}</div></div>${p.note?`<div class="budget-detail-row"><span>Notatka</span><div>${escHtml(p.note)}</div></div>`:''}</div><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zamknij</button></div>`);}
+function setDeclarationState(ideaId,bid,pid,state){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;const {p}=findBudgetPledge(idea,pid);if(!p)return;const vId='v'+Date.now(),label=state==='wplacona'?'oznaczyć jako wpłaconą':'przyjąć';idea.votes.push({id:vId,kind:'pledge-state',bid,pledgeId:pid,newState:state,prop:`${label[0].toUpperCase()+label.slice(1)} deklarację ${p.amount} zł od ${p.person}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:`Proponowana zmiana stanu wpłaty: ${state}.`,date:TODAY,supporters:[],debunks:[]}]});closeAppModal();notifyVote(idea);toast('Zmiana stanu wpłaty trafiła do głosowania.','ok');openIdea(ideaId,true);}
+function removeDeclaration(ideaId,bid,pid){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;const {p}=findBudgetPledge(idea,pid);if(!p)return;const vId='v'+Date.now();idea.votes.push({id:vId,kind:'pledge-remove',bid,pledgeId:pid,prop:`Wycofać deklarację ${p.amount} zł od ${p.person}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:'Deklaracja powinna zostać wycofana z finansowania projektu.',date:TODAY,supporters:[],debunks:[]}]});closeAppModal();notifyVote(idea);toast('Wycofanie deklaracji trafiło do głosowania.','ok');openIdea(ideaId,true);}
 function withdrawSupport(ideaId,ci){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
   const c=(idea.coalition||[])[ci];if(!c||c.status!=='signed')return;
