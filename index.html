@@ -2,7 +2,10 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CollaboHub">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#fbfbfd">
 <title>CollaboHub · Razem Demokracja · v24</title>
@@ -1317,10 +1320,32 @@ body>nav{height:76px!important;padding:0 2rem!important;gap:18px!important;borde
 html.theme-dark .join-project-modal .form-action-modal,html.theme-dark .join-project-modal .form-action-main,html.theme-dark .join-project-modal .join-cap-card,html.theme-dark .join-project-modal .join-profile-source,html.theme-dark .join-project-modal .join-extra-confirm,html.theme-dark .member-managed-needs{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-project-modal .form-action-side,html.theme-dark .join-project-modal .join-section-empty,html.theme-dark .join-project-modal .join-summary-note{background:var(--surf2)!important;color:var(--txs)!important}html.theme-dark .join-project-modal .join-cap-card.extra:has(.join-skill-check:checked),html.theme-dark .join-project-modal .join-cap-card:has(.join-skill-check:checked){background:var(--surf2)!important;border-color:var(--p400)!important}html.theme-dark .join-project-modal .join-profile-source button,html.theme-dark .join-project-modal .join-extra-confirm textarea{background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-transition>span{background:var(--p200)!important;color:var(--p800)!important}
 @media(max-width:680px){.idea-page{padding-bottom:320px}}
 @media(max-width:680px){.join-profile-source{flex-direction:column}.join-profile-source button{width:100%}}
+.stage-track{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.st{min-height:146px!important}
+.st-help{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.st.open{grid-column:span 2;min-height:176px!important;border-color:var(--p400)!important;box-shadow:0 12px 28px rgba(43,31,72,.08)}
+.st.open .st-help{-webkit-line-clamp:unset;display:block;overflow:visible}
+.st-meta{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--bdr);gap:7px;flex-wrap:wrap}
+.st.open .st-meta{display:flex}
+.st-meta span{font-size:11px;color:var(--txs);background:var(--surf);border:1px solid var(--bdr);border-radius:999px;padding:4px 8px}
+@media(max-width:980px){.stage-track{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:980px){.st.open{grid-column:1/-1}}
+@media(max-width:620px){.stage-track{grid-template-columns:1fr!important}.st{min-height:auto!important}.st.open{grid-column:auto}}
+.need-tile-grid{grid-template-columns:repeat(auto-fit,minmax(172px,1fr))!important}
+.need-tile{min-height:58px;display:flex;align-items:center;line-height:1.3}
+.members-toolbar{margin-bottom:16px}.members-toolbar input{width:100%;padding:14px 16px;border:1.5px solid var(--bdr);border-radius:15px;background:#fff;color:var(--txt);font:14px 'DM Sans',sans-serif}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.team-card{border:1px solid var(--bdr);border-radius:16px;background:#fff;padding:15px}.team-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}.team-card-title{font-size:16px;font-weight:700;color:var(--txt)}.team-card-sub{font-size:12px;color:var(--txs);line-height:1.45;margin-top:3px}.team-count{font-size:12px;color:var(--txs);white-space:nowrap}.team-members{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.team-members .person-chip{background:var(--surf2);color:var(--txm);border:1px solid var(--bdr)}.team-members .person-chip .pc-av{background:#fff;color:var(--txs);border-color:var(--bdr)}.team-discussion{border-top:1px dashed var(--bdr);padding-top:10px;margin-top:10px}.team-discussion-title{font-size:12px;font-weight:700;color:var(--txs);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}.team-msg{font-size:12px;color:var(--txm);line-height:1.45;background:var(--surf);border-radius:10px;padding:8px 9px;margin-top:6px}.team-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.team-form{border:1.5px dashed var(--p300);border-radius:16px;background:var(--surf);padding:14px;margin-bottom:14px}.team-form input,.team-form textarea{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif;margin-bottom:8px}.team-join-list{display:grid;gap:8px;margin:10px 0}.team-join-row{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--bdr);border-radius:12px;background:#fff;padding:10px}.team-join-row input{margin-top:3px}.team-app-badge{font-size:11px;font-weight:700;border-radius:999px;background:var(--blue);color:var(--bluetx);padding:4px 8px;white-space:nowrap}
+.team-form.rich{border:1px solid var(--bdr);border-radius:18px;background:#fff;padding:18px;margin-bottom:18px}.team-form-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}.team-form-title{font-size:18px;font-weight:800;color:var(--txt)}.team-form-sub{font-size:13px;color:var(--txs);line-height:1.55;margin-top:4px;max-width:720px}.team-form-step{font-size:11px;font-weight:800;color:var(--p700);background:var(--p100);border-radius:999px;padding:5px 9px;white-space:nowrap}.team-form-grid{display:grid;grid-template-columns:1fr 220px;gap:12px}.team-field{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:var(--txt)}.team-field.full{grid-column:1/-1}.team-field span{font-size:11px;font-weight:500;color:var(--txs)}.team-field input,.team-field textarea,.team-field select{width:100%;padding:11px 12px;border:1px solid var(--bdr);border-radius:11px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif;margin:0}.team-field textarea{min-height:78px;resize:vertical}.team-form-section{margin-top:16px;padding-top:15px;border-top:1px dashed var(--bdr)}.team-form-section-title{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:4px}.team-form-section-sub{font-size:12px;color:var(--txs);line-height:1.5;margin-bottom:10px}.team-founder{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--bdr);border-radius:13px;background:var(--surf);padding:10px 12px;margin-bottom:9px}.team-founder b{font-size:13px;color:var(--txt);margin-right:8px}.team-founder span{font-size:12px;color:var(--txs)}.team-settings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.team-setting-card{border:1px solid var(--bdr);border-radius:13px;background:var(--surf);padding:10px}.team-setting-card label{display:block;font-size:11px;font-weight:800;color:var(--txt);margin-bottom:6px}.team-setting-card input,.team-setting-card select{width:100%;padding:9px 10px;border:1px solid var(--bdr);border-radius:10px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif}.team-setting-card small{display:block;font-size:11px;color:var(--txs);line-height:1.35;margin-top:6px}.team-member-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:9px}.team-member-option{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;border:1px solid var(--bdr);border-radius:13px;background:#fff;padding:11px 12px;cursor:pointer}.team-member-option input[type=checkbox]{width:18px;height:18px;margin:2px 0 0;accent-color:var(--p600)}.team-member-main b{display:block;font-size:13px;color:var(--txt)}.team-member-main small{display:block;font-size:12px;color:var(--txs);line-height:1.45;margin-top:2px}.team-member-role-list{grid-column:2;display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.team-role-chip{display:inline-flex;gap:7px;align-items:center;border:1px solid var(--bdr);border-radius:999px;background:var(--surf);padding:8px 11px;font-size:12px;color:var(--txm);cursor:pointer;min-height:34px}.team-role-chip input{width:16px!important;height:16px!important;margin:0!important}.team-member-note{grid-column:2;width:100%;min-height:48px!important;margin-top:8px!important;padding:8px 10px!important;font-size:12px!important}.team-invite-search{width:100%;padding:11px 12px;border:1px solid var(--bdr);border-radius:11px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif;margin:0 0 10px}.team-member-option:has(input[type=checkbox]:checked){border-color:var(--p400);background:var(--p50)}.team-charter{display:grid;gap:9px}.team-charter-row{border:1px solid var(--bdr);border-radius:13px;background:var(--surf);padding:10px 12px}.team-charter-row span{display:block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--txs);margin-bottom:3px}.team-charter-row b,.team-charter-row div{font-size:13px;color:var(--txt);line-height:1.5}.team-vote-pending{border:1px solid var(--p300);background:var(--p50);border-radius:13px;padding:10px 12px;margin-top:9px}.team-vote-pending b{display:block;font-size:13px;color:var(--txt)}.team-vote-pending span{display:block;font-size:12px;color:var(--txs);line-height:1.45;margin-top:3px}.team-ann-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.team-ann-card{border:1px solid var(--bdr);border-radius:14px;background:var(--surf);padding:12px}.team-ann-title{font-size:14px;font-weight:800;color:var(--txt);line-height:1.35}.team-ann-meta{font-size:11px;color:var(--txs);margin-top:4px}.team-ann-desc{font-size:12px;color:var(--txm);line-height:1.5;margin-top:8px}.team-ann-caps{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.team-ann-caps span{font-size:11px;border:1px solid var(--bdr);border-radius:999px;background:#fff;color:var(--txs);padding:3px 7px}
+html.theme-dark .members-toolbar input,html.theme-dark .team-card,html.theme-dark .team-form input,html.theme-dark .team-form textarea,html.theme-dark .team-join-row{background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txt)!important}
+html.theme-dark .team-form.rich,html.theme-dark .team-member-option,html.theme-dark .team-field input,html.theme-dark .team-field textarea,html.theme-dark .team-field select,html.theme-dark .team-charter-row,html.theme-dark .team-setting-card,html.theme-dark .team-setting-card input,html.theme-dark .team-setting-card select,html.theme-dark .team-invite-search,html.theme-dark .team-ann-card{background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txt)!important}
+html.theme-dark .team-founder{background:var(--surf)!important;border-color:var(--bdr)!important}
+html.theme-dark .team-member-option:has(input[type=checkbox]:checked){background:var(--surf)!important;border-color:var(--p400)!important}
+html.theme-dark .team-members .person-chip{background:var(--surf)!important;color:var(--txs)!important;border-color:var(--bdr)!important}
+html.theme-dark .team-members .person-chip .pc-av{background:var(--surf2)!important;color:var(--txs)!important;border-color:var(--bdr)!important}
 html.theme-dark .need-group,html.theme-dark .need-tile,html.theme-dark .need-level-wrap select{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}.theme-dark .need-group-head{background:var(--surf2)}
 html.theme-dark .cap-toolbar input,html.theme-dark .cap-toolbar select,html.theme-dark .cap-item{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}
 @media(max-width:760px){.register-tools{grid-template-columns:1fr}.now-item{grid-template-columns:30px 1fr}.now-link{grid-column:2;justify-self:start}.register-head{grid-template-columns:32px 1fr}.register-meta{grid-column:2;text-align:left}.register-detail{padding:12px 18px}.stage-track{grid-template-columns:1fr!important}}
-@media(max-width:760px){.cap-toolbar{grid-template-columns:1fr}.cap-item summary{grid-template-columns:minmax(0,1fr) auto}.cap-item summary::after{display:none}.cap-kind{grid-column:2}.team-needs-head{display:block}.team-needs-tools{justify-content:flex-start;margin-top:10px}}
+@media(max-width:760px){.cap-toolbar{grid-template-columns:1fr}.cap-item summary{grid-template-columns:minmax(0,1fr) auto}.cap-item summary::after{display:none}.cap-kind{grid-column:2}.team-needs-head{display:block}.team-needs-tools{justify-content:flex-start;margin-top:10px}.team-form-grid,.team-settings-grid{grid-template-columns:1fr}.team-form-head{display:block}.team-form-step{display:inline-block;margin-top:8px}}
 
 
 /* === THEME TOGGLE === */
@@ -3247,6 +3272,196 @@ html.theme-dark .res-card .role-more:hover{
   cursor:pointer;
 }
 .doc-subthread-title-edit button:hover{background:var(--p50)}
+/* === Codex mobile app shell · 2026-07-01 === */
+@media (max-width: 760px){
+  html{background:#f1eff6!important;scroll-padding-top:72px}
+  body{
+    zoom:1!important;
+    width:100%;
+    min-width:0!important;
+    background:#f1eff6!important;
+    padding-bottom:calc(82px + env(safe-area-inset-bottom))!important;
+    -webkit-text-size-adjust:100%;
+    overscroll-behavior-y:contain;
+  }
+  body>nav{
+    height:64px!important;
+    min-height:64px!important;
+    padding:8px 12px!important;
+    gap:8px!important;
+    flex-wrap:nowrap!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    border-bottom:1px solid rgba(32,28,45,.09)!important;
+    box-shadow:0 8px 24px rgba(36,28,58,.06)!important;
+  }
+  .nav-brand{min-width:0!important;flex:1!important;gap:8px!important}
+  .nav-logo{width:36px!important;height:36px!important;border-radius:10px!important;font-size:14px!important}
+  .nav-name{font-size:17px!important;line-height:1.05!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .nav-name span{display:block!important;font-size:11px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .theme-toggle,.nav-pill,.bell-pill{width:38px!important;height:38px!important;min-width:38px!important;padding:0!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+  .nav-pill:not(.bell-pill){display:none!important}
+  .bell-pill span:not(.cnt),.theme-toggle span{display:none!important}
+  .btn-add{
+    margin-left:0!important;
+    width:38px!important;
+    height:38px!important;
+    min-width:38px!important;
+    padding:0!important;
+    border-radius:14px!important;
+    font-size:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .btn-add::before{content:'+';font-size:25px;line-height:1;font-weight:800;color:#fff}
+  .nav-links{
+    position:fixed!important;
+    top:auto!important;
+    left:10px!important;
+    right:10px!important;
+    bottom:calc(8px + env(safe-area-inset-bottom))!important;
+    z-index:800!important;
+    order:initial!important;
+    width:auto!important;
+    height:58px!important;
+    padding:7px!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:4px!important;
+    overflow:hidden!important;
+    background:rgba(255,255,255,.94)!important;
+    border:1px solid rgba(32,28,45,.11)!important;
+    border-radius:22px!important;
+    box-shadow:0 16px 48px rgba(35,29,55,.18)!important;
+    backdrop-filter:blur(20px)!important;
+  }
+  .nl{
+    min-width:0!important;
+    height:44px!important;
+    padding:3px 4px!important;
+    border-radius:16px!important;
+    font-size:11px!important;
+    line-height:1.05!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+  }
+  .nl.on{background:var(--p700)!important;color:#fff!important}
+  .screen{padding-top:64px!important;min-height:100svh!important}
+  .ph{padding:22px 16px 18px!important;background:#f1eff6!important}
+  .ph-inner{max-width:none!important}
+  .eyebrow{font-size:10px!important;margin-bottom:7px!important}
+  .ph h1{font-size:28px!important;line-height:1.08!important;letter-spacing:0!important}
+  .ph p{font-size:14px!important;line-height:1.55!important;max-width:none!important}
+  .statsbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;background:#fff!important}
+  .sbi{max-width:none!important;min-width:0!important;width:auto!important;padding:13px 8px!important;border-bottom:1px solid var(--bdr)!important}
+  .sbn{font-size:22px!important}.sbl{font-size:10px!important}
+  .cw,.idea-page,.profile-body,.submit-wrap,.about-wrap{max-width:none!important;padding:18px 14px calc(96px + env(safe-area-inset-bottom))!important}
+  .tabs,.itabs,.filters,.role-actions,.points-actions,.team-actions,.res-add-bar{
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    scrollbar-width:none!important;
+    padding-bottom:7px!important;
+    margin-left:-2px!important;
+    margin-right:-2px!important;
+  }
+  .tabs::-webkit-scrollbar,.itabs::-webkit-scrollbar,.filters::-webkit-scrollbar{display:none}
+  .tab,.itab,.fb,.hero-btn,.tiny-action,.vbtn,.prop-btn,.budget-add,.team-actions button{min-height:42px!important;flex:0 0 auto!important}
+  .ideas-list{gap:12px!important}
+  .ic,.mc,.sc,.submit-card,.points-card,.vote-item,.team-card,.team-form.rich,.res-group,.now-panel,.need-group{
+    border-radius:16px!important;
+    padding:15px!important;
+    box-shadow:none!important;
+    transform:none!important;
+  }
+  .ic:hover,.mc:hover{transform:none!important;box-shadow:none!important}
+  .ic-top,.ic-footer,.coal-top,.coal-foot,.budget-head,.resource-section-head,.points-head,.team-form-head,.team-founder,.join-profile-source{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:10px!important;
+  }
+  .ic-title{font-size:16px!important;line-height:1.35!important}
+  .ic-desc{font-size:13px!important;line-height:1.55!important}
+  .ic-badges,.ic-meta,.skill-needs,.roles,.skill-chips,.team-members{width:100%!important}
+  .cbar{width:100%!important;min-width:0!important}
+  .mg,.team-grid,.team-member-picker,.budget-overview-grid,.budget-form-grid,.res-form-grid,.vote-change-compare,.level-legend,.points-row,.platform-options{
+    grid-template-columns:1fr!important;
+  }
+  .ph-idea{display:block!important}
+  .ph-idea-actions{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%!important;margin-top:14px!important;gap:8px!important}
+  .hero-btn{width:100%!important;padding:10px 9px!important;white-space:normal!important}
+  .idea-h1{font-size:25px!important;line-height:1.12!important}
+  .idea-desc-full{font-size:14px!important;line-height:1.65!important}
+  .stage-track{grid-template-columns:1fr!important;gap:8px!important;margin:8px 0 18px!important}
+  .st,.st.open{min-height:0!important;padding:13px!important;border-radius:15px!important;grid-column:auto!important}
+  .st-help{display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important}
+  .now-item,.register-head{grid-template-columns:30px minmax(0,1fr)!important}
+  .now-link,.register-meta{grid-column:2!important;justify-self:start!important;text-align:left!important}
+  .task-card-v2-top,.budget-card-top,.res-card-head,.res-summary,.material-lifecycle,.availability-row{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+  }
+  .res-summary-div{display:none!important}
+  .res-summary-part{width:100%!important;border-bottom:1px solid var(--bdr)!important}
+  .res-summary-part:last-child{border-bottom:0!important}
+  .res-card-side,.budget-card-side{width:100%!important;justify-content:space-between!important}
+  .budget-decl-row,.budget-detail-row,.team-settings-grid,.team-form-grid,.register-tools,.cap-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  .budget-decl-amount,.budget-decl-source,.budget-decl-row>.budget-decl-state{grid-column:auto!important;white-space:normal!important}
+  .form-action-modal,.member-action-modal,.resource-detail-shell{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:0!important;
+  }
+  .app-modal-bg,.modal-bg{
+    align-items:flex-end!important;
+    padding:0!important;
+  }
+  .app-modal,.modal{
+    width:100%!important;
+    max-width:none!important;
+    max-height:92svh!important;
+    overflow:auto!important;
+    border-radius:22px 22px 0 0!important;
+    padding:18px!important;
+  }
+  .form-action-side,.member-action-side,.resource-detail-side{display:none!important}
+  .form-action-main,.member-action-main,.resource-detail-main{
+    padding:18px!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  .app-modal-actions,.modal-actions{
+    position:sticky!important;
+    bottom:0!important;
+    background:linear-gradient(180deg,rgba(255,255,255,0),#fff 18%)!important;
+    padding-top:18px!important;
+    justify-content:stretch!important;
+  }
+  .app-modal-actions button,.modal-actions button{flex:1 1 auto!important;min-height:44px!important}
+  input,textarea,select,button{font-size:16px!important}
+  .toast-host{left:12px!important;right:12px!important;bottom:calc(78px + env(safe-area-inset-bottom))!important;max-width:none!important}
+}
+@media (max-width: 390px){
+  .nav-name{font-size:15px!important}
+  .nav-logo,.theme-toggle,.nav-pill,.bell-pill,.btn-add{width:34px!important;height:34px!important;min-width:34px!important}
+  .ph h1{font-size:25px!important}
+  .nl{font-size:10px!important}
+  .ph-idea-actions{grid-template-columns:1fr!important}
+}
+@media (prefers-color-scheme: dark) and (max-width:760px){
+  .nav-links{background:rgba(22,18,31,.94)!important;border-color:rgba(255,255,255,.08)!important}
+  .app-modal-actions,.modal-actions{background:linear-gradient(180deg,rgba(23,19,33,0),var(--surf) 18%)!important}
+}
 </style>
 </head>
 <body>
@@ -3259,6 +3474,7 @@ html.theme-dark .res-card .role-more:hover{
   <div class="nav-links">
     <button class="nl on" id="nl-ideas" onclick="go('ideas',this,'nl-ideas')">Pomysły</button>
     <button class="nl" id="nl-members" onclick="go('members',this,'nl-members')">Członkowie</button>
+    <button class="nl" id="nl-teams" onclick="go('teams',this,'nl-teams')">Teamy</button>
     <button class="nl" id="nl-platform" onclick="go('platform',this,'nl-platform')">Platforma</button>
     <button class="nl" id="nl-profile" onclick="go('profile-me',this,'nl-profile')">Mój profil</button>
     <button class="nl" id="nl-about" onclick="go('about',this,'nl-about')">O platformie</button>
@@ -3327,8 +3543,32 @@ html.theme-dark .res-card .role-more:hover{
     </div>
   </div>
   <div class="cw">
+    <div class="members-toolbar"><input id="members-search" placeholder="Szukaj uczestników — imię, rola, umiejętność..." oninput="memberSearchQ=this.value;renderMembers()"></div>
     <div class="mg" id="members-list"></div>
   </div>
+</div>
+
+<!-- TEAMS -->
+<div id="s-teams" class="screen">
+  <div class="ph">
+    <div class="ph-inner">
+      <div class="eyebrow">Katalog współpracy</div>
+      <h1>Teamy <em>robocze</em></h1>
+      <p>Stałe grupy współpracy, ich skład, historia projektów i portfolio wspólnie dowiezionych rzeczy.</p>
+    </div>
+  </div>
+  <div class="cw">
+    <div class="members-toolbar"><input id="teams-search" placeholder="Szukaj teamów — nazwa, osoby, kompetencje, projekt..." oninput="teamSearchQ=this.value;renderTeams()"></div>
+    <div class="team-actions" style="margin-bottom:16px"><button class="prop-btn" onclick="startGlobalTeamForm()">+ Nowy team</button></div>
+    <div id="teams-form"></div>
+    <div class="team-grid" id="teams-list"></div>
+  </div>
+</div>
+
+<!-- TEAM PROFILE -->
+<div id="s-team-profile" class="screen">
+  <div class="profile-header" id="team-profile-header"></div>
+  <div class="profile-body" id="team-profile-body"></div>
 </div>
 
 <!-- PLATFORM (registry of skills & roles + platform-wide decisions) -->
@@ -3690,6 +3930,30 @@ function phaseMeta(idea){
   let si=path.findIndex(p=>p.key===cur); if(si<0)si=0;
   return {path,si,cur:path[si],next:path[si+1]||null,prev:path[si-1]||null};
 }
+function phaseCreatedDate(idea,step){
+  const extra=(idea.extraPhases||[]).find(p=>p.key===step.key);
+  if(extra?.date)return extra.date;
+  const added=(idea.log||[]).find(l=>/Dodano nową fazę/.test(l.text||'')&&(l.text||'').includes(step.label));
+  return added?.date||idea.date||'—';
+}
+function phaseCompletedDate(idea,path,idx,currentIdx){
+  if(idx>=currentIdx)return '—';
+  const step=path[idx],next=path[idx+1];
+  const logs=idea.log||[];
+  const direct=logs.find(l=>/Zakończono|przeszedł|przeszła|etap/i.test(l.text||'')&&(l.text||'').includes(step.label));
+  if(direct?.date)return direct.date;
+  const moved=next?logs.find(l=>(l.text||'').includes(`do fazy „${next.label}`)||(l.text||'').includes(`do fazy: „${next.label}`)):null;
+  return moved?.date||'—';
+}
+function togglePhaseCard(ideaId,key){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  idea.openPhaseKey=idea.openPhaseKey===key?null:key;
+  openIdea(ideaId,true);
+}
+function phaseCardClick(ev,ideaId,key){
+  if(ev?.target?.closest?.('.kwrap'))return;
+  togglePhaseCard(ideaId,key);
+}
 function ideaPhaseLabel(idea){return phaseMeta(idea).cur?.label||SL[idea.stage]||'Etap projektu';}
 function renderPhaseControls(idea,ideaId){
   const {path,si,cur}=phaseMeta(idea);
@@ -4023,7 +4287,8 @@ function renderRoleRequirements(idea,ideaId){
     const filledRow=filled
       ? `<div class="role-filled-row"><div class="role-filled-people">${filled}</div>${kebab}</div>`
       : `<div class="role-mode-row" style="justify-content:flex-end">${kebab}</div>`;
-    const coverage=`${(r.filledBy||[]).length}/${Number(r.min||1)}`;
+    const acceptedCount=(r.filledBy||[]).length;
+    const coverage=`${acceptedCount}/${Math.max(Number(r.min||1),acceptedCount)}`;
     const needState=ok?'ok':(cands.length?'candidate':'missing');
     const statusBadge=`<span class="need-status ${needState}">${coverage}</span>`;
     const primary=needPrimaryCapability(r);
@@ -4244,6 +4509,12 @@ let members=[
   {id:6,name:'Tomasz Górski',ini:'TG',av:5,roles:['Radny Kraków','Członek'],skills:['Grafik','Design','Ilustracja'],since:'Maj 2023',ideas:1,cosigns:3,done:0,team:1,points:58,looking:'Kampanie wizualne, materiały graficzne.',portfolio:[{type:'Grafika',title:'Plakaty wyborcze Kraków',desc:'Seria plakatów 2023.',link:'behance.net/tg'}]},
 ];
 
+let teamSearchQ='';
+let projectTeams=[
+  {id:'tm-leg',name:'Zespół Legislacyjny',desc:'Stała grupa do projektów ustaw, regulaminów i analiz prawnych.',members:['Anna Wiśniewska','Magdalena Lis','Piotr Kowalczyk'],pendingMembers:[],projectIds:[1],createdBy:'Anna Wiśniewska',date:'7 cze 2026',discussion:[{by:'Anna Wiśniewska',text:'Zbieramy argumenty prawne i polityczne w jednym miejscu.',date:'18 cze 2026'}],portfolio:[{type:'Dokument',title:'Pakiet reformy zamrażarki sejmowej',desc:'Projekt przepisów, uzasadnienie i mapa ryzyk formalnych.',projectId:1}]},
+  {id:'tm-comms',name:'Komunikacja i materiały',desc:'Team od tekstów, grafik i prostych materiałów wyjaśniających projekty.',members:['Katarzyna Zielińska','Tomasz Górski'],pendingMembers:[],projectIds:[],createdBy:'Katarzyna Zielińska',date:'12 cze 2026',discussion:[],portfolio:[{type:'Kampania',title:'Szablon materiałów lokalnych',desc:'Wspólny format postów, grafik i krótkich argumentarzy.'}]}
+];
+
 let ideas=[
   {id:1,title:'Ustawa ograniczająca możliwości Marszałka Sejmu',desc:'W Polsce Marszałek Sejmu ma bardzo silną pozycję w praktycznym decydowaniu o tempie prac nad projektami ustaw. Projekt ma ograniczyć możliwość długotrwałego blokowania inicjatyw ustawodawczych przez brak nadania im biegu, brak wyznaczenia terminów albo przeciąganie prac bez jawnego uzasadnienia. Celem jest większa przewidywalność, jawność i demokratyczna kontrola nad sejmową ścieżką legislacyjną.',stage:'active',_phaseKey:'active',cat:'ustawa',authorId:1,date:'3 cze 2026',workMode:'solo',hiddenPhases:['clarify'],extraPhases:[{key:'team',afterKey:'waiting',label:'Zespół',help:'Zbieramy osoby odpowiedzialne za prawo, strategię, research, konsultacje i komunikację.'},{key:'clarify2',afterKey:'team',label:'Doprecyzowanie',help:'Ustalamy problem, zakres reformy, wariant prawny i najważniejsze ryzyka.'}],phaseLabels:{waiting:'Zgłoszone',active:'Prace robocze',consult:'Konsultacje i poprawki',review:'Zatwierdzenie',deploy:'Publikacja',done:'Post-analiza'},fields:{cel:{text:'Ograniczyć sejmową zamrażarkę przez terminy proceduralne, jawne uzasadnienia opóźnień i publiczny rejestr projektów oczekujących na nadanie biegu.'},skutki:{text:'Po wdrożeniu mierzymy liczbę projektów bez pierwszej czynności proceduralnej po terminie, średni czas oczekiwania na nadanie biegu oraz liczbę opublikowanych uzasadnień opóźnień.'},__phase_team:{text:'Zespół projektu ma połączyć doświadczenie parlamentarne, analizę regulaminową, research procesu legislacyjnego, konsultacje społeczne i jasną komunikację polityczną.'},__phase_clarify2:{text:'Doprecyzowano, że reforma nie ma automatycznie przepychać każdego projektu na salę, tylko kończyć ciche blokowanie bez śladu i bez odpowiedzialności.'}},approvals:{opis:{yes:5,voters:6,date:'6 cze 2026'},cel:{yes:5,voters:6,date:'8 cze 2026'}},
    coalition:[{name:'Anna Wiśniewska',role:'Posłanka / Poseł',status:'signed',date:'3 cze 2026'},{name:'Magdalena Lis',role:'Posłanka / Poseł',status:'signed',date:'4 cze 2026'},{name:'Marek Nowak',role:'Radny / konsultacje samorządowe',status:'signed',date:'5 cze 2026'}],
@@ -4406,6 +4677,7 @@ function openIdea(id,preserveScroll=false){
   const skillList=document.getElementById('platform-skill-modal-list'); if(skillList) skillList.innerHTML=platformSkills.map(s=>`<option value="${escAttr(s.name)}">${s.cat||''}</option>`).join('');
   idea.viewTab=idea.viewTab||'przeglad';
   if(idea.viewTab==='pliki')idea.viewTab='dokumenty';
+  if(idea.viewTab==='teamy')idea.viewTab='zespol';
   idea.files=idea.files||[];idea.discussion=idea.discussion||[];idea.tasks=idea.tasks||[];
   const auth=authorOf(idea);
   const av=AV[auth.av]||AV[0];
@@ -4430,8 +4702,10 @@ function openIdea(id,preserveScroll=false){
       if(state==='now'&&i+1<path.length) opts.push({label:`Przejdź do „${path[i+1].label}"`,run:`startPhaseAdvance(${id})`,kind:'go'});
       if(state==='now'&&i>0) opts.push({label:`Cofnij do „${path[i-1].label}"`,run:`startPhaseBack(${id})`});
     }
-    const kebab=locked?'':renderActionMenu(`sttk-${id}-${i}`,state==='now'?'Obecna faza projektu.':'Przyszła faza — można ją zmienić zawczasu.',opts,{title:'Zmień tę fazę',wrapClass:'kwrap st-kebab-wrap',buttonHtml:`<button type="button" class="st-kebab" title="Zmień tę fazę" onclick="toggleKebab('sttk-${id}-${i}')">⋮</button>`});
-    return `<div class="st st-${state}${i<si?' past':''}${i===si?' now':''}"><span class="st-num">${i<si?'✓':i+1}</span><span class="st-body"><span class="st-label">${step.label}</span><span class="st-help">${step.help}</span></span>${kebab}</div>`;
+    const kebab=locked?'':renderActionMenu(`sttk-${id}-${i}`,state==='now'?'Obecna faza projektu.':'Przyszła faza — można ją zmienić zawczasu.',opts,{title:'Zmień tę fazę',wrapClass:'kwrap st-kebab-wrap',buttonHtml:`<button type="button" class="st-kebab" title="Zmień tę fazę" onclick="event.stopPropagation();toggleKebab('sttk-${id}-${i}')">⋮</button>`});
+    const opened=idea.openPhaseKey===step.key;
+    const meta=`<span>Utworzona: ${escHtml(phaseCreatedDate(idea,step))}</span><span>${i<si?'Ukończona':'Ukończenie'}: ${escHtml(phaseCompletedDate(idea,path,i,si))}</span><span>Status: ${i<si?'zakończona':i===si?'aktualna':'planowana'}</span>`;
+    return `<div class="st st-${state}${i<si?' past':''}${i===si?' now':''}${opened?' open':''}" onclick="phaseCardClick(event,${id},'${escAttr(step.key)}')" title="Kliknij, żeby ${opened?'zwinąć':'zobaczyć pełny opis i metadane'}"><span class="st-num">${i<si?'✓':i+1}</span><span class="st-body"><span class="st-label">${step.label}</span><span class="st-help">${step.help}</span><span class="st-meta">${meta}</span></span>${kebab}</div>`;
   }).join('');
 
   const coalHTML=(idea.coalition||[]).map(c=>`
@@ -4659,11 +4933,6 @@ function openIdea(id,preserveScroll=false){
 
   const partsBlock=`
     <div class="sc" style="margin-bottom:14px">
-      <div class="sc-title">Autor</div>
-      <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openMember(${auth.id})">
-        <div class="av" style="background:${av.bg};color:${av.tx};width:36px;height:36px;font-size:13px">${auth.ini}</div>
-        <div><div style="font-size:14px;font-weight:600;color:var(--txt)">${auth.name}</div><div style="font-size:12px;color:var(--txs)">${auth.roles?auth.roles[0]:''}</div></div>
-      </div>
       <div class="participants-head"><div class="sc-title">Uczestnicy projektu (${parts.length})</div>${renderPartManager(id)}</div>
       ${ensureProjectMembers(idea).map(m=>{
         const removed=m.status==='removed';
@@ -4684,7 +4953,6 @@ function openIdea(id,preserveScroll=false){
     </div>`;
 
   const tabBudzet=`
-    <div class="tab-info-wrap"><button class="info-corner" title="Co to za sekcja?" onclick="toggleTabInfo(${id},'budzet')">${IC.info}</button>${idea._tabInfo==='budzet'?`<div class="tab-intro"><b>Zasoby.</b> Pieniądze i materiały w jednym miejscu. Kliknij pozycję, żeby ją rozwinąć — tam zadeklarujesz wkład i zobaczysz głosowanie. Akcje są pod ⋮.</div>`:''}</div>
     <div class="sc">
       <div class="sc-title">Zasoby</div>
       ${renderResources(idea,id)}
@@ -4753,6 +5021,7 @@ function openIdea(id,preserveScroll=false){
   }
   const showIdeaBreadcrumb=true;
   if(showIdeaBreadcrumb&&!ideaBreadcrumb)ideaBreadcrumb=renderIdeaBreadcrumb(idea,null,false);
+  if(idea.viewTab==='teamy')idea.viewTab='zespol';
   const tabContent={przeglad:tabPrzeglad,zespol:tabZespol,budzet:tabBudzet,zadania:tabZadania,dokumenty:tabDokumenty,glosowania:tabGlosowania,dyskusja:tabDyskusja}[idea.viewTab];
 
   const isFollowed=followedIdeas.has(id);
@@ -7193,6 +7462,7 @@ function openPartManager(id,name){
   const actions=memberActionButtons(id,selected);
   const meta=`<div class="member-meta-grid"><div class="member-meta-card"><span>Ostatnia aktywność</span><b>${dmyDate(lastProjectActivityOf(idea,selected.name))}</b></div><div class="member-meta-card"><span>Dołączył/a</span><b>${escHtml(projectMemberJoinedText(idea,selected))}</b></div><div class="member-meta-card"><span>Potrzeby zespołu</span><b>${escHtml(projectMemberRolesText(idea,selected.name))}</b></div></div>`;
   const contributions=memberContributionChips(idea,selected.name);
+  const selectedProfile=members.find(m=>m.name===selected.name);
   appModal(`
     <div class="member-action-modal">
       <div class="member-action-side">
@@ -7206,7 +7476,7 @@ function openPartManager(id,name){
         <div class="member-action-sub">Najpierw wybierz osobę, potem akcję. Odwołanie tworzy jawną decyzję zespołu i nie usuwa historii wkładu.</div>
         <div class="member-action-person">
           <div class="member-action-avatar">${memberInitials(selected.name)}</div>
-          <div><b>${escHtml(selected.name)}</b><span>${projectMemberStatusText(idea,selected)}</span></div>
+          <div><b ${selectedProfile?`style="cursor:pointer" onclick="closeAppModal();openMember(${selectedProfile.id})"`:''}>${escHtml(selected.name)}</b><span>${projectMemberStatusText(idea,selected)}</span></div>
         </div>
         ${meta}
         ${contributions?`<div class="member-managed-needs"><b>Użyczone kompetencje</b><span>To tutaj widać kompetencje wniesione przez tę osobę do projektu.</span>${contributions}</div>`:''}
@@ -7296,10 +7566,228 @@ function startRecallUndo(ideaId,name){
   openIdea(ideaId,true);
 }
 
-function renderProjectJoinApplications(idea,ideaId){
-  const rows=(idea.votes||[]).filter(v=>v.open&&v.kind==='project-join');
+function ensureIdeaTeams(idea){
+  projectTeams=projectTeams||[];
+  projectTeams.forEach(t=>{t.members=t.members||[];t.pendingMembers=t.pendingMembers||[];t.pendingInvites=t.pendingInvites||[];t.discussion=t.discussion||[];t.projectIds=t.projectIds||[];t.portfolio=t.portfolio||[];t.decisions=t.decisions||[];t.governance=teamGovernance(t);t.recruitment=t.recruitment||{capabilities:[],note:''};t.recruitmentPosts=t.recruitmentPosts||[];if((t.recruitment.capabilities||[]).length||t.recruitment.note){t.recruitmentPosts.push({id:'ra'+Date.now(),title:'Kogo szukamy',capabilities:t.recruitment.capabilities||[],level:'dowolny',category:'',subcategory:'',desc:t.recruitment.note||'',date:TODAY});t.recruitment={capabilities:[],note:''};}});
+  return projectTeams;
+}
+function teamAcceptedMembers(t){return (t.members||[]).filter(Boolean);}
+function teamSkills(t){return Array.from(new Set(teamAcceptedMembers(t).flatMap(n=>(members.find(m=>m.name===n)?.skills||[]).concat(n===MY_NAME?(myProfile.skills||[]):[]))));}
+function teamProjects(t){return (t.projectIds||[]).map(id=>ideas.find(i=>i.id===id)).filter(Boolean);}
+function teamPortfolioItemHTML(p){
+  return `<div class="portfolio-item"><div class="pi-type">${escHtml(p.type||'Współpraca')}</div><div class="pi-title">${escHtml(p.title||'Wpis portfolio')}</div>${p.desc?`<div class="pi-desc">${escHtml(p.desc)}</div>`:''}${p.projectId?`<button class="dl-btn" onclick="openIdea(${Number(p.projectId)})">Otwórz projekt</button>`:''}</div>`;
+}
+function teamDefaultGovernance(){
+  return {approvalPct:60,quorumPct:50,minVoters:1,voteHours:72,fastMode:'weekend',fastApprovalPct:50,fastQuorumPct:10,fastMinVoters:1,fastVoteMinutes:5,inactiveDays:30,inactiveVotes:5,unlockDays:14};
+}
+function teamGovernance(t){
+  return {...teamDefaultGovernance(),...(t?.governance||{})};
+}
+function memberExistingTeamRoles(m){
+  if(!m)return [];
+  const base=m.name===MY_NAME?[...(myProfile.roles||[]),...(myProfile.platRoles||[])]:[...(m.roles||[]),...(m.platRoles||[])];
+  return Array.from(new Set(base.filter(Boolean))).filter(r=>!/^członek$/i.test(String(r).trim()));
+}
+function teamCapabilityOptions(limit=12){
+  const list=platformCapabilities().filter(c=>c.kind!=='Możliwość');
+  return limit?list.slice(0,limit):list;
+}
+function filterTeamInvitePeople(q){
+  q=String(q||'').toLowerCase().trim();
+  document.querySelectorAll('#teams-form .team-member-option').forEach(el=>{el.style.display=!q||String(el.dataset.search||'').includes(q)?'grid':'none';});
+}
+function selectTeamInviteRole(input){
+  const card=input?.closest('.team-member-option');
+  const person=card?.querySelector('.team-member-check');
+  if(input?.checked&&person)person.checked=true;
+}
+function teamFastModeLabel(v){
+  return ({weekend:'weekend',monday:'poniedziałek',tuesday:'wtorek',wednesday:'środa',thursday:'czwartek',friday:'piątek',saturday:'sobota',sunday:'niedziela',manual:'ręcznie włączone spotkanie'})[v]||'ustalone okno';
+}
+function teamPendingDecisionHTML(t){
+  const rows=(t.decisions||[]).filter(d=>d.open);
   if(!rows.length)return '';
-  return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Kandydatury do zespołu (${rows.length})</div>${rows.map(v=>`<div class="invite-row"><div class="invite-info">${personChip(v.person,true)}<div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Chcę dołączyć do projektu.')}<br><span class="dt">Kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`).join('')}</div>`;
+  return `<div class="team-vote-pending"><b>Zmiany ustawień czekają na głosowanie</b>${rows.map(d=>`<span>${escHtml(d.prop)} · próg ${Number(d.thresholdPct||teamGovernance(t).approvalPct)}%, kworum ${Number(d.quorumPct||teamGovernance(t).quorumPct)}%, min. ${Number(d.minVoters||teamGovernance(t).minVoters)} głosujących · zamknięcie po ${Number(d.voteHours||teamGovernance(t).voteHours)}h</span>`).join('')}<div class="role-actions" style="margin-top:8px">${rows.map(d=>`<button class="vbtn voted-yes" onclick="acceptTeamGovernanceDecision('${t.id}','${d.id}')">(demo) przyjmij</button>`).join('')}</div></div>`;
+}
+function renderTeamAnnouncements(t){
+  const posts=t.recruitmentPosts||[];
+  const list=posts.map(p=>`<article class="team-ann-card"><div class="team-ann-title">${escHtml(p.title||'Kogo szukamy')}</div><div class="team-ann-meta">${escHtml(p.category||'Obszar otwarty')}${p.subcategory?' · '+escHtml(p.subcategory):''}${p.level?' · poziom '+escHtml(p.level):''}</div>${p.desc?`<div class="team-ann-desc">${escHtml(p.desc)}</div>`:''}<div class="team-ann-caps">${(p.capabilities||[]).map(c=>`<span>${escHtml(c)}</span>`).join('')}</div></article>`).join('');
+  return `<div class="team-ann-grid">${list||'<div class="empty-inline">Team nie ma jeszcze ogłoszeń rekrutacyjnych.</div>'}</div><div class="role-actions" style="margin-top:10px"><button class="vbtn" onclick="openTeamAnnouncementModal('${t.id}')">+ Dodaj ogłoszenie</button></div>`;
+}
+function openTeamAnnouncementModal(teamId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
+  const caps=teamCapabilityOptions(0),cats=Array.from(new Set(caps.map(c=>c.cat||'Inne'))).sort((a,b)=>a.localeCompare(b,'pl'));
+  const capOptions=`<option value="">wybierz z platformy</option>`+caps.map(c=>`<option value="${escAttr(c.name)}">${escHtml(c.name)} · ${escHtml(c.cat||'Inne')}</option>`).join('');
+  actionModal({sideTitle:'Ogłoszenie teamu',sideText:'Jedno ogłoszenie może wymagać jednej albo kilku kompetencji. Opis dopowiada charakter osoby i sens jej wejścia do teamu.',steps:['Obszar','Kompetencje','Opis'],title:'Kogo szukacie?',body:`<div class="modal-form-grid"><label class="full">Tytuł ogłoszenia<input id="team-ann-title" placeholder="np. Osoba do rozmów z mediami lokalnymi"></label><label>Obszar<select id="team-ann-category"><option value="">wybierz obszar</option>${cats.map(c=>`<option value="${escAttr(c)}">${escHtml(c)}</option>`).join('')}</select></label><label>Podkategoria<input id="team-ann-subcategory" placeholder="np. media lokalne / prawo pracy"></label><label>Poziom<select id="team-ann-level"><option>dowolny</option><option>P1 podstawowy</option><option>P2 samodzielny</option><option>P3 zaawansowany</option><option>P4 ekspercki</option></select></label><div class="full join-cap-list">${[0,1,2,3].map(i=>`<label>Kompetencja ${i+1}<select class="team-ann-cap">${capOptions}</select></label>`).join('')}</div><label class="full">Opis osoby albo powód wejścia<textarea id="team-ann-desc" placeholder="Np. szukamy kogoś z dobrą gadką, kto potrafi wejść w lokalny konflikt bez eskalowania i wyjaśnić prostym językiem, po co robimy projekt."></textarea></label></div><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="addTeamAnnouncement('${teamId}')">Dodaj ogłoszenie</button></div>`});
+}
+function addTeamAnnouncement(teamId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
+  const title=(document.getElementById('team-ann-title')?.value||'').trim();
+  const caps=Array.from(new Set([...document.querySelectorAll('.team-ann-cap')].map(x=>x.value).filter(Boolean)));
+  const desc=(document.getElementById('team-ann-desc')?.value||'').trim();
+  if(!title&&!caps.length){toast('Dodaj tytuł albo przynajmniej jedną kompetencję.','warn');return;}
+  t.recruitmentPosts=t.recruitmentPosts||[];
+  t.recruitmentPosts.push({id:'ra'+Date.now(),title:title||'Kogo szukamy',capabilities:caps,level:document.getElementById('team-ann-level')?.value||'dowolny',category:document.getElementById('team-ann-category')?.value||'',subcategory:(document.getElementById('team-ann-subcategory')?.value||'').trim(),desc,date:TODAY});
+  t.discussion=t.discussion||[];
+  t.discussion.push({by:MY_NAME,text:'Dodano ogłoszenie rekrutacyjne teamu: '+(title||caps.join(', ')),date:TODAY});
+  closeAppModal();openTeam(teamId);toast('Ogłoszenie dodane.','ok');
+}
+function renderGlobalTeamForm(){
+  const people=members.filter(m=>m.name!==MY_NAME);
+  return `<div class="team-form rich">
+    <div class="team-form-head"><div><div class="team-form-title">Nowy team</div><div class="team-form-sub">Team to stała grupa współpracy. Przy zakładaniu ustal cel, zasady decyzji, nieaktywności oraz pierwsze osoby zaproszone do składu.</div></div><span class="team-form-step">karta założycielska</span></div>
+    <div class="team-form-grid">
+      <label class="team-field">Nazwa teamu<input id="global-team-name" placeholder="np. Zespół legislacyjny regionu"></label>
+      <label class="team-field">Pierwszy fokus<input id="global-team-focus" placeholder="np. lista projektów wymagających analizy"></label>
+      <label class="team-field full">Cel i sens współpracy<span>Krótko: po co ten team istnieje i jaki typ pracy bierze na siebie.</span><textarea id="global-team-desc" placeholder="Np. przygotowujemy projekty uchwał i analizę prawną dla pomysłów, które dochodzą do fazy decyzji."></textarea></label>
+    </div>
+    <div class="team-form-section"><div class="team-form-section-title">Ustawienia decyzji</div><div class="team-form-section-sub">Te wartości sterują głosowaniami w teamie. Późniejsza zmiana tych ustawień przechodzi przez głosowanie według poprzednich zasad.</div><div class="team-settings-grid"><div class="team-setting-card"><label>Próg przyjęcia (%)</label><input id="global-team-approval" type="number" min="50" max="100" value="60"><small>Minimum 50%. Możesz wpisać np. 51 albo 70.</small></div><div class="team-setting-card"><label>Kworum (%)</label><input id="global-team-quorum" type="number" min="10" max="100" value="50"><small>Minimum 10% aktywnych osób.</small></div><div class="team-setting-card"><label>Minimum głosujących</label><input id="global-team-min-voters" type="number" min="1" max="50" value="1"><small>Dla jednoosobowego teamu wystarczy 1.</small></div><div class="team-setting-card"><label>Koniec głosowania po godzinach</label><input id="global-team-vote-hours" type="number" min="1" max="720" value="72"><small>Swobodnie ustaw czas, np. 6, 48 albo 168.</small></div></div></div>
+    <div class="team-form-section"><div class="team-form-section-title">Tryb szybkiego spotkania</div><div class="team-form-section-sub">Gdy team pracuje w ustalonym oknie, może użyć lżejszych limitów i krótkich głosowań, bo wszyscy są akurat razem.</div><div class="team-settings-grid"><div class="team-setting-card"><label>Kiedy działa</label><select id="global-team-fast-mode"><option value="weekend">weekend</option><option value="monday">poniedziałek</option><option value="tuesday">wtorek</option><option value="wednesday">środa</option><option value="thursday">czwartek</option><option value="friday">piątek</option><option value="saturday">sobota</option><option value="sunday">niedziela</option><option value="manual">tylko ręcznie włączone spotkanie</option></select><small>Okno szybkich decyzji.</small></div><div class="team-setting-card"><label>Próg w trybie szybkim (%)</label><input id="global-team-fast-approval" type="number" min="50" max="100" value="50"><small>Minimum nadal 50%.</small></div><div class="team-setting-card"><label>Kworum w trybie szybkim (%)</label><input id="global-team-fast-quorum" type="number" min="10" max="100" value="10"><small>Może być niższe niż zwykle.</small></div><div class="team-setting-card"><label>Głosowanie trwa minut</label><input id="global-team-fast-minutes" type="number" min="1" max="240" value="5"><small>Np. 5 minut na spotkaniu.</small></div></div></div>
+    <div class="team-form-section"><div class="team-form-section-title">Nieaktywność i odblokowanie pracy</div><div class="team-form-section-sub">Nieaktywny członek nie liczy się do kworum. Dokumenty i zadania mogą wrócić do puli po braku aktywności.</div><div class="team-settings-grid"><div class="team-setting-card"><label>Dni od ostatniego głosu</label><input id="global-team-inactive-days" type="number" min="7" max="365" value="30"><small>Po ilu dniach bez głosu zaczynamy sprawdzać nieaktywność.</small></div><div class="team-setting-card"><label>Ile głosowań po tym czasie</label><input id="global-team-inactive-votes" type="number" min="1" max="50" value="5"><small>Osoba wypada z kworum dopiero jeśli po jej ostatnim głosie minął limit dni i team przeprowadził tyle kolejnych głosowań.</small></div><div class="team-setting-card"><label>Odblokowanie zadań i dokumentów</label><input id="global-team-unlock-days" type="number" min="1" max="90" value="14"><small>Dni od ostatniej aktywności przy fragmencie pracy.</small></div></div></div>
+    <div class="team-form-section"><div class="team-form-section-title">Skład startowy</div><div class="team-form-section-sub">Ty jesteś założycielem teamu. Możesz zaprosić osoby bez zobowiązań albo zasugerować im wybrane role z ich profilu; kliknięcie roli automatycznie zaznacza osobę.</div><div class="team-founder"><div><b>${escHtml(MY_NAME)}</b><span>${escHtml(memberExistingTeamRoles(myProfile).join(' · ')||'Założyciel/ka')}</span></div><span>aktywny/a od razu</span></div><input class="team-invite-search" id="global-team-member-search" placeholder="Szukaj osób po nazwisku, kompetencjach albo roli..." oninput="filterTeamInvitePeople(this.value)"><div class="team-member-picker">${people.map((m,idx)=>{const roles=memberExistingTeamRoles(m);const search=[m.name,...(m.skills||[]),...roles].join(' ').toLowerCase();return `<label class="team-member-option" data-search="${escAttr(search)}"><input class="team-member-check" type="checkbox" value="${escAttr(m.name)}" data-idx="${idx}"><span class="team-member-main"><b>${escHtml(m.name)}</b><small>${escHtml((m.skills||[]).join(' · '))}</small></span><div class="team-member-role-list">${roles.map((r,ri)=>`<span class="team-role-chip"><input type="checkbox" class="team-member-role-check" data-person="${escAttr(m.name)}" value="${escAttr(r)}" id="team-role-${idx}-${ri}" onclick="event.stopPropagation()" onchange="selectTeamInviteRole(this)"><span>${escHtml(r)}</span></span>`).join('')||'<span class="hint">Brak ról do zasugerowania. Osoba może wejść bez zobowiązań.</span>'}</div><textarea class="team-member-note" id="team-note-${idx}" placeholder="Wiadomość do tej osoby, np. dlaczego pasuje do teamu" onclick="event.stopPropagation()"></textarea></label>`}).join('')}</div></div>
+    <div class="role-actions"><button class="vbtn voted-yes" onclick="createGlobalTeam()">Utwórz team</button><button class="vbtn" onclick="cancelGlobalTeamForm()">Anuluj</button></div>
+  </div>`;
+}
+function teamCharterHTML(t){
+  const c=t.charter||{},g=teamGovernance(t);
+  const rows=[
+    ['Próg przyjęcia',`${Number(g.approvalPct)}% głosów za`],
+    ['Kworum',`${Number(g.quorumPct)}% aktywnych osób i minimum ${Number(g.minVoters)} głosujących`],
+    ['Koniec głosowania',`po ${Number(g.voteHours)} godzinach`],
+    ['Tryb szybki',`${teamFastModeLabel(g.fastMode)}: próg ${Number(g.fastApprovalPct)}%, kworum ${Number(g.fastQuorumPct)}%, głosowanie ${Number(g.fastVoteMinutes)} min`],
+    ['Nieaktywność w kworum',`po ${Number(g.inactiveDays)} dniach od ostatniego głosu, jeśli team miał od tego czasu min. ${Number(g.inactiveVotes)} głosowań`],
+    ['Odblokowanie zadań i dokumentów',`po ${Number(g.unlockDays)} dniach bez aktywności przy fragmencie pracy`],
+    ['Pierwszy fokus',c.firstFocus||'Ustalić pierwszy projekt lub zadanie dla teamu.']
+  ];
+  return `<div class="team-charter">${rows.map(([k,v])=>`<div class="team-charter-row"><span>${escHtml(k)}</span><div>${escHtml(v)}</div></div>`).join('')}<div class="role-actions"><button class="vbtn" onclick="openTeamGovernanceEdit('${t.id}')">Zaproponuj zmianę ustawień</button></div>${teamPendingDecisionHTML(t)}</div>`;
+}
+function renderTeams(){
+  const q=String(teamSearchQ||document.getElementById('teams-search')?.value||'').toLowerCase().trim();
+  const list=ensureIdeaTeams({}).filter(t=>{
+    const hay=[t.name,t.desc,...teamAcceptedMembers(t),...teamSkills(t),...teamProjects(t).map(i=>i.title)].join(' ').toLowerCase();
+    return !q||hay.includes(q);
+  });
+  const form=document.getElementById('teams-form');
+  if(form)form.innerHTML=window.globalTeamFormOpen?renderGlobalTeamForm():'';
+  const box=document.getElementById('teams-list');if(!box)return;
+  box.innerHTML=list.map(t=>{
+    const projects=teamProjects(t);
+    return `<article class="team-card" onclick="openTeam('${t.id}')" style="cursor:pointer"><div class="team-card-head"><div><div class="team-card-title">${escHtml(t.name)}</div><div class="team-card-sub">${escHtml(t.desc||'Team roboczy platformy.')}</div></div><span class="team-count">${teamAcceptedMembers(t).length} osób</span></div><div class="team-members">${teamAcceptedMembers(t).map(n=>personChip(n)).join('')}</div><div class="team-discussion"><div class="team-discussion-title">Projekty</div>${projects.map(i=>`<div class="team-msg"><b>${escHtml(i.title)}</b><br>${escHtml(i.cat)} · ${escHtml(i.date)}</div>`).join('')||'<div class="dt">Ten team nie ma jeszcze historii projektów.</div>'}</div></article>`;
+  }).join('')||'<div class="empty-inline">Brak teamów pasujących do wyszukiwania.</div>';
+  const inp=document.getElementById('teams-search');if(inp&&inp.value!==teamSearchQ)inp.value=teamSearchQ;
+}
+function startGlobalTeamForm(){window.globalTeamFormOpen=true;renderTeams();setTimeout(()=>document.getElementById('global-team-name')?.focus(),40);}
+function cancelGlobalTeamForm(){window.globalTeamFormOpen=false;renderTeams();}
+function createGlobalTeam(){
+  const name=(document.getElementById('global-team-name')?.value||'').trim(),desc=(document.getElementById('global-team-desc')?.value||'').trim();
+  const firstFocus=(document.getElementById('global-team-focus')?.value||'').trim();
+  if(!name){toast('Podaj nazwę teamu.','warn');return;}
+  if(!desc){toast('Dodaj cel i sens współpracy teamu.','warn');return;}
+  const governance={
+    approvalPct:Math.max(50,Math.min(100,Number(document.getElementById('global-team-approval')?.value||60))),
+    quorumPct:Math.max(10,Math.min(100,Number(document.getElementById('global-team-quorum')?.value||50))),
+    minVoters:Math.max(1,Number(document.getElementById('global-team-min-voters')?.value||1)),
+    voteHours:Math.max(1,Number(document.getElementById('global-team-vote-hours')?.value||72)),
+    fastMode:document.getElementById('global-team-fast-mode')?.value||'weekend',
+    fastApprovalPct:Math.max(50,Math.min(100,Number(document.getElementById('global-team-fast-approval')?.value||50))),
+    fastQuorumPct:Math.max(10,Math.min(100,Number(document.getElementById('global-team-fast-quorum')?.value||10))),
+    fastMinVoters:1,
+    fastVoteMinutes:Math.max(1,Number(document.getElementById('global-team-fast-minutes')?.value||5)),
+    inactiveDays:Math.max(1,Number(document.getElementById('global-team-inactive-days')?.value||30)),
+    inactiveVotes:Math.max(1,Number(document.getElementById('global-team-inactive-votes')?.value||5)),
+    unlockDays:Math.max(1,Number(document.getElementById('global-team-unlock-days')?.value||14))
+  };
+  const selected=[...document.querySelectorAll('#teams-form .team-member-check:checked')].map(x=>{
+    const roles=[...document.querySelectorAll('#teams-form .team-member-role-check:checked')].filter(r=>r.dataset.person===x.value).map(r=>r.value);
+    const note=(document.getElementById('team-note-'+x.dataset.idx)?.value||'').trim();
+    return {name:x.value,suggestedRoles:roles,note,status:'pending',by:MY_NAME,date:TODAY};
+  });
+  const pending=selected.map(x=>x.name);
+  const founderRole=memberExistingTeamRoles(myProfile)[0]||'Założyciel/ka';
+  const memberRoles={[MY_NAME]:founderRole};
+  selected.forEach(x=>{memberRoles[x.name]=(x.suggestedRoles||[])[0]||'';});
+  const charter={firstFocus:firstFocus||'Ustalić pierwszy projekt lub zadanie dla teamu.'};
+  projectTeams.push({id:'tm'+Date.now(),name,desc,members:[MY_NAME],pendingMembers:pending,pendingInvites:selected,memberRoles,governance,recruitment:{capabilities:[],note:''},recruitmentPosts:[],charter,decisions:[],projectIds:[],createdBy:MY_NAME,date:TODAY,discussion:[{by:MY_NAME,text:`Zakładam team. Pierwszy fokus: ${charter.firstFocus}`,date:TODAY}],portfolio:[]});
+  window.globalTeamFormOpen=false;renderTeams();toast('Team utworzony.','ok');
+}
+function openTeam(teamId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
+  const projects=teamProjects(t),skills=teamSkills(t),pending=t.pendingMembers||[],invites=t.pendingInvites||[];
+  document.getElementById('team-profile-header').innerHTML=`<div class="profile-header-inner"><div class="profile-av" style="background:var(--p200);color:var(--p800)">${escHtml(t.name.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase())}</div><div class="profile-info"><div class="profile-name">${escHtml(t.name)}</div><div class="profile-since">Team od ${escHtml(t.date||'brak daty')} · założył/a ${escHtml(t.createdBy||'—')}</div><div class="skill-chips" style="margin-top:8px">${skills.slice(0,8).map(s=>`<span class="schip">${escHtml(s)}</span>`).join('')}</div><div class="profile-looking">${escHtml(t.desc||'Team roboczy platformy.')}</div><div class="profile-stats"><div class="pst"><div class="pst-n">${teamAcceptedMembers(t).length}</div><div class="pst-l">OSOBY</div></div><div class="pst"><div class="pst-n">${projects.length}</div><div class="pst-l">PROJEKTY</div></div><div class="pst"><div class="pst-n">${(t.portfolio||[]).length}</div><div class="pst-l">PORTFOLIO</div></div></div></div></div>`;
+  const projectOptions=ideas.filter(i=>!(t.projectIds||[]).includes(i.id)&&!(i.votes||[]).some(v=>v.open&&v.kind==='project-team-join'&&v.teamId===t.id)).map(i=>`<option value="${i.id}">${escHtml(i.title)}</option>`).join('');
+  document.getElementById('team-profile-body').innerHTML=`<div><div class="profile-section"><div class="ps-title">Ustalenia teamu</div>${teamCharterHTML(t)}</div><div class="profile-section"><div class="ps-title">Ogłoszenia teamu</div>${renderTeamAnnouncements(t)}</div><div class="profile-section"><div class="ps-title">Historia projektów</div>${projects.map(i=>`<div class="record-item" onclick="openIdea(${i.id})" style="cursor:pointer"><div class="ri-left"><div class="ri-dot" style="background:var(--p400)"></div><div><div class="ri-text">${escHtml(i.title)}</div><div class="ri-sub">${escHtml(i.cat)} · ${escHtml(i.date)}</div></div></div><span class="ri-action ra-sub">Projekt</span></div>`).join('')||'<div class="empty-inline">Ten team nie ma jeszcze zakończonych ani przyjętych projektów.</div>'}</div><div class="profile-section"><div class="ps-title">Portfolio współpracy</div>${(t.portfolio||[]).map(teamPortfolioItemHTML).join('')||'<div class="empty-inline">Brak wpisów portfolio tego teamu.</div>'}</div><div class="profile-section"><div class="ps-title">Dyskusja teamu</div>${(t.discussion||[]).map(m=>`<div class="disc-item"><div class="disc-who">${escHtml(m.by)} <span>${escHtml(m.date||'')}</span></div><div class="disc-text">${escHtml(m.text)}</div></div>`).join('')||'<div class="empty-inline">Brak wpisów.</div>'}<div class="role-actions" style="margin-top:10px"><input id="team-profile-post-${t.id}" placeholder="Napisz do teamu..." style="flex:1;min-width:220px;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px"><button class="vbtn" onclick="addGlobalTeamPost('${t.id}')">Wyślij</button></div></div></div><aside><div class="sc"><div class="sc-title">Członkowie teamu</div><div class="team-members">${teamAcceptedMembers(t).map(n=>personChip(n)).join('')}</div>${pending.length?`<div class="team-discussion"><div class="team-discussion-title">Do akceptacji</div>${pending.map(n=>{const inv=invites.find(x=>x.name===n)||{};return `<div class="invite-row"><div class="invite-info">${personChip(n,true)}<div class="invite-meta">${(inv.suggestedRoles||[]).length?`Role: ${escHtml(inv.suggestedRoles.join(', '))}`:'Bez wskazanej roli'}${inv.note?`<br>${escHtml(inv.note)}`:''}</div></div><div class="invite-acts"><button class="tiny-action go" onclick="acceptGlobalTeamMember('${t.id}','${escAttr(n)}')">✓</button><button class="tiny-action" onclick="declineGlobalTeamMember('${t.id}','${escAttr(n)}')">✕</button></div></div>`}).join('')}</div>`:''}<div class="team-actions"><button class="vbtn" onclick="inviteMyselfToGlobalTeam('${t.id}')">Dołącz do teamu</button></div></div><div class="sc"><div class="sc-title">Dołącz team do projektu</div>${projectOptions?`<select id="team-project-target-${t.id}" class="fsel">${projectOptions}</select><button class="prop-btn" style="width:100%;margin-top:10px" onclick="submitTeamToProjectFromProfile('${t.id}')">Zgłoś team</button>`:'<div class="hint">Brak projektów dostępnych do zgłoszenia albo kandydatura już trwa.</div>'}</div></aside>`;
+  go('team-profile');
+}
+function addGlobalTeamPost(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId),inp=document.getElementById(`team-profile-post-${teamId}`),text=(inp?.value||'').trim();if(!t||!text)return;t.discussion.push({by:MY_NAME,text,date:TODAY});openTeam(teamId);}
+function openTeamGovernanceEdit(teamId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
+  const g=teamGovernance(t);
+  appModal(`<h3>Zmiana ustawień teamu</h3><p>Ta propozycja nie zmienia zasad od razu. Trafia pod głosowanie według obecnych ustawień teamu.</p><div class="team-settings-grid"><div class="team-setting-card"><label>Próg przyjęcia (%)</label><input id="edit-team-approval" type="number" min="50" max="100" value="${Number(g.approvalPct)}"><small>Minimum 50%.</small></div><div class="team-setting-card"><label>Kworum (%)</label><input id="edit-team-quorum" type="number" min="10" max="100" value="${Number(g.quorumPct)}"><small>Minimum 10% aktywnych osób.</small></div><div class="team-setting-card"><label>Minimum głosujących</label><input id="edit-team-min-voters" type="number" min="1" max="50" value="${Number(g.minVoters)}"><small>Dolny limit ważności.</small></div><div class="team-setting-card"><label>Koniec głosowania po godzinach</label><input id="edit-team-vote-hours" type="number" min="1" max="720" value="${Number(g.voteHours)}"><small>Czas na oddanie głosu.</small></div><div class="team-setting-card"><label>Tryb szybki</label><select id="edit-team-fast-mode"><option value="weekend">weekend</option><option value="monday">poniedziałek</option><option value="tuesday">wtorek</option><option value="wednesday">środa</option><option value="thursday">czwartek</option><option value="friday">piątek</option><option value="saturday">sobota</option><option value="sunday">niedziela</option><option value="manual">ręcznie włączone spotkanie</option></select><small>Obecnie: ${escHtml(teamFastModeLabel(g.fastMode))}.</small></div><div class="team-setting-card"><label>Próg szybki (%)</label><input id="edit-team-fast-approval" type="number" min="50" max="100" value="${Number(g.fastApprovalPct)}"><small>Minimum 50%.</small></div><div class="team-setting-card"><label>Kworum szybkie (%)</label><input id="edit-team-fast-quorum" type="number" min="10" max="100" value="${Number(g.fastQuorumPct)}"><small>Minimum 10%.</small></div><div class="team-setting-card"><label>Szybkie głosowanie minut</label><input id="edit-team-fast-minutes" type="number" min="1" max="240" value="${Number(g.fastVoteMinutes)}"><small>Np. 5 minut.</small></div><div class="team-setting-card"><label>Dni do nieaktywności</label><input id="edit-team-inactive-days" type="number" min="1" max="365" value="${Number(g.inactiveDays)}"><small>Od ostatniego głosu.</small></div><div class="team-setting-card"><label>Ile głosowań po tym czasie</label><input id="edit-team-inactive-votes" type="number" min="1" max="50" value="${Number(g.inactiveVotes)}"><small>Po ostatnim głosie osoby musi minąć limit dni i tyle kolejnych głosowań teamu.</small></div><div class="team-setting-card"><label>Dni do odblokowania pracy</label><input id="edit-team-unlock-days" type="number" min="1" max="90" value="${Number(g.unlockDays)}"><small>Zadania i dokumenty.</small></div></div><label class="team-field full" style="margin-top:12px">Uzasadnienie<textarea id="edit-team-why" placeholder="Dlaczego team powinien zmienić te ustawienia?"></textarea></label><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="submitTeamGovernanceEdit('${teamId}')">Wyślij pod głosowanie</button></div>`);
+  const sel=document.getElementById('edit-team-fast-mode');if(sel)sel.value=g.fastMode||'weekend';
+}
+function submitTeamGovernanceEdit(teamId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
+  const old=teamGovernance(t);
+  const proposed={approvalPct:Math.max(50,Math.min(100,Number(document.getElementById('edit-team-approval')?.value||old.approvalPct))),quorumPct:Math.max(10,Math.min(100,Number(document.getElementById('edit-team-quorum')?.value||old.quorumPct))),minVoters:Math.max(1,Number(document.getElementById('edit-team-min-voters')?.value||old.minVoters)),voteHours:Math.max(1,Number(document.getElementById('edit-team-vote-hours')?.value||old.voteHours)),fastMode:document.getElementById('edit-team-fast-mode')?.value||old.fastMode,fastApprovalPct:Math.max(50,Math.min(100,Number(document.getElementById('edit-team-fast-approval')?.value||old.fastApprovalPct))),fastQuorumPct:Math.max(10,Math.min(100,Number(document.getElementById('edit-team-fast-quorum')?.value||old.fastQuorumPct))),fastMinVoters:1,fastVoteMinutes:Math.max(1,Number(document.getElementById('edit-team-fast-minutes')?.value||old.fastVoteMinutes)),inactiveDays:Math.max(1,Number(document.getElementById('edit-team-inactive-days')?.value||old.inactiveDays)),inactiveVotes:Math.max(1,Number(document.getElementById('edit-team-inactive-votes')?.value||old.inactiveVotes)),unlockDays:Math.max(1,Number(document.getElementById('edit-team-unlock-days')?.value||old.unlockDays))};
+  const why=(document.getElementById('edit-team-why')?.value||'').trim();
+  t.decisions=t.decisions||[];
+  t.decisions.push({id:'td'+Date.now(),kind:'governance-edit',prop:'Zmienić ustawienia decyzji i nieaktywności teamu',proposedGovernance:proposed,proposedBy:MY_NAME,yes:1,no:0,myVote:'yes',open:true,date:TODAY,thresholdPct:old.approvalPct,quorumPct:old.quorumPct,minVoters:old.minVoters,voteHours:old.voteHours,reason:why});
+  t.discussion=t.discussion||[];
+  t.discussion.push({by:MY_NAME,text:`Proponuję zmianę ustawień teamu. ${why||''}`.trim(),date:TODAY});
+  closeAppModal();openTeam(teamId);toast('Zmiana ustawień trafiła pod głosowanie teamu.','ok');
+}
+function acceptTeamGovernanceDecision(teamId,decisionId){
+  const t=ensureIdeaTeams({}).find(x=>x.id===teamId),d=t?.decisions?.find(x=>x.id===decisionId);if(!t||!d||!d.open)return;
+  if(d.kind==='governance-edit'&&d.proposedGovernance)t.governance={...teamGovernance(t),...d.proposedGovernance};
+  d.open=false;d.accepted=true;d.closedDate=TODAY;
+  t.discussion=t.discussion||[];
+  t.discussion.push({by:MY_NAME,text:'Ustawienia teamu zostały zmienione po głosowaniu.',date:TODAY});
+  openTeam(teamId);toast('Ustawienia teamu zaktualizowane.','ok');
+}
+function acceptGlobalTeamMember(teamId,name){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;const inv=(t.pendingInvites||[]).find(x=>x.name===name)||{};t.pendingMembers=t.pendingMembers.filter(n=>n!==name);t.pendingInvites=(t.pendingInvites||[]).filter(x=>x.name!==name);if(!t.members.includes(name))t.members.push(name);t.memberRoles=t.memberRoles||{};if(inv.suggestedRoles?.length)t.memberRoles[name]=inv.suggestedRoles[0];t.discussion.push({by:MY_NAME,text:`${name} dołącza do teamu${t.memberRoles[name]?` w roli: ${t.memberRoles[name]}`:''}.`,date:TODAY});openTeam(teamId);}
+function declineGlobalTeamMember(teamId,name){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;t.pendingMembers=t.pendingMembers.filter(n=>n!==name);t.pendingInvites=(t.pendingInvites||[]).filter(x=>x.name!==name);t.discussion.push({by:MY_NAME,text:`${name} nie dołącza do teamu.`,date:TODAY});openTeam(teamId);}
+function inviteMyselfToGlobalTeam(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;if(t.members.includes(MY_NAME)||t.pendingMembers.includes(MY_NAME)){toast('Jesteś już w tym teamie albo czekasz na akceptację.','warn');return;}t.pendingMembers.push(MY_NAME);t.pendingInvites=t.pendingInvites||[];t.pendingInvites.push({name:MY_NAME,suggestedRoles:memberExistingTeamRoles(myProfile).slice(0,1),note:'Zgłaszam chęć dołączenia do teamu.',status:'pending',by:MY_NAME,date:TODAY});t.discussion.push({by:MY_NAME,text:'Zgłaszam chęć dołączenia do teamu.',date:TODAY});openTeam(teamId);}
+function submitTeamToProjectFromProfile(teamId){const target=Number(document.getElementById(`team-project-target-${teamId}`)?.value||0);if(!target){toast('Wybierz projekt.','warn');return;}submitTeamToProject(target,teamId);}
+function renderTeamsTab(idea,ideaId){
+  const teams=ensureIdeaTeams(idea);
+  const form=idea.teamFormOpen?`<div class="team-form"><input id="team-name-${ideaId}" placeholder="Nazwa teamu"><textarea id="team-desc-${ideaId}" placeholder="Po co powstaje ten team i czym chce się zająć?"></textarea><div class="team-join-list">${members.filter(m=>m.name!==MY_NAME).map(m=>`<label class="team-join-row"><input type="checkbox" value="${escAttr(m.name)}"><span><b>${escHtml(m.name)}</b><br><small>${escHtml((m.skills||[]).slice(0,3).join(' · '))}</small></span></label>`).join('')}</div><div class="role-actions"><button class="vbtn voted-yes" onclick="createProjectTeam(${ideaId})">Utwórz team</button><button class="vbtn" onclick="cancelProjectTeamForm(${ideaId})">Anuluj</button></div></div>`:'';
+  const cards=teams.map(t=>{
+    const accepted=teamAcceptedMembers(t);
+    const pending=(t.pendingMembers||[]).filter(Boolean);
+    const openVote=(idea.votes||[]).find(v=>v.open&&v.kind==='project-team-join'&&v.teamId===t.id);
+    const inProject=accepted.length&&accepted.every(n=>participantsOf(idea).includes(n));
+    return `<article class="team-card"><div class="team-card-head"><div><div class="team-card-title">${escHtml(t.name)}</div><div class="team-card-sub">${escHtml(t.desc||'Team roboczy projektu.')}</div></div>${openVote?'<span class="team-app-badge">kandydatura</span>':inProject?'<span class="need-status ok">w projekcie</span>':''}</div><div class="team-members">${accepted.map(n=>personChip(n)).join('')||'<span class="dt">Brak zaakceptowanych członków.</span>'}</div>${pending.length?`<div class="team-discussion"><div class="team-discussion-title">Do akceptacji</div>${pending.map(n=>`<div class="invite-row"><div class="invite-info">${personChip(n,true)}<div class="invite-meta">czeka na akceptację teamu</div></div><div class="invite-acts"><button class="tiny-action go" onclick="acceptTeamMember(${ideaId},'${t.id}','${escAttr(n)}')">✓ przyjmij</button><button class="tiny-action" onclick="declineTeamMember(${ideaId},'${t.id}','${escAttr(n)}')">✕ odrzuć</button></div></div>`).join('')}</div>`:''}<div class="team-discussion"><div class="team-discussion-title">Dyskusja teamu</div>${(t.discussion||[]).map(m=>`<div class="team-msg"><b>${escHtml(m.by)}</b> · <span class="dt">${escHtml(m.date)}</span><br>${escHtml(m.text)}</div>`).join('')||'<div class="dt">Brak wpisów.</div>'}<div class="role-actions" style="margin-top:8px"><input id="team-post-${ideaId}-${t.id}" placeholder="Napisz do teamu..." style="flex:1;min-width:180px;padding:9px 11px;border:1px solid var(--bdr);border-radius:10px"><button class="vbtn" onclick="addTeamPost(${ideaId},'${t.id}')">Wyślij</button></div></div><div class="team-actions">${openVote?`<button class="vbtn voted-yes" onclick="openVote(${ideaId},'${openVote.id}')">Decyzja projektu</button>`:`<button class="vbtn voted-yes" onclick="submitTeamToProject(${ideaId},'${t.id}')">Zgłoś team do projektu</button>`}<button class="vbtn" onclick="inviteMyselfToTeam(${ideaId},'${t.id}')">Dołącz do teamu</button></div></article>`;
+  }).join('')||'<div class="empty-inline">Nie ma jeszcze teamów w tym projekcie.</div>';
+  return `<div class="tab-info-wrap"><button class="info-corner" title="Co to za sekcja?" onclick="toggleTabInfo(${ideaId},'teamy')">${IC.info}</button>${idea._tabInfo==='teamy'?`<div class="tab-intro"><b>Teamy.</b> Małe grupy najpierw kompletują skład i rozmawiają we własnym wątku, a potem mogą zgłosić się do projektu razem.</div>`:''}</div><div class="sc" style="margin-bottom:14px"><div class="team-needs-head"><div><div class="sc-title" style="margin-bottom:4px">Teamy</div><div class="hint">Członkowie dołączają do teamu po akceptacji. Gotowy team może kandydować do projektu jako całość.</div></div><button class="prop-btn" onclick="startProjectTeamForm(${ideaId})">+ Nowy team</button></div>${form}<div class="team-grid">${cards}</div></div>`;
+}
+function startProjectTeamForm(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea.teamFormOpen=true;openIdea(ideaId,true);}
+function cancelProjectTeamForm(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea.teamFormOpen=false;openIdea(ideaId,true);}
+function createProjectTeam(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  const name=(document.getElementById('team-name-'+ideaId)?.value||'').trim(),desc=(document.getElementById('team-desc-'+ideaId)?.value||'').trim();
+  if(!name){toast('Podaj nazwę teamu.','warn');return;}
+  const pending=[...document.querySelectorAll('.team-form .team-join-row input:checked')].map(x=>x.value);
+  ensureIdeaTeams(idea).push({id:'tm'+Date.now(),name,desc,members:[MY_NAME],pendingMembers:pending,discussion:[{by:MY_NAME,text:'Zakładam team i zapraszam osoby do wspólnej pracy.',date:TODAY}],createdBy:MY_NAME,date:TODAY});
+  idea.teamFormOpen=false;idea.log.push({text:`Utworzono team: ${name}`,date:TODAY,time:NOW_TIME(),type:'team',detail:pending.length?'Zaproszeni: '+escHtml(pending.join(', ')):''});
+  openIdea(ideaId,true);
+}
+function acceptTeamMember(ideaId,teamId,name){const idea=ideas.find(i=>i.id===ideaId),t=ensureIdeaTeams(idea).find(x=>x.id===teamId);if(!t)return;t.pendingMembers=t.pendingMembers.filter(n=>n!==name);if(!t.members.includes(name))t.members.push(name);t.discussion.push({by:MY_NAME,text:`${name} dołącza do teamu.`,date:TODAY});openIdea(ideaId,true);}
+function declineTeamMember(ideaId,teamId,name){const idea=ideas.find(i=>i.id===ideaId),t=ensureIdeaTeams(idea).find(x=>x.id===teamId);if(!t)return;t.pendingMembers=t.pendingMembers.filter(n=>n!==name);t.discussion.push({by:MY_NAME,text:`${name} nie dołącza do teamu.`,date:TODAY});openIdea(ideaId,true);}
+function inviteMyselfToTeam(ideaId,teamId){const idea=ideas.find(i=>i.id===ideaId),t=ensureIdeaTeams(idea).find(x=>x.id===teamId);if(!t)return;if(t.members.includes(MY_NAME)||t.pendingMembers.includes(MY_NAME)){toast('Jesteś już w tym teamie albo czekasz na akceptację.','warn');return;}t.pendingMembers.push(MY_NAME);t.discussion.push({by:MY_NAME,text:'Zgłaszam chęć dołączenia do teamu.',date:TODAY});openIdea(ideaId,true);}
+function addTeamPost(ideaId,teamId){const idea=ideas.find(i=>i.id===ideaId),t=ensureIdeaTeams(idea).find(x=>x.id===teamId),inp=document.getElementById(`team-post-${ideaId}-${teamId}`),text=(inp?.value||'').trim();if(!t||!text)return;t.discussion.push({by:MY_NAME,text,date:TODAY});openIdea(ideaId,true);}
+function submitTeamToProject(ideaId,teamId){
+  const idea=ideas.find(i=>i.id===ideaId),t=ensureIdeaTeams(idea).find(x=>x.id===teamId);if(!t)return;
+  const people=teamAcceptedMembers(t);if(!people.length){toast('Team musi mieć zaakceptowanych członków.','warn');return;}
+  if((idea.votes||[]).some(v=>v.open&&v.kind==='project-team-join'&&v.teamId===teamId)){toast('Kandydatura tego teamu już trwa.','warn');return;}
+  const skills=teamSkills(t);
+  const vId='v'+Date.now();
+  idea.votes.push({id:vId,kind:'project-team-join',teamId,teamName:t.name,teamMembers:people,teamSkills:skills,prop:`Przyjąć team „${t.name}" do projektu`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:`Team chce wejść do projektu razem. Skład: ${people.join(', ')}.`,date:TODAY,supporters:[],debunks:[]}]});
+  notifyVote(idea);openIdea(ideaId,true);
+}
+function renderProjectJoinApplications(idea,ideaId){
+  const rows=(idea.votes||[]).filter(v=>v.open&&(v.kind==='project-join'||v.kind==='project-team-join'));
+  if(!rows.length)return '';
+  return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Kandydatury do zespołu (${rows.length})</div>${rows.map(v=>v.kind==='project-team-join'?`<div class="invite-row"><div class="invite-info"><b>${escHtml(v.teamName)}</b><div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Team chce dołączyć do projektu.')}<br><span class="dt">Członkowie: ${escHtml((v.teamMembers||[]).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`:`<div class="invite-row"><div class="invite-info">${personChip(v.person,true)}<div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Chcę dołączyć do projektu.')}<br><span class="dt">Kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`).join('')}</div>`;
 }
 function renderPendingRejoinInvites(idea,ideaId){const rows=(idea.pendingRejoinInvites||[]).filter(x=>x.status==='pending');if(!rows.length)return '';return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Ponowne zaproszenia (${rows.length})</div>${rows.map(inv=>`<div class="rejoin-invite"><div><b>${escHtml(inv.person)}</b><span>Grupa zatwierdziła zaproszenie · czeka na odpowiedź tej osoby</span></div>${inv.person===MY_NAME?`<button class="vbtn" onclick="openRejoinInvite(${ideaId},'${inv.id}')">Odpowiedz</button>`:`<button class="vbtn" onclick="simulateRejoinInviteAnswer(${ideaId},'${inv.id}')">(demo) odpowiedź osoby</button>`}</div>`).join('')}</div>`;}
 function simulateRejoinInviteAnswer(ideaId,inviteId){appModal(`<h3>Symulacja odpowiedzi na zaproszenie</h3><p>W prawdziwym systemie tę decyzję podejmuje zaproszona osoba na swoim koncie.</p><div class="app-modal-actions"><button class="vbtn" onclick="answerRejoinInvite(${ideaId},'${inviteId}',false)">Odrzuca</button><button class="vbtn voted-yes" onclick="answerRejoinInvite(${ideaId},'${inviteId}',true)">Przyjmuje</button></div>`);}
@@ -7717,6 +8205,31 @@ function checkQuorum(idea,v){
       });
       idea.log.push({text:`${v.person} przyjęta/y do projektu głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:`Użyczone kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', ')||'brak')}. Kompetencje pasujące do istniejących potrzeb przypisano automatycznie.`});
       notify(`Przyjęto Cię do projektu: ${idea.title}`,idea.id);maybeNotify(idea,'Nowa osoba w zespole: '+v.person);
+    } else if(v.kind==='project-team-join'&&v.teamId){
+      const t=ensureIdeaTeams(idea).find(x=>x.id===v.teamId);
+      const people=v.teamMembers||teamAcceptedMembers(t||{});
+      people.forEach(name=>markProjectMember(idea,name,'przyjęcie teamu: '+(v.teamName||'')));
+      (idea.roleRequirements||[]).forEach(r=>{
+        const cap=needPrimaryCapability(r).name;
+        people.forEach(name=>{
+          const m=members.find(x=>x.name===name);
+          const skills=[...(m?.skills||[]),...(name===MY_NAME?(myProfile.skills||[]):[])];
+          if(skills.some(s=>textNeedMatch(cap,s))&&roleHasVacancy(r)){
+            r.filledBy=r.filledBy||[];
+            if(!r.filledBy.includes(name))r.filledBy.push(name);
+            if(roleStatus(r))r.status='filled';
+          }
+        });
+      });
+      if(t){
+        t.projectAccepted=true;t.projectAcceptedDate=TODAY;
+        t.projectIds=t.projectIds||[];
+        if(!t.projectIds.includes(idea.id))t.projectIds.push(idea.id);
+        t.portfolio=t.portfolio||[];
+        if(!t.portfolio.some(p=>p.projectId===idea.id))t.portfolio.push({type:'Projekt',title:idea.title,desc:'Team został przyjęty do projektu jako grupa współpracy.',projectId:idea.id});
+      }
+      idea.log.push({text:`Team „${v.teamName||t?.name||'bez nazwy'}" przyjęty do projektu`,date:TODAY,time:NOW_TIME(),type:'team',detail:`Członkowie: ${escHtml(people.join(', '))}. Pasujące kompetencje przypisano do otwartych potrzeb, jeśli były wolne miejsca.`});
+      maybeNotify(idea,'Przyjęto team do projektu: '+(v.teamName||'team'));
     } else if((v.kind==='readmit'||v.kind==='recall-undo')&&v.person){
       idea.pendingRejoinInvites=idea.pendingRejoinInvites||[];
       if(!idea.pendingRejoinInvites.some(x=>x.person===v.person&&x.status==='pending'))idea.pendingRejoinInvites.push({id:'ri'+Date.now(),person:v.person,status:'pending',date:TODAY,voteId:v.id});
@@ -8322,8 +8835,11 @@ function proposeSkill(){
 function closeModal(e){if(e.target.classList.contains('modal-bg'))e.target.classList.remove('on');}
 
 // ——— MEMBERS ———
+let memberSearchQ='';
 function renderMembers(){
-  document.getElementById('members-list').innerHTML=members.map(m=>{
+  const q=String(memberSearchQ||document.getElementById('members-search')?.value||'').toLowerCase().trim();
+  const list=members.filter(m=>!q||[m.name,m.since,...(m.roles||[]),...(m.skills||[])].join(' ').toLowerCase().includes(q));
+  document.getElementById('members-list').innerHTML=list.map(m=>{
     const av=AV[m.av]||AV[0];
     return `<div class="mc" onclick="openMember(${m.id})">
       <div class="mc-top">
@@ -8339,7 +8855,8 @@ function renderMembers(){
         <div class="mcs"><div class="mcs-n">${m.team}</div><div class="mcs-l">ZESPÓŁ</div></div>
       </div>
     </div>`;
-  }).join('');
+  }).join('')||'<div class="empty-inline">Brak uczestników pasujących do wyszukiwania.</div>';
+  const inp=document.getElementById('members-search');if(inp&&inp.value!==memberSearchQ)inp.value=memberSearchQ;
 }
 
 let currentMemberProfileId=null;
@@ -9215,9 +9732,11 @@ function go(name,btn,nlId,opts={}){
   if(nlId) document.getElementById(nlId)?.classList.add('on');
   else if(name==='ideas') document.getElementById('nl-ideas')?.classList.add('on');
   else if(name==='members') document.getElementById('nl-members')?.classList.add('on');
+  else if(name==='teams'||name==='team-profile') document.getElementById('nl-teams')?.classList.add('on');
   else if(name==='profile-me') document.getElementById('nl-profile')?.classList.add('on');
   if(name==='ideas'){renderIdeas();renderMyMatches();}
   if(name==='members') renderMembers();
+  if(name==='teams') renderTeams();
   if(name==='platform') renderPlatform();
   if(name==='profile-me'){renderMyProfile();renderMyMatches();}
   if(name==='watch') renderWatch();
@@ -9284,3 +9803,7 @@ renderCatOptions();
 </script>
 </body>
 </html>
+
+
+
+
