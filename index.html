@@ -7128,7 +7128,7 @@ function renderSinglePickerChip(inputId,value,empty=''){
 }
 function parseLeveledValue(value){
   const raw=String(value||'').trim();
-  const m=raw.match(/^(.*?):([1-4])$/);
+  const m=raw.match(/^(.*?)(?::|\s+P)([1-4])$/i);
   return m?{name:m[1].trim(),lvl:Number(m[2])}:{name:raw,lvl:1};
 }
 function formatLeveledValue(value){
@@ -14060,19 +14060,14 @@ function profileFullNameGenitive(name){
   return forms[name]||name;
 }
 function setMemberProfileFeedFilter(id,type){
-  memberProfileFeedFilters[id]=type;
+  memberProfileFeedFilters[id]=type;memberFeedLimits[id]=8;
   openMember(id,{fromRoute:true});
 }
 function profileBoardDefaultRows(member,thanksAuthor){
-  const firstName=String(member.name||'').split(' ')[0];
-  return [
-    {id:`default-update-${member.id}`,type:'update',stamp:600,date:'Dzisiaj',time:'10:42',title:'Szukam osób do wspólnego działania',text:member.looking||'Działam przy projektach społecznych i szukam nowych osób do współpracy.',by:member.name,tags:['Szukam współpracy'],likes:3,comments:2},
-    {id:`default-portfolio-${member.id}`,type:'portfolio',stamp:500,date:'Wczoraj',time:'19:15',title:(member.portfolio&&member.portfolio[0]&&member.portfolio[0].title)||'Nowy wpis w portfolio',text:(member.portfolio&&member.portfolio[0]&&(member.portfolio[0].desc||member.portfolio[0].type))||'Efekty ostatniej pracy i materiały przygotowane dla zespołu.',by:member.name,tags:(member.skills||[]).slice(0,2),likes:5,comments:1},
-    {id:`default-idea-${member.id}`,type:'idea',stamp:400,date:'17 sie',time:'14:30',title:`Pomysł, nad którym pracuje ${firstName}`,text:'Zapraszam do rozmowy i wspólnego rozwijania kierunku działania.',by:member.name,tags:['W toku'],likes:2,comments:0},
-    {id:`default-resource-${member.id}`,type:'resource',stamp:300,date:'14 sie',time:'11:20',title:'Zasób dostępny dla zespołu',text:'Mogę udostępnić materiały i wsparcie potrzebne przy działaniach lokalnych.',by:member.name,tags:['Dostępny'],likes:1,comments:0},
-    {id:`default-thanks-${member.id}`,type:'thanks',stamp:200,date:'10 sie',time:'16:08',title:`Podziękowanie od ${profileFullNameGenitive(thanksAuthor.name)}`,text:'Dziękuję za zaangażowanie i rzetelną pracę. Twój wkład wnosi realną wartość do naszych projektów.',by:thanksAuthor.name,likes:4,comments:0}
-  ];
+  return (member.portfolio||[]).map((item,index)=>({id:`portfolio-${member.id}-${index}`,type:'portfolio',stamp:0,date:'Portfolio',title:item.title||'Wpis w portfolio',text:item.desc||item.type||'',by:member.name,tags:[],likes:0,comments:0}));
 }
+var memberFeedLimits={};
+function loadOlderMemberEntries(id){memberFeedLimits[id]=(memberFeedLimits[id]||8)+8;openMember(id,{fromRoute:true});}
 function profileBoardRows(member,thanksAuthor){
   const saved=Array.isArray(member.profileFeed)?member.profileFeed:[];
   const normalizedSaved=saved.map((row,index)=>({...row,stamp:Number(row.stamp||Date.now()-index),title:row.title||(row.type==='thanks'?`Podziękowanie od ${profileFullNameGenitive(row.by)}`:`Aktualizacja od ${row.by}`),likes:row.likes||0,comments:row.comments||0}));
@@ -14083,7 +14078,8 @@ function memberPublicFeedHTML(member,thanksAuthor){
   const isOwnProfile=member.name===MY_NAME;
   const activeFilter=memberProfileFeedFilters[member.id]||'all';
   const allRows=profileBoardRows(member,thanksAuthor);
-  const rows=(activeFilter==='all'?allRows:allRows.filter(row=>row.type===activeFilter)).slice(0,8);
+  const filteredRows=activeFilter==='all'?allRows:allRows.filter(row=>row.type===activeFilter);
+  const rows=filteredRows.slice(0,memberFeedLimits[member.id]||8);
   const viewer=members.find(row=>row.name===MY_NAME)||{name:MY_NAME,ini:'?'};
   const tabs=[['all','Wszystko'],['update','Aktualizacje'],['idea','Pomysły'],['portfolio','Portfolio'],['project','Projekty'],['resource','Zasoby'],['thanks','Podziękowania']];
   const feed=rows.map(row=>`<article class="mp-feed-row mp-feed-${row.type}">
@@ -14098,10 +14094,10 @@ function memberPublicFeedHTML(member,thanksAuthor){
   </article>`).join('');
   return `<section class="member-board">
     <h2 class="member-board-title">Tablica ${escHtml(profileBoardName(member.name))}</h2>
-    <div class="mp-composer"><span class="mp-composer-avatar">${memberAvatarContent(viewer.name,viewer.ini)}</span><input id="member-profile-post-input" placeholder="${isOwnProfile?'Napisz aktualizację…':'Napisz aktualizację albo podziękowanie dla '+escAttr(firstName)+'…'}" onkeydown="if(event.key==='Enter') publishMemberProfileEntry(${member.id},'update')"><div class="mp-compose-types"><button onclick="publishMemberProfileEntry(${member.id},'update')">＋ Aktualizacja</button>${isOwnProfile?'':`<button onclick="publishMemberProfileEntry(${member.id},'thanks')">♡ Podziękowanie</button>`}</div></div>
+    <div class="mp-composer"><span class="mp-composer-avatar">${memberAvatarContent(viewer.name,viewer.ini)}</span><input id="member-profile-post-input" placeholder="${isOwnProfile?'Napisz aktualizację…':'Napisz aktualizację albo podziękowanie na tym profilu…'}" onkeydown="if(event.key==='Enter') publishMemberProfileEntry(${member.id},'update')"><div class="mp-compose-types"><button onclick="publishMemberProfileEntry(${member.id},'update')">＋ Aktualizacja</button>${isOwnProfile?'':`<button onclick="publishMemberProfileEntry(${member.id},'thanks')">♡ Podziękowanie</button>`}</div></div>
     <div class="mp-feed-toolbar"><div class="mp-feed-tabs">${tabs.map(([key,label])=>`<button class="${activeFilter===key?'active':''}" onclick="setMemberProfileFeedFilter(${member.id},'${key}')">${label}</button>`).join('')}</div><div class="mp-toolbar-end"><span>Wpisujesz jako ${escHtml(MY_NAME)}</span><span class="mp-board-view">▤</span></div></div>
     <section class="mp-feed">${feed||'<div class="empty-inline">Brak wpisów w tej kategorii.</div>'}</section>
-    <button class="mp-older">Pokaż starsze wpisy⌄</button>
+    ${filteredRows.length>rows.length?`<button class="mp-older" onclick="loadOlderMemberEntries(${member.id})">Pokaż starsze wpisy⌄</button>`:''}
   </section>`;
 }
 function memberProfileAction(kind,id){
@@ -14176,7 +14172,7 @@ function openMember(id,opts={}){
           <div class="member-hero-person-meta"><span>${escHtml(memberNoun)} od ${escHtml(String(m.since||'').toLowerCase())}</span><span>·</span><span class="member-hero-pronouns">${escHtml(profilePronouns(m))}</span></div>
         </div>
       </div>
-      <p class="member-hero-bio">${escHtml(m.bio||m.looking||'Działa przy projektach społecznych i dzieli się swoim doświadczeniem z zespołami.')}</p>
+      <p class="member-hero-bio">${escHtml(m.bio||'')}</p>
       ${profileCollaborationLine(m)}
       <div class="member-hero-stats">
         ${[[IC.star,m.points||0,'Punkty'],[IC.bulb,m.ideas||0,'Pomysłów'],[TREASURE_CHEST_ICON,memberResourceCount(m),'Zasobów'],[IC.check,m.done||0,'Zrealizowane'],[IC.users,teams.length,'Zespołów']].map(([ico,val,label])=>`<div class="member-stat"><span class="member-stat-ico">${ico}</span><span><strong>${val}</strong><small>${label}</small></span></div>`).join('')}
@@ -15037,8 +15033,8 @@ function renderMyProfile(){
               <h1>${escHtml(myProfile.name)} <button onclick="openProfileEdit()" aria-label="Edytuj dane">✎</button></h1>
               <div class="mp-roleline">${escHtml(roleLine||'Członkini społeczności')}</div>
               <div class="mp-smallline">${escHtml(memberNoun)} od ${escHtml(String(myProfile.since||'').toLowerCase())} · ${escHtml(profilePronouns(myProfile))}</div>
-              <p>${escHtml(myProfile.bio||myProfile.looking||'')}</p>${profileCollaborationLine(myProfile)}
             </div>
+            <div class="ch-hero-description">${myProfile.bio?`<p>${escHtml(myProfile.bio)}</p>`:''}${profileCollaborationLine(myProfile)}</div>
           </div>
           <div class="mp-hero-metrics">
             <div><b>${IC.star}</b><strong>${profileMember.points||myPoints}</strong><span>Punkty</span></div>
@@ -15086,7 +15082,22 @@ function addProfileEditSkill(){
 function removeProfileEditSkill(name){
   profileEditSkillsDraft=profileEditSkillsDraft.filter(skill=>skill!==name);delete profileEditSkillLevelsDraft[name];renderProfileSkillsEditor();
 }
+function openProfileSkillsDialog(){
+  profileEditSkillsDraft=[...(myProfile.skills||[])];profileEditSkillLevelsDraft={...(myProfile.skillLevels||{})};
+  const editor=document.getElementById('profile-skills-editor');
+  const origin=editor.parentNode;renderProfileSkillsEditor();
+  appModal('<h3>Zarządzaj kompetencjami</h3><p>Wybierz kompetencje i ich poziomy.</p><div id="skills-dialog-slot"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAppModal()">Anuluj</button><button class="btn" onclick="saveProfileSkillsDialog()">Zapisz kompetencje</button></div>','ch-skills-modal');
+  document.getElementById('skills-dialog-slot').appendChild(editor);
+  const observer=new MutationObserver(()=>{if(!document.getElementById('app-modal-bg').classList.contains('on')||!document.getElementById('skills-dialog-slot')){origin.appendChild(editor);observer.disconnect();}});
+  observer.observe(document.getElementById('app-modal-bg'),{attributes:true,childList:true,subtree:true});
+}
+function saveProfileSkillsDialog(){
+  myProfile.skills=[...profileEditSkillsDraft];myProfile.skillLevels={...profileEditSkillLevelsDraft};MYSTILLS.splice(0,MYSTILLS.length,...myProfile.skills);
+  syncProfileToMember();saveActiveDemoAccountState();__persistenceLastDataJson='';persistNow();renderMyProfile();renderMemberSkillFilters();closeAppModal();toast('Kompetencje zapisane.');
+}
 function openProfileEdit(section=''){
+  if(section==='skills'){openProfileSkillsDialog();return;}
+
   document.getElementById('prof-name').value=myProfile.name;
   document.getElementById('prof-system-pronoun').value=normalizeSystemPronoun(myProfile.systemPronoun);
   document.getElementById('prof-bio').value=myProfile.bio;
@@ -16187,7 +16198,7 @@ function dictionaryDefinition(cap){
 function dictionaryEntries(){
   const capabilities=platformCapabilities().map((cap,index)=>({
     id:'cap-'+cap.source+'-'+cap.id,name:cap.name,category:'competency',definition:dictionaryDefinition(cap),
-    people:12+(index*7)%24,teams:(2+(index%6))+' zespołów',projects:(3+(index*5)%11)+' projektów',
+    people:members.filter(m=>(m.skills||[]).some(s=>parseLeveledValue(s).name===cap.name)).length,teams:'—',projects:'—',
     status:'active',added:index%3===0?'4 cze 2026':index%3===1?'2 cze 2026':'28 kwi 2026',
     by:index%3===0?'Anna Wiśniewska':index%3===1?'Marek Nowak':'Piotr Kowalczyk',source:cap.source,sourceId:cap.id
   }));
@@ -16196,7 +16207,7 @@ function dictionaryEntries(){
     definition:d.detail||'Propozycja zmiany we wspólnym słowniku.',people:0,teams:'0 zespołów',projects:'0 projektów',
     status:'voting',added:d.date||TODAY,by:d.by||MY_NAME,proposalType:d.scope==='fix'?'rename':'new',decisionId:d.pid
   }));
-  return [...capabilities,...dictionaryBaseEntries,...pending];
+  return [...capabilities,...dictionaryBaseEntries.map(item=>({...item,people:0,teams:'—',projects:'—',definition:item.definition+' (Przykładowe hasło; statystyki użycia nie są jeszcze rejestrowane.)'})),...pending];
 }
 function dictionaryLabel(category){return (DICTIONARY_CATEGORY[category]||['Pojęcie','◇'])[0];}
 function dictionaryIcon(category){
@@ -16404,8 +16415,18 @@ function openProfileInviteChoice(id){
 function profileCollaborationLine(member){
   const looking=String(member.looking||'').trim(),teams=teamsForPerson(member.name);
   const own=member.name===MY_NAME;
-  return `<div class="ch-profile-context">${looking&&looking!==String(member.bio||'').trim()?`<p class="ch-looking-line"><span>Szukam współpracy przy</span> ${escHtml(looking.replace(/^Szukam\s+/i,''))}${own?`<button type="button" class="ch-inline-edit" onclick="openProfileEdit('looking')" aria-label="Edytuj opis współpracy" title="Edytuj opis współpracy">${IC.pencil}</button>`:''}</p>`:''}${teams.length?`<div class="ch-profile-teams">${teams.map(t=>`<a href="${escAttr(teamHash(t.id))}">${IC.users} ${escHtml(t.name)}</a>`).join('')}</div>`:''}</div>`;
+  return `<div class="ch-profile-context">${looking&&looking!==String(member.bio||'').trim()?`<p class="ch-looking-line"><span>Współpraca:</span> ${escHtml(looking)}${own?`<button type="button" class="ch-inline-edit" onclick="openProfileEdit('looking')" aria-label="Edytuj opis współpracy" title="Edytuj opis współpracy">${IC.pencil}</button>`:''}</p>`:''}${teams.length?`<div class="ch-profile-teams">${teams.map(t=>`<a href="${escAttr(teamHash(t.id))}">${IC.users} ${escHtml(t.name)}</a>`).join('')}</div>`:''}</div>`;
 }
+
+(function(){
+ const bg=document.getElementById('modal-profile'),box=bg.querySelector('.profile-edit-modal');let opener;
+ box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Edytuj profil');box.tabIndex=-1;
+ new MutationObserver(()=>{if(bg.classList.contains('on')){opener=document.activeElement;document.documentElement.classList.add('ch-dialog-open');box.focus();}else{if(!document.getElementById('app-modal-bg').classList.contains('on'))document.documentElement.classList.remove('ch-dialog-open');if(opener?.isConnected)opener.focus();}}).observe(bg,{attributes:true,attributeFilter:['class']});
+ document.addEventListener('keydown',e=>{if(!bg.classList.contains('on'))return;
+ if(e.key==='Escape'){e.preventDefault();bg.classList.remove('on');return;}
+ if(e.key==='Tab'){const fields=[...box.querySelectorAll('button:not([disabled]),input:not([disabled]),select,textarea,[tabindex="0"]')].filter(el=>el.getClientRects().length);const first=fields[0],last=fields.at(-1);if(e.shiftKey&&(document.activeElement===first||document.activeElement===box)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&(document.activeElement===last||document.activeElement===box)){e.preventDefault();first?.focus();}}
+ });
+})();
 
 // init
 installProjectMemberGuards();
@@ -16629,6 +16650,25 @@ html.theme-dark .ch-icon-button,html.theme-dark .ch-invite-button,html.theme-dar
  #s-profile-me .mp-change-cover.ch-icon-button{top:16px;right:16px}
 }
 @media(max-width:420px){#s-profile .member-hero-stats,#s-profile-me .mp-hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Audit fixes: navigation, profile and focused competence editor. */
+.global-nav{gap:10px!important}
+.global-nav .global-search-wrap{min-width:120px!important;flex:1 1 180px!important}
+@media(min-width:901px) and (max-width:1500px){.global-nav{padding-left:16px!important;padding-right:16px!important;gap:8px!important}.global-nav .nl{padding:0 7px!important;font-size:12px!important}.global-search-shortcut{display:none!important}.global-nav .global-search-wrap{max-width:220px!important}.global-nav .nav-links{min-width:0!important}}
+#s-profile-me .mp-hero-copy{align-items:start!important}
+.ch-hero-description{grid-column:1/-1;min-width:0;font-size:15px;line-height:1.65}
+.ch-hero-description>p{margin:0 0 12px}
+.ch-skills-modal .profile-skills-editor{display:grid;gap:16px}
+.ch-skills-modal .profile-skills-current{display:flex;flex-wrap:wrap;gap:8px}
+.ch-skills-modal .schip{padding:8px;border:1px solid var(--bdr);border-radius:10px}
+.ch-skills-modal .schip button{margin-left:8px;cursor:pointer}
+.ch-skills-modal .platform-picker{width:100%;position:relative}
+.ch-skills-modal .platform-options{position:relative;max-height:210px;overflow:auto}
+html.theme-dark .global-nav .nl{color:#ddd6ed!important}
+html.theme-dark .global-nav .nl svg,html.theme-dark .mp-hero-metrics b,html.theme-dark .member-profile-hero svg{color:#bca1f5!important}
+@media(max-width:600px){#s-profile-me .mp-hero-copy{grid-template-columns:64px minmax(0,1fr)!important;gap:14px!important}#s-profile-me .mp-avatar{width:64px!important;height:64px!important}.ch-hero-description{font-size:14px;line-height:1.55}}
+
+@media(max-width:1250px){.global-nav .btn-add{width:40px!important;min-width:40px!important;padding:0!important;font-size:0!important}.global-nav .btn-add::before{content:'+';font-size:22px!important}}
 </style>
 </body>
 </html>
