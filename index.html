@@ -5448,7 +5448,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 </div>
 
 <nav class="global-nav">
-  <div class="nav-brand" onclick="go('ideas')">
+  <div class="nav-brand" role="button" tabindex="0" aria-label="Przejdź do pomysłów" onclick="go('ideas')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('ideas')}">
     <div class="nav-logo" aria-hidden="true"><span class="brand-bar"></span><span class="brand-bar"></span><span class="brand-bar"></span><span class="brand-bar"></span></div>
     <div class="nav-name">CollaboHub <span style="font-weight:300;color:var(--txs);font-size:13px">· Razem Demokracja</span></div>
   </div>
@@ -5468,7 +5468,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
     </form>
   </div>
   <div class="account-wrap" id="demo-account-wrap">
-    <button type="button" class="account-current" id="demo-account-current" onclick="toggleDemoAccountMenu(event)" aria-expanded="false">
+    <button type="button" class="account-current" id="demo-account-current" onclick="toggleDemoAccountMenu(event)" aria-label="Zmień konto demonstracyjne" aria-expanded="false">
       <span class="account-current-avatar" id="demo-account-avatar">PK</span>
       <span class="account-current-copy"><b id="demo-account-name">Patrycja Kowalska</b><small>konto demo</small></span><span class="account-caret">⌄</span>
     </button>
@@ -5476,7 +5476,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   </div>
   <div class="pts-pill">✦ <span id="my-points">46</span> pkt</div>
   <button type="button" class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Przełącz tryb jasny/ciemny" aria-label="Włącz tryb ciemny"></button>
-  <div class="bell-pill" onclick="go('watch')" title="Powiadomienia i obserwowane"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 1.6 6.5 2 7H4c.4-.5 2-2 2-7Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bell-count" id="bell-count" style="display:none">0</span></div>
+  <button type="button" class="bell-pill" onclick="go('watch')" title="Powiadomienia i obserwowane" aria-label="Powiadomienia i obserwowane"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 1.6 6.5 2 7H4c.4-.5 2-2 2-7Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bell-count" id="bell-count" style="display:none">0</span></button>
   <div class="nav-pill" onclick="go('ideas');switchTab('for-me')">
     <div class="dot"></div>
     Dopasowane <span class="for-me-count" id="for-me-nav-count">0</span>
@@ -5527,7 +5527,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <button type="button" class="ideas-clear-sidebar" id="ideas-clear-sidebar" onclick="clearIdeaListFilters()">Wyczyść filtry</button>
     </aside>
     <main class="ideas-catalog-main">
-      <div class="search-wrap"><input id="idea-search" placeholder="Szukaj propozycji — tytuł, opis, umiejętność, kategoria, autor..." oninput="searchQ=this.value;renderIdeas()" /></div>
+      <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj propozycji…" oninput="searchQ=this.value;renderIdeas()" /></div>
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
         <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')">Wszystkie</button>
@@ -5601,7 +5601,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="members-catalog-tools">
         <label class="members-main-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-          <input id="members-search" placeholder="Szukaj członków — imię, nazwisko, kompetencje..." oninput="memberSearchQ=this.value;renderMembers()">
+          <input id="members-search" aria-label="Szukaj członków" placeholder="Szukaj członków…" oninput="memberSearchQ=this.value;renderMembers()">
         </label>
         <div class="members-sort" id="members-sort">
           <button class="members-sort-trigger" id="members-sort-trigger" onclick="toggleMemberSort(event)" aria-expanded="false"><span>Sortuj: <b id="members-sort-label">Ostatnia aktywność: najnowsze</b></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
@@ -5662,7 +5662,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       </header>
       <div class="teams-catalog-tools">
         <button class="vbtn voted-yes" type="button" onclick="startGlobalTeamForm()">+ Utwórz zespół</button>
-        <label class="members-main-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="teams-search" placeholder="Szukaj zespołów — nazwa, osoba, kompetencja, projekt..." oninput="teamSearchQ=this.value;renderTeams()"></label>
+        <label class="members-main-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="teams-search" aria-label="Szukaj zespołów" placeholder="Szukaj zespołów…" oninput="teamSearchQ=this.value;renderTeams()"></label>
         <div class="members-sort teams-sort" id="teams-sort">
           <button type="button" class="members-sort-trigger" onclick="toggleTeamSort(event)">Sortuj: <b id="teams-sort-label">Ostatnia aktywność</b><svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
           <div class="members-sort-menu" id="teams-sort-menu"></div>
@@ -6144,9 +6144,9 @@ html.theme-dark #s-profile-me .mp-composer-field{color:var(--txm)}
       <div class="profile-section">
         <div class="ps-title">Portfolio</div>
         <div class="portfolio-grid">
-          <div class="portfolio-item"><div class="pi-type">Grafika</div><div class="pi-title">Plakat kampanijny Warszawa 2023</div><div class="pi-desc">Seria 4 plakatów do kampanii miejskiej.</div><a class="pi-link" href="javascript:void(0)">behance.net/pk →</a></div>
-          <div class="portfolio-item"><div class="pi-type">Social media</div><div class="pi-title">Kampania #RazemMoże</div><div class="pi-desc">Posty, stories, szablony.</div><a class="pi-link" href="javascript:void(0)">instagram.com →</a></div>
-          <div class="portfolio-item"><div class="pi-type">Strona www</div><div class="pi-title">Razem Mokotów</div><div class="pi-desc">Prosta strona sekcji lokalnej.</div><a class="pi-link" href="javascript:void(0)">razemmokotow.pl →</a></div>
+          <div class="portfolio-item"><div class="pi-type">Grafika</div><div class="pi-title">Plakat kampanijny Warszawa 2023</div><div class="pi-desc">Seria 4 plakatów do kampanii miejskiej.</div><span class="pi-link">behance.net/pk · przykład</span></div>
+          <div class="portfolio-item"><div class="pi-type">Social media</div><div class="pi-title">Kampania #RazemMoże</div><div class="pi-desc">Posty, stories, szablony.</div><span class="pi-link">instagram.com · przykład</span></div>
+          <div class="portfolio-item"><div class="pi-type">Strona www</div><div class="pi-title">Razem Mokotów</div><div class="pi-desc">Prosta strona sekcji lokalnej.</div><span class="pi-link">razemmokotow.pl · przykład</span></div>
         </div>
       </div>
       <div class="profile-section">
@@ -6260,7 +6260,7 @@ html.theme-dark #s-profile-me .mp-composer-field{color:var(--txm)}
     <div class="about-grid">
       <div class="about-card">
         <h3>Dla osoby, która chce pomóc</h3>
-        <p>Wchodzisz na „Dla mnie” i widzisz projekty, które czekają dokładnie na twoje umiejętności. Nie musisz pytać gdzie się przydasz.</p>
+        <p>Wchodzisz w „Dopasowane” i widzisz projekty, które czekają dokładnie na twoje umiejętności. Nie musisz pytać, gdzie się przydasz.</p>
       </div>
       <div class="about-card">
         <h3>Dla autora pomysłu</h3>
@@ -6274,7 +6274,7 @@ html.theme-dark #s-profile-me .mp-composer-field{color:var(--txm)}
 
 
     <div class="about-block"><div class="about-num">Instrukcja obsługi</div><div class="about-h">Jak działa CollaboHub?</div><div class="about-p">CollaboHub jest jednocześnie przestrzenią pomysłów i systemem prowadzenia demokratycznych projektów. Luźny pomysł może istnieć jako propozycja, ale kiedy zbierze ludzi, potrzeby zespołu, zadania i decyzje, staje się projektem z pamięcią pracy.</div><div class="permissions-grid"><div class="perm-card"><h4>Członek platformy</h4><ul><li>może komentować, reagować i proponować wkład</li><li>może zgłosić się do potrzeby zespołu albo zaproponować nową</li><li>może utworzyć wariant projektu, gdy wizje się rozchodzą</li><li>nie głosuje w decyzjach projektu, jeśli nie jest członkiem projektu</li></ul></div><div class="perm-card"><h4>Członek projektu</h4><ul><li>ma głos w decyzjach formalnych projektu</li><li>może przyjmować zadania i oceniać wykonanie</li><li>uczestniczy w końcowym podziale punktów wkładu</li><li>jego głosy i powody zostają w rejestrze</li></ul></div><div class="perm-card"><h4>Potrzeba zespołu</h4><ul><li>opisuje kompetencję, doświadczenie lub możliwość przydatną w projekcie</li><li>można zaprosić osobę, zgłosić się samemu albo zaproponować nową potrzebę</li><li>brak kandydata pozostaje widoczny, ale nie blokuje dalszej pracy</li></ul></div></div></div>
-    <div class="about-block"><div class="about-num">Quirksy platformy</div><div class="about-h">Zasady, które trzeba znać</div><div class="quirk-list"><div class="quirk"><b>Decyzja formalna</b> zmienia sens projektu, role, zatwierdzone treści albo skład zespołu. Wymaga głosowania członków projektu.</div><div class="quirk"><b>Ustalenie robocze</b> organizuje pracę. Wchodzi po 48 godzinach, jeśli nikt nie zgłosi sprzeciwu. Sprzeciw eskaluje sprawę do decyzji formalnej.</div><div class="quirk"><b>Wkład swobodny</b> to komentarz, link, plik, szkic albo reakcja. Zostaje w historii, ale sam nie jest głosem.</div><div class="quirk"><b>Głosowanie z powodami</b> rozdziela dwie rzeczy: możesz dołączyć do istniejącego argumentu albo dodać własny powód. Każdy głos ma uzasadnienie.</div><div class="quirk"><b>Utwórz wariant</b> działa jak pokojowy fork. Gdy grupa dzieli się 50/50, jedna strona może skopiować strukturę projektu i rozwijać alternatywną wersję.</div><div class="quirk"><b>Rejestr projektu</b> jest pamięcią organizacyjną. Pokazuje kto, kiedy, co zmienił, dlaczego i z jaką decyzją było to powiązane.</div></div></div>
+    <div class="about-block"><div class="about-num">Mechanizmy platformy</div><div class="about-h">Zasady, które trzeba znać</div><div class="quirk-list"><div class="quirk"><b>Decyzja formalna</b> zmienia sens projektu, role, zatwierdzone treści albo skład zespołu. Wymaga głosowania członków projektu.</div><div class="quirk"><b>Ustalenie robocze</b> organizuje pracę. Wchodzi po 48 godzinach, jeśli nikt nie zgłosi sprzeciwu. Sprzeciw eskaluje sprawę do decyzji formalnej.</div><div class="quirk"><b>Wkład swobodny</b> to komentarz, link, plik, szkic albo reakcja. Zostaje w historii, ale sam nie jest głosem.</div><div class="quirk"><b>Głosowanie z powodami</b> rozdziela dwie rzeczy: możesz dołączyć do istniejącego argumentu albo dodać własny powód. Każdy głos ma uzasadnienie.</div><div class="quirk"><b>Utwórz wariant</b> działa jak pokojowy fork. Gdy grupa dzieli się 50/50, jedna strona może skopiować strukturę projektu i rozwijać alternatywną wersję.</div><div class="quirk"><b>Rejestr projektu</b> jest pamięcią organizacyjną. Pokazuje kto, kiedy, co zmienił, dlaczego i z jaką decyzją było to powiązane.</div></div></div>
 
     <div class="about-block">
       <div class="about-num">Punkty współpracy</div>
@@ -6756,7 +6756,7 @@ function pendingInviteByRef(idea,ref){
 function myDirectInvitations(){const out=[];ideas.filter(idea=>!isPrivateIdeaDraft(idea)&&!projectIsArchived(idea)&&projectLifecycleStatus(idea)==='in_progress').forEach(idea=>{(idea.tasks||[]).forEach(t=>(t.fazy||[]).forEach(f=>{if((f.zaproszeni||[]).includes(MY_NAME))out.push({kind:'phase',idea,t,f});}));ensurePendingInviteIds(idea).forEach(inv=>{if(inv.person===MY_NAME)out.push({kind:inv.kind==='project'?'project':'role',idea,inv,inviteId:inv.id});});});return out;}
 function renderForMeInvites(){
   const rows=myDirectInvitations();if(!rows.length)return '';
-  return `<section class="for-me-invites"><div class="for-me-invites-head"><div><span>Zaproszenia</span><b>Dla mnie</b></div><strong>${rows.length}</strong></div><div class="for-me-invite-list">${rows.map(x=>{
+  return `<section class="for-me-invites"><div class="for-me-invites-head"><div><span>Zaproszenia</span><b>Dopasowane</b></div><strong>${rows.length}</strong></div><div class="for-me-invite-list">${rows.map(x=>{
     if(x.kind==='phase')return `<article class="for-me-invite-card"><div><span class="for-me-invite-kind">Faza zadania</span><b>${escHtml(x.f.tytul)}</b><p>${escHtml(x.idea.title)} · zadanie: ${escHtml(x.t.tytul||x.t.title||'')}</p></div><div class="for-me-invite-actions"><button type="button" class="view" onclick="openIdea(${x.idea.id})">Zobacz projekt</button><button type="button" class="accept" onclick="acceptTaskPhaseInvite(${x.idea.id},'${x.t.id}','${x.f.id}')">Przyjmij</button><button type="button" onclick="declineTaskPhaseInvite(${x.idea.id},'${x.t.id}','${x.f.id}')">Odrzuć</button></div></article>`;
     const project=x.kind==='project';return `<article class="for-me-invite-card"><div><span class="for-me-invite-kind">${project?'Projekt':'Rola w projekcie'}</span><b>${escHtml(project?x.idea.title:x.inv.role)}</b><p>${project?'Zaproszenie do współtworzenia':'Projekt: '+escHtml(x.idea.title)} · zaprasza: ${escHtml(x.inv.by||'członek projektu')}${x.inv.why?`<span class="invite-reason-copy invite-saved-message"><b>Dlaczego:</b> ${mdRender(x.inv.why)}</span>`:''}</p></div><div class="for-me-invite-actions"><button type="button" class="view" onclick="openIdea(${x.idea.id})">Zobacz projekt</button><button type="button" class="accept" onclick="acceptMyInvite(${x.idea.id},'${x.inviteId}')">Przyjmij</button><button type="button" onclick="declineMyInvite(${x.idea.id},'${x.inviteId}')">Odrzuć</button></div></article>`;
   }).join('')}</div></section>`;
@@ -6978,7 +6978,7 @@ function renderRoleRequirements(idea,ideaId){
   const needCards=roles.map((r,idx)=>`<div class="need-card-wrap" style="--need-order:${idx}">${buildCard(r,idx)}</div>`);
   const needsSec=needCards.length?`<div class="need-cards-grid"><div class="need-cards-column">${needCards.filter((_,index)=>index%2===0).join('')}</div><div class="need-cards-column">${needCards.filter((_,index)=>index%2===1).join('')}</div></div>`:'<div style="font-size:13px;color:var(--txf);margin-bottom:8px">Zespół nie dodał jeszcze żadnych potrzeb.</div>';
   const pendingInvites=ensurePendingInviteIds(idea);
-  const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dla mnie”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dla mnie”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
+  const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dopasowane”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dopasowane”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
   return needsSec + invitesSec;
 }
 
@@ -7980,9 +7980,10 @@ function openIdea(id,preserveScroll=false,opts={}){
 
   const tabPrzeglad=renderProjectOverviewBottom(idea,id);
 
+  const taskOverview=projectOverviewStats(idea);
   const tabZadania=`<div class="sc task-tab-card">
       <div class="task-tab-head"><div><div class="task-tab-title">Zadania</div><div class="task-tab-sub">Otwarta lista pracy bez głosowania. Każdy może wziąć własny kawałek; jego pliki i aktualizacje należą tylko do niego.</div></div><div class="task-add-launch"><button type="button" class="prop-btn task-plus" title="Dodaj zadanie" onclick="openTaskModal(${id})">+ Dodaj zadanie</button></div></div>
-      ${idea.tasks.length?`<div class="task-summary">${[['otwarte','t-open','otwarte'],['w_toku','t-prog','w toku'],['zrobione','t-done','zrobione']].map(([st,cls,lbl])=>{const n=idea.tasks.filter(x=>taskComputedStatus(x)===st).length;return n?`<span class="tsum ${cls}">${lbl}: ${n}</span>`:'';}).join('')}</div>`:''}
+      ${idea.tasks.length?`<div class="task-summary">${[['otwarte','t-open','otwarte'],['w_toku','t-prog','w toku'],['zrobione','t-done','zrobione']].map(([st,cls,lbl])=>{const n=idea.tasks.filter(x=>taskComputedStatus(x)===st).length;return n?`<span class="tsum ${cls}">${lbl}: ${n}</span>`:'';}).join('')}${taskOverview.overdue?`<span class="tsum t-overdue">po terminie: ${taskOverview.overdue}</span>`:''}</div>`:''}
       ${tasksHTML||'<div style="font-size:13px;color:var(--txf);margin-bottom:6px">Brak aktywnych zadań. Rozbij realizację na konkretne kroki z odpowiedzialnymi osobami.</div>'}
       ${closedHTML}</div>`;
 
@@ -8829,7 +8830,7 @@ function projectMeetingAssetCard(ideaId,meeting,kind,canEdit){const file=meeting
 async function saveProjectMeetingAttachment(ideaId,meetingId,kind,input){const idea=ideas.find(row=>row.id===ideaId),meeting=(idea?.meetings||[]).find(row=>String(row.id)===String(meetingId)),file=await projectMeetingFileFromFile(input?.files?.[0]);if(!meeting||!file)return;meeting[kind]=file;idea.log=idea.log||[];idea.log.push({text:`Dodano ${kind==='agenda'?'agendę':'sprawozdanie'} do spotkania: ${meeting.title}`,date:TODAY,time:NOW_TIME(),type:'dokument',meetingId:meeting.id});queuePersistence();openIdea(ideaId,true);toast(`${kind==='agenda'?'Agenda':'Sprawozdanie'} zostało dodane.`,'ok');}
 function downloadProjectMeetingAttachment(ideaId,meetingId,kind){const idea=ideas.find(row=>row.id===ideaId),file=(idea?.meetings||[]).find(row=>String(row.id)===String(meetingId))?.[kind];if(!file?.data)return toast('Ten plik nie ma zapisanej zawartości.','warn');const link=document.createElement('a');link.href=file.data;link.download=file.name||`${kind}.pdf`;document.body.appendChild(link);link.click();link.remove();}
 function openProjectMeetingPin(ideaId,meetingId){openProjectBulletinPicker(ideaId);if(!projectPinPickerState)return;projectPinPickerState.mode='project';projectPinPickerState.filter='meeting';projectPinPickerState.selected=`meeting:${meetingId}`;renderProjectPinModal();}
-function renderProjectMeetingsTab(idea,ideaId){idea.meetings=idea.meetings||[];const canEdit=isActiveProjectMember(idea)&&projectLifecycleStatus(idea)==='in_progress',rows=idea.meetings.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)),upcoming=rows.filter(row=>!projectMeetingEnded(row)),past=rows.filter(projectMeetingEnded).reverse();const card=meeting=>{const date=projectMeetingDateParts(meeting),safeLink=safeUserUrl(meeting.link||'','link');return `<article class="project-meeting-card"><div class="project-meeting-date"><strong>${escHtml(date.day)}</strong><span>${escHtml(date.month)} ${escHtml(date.year)}</span><small>${escHtml(date.time)}</small></div><div class="project-meeting-main"><span class="project-meeting-kicker">${projectMeetingEnded(meeting)?'Zakończone spotkanie':'Zaplanowane spotkanie'}</span><h3>${escHtml(meeting.title||'Spotkanie projektu')}</h3><p class="project-meeting-description">${escHtml(meeting.description||'Nie dodano jeszcze opisu spotkania.')}</p><div class="project-meeting-meta"><span>${Number(meeting.participants||0)} ${plural(Number(meeting.participants||0),['uczestnik','uczestników','uczestników'])}</span><span>Utworzyła: ${escHtml(meeting.by||'Zespół projektu')}</span></div><div class="project-meeting-actions"><button type="button" class="project-meeting-action" onclick="openProjectMeeting(${ideaId},'${escAttr(meeting.id)}')">Zobacz szczegóły</button>${safeLink?`<a class="project-meeting-action" href="${escAttr(safeLink)}" target="_blank" rel="noopener noreferrer">Dołącz przez link ↗</a>`:''}${canEdit?`<button type="button" class="project-meeting-action" onclick="openProjectMeetingPin(${ideaId},'${escAttr(meeting.id)}')">Przypnij na przeglądzie</button>`:''}</div></div><div class="project-meeting-assets">${projectMeetingAssetCard(ideaId,meeting,'agenda',canEdit)}${projectMeetingAssetCard(ideaId,meeting,'report',canEdit)}</div></article>`;};const group=(title,list)=>list.length?`<section class="project-meeting-group"><h3 class="project-meeting-group-title">${title}</h3>${list.map(card).join('')}</section>`:'';return `<div class="project-meetings-tab"><header class="project-meetings-head"><div><h2>Spotkania</h2><p>Terminy pracy zespołu, linki, agenda oraz sprawozdania znajdują się w jednym miejscu.</p></div>${canEdit?`<button type="button" class="project-meeting-primary" onclick="openScheduleProjectMeeting(${ideaId})">+ Zaplanuj nowe spotkanie</button>`:''}</header>${group('Nadchodzące',upcoming)}${group('Zakończone',past)}${rows.length?'':'<div class="project-meeting-empty">Nie zaplanowano jeszcze żadnego spotkania.</div>'}</div>`;}
+function renderProjectMeetingsTab(idea,ideaId){idea.meetings=idea.meetings||[];const member=isActiveProjectMember(idea),canEdit=member&&projectLifecycleStatus(idea)==='in_progress',rows=idea.meetings.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)),upcoming=rows.filter(row=>!projectMeetingEnded(row)),past=rows.filter(projectMeetingEnded).reverse();const card=meeting=>{const date=projectMeetingDateParts(meeting),safeLink=safeUserUrl(meeting.link||'','link');return `<article class="project-meeting-card"><div class="project-meeting-date"><strong>${escHtml(date.day)}</strong><span>${escHtml(date.month)} ${escHtml(date.year)}</span><small>${escHtml(date.time)}</small></div><div class="project-meeting-main"><span class="project-meeting-kicker">${projectMeetingEnded(meeting)?'Zakończone spotkanie':'Zaplanowane spotkanie'}</span><h3>${escHtml(meeting.title||'Spotkanie projektu')}</h3><p class="project-meeting-description">${escHtml(meeting.description||'Nie dodano jeszcze opisu spotkania.')}</p><div class="project-meeting-meta"><span>${Number(meeting.participants||0)} ${plural(Number(meeting.participants||0),['uczestnik','uczestników','uczestników'])}</span><span>Utworzyła: ${escHtml(meeting.by||'Zespół projektu')}</span></div><div class="project-meeting-actions"><button type="button" class="project-meeting-action" onclick="openProjectMeeting(${ideaId},'${escAttr(meeting.id)}')">Zobacz szczegóły</button>${safeLink?`<a class="project-meeting-action" href="${escAttr(safeLink)}" target="_blank" rel="noopener noreferrer">Dołącz przez link ↗</a>`:''}${canEdit?`<button type="button" class="project-meeting-action" onclick="openProjectMeetingPin(${ideaId},'${escAttr(meeting.id)}')">Przypnij na przeglądzie</button>`:''}</div></div><div class="project-meeting-assets">${projectMeetingAssetCard(ideaId,meeting,'agenda',canEdit)}${projectMeetingAssetCard(ideaId,meeting,'report',canEdit)}</div></article>`;};const group=(title,list)=>list.length?`<section class="project-meeting-group"><h3 class="project-meeting-group-title">${title}</h3>${list.map(card).join('')}</section>`:'';const empty=rows.length?'':`<div class="project-meeting-empty"><strong>Nie zaplanowano jeszcze żadnego spotkania.</strong>${canEdit?`<span>Ustal termin i dodaj agendę, żeby zespół wiedział, kiedy i nad czym pracuje.</span><button type="button" class="project-meeting-primary" onclick="openScheduleProjectMeeting(${ideaId})">+ Zaplanuj spotkanie</button>`:member?'<span>Nowe spotkanie może zaplanować członek zespołu, gdy projekt jest w toku.</span>':`<span>Spotkania planują członkowie projektu. Zgłoś chęć dołączenia, aby współtworzyć harmonogram.</span><button type="button" class="project-meeting-action" onclick="projectHeaderJoin(${ideaId})">Zgłoś chęć dołączenia</button>`}</div>`;return `<div class="project-meetings-tab"><header class="project-meetings-head"><div><h2>Spotkania</h2><p>Terminy pracy zespołu, linki, agenda oraz sprawozdania znajdują się w jednym miejscu.</p></div>${canEdit?`<button type="button" class="project-meeting-primary" onclick="openScheduleProjectMeeting(${ideaId})">+ Zaplanuj nowe spotkanie</button>`:''}</header>${group('Nadchodzące',upcoming)}${group('Zakończone',past)}${empty}</div>`;}
 function openProjectMeeting(ideaId,meetingId){const idea=ideas.find(i=>i.id===ideaId),meeting=idea?.meetings?.find(m=>String(m.id)===String(meetingId));if(!meeting)return;const safeLink=safeUserUrl(meeting.link||'','link'),canEdit=isActiveProjectMember(idea)&&projectLifecycleStatus(idea)==='in_progress';appModal(`<div class="meeting-detail-grid"><div><span class="project-meeting-kicker">Spotkanie projektu</span><h3>${escHtml(meeting.title||'Spotkanie projektu')}</h3><p>${escHtml(projectMeetingDateLabel(meeting))}${meeting.endDate?`–${escHtml(new Date(meeting.endDate).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}))}`:''} · ${Number(meeting.participants||0)} ${plural(Number(meeting.participants||0),['osoba','osoby','osób'])}</p></div><div class="meeting-detail-description">${escHtml(meeting.description||'Nie dodano opisu spotkania.')}</div><div class="meeting-detail-assets">${projectMeetingAssetCard(ideaId,meeting,'agenda',canEdit)}${projectMeetingAssetCard(ideaId,meeting,'report',canEdit)}</div><div class="project-meeting-actions">${safeLink?`<a class="vbtn voted-yes meeting-open-link" href="${escAttr(safeLink)}" target="_blank" rel="noopener noreferrer">Otwórz link do spotkania</a>`:''}${canEdit?`<button class="vbtn" onclick="closeAppModal();openProjectMeetingPin(${ideaId},'${escAttr(meeting.id)}')">Przypnij na przeglądzie</button>`:''}</div><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zamknij</button></div></div>`,'meeting-detail-modal');}
 function renderProjectStatus(idea,id){
   const status=projectLifecycleStatus(idea),order=['in_progress','completed','evaluation'],current=order.indexOf(status);
@@ -8901,7 +8902,7 @@ function projectNowOverviewCard(idea,id){
     [`${stat.done} z ${stat.total}`,'zadań ukończonych','tasks'],
     [stat.pending,plural(stat.pending,['decyzja oczekuje','decyzje oczekują','decyzji oczekuje']),'decisions'],
     [stat.overdue,plural(stat.overdue,['zadanie po terminie','zadania po terminie','zadań po terminie']),'overdue'],
-    [stat.active,plural(stat.active,['aktywna osoba w tym tygodniu','aktywne osoby w tym tygodniu','aktywnych osób w tym tygodniu']),'people'],
+    [stat.active,plural(stat.active,['osoba z własnym wpisem w tym tygodniu','osoby z własnym wpisem w tym tygodniu','osób z własnym wpisem w tym tygodniu']),'people'],
     [`${stat.rolesFilled} z ${stat.rolesTotal}`,'ról w zespole','roles'],
     [stat.duration,plural(stat.duration,['dzień trwania projektu','dni trwania projektu','dni trwania projektu']),'duration']
   ];
@@ -10396,7 +10397,7 @@ function docLibraryStatusChip(d){
 function docLibraryMeta(idea,d){
   const task=d.taskId?(idea.tasks||[]).find(t=>t.id===d.taskId):null;
   const type=task?`powiązany z zadaniem: ${escHtml(task.tytul||task.title)}`:'dokument projektu';
-  const status=d.adopted?'status: uchwalona, zamrożona':d.voting?'status: w głosowaniu, zamrożona':d.frozen?'status: zamrożona':'status: otwarta, można edytować';
+  const status=d.adopted?'status: uchwalony, zamrożony':d.voting?'status: w głosowaniu, zamrożony':d.frozen?'status: zamrożony':'status: otwarty, można edytować';
   return `Utworzony przez ${escHtml(d.by||'')} · ${escHtml(d.date||'')} · ${type} · ${status} · ${(d.versions||[]).length} ${plural((d.versions||[]).length,['wersja','wersje','wersji'])}`;
 }
 function taskFileLibraryEntries(idea){
@@ -11012,9 +11013,11 @@ function renderTaskCardV2(idea,ideaId,t){
   migrateTaskModel(t);const status=taskComputedStatus(t),done=t.fazy.filter(f=>f.stan==='zrobiona').length,people=taskContributors(t);
   const stClass=status==='zrobione'?'ts-zrobione':status==='w_toku'?'ts-wtoku':'ts-otwarte';
   const closing=t.zamykanie?.status==='grace'?`<span>· domknięcie do ${new Date(t.zamykanie.deadlineAt).toLocaleString('pl-PL')}</span>`:'';
+  const deadline=t.termin||t.deadline||'',due=overviewDateTimestamp(deadline),reference=overviewDateTimestamp(TODAY)||Date.now(),overdue=status!=='zrobione'&&Number.isFinite(due)&&due<reference;
+  const deadlineMeta=deadline?`<span>·</span><span class="${overdue?'task-overdue-label':''}">${overdue?'Po terminie: ':'Termin: '}${escHtml(fmtDate(deadline))}</span>`:'';
   const posts=(t.watki||[]).reduce((n,w)=>n+(w.posty||[]).length,0);
   const pct=t.fazy.length?Math.round((done/t.fazy.length)*100):0;
-  return `<article class="task-card-v2" role="button" tabindex="0" onclick="openTaskDetail(${ideaId},'${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTaskDetail(${ideaId},'${t.id}')}"><div class="task-card-v2-head"><div class="task-card-v2-top"><div><div class="task-card-v2-title">${escHtml(t.tytul)}</div><div class="task-card-v2-meta"><span>${t.fazy.length} ${plural(t.fazy.length,['faza','fazy','faz'])}</span><span>·</span><span>${(t.watki||[]).length} ${plural((t.watki||[]).length,['wątek','wątki','wątków'])}</span><span>·</span><span>${posts} ${plural(posts,['wiadomość','wiadomości','wiadomości'])}</span>${closing}</div><div class="task-contributors"><span class="task-contributors-label">Osoby, które przyjęły pracę</span>${people.length?people.map(taskPersonPlain).join(''):'<span class="task-contributors-label">jeszcze nikt</span>'}</div></div><div class="task-card-v2-side"><span class="task-progress-ring" style="--pct:${pct}%"><span class="task-progress-ring-label">${pct}%</span></span><span class="task-status ${stClass}">${taskStatusLabel(status)}</span></div></div><div class="task-progress-label"><b>${done} z ${t.fazy.length}</b> faz ukończonych</div></div></article>`;
+  return `<article class="task-card-v2${overdue?' overdue':''}" role="button" tabindex="0" onclick="openTaskDetail(${ideaId},'${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTaskDetail(${ideaId},'${t.id}')}"><div class="task-card-v2-head"><div class="task-card-v2-top"><div><div class="task-card-v2-title">${escHtml(t.tytul)}</div><div class="task-card-v2-meta"><span>${t.fazy.length} ${plural(t.fazy.length,['faza','fazy','faz'])}</span><span>·</span><span>${(t.watki||[]).length} ${plural((t.watki||[]).length,['wątek','wątki','wątków'])}</span><span>·</span><span>${posts} ${plural(posts,['wiadomość','wiadomości','wiadomości'])}</span>${deadlineMeta}${closing}</div><div class="task-contributors"><span class="task-contributors-label">Osoby, które przyjęły pracę</span>${people.length?people.map(taskPersonPlain).join(''):'<span class="task-contributors-label">jeszcze nikt</span>'}</div></div><div class="task-card-v2-side"><span class="task-progress-ring" style="--pct:${pct}%"><span class="task-progress-ring-label">${pct}%</span></span><span class="task-status ${stClass}">${taskStatusLabel(status)}</span></div></div><div class="task-progress-label"><b>${done} z ${t.fazy.length}</b> faz ukończonych</div></div></article>`;
 }
 function toggleTaskCard(ideaId,tid){const {idea,t}=findTask(ideaId,tid);if(!idea||!t)return;t._cardOpen=!t._cardOpen;openIdea(ideaId,true);}
 function taskPhaseMenu(ideaId,t,f){
@@ -11164,7 +11167,16 @@ function toggleTaskPhase(ideaId,tid,pid,head){
   const collapse=card.querySelector('.tphase-collapse');if(collapse){collapse.setAttribute('aria-hidden',String(!open));collapse.toggleAttribute('inert',!open);}
   const caret=card.querySelector('.tphase-caret');if(caret)caret.textContent=open?'▾':'▸';
 }
-function collapseTaskPhases(){}
+function collapseTaskPhases(ideaId,tid){
+  const {t}=findTask(ideaId,tid);if(!t)return;
+  t._openPhases={};
+  document.querySelectorAll('.task-detail-modal .tphase-card.open').forEach(card=>{
+    card.classList.remove('open');
+    card.querySelector('.tphase-card-head')?.setAttribute('aria-expanded','false');
+    const collapse=card.querySelector('.tphase-collapse');if(collapse){collapse.setAttribute('aria-hidden','true');collapse.setAttribute('inert','');}
+    const caret=card.querySelector('.tphase-caret');if(caret)caret.textContent='▸';
+  });
+}
 function toggleInlineTaskProgress(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!f||!taskPhaseCanContribute(f)){toast('Aktualizacje dodaje właściciel albo osoba z jego bańki.','warn');return;}const body=document.querySelector('.task-detail-modal .task-detail-body'),scrollTop=body?.scrollTop||0;f._addingProgress=!f._addingProgress;t._openPhases=t._openPhases||{};t._openPhases[pid]=true;openTaskDetail(ideaId,tid);requestAnimationFrame(()=>{const nextBody=document.querySelector('.task-detail-modal .task-detail-body');if(nextBody)nextBody.scrollTop=scrollTop;if(f._addingProgress){const input=document.getElementById('mb-inp-task-phase-progress-'+pid);input?.focus({preventScroll:true});}});}
 async function saveInlineTaskProgress(ideaId,tid,pid){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid),key='task-phase-progress-'+pid,text=mbVal(key);if(!f||!taskPhaseCanContribute(f)){toast('Nie należysz do tej fazy.','warn');return;}const pliki=await taskFilesFromInput('mb-file-'+key);if(!text&&!pliki.length){toast('Dodaj tekst albo plik.','warn');return;}const kiedy=TODAY+' '+NOW_TIME();f.postep.push({id:'tpu'+Date.now(),osoba:MY_NAME,tekst:text,kiedy,pliki});f.ostatniaAktywnosc=kiedy;f._addingProgress=false;f.ruszyla=true;f.stan='w_toku';taskActivity(t,`${MY_NAME} dodała aktualizację w fazie „${f.tytul}"`);openTaskDetail(ideaId,tid);}
 function downloadPhaseUpdateFile(ideaId,tid,pid,postId,index){const {t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid),p=f?.postep?.find(x=>x.id===postId),file=p?.pliki?.[index];if(!file)return;const a=document.createElement('a');a.href=file.data;a.download=file.name;document.body.appendChild(a);a.click();a.remove();}
@@ -11458,6 +11470,12 @@ function addPoints(n){
 }
 
 // ——— REASON-BASED VOTING ———
+function voteWasAccepted(idea,v){
+  if(v?.accepted===true)return true;
+  if(v?.accepted===false||v?.expired||v?.open)return false;
+  const yes=Number(v?.yes||0),no=Number(v?.no||0);
+  return voteQuorumReached(idea,v)&&yes>=voteThreshold(idea,v)&&yes>no;
+}
 function renderVoteCard(ideaId,v,full,compact=false){
   const idea=ideas.find(i=>i.id===ideaId);
   ensureVoteModeSnapshot(idea,v);
@@ -11510,7 +11528,7 @@ function renderVoteCard(ideaId,v,full,compact=false){
   if(v.open&&canVote&&v.ui!=='quickVote'){
     actions=`<div class="vote-quick-buttons"><button class="vbtn voted-yes" onclick="startQuickVote(${ideaId},'${v.id}','yes')">${v.myVote==='yes'?'✓ ':' '}Głosuję ZA</button><button class="vbtn voted-no" onclick="startQuickVote(${ideaId},'${v.id}','no')">${v.myVote==='no'?'✓ ':' '}Głosuję PRZECIW</button><button class="vbtn abstain" onclick="startQuickVote(${ideaId},'${v.id}','abstain')">${v.myVote==='abstain'?'✓ ':' '}Wstrzymuję się</button></div>${v.myVote?`<div class="vote-closed">Twój głos: ${voteStanceLabel(v.myVote)}. Możesz kliknąć inną opcję i zmienić głos.</div>`:''}`;
   }else if(v.open&&!canVote)actions='<div class="vote-closed">Nie należysz do elektoratu tej decyzji. Kandydaci i osoby spoza projektu nie mogą nad nią głosować.</div>';
-  const status=!v.open?`<div class="vote-closed">${v.expired?'Wygasło bez rozstrzygnięcia':(v.accepted?'✓ Przyjęto':'✗ Odrzucono')}</div>`:'';
+  const status=!v.open?`<div class="vote-closed">${v.expired?'Wygasło bez rozstrzygnięcia':(voteWasAccepted(idea,v)?'✓ Przyjęto':'✗ Odrzucono')}</div>`:'';
   const openPage=full?'':`<button class="task-toggle" style="margin-top:6px" onclick="openVote(${ideaId},'${v.id}')">⤷ Otwórz stronę głosowania i dyskusję</button>`;
   const demoBtns=v.open&&canVote?`<div class="demo-strip"><span class="demo-strip-label">Demo wyniku:</span><button class="demo-btn ok" onclick="demoConsensus(${ideaId},'${v.id}')">✓ konsensus (przechodzi)</button><button class="demo-btn no" onclick="demoObjection(${ideaId},'${v.id}')">✗ sprzeciw (odrzucone)</button><button class="demo-btn" onclick="simulateVoteDeadline(${ideaId},'${v.id}')">upływ terminu</button></div>`:'';
   const proposedContent=renderVoteContent(idea,v);
@@ -12248,7 +12266,7 @@ function openTeam(teamId,opts={}){
   const mode=({online:'Online',local:'Lokalnie',hybrid:'Hybrydowo'})[t.workMode]||'Tryb nieokreślony';
   const membership=mine?'Twój zespół':pending?'Zgłoszenie oczekuje':'Poznaj zespół';
   const chipList=rows=>rows.map(s=>`<span class="tp-chip">${escHtml(s)}</span>`).join('');
-  document.getElementById('team-profile-header').innerHTML=`<div class="tp-side-card"><a class="tp-back" href="#teams">← Wszystkie zespoły</a><div class="tp-membership">${IC.users} ${membership}</div>${!mine?`<button class="tp-button primary" ${pending?'disabled':`onclick="${action('inviteMyselfToGlobalTeam',t.id)}"`}>${pending?'Czekasz na akceptację':'Zgłoś chęć dołączenia'}</button>`:`<button class="tp-button primary" onclick="${action('openTeamAnnouncementModal',t.id)}">${IC.plus} Dodaj ogłoszenie</button>`}<a class="tp-button" href="#tp-discussion">${IC.chat} Dyskusja zespołu</a><a class="tp-button" href="#tp-rules">${IC.log} Zasady współpracy</a></div>
+  document.getElementById('team-profile-header').innerHTML=`<div class="tp-side-card"><a class="tp-back" href="#teams">← Wszystkie zespoły</a><div class="tp-membership">${IC.users} ${membership}</div>${!mine?pending?`<button class="tp-button" onclick="${action('confirmWithdrawGlobalTeamRequest',t.id)}">Wycofaj zgłoszenie</button>`:`<button class="tp-button primary" onclick="${action('openGlobalTeamJoinRequest',t.id)}">Zgłoś chęć dołączenia</button>`:`<button class="tp-button primary" onclick="${action('openTeamAnnouncementModal',t.id)}">${IC.plus} Dodaj ogłoszenie</button>`}<a class="tp-button" href="#tp-discussion">${IC.chat} Dyskusja zespołu</a><a class="tp-button" href="#tp-rules">${IC.log} Zasady współpracy</a></div>
     <section class="tp-side-card"><h2>Szukamy do współpracy</h2><div class="tp-chips">${chipList(wanted)||'<p>Obecnie nie szukamy konkretnych kompetencji.</p>'}</div></section>
     <section class="tp-side-card"><h2>Informacje o zespole</h2><dl class="tp-info"><dt>Tryb pracy</dt><dd>${escHtml(mode)}</dd>${t.location&&t.location!=='Online'?`<dt>Miejsce</dt><dd>${escHtml(t.location)}</dd>`:''}<dt>Data utworzenia</dt><dd>${escHtml(t.date||'Nie podano')}</dd><dt>Założyciel / założycielka</dt><dd>${escHtml(t.createdBy||'Nie podano')}</dd></dl></section>`;
   const projectCards=projects.map(i=>`<a class="tp-project" href="${escAttr(ideaHash(i))}"><span class="tp-project-icon">${IC.bulb}</span><div><h3>${escHtml(i.title)}</h3><p>${escHtml(String(i.desc||i.description||'').slice(0,180))}</p><span class="tp-meta">${escHtml(i.cat||'Projekt')} · ${escHtml(i.date||'')}</span></div><span class="tp-chip">${escHtml(ideaPhaseLabel(i))}</span></a>`).join('');
@@ -12305,7 +12323,10 @@ function acceptTeamGovernanceDecision(teamId,decisionId){
 }
 function acceptGlobalTeamMember(teamId,name){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t||!teamAcceptedMembers(t).includes(MY_NAME)||!t.pendingMembers.includes(name))return;const inv=(t.pendingInvites||[]).find(x=>x.name===name)||{};t.pendingMembers=t.pendingMembers.filter(n=>n!==name);t.pendingInvites=(t.pendingInvites||[]).filter(x=>x.name!==name);if(!t.members.includes(name))t.members.push(name);t.memberRoles=t.memberRoles||{};if(inv.suggestedRoles?.length)t.memberRoles[name]=inv.suggestedRoles[0];t.discussion.push({by:MY_NAME,text:`${name} dołącza do teamu${t.memberRoles[name]?` w roli: ${t.memberRoles[name]}`:''}.`,date:TODAY});queuePersistence();openTeam(teamId);}
 function declineGlobalTeamMember(teamId,name){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t||!teamAcceptedMembers(t).includes(MY_NAME)||!t.pendingMembers.includes(name))return;t.pendingMembers=t.pendingMembers.filter(n=>n!==name);t.pendingInvites=(t.pendingInvites||[]).filter(x=>x.name!==name);t.discussion.push({by:MY_NAME,text:`${name} nie dołącza do teamu.`,date:TODAY});queuePersistence();openTeam(teamId);}
-function inviteMyselfToGlobalTeam(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;if(t.members.includes(MY_NAME)||t.pendingMembers.includes(MY_NAME)){toast('Jesteś już w tym teamie albo czekasz na akceptację.','warn');return;}t.pendingMembers.push(MY_NAME);t.pendingInvites=t.pendingInvites||[];t.pendingInvites.push({name:MY_NAME,suggestedRoles:memberExistingTeamRoles(myProfile).slice(0,1),note:'Zgłaszam chęć dołączenia do teamu.',status:'pending',by:MY_NAME,date:TODAY});t.discussion.push({by:MY_NAME,text:'Zgłaszam chęć dołączenia do teamu.',date:TODAY});queuePersistence();openTeam(teamId);}
+function openGlobalTeamJoinRequest(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;appModal(`<h3>Dołączyć do zespołu?</h3><p>Wyślesz zgłoszenie do zespołu „${escHtml(t.name)}”. Członkowie zespołu będą mogli je zaakceptować albo odrzucić.</p><label>Krótka wiadomość <span class="hint">opcjonalnie</span><textarea id="global-team-join-note" maxlength="600" placeholder="Napisz, dlaczego chcesz dołączyć albo w czym możesz pomóc."></textarea></label><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="inviteMyselfToGlobalTeam('${escAttr(teamId)}')">Wyślij zgłoszenie</button></div>`,'team-join-confirm-modal');}
+function inviteMyselfToGlobalTeam(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;if(t.members.includes(MY_NAME)||t.pendingMembers.includes(MY_NAME)){toast('Jesteś już w tym zespole albo czekasz na akceptację.','warn');return;}const note=(document.getElementById('global-team-join-note')?.value||'').trim()||'Zgłaszam chęć dołączenia do zespołu.';t.pendingMembers.push(MY_NAME);t.pendingInvites=t.pendingInvites||[];t.pendingInvites.push({name:MY_NAME,suggestedRoles:memberExistingTeamRoles(myProfile).slice(0,1),note,status:'pending',by:MY_NAME,date:TODAY});t.discussion.push({by:MY_NAME,text:note,date:TODAY});closeAppModal();queuePersistence();openTeam(teamId);toast('Zgłoszenie zostało wysłane.','ok');}
+function confirmWithdrawGlobalTeamRequest(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t||(t.pendingMembers||[]).indexOf(MY_NAME)<0)return;appModal(`<h3>Wycofać zgłoszenie?</h3><p>Zespół „${escHtml(t.name)}” nie będzie już widział Twojego oczekującego zgłoszenia. Możesz zgłosić się ponownie później.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zostaw zgłoszenie</button><button class="vbtn" style="color:var(--red)" onclick="withdrawGlobalTeamRequest('${escAttr(teamId)}')">Wycofaj zgłoszenie</button></div>`,'team-join-withdraw-modal');}
+function withdrawGlobalTeamRequest(teamId){const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;t.pendingMembers=(t.pendingMembers||[]).filter(name=>name!==MY_NAME);t.pendingInvites=(t.pendingInvites||[]).filter(row=>row.name!==MY_NAME);closeAppModal();queuePersistence();openTeam(teamId);toast('Zgłoszenie zostało wycofane.','ok');}
 function submitTeamToProjectFromProfile(teamId){const target=Number(document.getElementById(`team-project-target-${teamId}`)?.value||0);if(!target){toast('Wybierz projekt.','warn');return;}submitTeamToProject(target,teamId);}
 function renderTeamsTab(idea,ideaId){
   const teams=ensureIdeaTeams(idea);
@@ -12677,7 +12698,7 @@ function canRejectVote(idea,v){
   return voteQuorumReached(idea,v) && (v.no||0)>=thr && (v.no||0)>=(v.yes||0) && (parts<=1 || votes>=parts || v.closeReady || v.deadlineReached);
 }
 function voteState(idea,v){
-  if(!v.open) return v.accepted?{kind:'done',label:'przyjęta'}:{kind:'rejected',label:v.expired?'wygasła':'odrzucona'};
+  if(!v.open) return voteWasAccepted(idea,v)?{kind:'done',label:'przyjęta'}:{kind:'rejected',label:v.expired?'wygasła':'odrzucona'};
   const thr=voteThreshold(idea,v);
   if((v.yes||0)>=thr && (v.yes||0)>(v.no||0) && voteQuorumReached(idea,v)) return {kind:'waiting',label:'kworum osiągnięte · czeka na czas'};
   return {kind:'open',label:'otwarta'};
@@ -13945,7 +13966,7 @@ function memberSkillsWithCounts(){
 function renderMemberSkillFilters(){
   const host=document.getElementById('members-skill-options');if(!host)return;
   const q=String(memberSkillQ||'').trim().toLowerCase();
-  const rows=memberSkillsWithCounts().filter(([skill])=>!q||skill.toLowerCase().includes(q));
+  const rows=memberSkillsWithCounts().filter(([skill,count])=>count>0&&(!q||skill.toLowerCase().includes(q)));
   host.innerHTML=rows.map(([skill,count])=>`<label class="members-skill-option"><input type="checkbox" ${selectedMemberSkills.has(skill)?'checked':''} onchange="setMemberSkill(decodeURIComponent('${encodeURIComponent(skill)}'),this.checked)"><span>${escHtml(skill)}</span><i>${count}</i></label>`).join('')||'<div class="empty-inline">Brak kompetencji.</div>';
   const clear=document.getElementById('members-clear-filters');if(clear)clear.disabled=!selectedMemberSkills.size&&!memberSkillQ;
 }
@@ -13998,7 +14019,7 @@ function renderMembers(){
       <span class="members-card-online" aria-label="Osoba aktywna"></span>
       <div class="members-card-person">
         <div class="av members-card-avatar" style="background:${av.bg};color:${av.tx}">${memberAvatarContent(m.name,m.ini)}</div>
-        <div><div class="members-card-name">${escHtml(m.name)}</div><div class="members-card-since">Członek od ${escHtml(m.since.toLowerCase())}</div></div>
+        <div><div class="members-card-name">${escHtml(m.name)}</div><div class="members-card-since">Członek od ${escHtml(memberSinceLabel(m.since))}</div></div>
       </div>
       <div class="members-card-skills">${(m.skills||[]).slice(0,3).map(s=>`<span class="schip">${escHtml(s)}</span>`).join('')}</div>
       <p class="members-card-looking">„${escHtml(m.looking||'Chętnie dołączę do projektów zgodnych z moimi kompetencjami.')}”</p>
@@ -14052,8 +14073,14 @@ function submitMemberProfileThanks(id){
 }
 function profileBoardName(name){
   const first=String(name||'').trim().split(/\s+/)[0]||'profilu';
-  const forms={Anna:'Anny',Patrycja:'Patrycji',Katarzyna:'Katarzyny',Magdalena:'Magdaleny',Joanna:'Joanny',Agnieszka:'Agnieszki',Marta:'Marty'};
+  const forms={Anna:'Anny',Patrycja:'Patrycji',Katarzyna:'Katarzyny',Magdalena:'Magdaleny',Joanna:'Joanny',Agnieszka:'Agnieszki',Marta:'Marty',Marek:'Marka',Piotr:'Piotra',Tomasz:'Tomasza'};
   return forms[first]||(first.endsWith('a')?first.slice(0,-1)+'y':first);
+}
+function memberSinceLabel(value){
+  const text=String(value||'').trim().toLowerCase(),parts=text.split(/\s+/);
+  const forms={styczeń:'stycznia',luty:'lutego',marzec:'marca',kwiecień:'kwietnia',maj:'maja',czerwiec:'czerwca',lipiec:'lipca',sierpień:'sierpnia',wrzesień:'września',październik:'października',listopad:'listopada',grudzień:'grudnia'};
+  if(parts[0])parts[0]=forms[parts[0]]||parts[0];
+  return parts.join(' ');
 }
 function profileFullNameGenitive(name){
   const forms={'Anna Wiśniewska':'Anny Wiśniewskiej','Patrycja Kowalska':'Patrycji Kowalskiej','Katarzyna Zielińska':'Katarzyny Zielińskiej'};
@@ -14169,13 +14196,13 @@ function openMember(id,opts={}){
         <div>
           <h1 class="member-hero-name">${escHtml(m.name)}</h1>
           <div class="member-hero-tags">${m.roles.filter(r=>r!=='Członek').concat(m.skills.slice(0,2)).map(escHtml).join(' · ')}</div>
-          <div class="member-hero-person-meta"><span>${escHtml(memberNoun)} od ${escHtml(String(m.since||'').toLowerCase())}</span><span>·</span><span class="member-hero-pronouns">${escHtml(profilePronouns(m))}</span></div>
+          <div class="member-hero-person-meta"><span>${escHtml(memberNoun)} od ${escHtml(memberSinceLabel(m.since))}</span><span>·</span><span class="member-hero-pronouns">${escHtml(profilePronouns(m))}</span></div>
         </div>
       </div>
       <p class="member-hero-bio">${escHtml(m.bio||'')}</p>
       ${profileCollaborationLine(m)}
       <div class="member-hero-stats">
-        ${[[IC.star,m.points||0,'Punkty'],[IC.bulb,m.ideas||0,'Pomysłów'],[TREASURE_CHEST_ICON,memberResourceCount(m),'Zasobów'],[IC.check,m.done||0,'Zrealizowane'],[IC.users,teams.length,'Zespołów']].map(([ico,val,label])=>`<div class="member-stat"><span class="member-stat-ico">${ico}</span><span><strong>${val}</strong><small>${label}</small></span></div>`).join('')}
+        ${[[IC.star,m.points||0,'Punkty'],[IC.bulb,m.ideas||0,'Pomysłów'],[TREASURE_CHEST_ICON,memberResourceCount(m),'Zasobów'],[IC.check,m.done||0,'Realizacje'],[IC.users,teams.length,'Zespołów']].map(([ico,val,label])=>`<div class="member-stat"><span class="member-stat-ico">${ico}</span><span><strong>${val}</strong><small>${label}</small></span></div>`).join('')}
       </div>
     </section>
     ${profileCompetenciesSectionHTML(m,false)}
@@ -14834,7 +14861,7 @@ function renderMyProfile(){
       <div class="profile-av" style="background:var(--p200);color:var(--p800)">${memberAvatarContent(myProfile.name,myProfile.ini)}</div>
       <div class="profile-info">
         <div class="profile-name">${escHtml(myProfile.name)}</div>
-        <div class="profile-since">Członek od ${escHtml(myProfile.since)} · ${myProfile.roles.map(escHtml).join(' · ')}</div>
+        <div class="profile-since">Członek od ${escHtml(memberSinceLabel(myProfile.since))} · ${myProfile.roles.map(escHtml).join(' · ')}</div>
         <div class="profile-pronouns">Zaimki: ${escHtml(profilePronouns(myProfile))}</div>
         <div class="roles" style="margin-top:8px">${myProfile.roles.map(r=>`<span class="rb">${escHtml(r)}</span>`).join('')}</div>
         <div class="skill-chips" style="margin-top:8px">${myProfile.skills.map(s=>`<span class="schip">${escHtml(s)}</span>`).join('')}</div>
@@ -15032,7 +15059,7 @@ function renderMyProfile(){
             <div class="mp-identity">
               <h1>${escHtml(myProfile.name)} <button onclick="openProfileEdit()" aria-label="Edytuj dane">✎</button></h1>
               <div class="mp-roleline">${escHtml(roleLine||'Członkini społeczności')}</div>
-              <div class="mp-smallline">${escHtml(memberNoun)} od ${escHtml(String(myProfile.since||'').toLowerCase())} · ${escHtml(profilePronouns(myProfile))}</div>
+              <div class="mp-smallline">${escHtml(memberNoun)} od ${escHtml(memberSinceLabel(myProfile.since))} · ${escHtml(profilePronouns(myProfile))}</div>
             </div>
             <div class="ch-hero-description">${myProfile.bio?`<p>${escHtml(myProfile.bio)}</p>`:''}${profileCollaborationLine(myProfile)}</div>
           </div>
@@ -15040,7 +15067,7 @@ function renderMyProfile(){
             <div><b>${IC.star}</b><strong>${profileMember.points||myPoints}</strong><span>Punkty</span></div>
             <div><b>${IC.bulb}</b><strong>${profileMember.ideas||0}</strong><span>Pomysłów</span></div>
             <div><b>${TREASURE_CHEST_ICON}</b><strong>${memberResourceCount(profileMember)}</strong><span>Zasobów</span></div>
-            <div><b>${IC.check}</b><strong>${profileMember.done||0}</strong><span>Zrealizowane</span></div>
+            <div><b>${IC.check}</b><strong>${profileMember.done||0}</strong><span>Realizacje</span></div>
             <div><b>${IC.users}</b><strong>${teamsForPerson(myProfile.name).length}</strong><span>Zespołów</span></div>
           </div>
         </section>
@@ -15135,7 +15162,8 @@ function portfolioItemHTML(p,idx,who,editable){
       <div class="pf-meta"><div class="pi-title">${escHtml(p.title||p.name||'plik')}</div>${p.desc?`<div class="pi-desc">${escHtml(p.desc)}</div>`:''}<div class="pi-by">${escHtml(p.by||'')}${p.date?' · '+escHtml(p.date):''}</div></div></div>
       ${acts}${comments}</div>`;
   }
-  return `<div class="portfolio-item"><div class="pi-title">${escHtml(p.title||'')}</div>${p.desc?`<div class="pi-desc">${escHtml(p.desc)}</div>`:''}${p.link?`<a class="pi-link" href="javascript:void(0)">${escHtml(p.link)} →</a>`:''}${acts}${comments}</div>`;
+  const safeLink=safeUserUrl(p.link||'','link');
+  return `<div class="portfolio-item"><div class="pi-title">${escHtml(p.title||'')}</div>${p.desc?`<div class="pi-desc">${escHtml(p.desc)}</div>`:''}${safeLink?`<a class="pi-link" href="${escAttr(safeLink)}" target="_blank" rel="noopener noreferrer">${escHtml(p.link)} ↗</a>`:p.link?`<span class="pi-link">${escHtml(p.link)} · nieprawidłowy adres</span>`:''}${acts}${comments}</div>`;
 }
 function myPortfolioSection(){
   const list=myProfile.portfolio||[];
@@ -15369,7 +15397,7 @@ function buildGlobalSearchIndex(){
     add('project',idea.title,`${ideaPhaseLabel(idea)} · ${idea.cat||'projekt'}`,[idea.desc,idea.cat,idea.date,globalSearchObjectText(idea.fields||{}),globalSearchObjectText(idea.coalition||[])].join(' '),{ideaId:idea.id});
     (idea.tasks||[]).forEach(task=>add('task',task.title||task.tytul||'Zadanie',projectContext,globalSearchObjectText(task),{ideaId:idea.id,targetId:task.id}));
     (idea.votes||[]).forEach(vote=>{
-      const state=vote.open?'Głosowanie trwa':(vote.accepted===false?'Odrzucono':'Głosowanie zakończone');
+      const state=vote.open?'Głosowanie trwa':vote.expired?'Wygasło':voteWasAccepted(idea,vote)?'Przyjęto':'Odrzucono';
       add('vote',vote.prop||registerVoteSubject(idea,vote)||'Decyzja',`${projectContext} · ${state}`,globalSearchObjectText(vote),{ideaId:idea.id,targetId:vote.id});
     });
     (idea.docs||[]).forEach(doc=>add('doc',doc.title||doc.name||'Dokument',projectContext,globalSearchObjectText(doc),{ideaId:idea.id,targetId:doc.did||doc.id}));
@@ -15400,10 +15428,7 @@ function runGlobalSearch(query){
     else if(title.includes(normalized))score+=80;
     tokens.forEach(token=>{if(title.includes(token))score+=24;});
     if(item.kind==='member')score+=10;
-    const literal=String(query||'').trim().toLowerCase(),source=String(item.source||''),sourceLower=source.toLowerCase();
-    const hitAt=literal?sourceLower.indexOf(literal):-1;
-    const matchSnippet=hitAt>=0?globalSearchExcerpt(source.slice(Math.max(0,hitAt-42),hitAt+literal.length+78),125):'';
-    return {...item,score,order,matchSnippet};
+    return {...item,score,order};
   }).filter(Boolean).sort((a,b)=>b.score-a.score||a.order-b.order).slice(0,80);
 }
 function globalSearchHighlight(text,query){
@@ -15426,7 +15451,7 @@ function renderGlobalSearchResults(query){
   globalSearchResults.forEach((item,index)=>{item.resultIndex=index;const list=groups.get(item.kind)||[];list.push(item);groups.set(item.kind,list);});
   box.innerHTML=[...groups.entries()].map(([kind,items])=>{
     const meta=GLOBAL_SEARCH_META[kind]||{label:'Inne',singular:'Wynik',icon:'•'};
-    return `<div class="gs-group"><div class="gs-group-title">${escHtml(meta.label)} · ${items.length}</div>${items.map(item=>{const context=item.matchSnippet&&!registerMatchText(item.title).includes(registerMatchText(query))?`${item.subtitle}${item.subtitle?' · ':''}${item.matchSnippet}`:item.subtitle;return `<button type="button" class="gs-result" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="gs-result-icon">${meta.icon}</span><span class="gs-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(context,query)}</span></span><span class="gs-result-type">${escHtml(meta.singular)} →</span></button>`;}).join('')}</div>`;
+    return `<div class="gs-group"><div class="gs-group-title">${escHtml(meta.label)} · ${items.length}</div>${items.map(item=>`<button type="button" class="gs-result" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="gs-result-icon">${meta.icon}</span><span class="gs-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.subtitle,query)}</span></span><span class="gs-result-type">${escHtml(meta.singular)} →</span></button>`).join('')}</div>`;
   }).join('');
 }
 function openGlobalSearch(query){
@@ -15454,6 +15479,7 @@ function focusGlobalSearchNeedle(needle,selectors){
 function openGlobalSearchResult(index){
   const item=globalSearchResults[index];if(!item)return;
   closeAppModal();
+  const input=document.getElementById('global-search-input');if(input)input.value='';
   if(item.kind==='member')return openMember(item.memberId);
   if(item.kind==='team')return openTeam(item.teamId);
   if(item.kind==='project')return openIdea(item.ideaId);
@@ -16228,7 +16254,7 @@ function dictionaryFilteredEntries(){
 function dictionaryChoice(label,value,current,kind,count){
   const active=kind==='proposal'?dictionaryProposalTypes.has(value):current===value;
   const action=kind==='category'?`setDictionaryCategory('${value}')`:kind==='status'?`setDictionaryStatus('${value}')`:`toggleDictionaryProposalType('${value}')`;
-  return `<button class="dictionary-choice${active?' active':''}" type="button" onclick="${action}"><span class="dict-${kind==='proposal'?'check':'radio'}">${active?'✓':''}</span><span>${escHtml(label)}</span>${count!==undefined?`<span class="dictionary-count">${count}</span>`:''}</button>`;
+  return `<button class="dictionary-choice${active?' active':''}" type="button" aria-pressed="${active}" onclick="${action}"><span class="dict-${kind==='proposal'?'check':'radio'}">${active?'✓':''}</span><span>${escHtml(label)}</span>${count!==undefined?`<span class="dictionary-count">${count}</span>`:''}</button>`;
 }
 function renderDictionarySidebar(all){
   const side=document.getElementById('dictionary-sidebar');if(!side)return;
@@ -16252,7 +16278,7 @@ function dictionaryRow(item){
     <div class="dictionary-name">${dictionaryIcon(item.category)}<strong>${escHtml(item.name)}</strong></div>
     <div><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span></div>
     <div class="dictionary-definition">${escHtml(item.definition)}</div>
-    <div class="dictionary-usage"><span>♙&nbsp; ${item.people} ${item.people===1?'osoba':'osób'}</span><span>♧&nbsp; ${escHtml(item.teams||'')}</span>${item.projects?`<span>▣&nbsp; ${escHtml(item.projects)}</span>`:''}</div>
+    <div class="dictionary-usage"><span>♙&nbsp; ${item.people} ${plural(item.people,['osoba','osoby','osób'])}</span><span>♧&nbsp; ${escHtml(item.teams||'')}</span>${item.projects?`<span>▣&nbsp; ${escHtml(item.projects)}</span>`:''}</div>
     <div class="dictionary-row-status">${dictionaryStatusMarkup(item)}</div>
     <button class="dictionary-more" type="button" aria-label="Akcje" onclick="openDictionaryRowMenu(event,'${item.id}')">⋮</button>
   </article>`;
@@ -16283,7 +16309,7 @@ function setDictionarySort(value){dictionarySort=value;dictionaryPage=1;renderPl
 function openDictionaryEntry(id){
   const item=dictionaryEntries().find(x=>x.id===id);if(!item)return;
   const competency=item.category==='competency'&&item.source;
-  appModal(`<div class="dictionary-detail-head">${dictionaryIcon(item.category)}<div><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span><h3>${escHtml(item.name)}</h3></div></div><p class="dictionary-detail-definition">${escHtml(item.definition)}</p><div class="dictionary-detail-grid"><div><small>Użycie</small><b>${item.people} osób · ${escHtml(item.teams||'')}${item.projects?' · '+escHtml(item.projects):''}</b></div><div><small>Status</small><b>${item.status==='voting'?'W głosowaniu':item.status==='archived'?'Archiwalne':'Aktywne'}</b></div><div><small>Dodano</small><b>${escHtml(item.added)} · ${escHtml(item.by)}</b></div></div>${competency?`<div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal();openEditLevels('${item.source}','${item.sourceId}')">Zmień poziomy</button><button class="vbtn" onclick="closeAppModal();openProposeFix('${item.source}','${item.sourceId}')">Zaproponuj zmianę nazwy</button></div>`:''}`,'dictionary-detail-modal');
+  appModal(`<div class="dictionary-detail-head">${dictionaryIcon(item.category)}<div><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span><h3>${escHtml(item.name)}</h3></div></div><p class="dictionary-detail-definition">${escHtml(item.definition)}</p><div class="dictionary-detail-grid"><div><small>Użycie</small><b>${item.people} ${plural(item.people,['osoba','osoby','osób'])} · ${escHtml(item.teams||'')}${item.projects?' · '+escHtml(item.projects):''}</b></div><div><small>Status</small><b>${item.status==='voting'?'W głosowaniu':item.status==='archived'?'Archiwalne':'Aktywne'}</b></div><div><small>Dodano</small><b>${escHtml(item.added)} · ${escHtml(item.by)}</b></div></div>${competency?`<div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal();openEditLevels('${item.source}','${item.sourceId}')">Zmień poziomy</button><button class="vbtn" onclick="closeAppModal();openProposeFix('${item.source}','${item.sourceId}')">Zaproponuj zmianę nazwy</button></div>`:''}`,'dictionary-detail-modal');
 }
 function openDictionaryRowMenu(event,id){
   event.stopPropagation();document.querySelectorAll('.dictionary-floating-menu').forEach(x=>x.remove());
@@ -16669,10 +16695,33 @@ html.theme-dark .global-nav .nl svg,html.theme-dark .mp-hero-metrics b,html.them
 @media(max-width:600px){#s-profile-me .mp-hero-copy{grid-template-columns:64px minmax(0,1fr)!important;gap:14px!important}#s-profile-me .mp-avatar{width:64px!important;height:64px!important}.ch-hero-description{font-size:14px;line-height:1.55}}
 
 @media(max-width:1250px){.global-nav .btn-add{width:40px!important;min-width:40px!important;padding:0!important;font-size:0!important}.global-nav .btn-add::before{content:'+';font-size:22px!important}}
+
+/* Final audit fixes: overdue work, actionable empty states and usable mobile navigation. */
+.task-card-v2.overdue{border-color:#e5b4aa}
+.task-overdue-label,.task-summary .t-overdue{color:#a43f2d!important;font-weight:800}
+.task-summary .t-overdue{background:#fff0ed;border-color:#efc0b6}
+.project-meeting-empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.project-meeting-empty strong{color:var(--txt);font-size:15px}
+.project-meeting-empty span{max-width:560px;line-height:1.55}
+#s-ideas .ideas-scope-tabs{scrollbar-width:none}
+#s-ideas .ideas-scope-tabs::-webkit-scrollbar{display:none}
+html.theme-dark .task-card-v2.overdue{border-color:#7d463d}
+html.theme-dark .task-summary .t-overdue{background:#38211f;border-color:#693b34;color:#ffb6a8!important}
+@media(max-width:760px){
+  .screen{padding-bottom:96px!important;scroll-padding-bottom:94px}
+  html.theme-dark .global-nav .nav-links{background:rgba(25,21,34,.97)!important;border-color:#443b50!important;box-shadow:0 16px 48px rgba(0,0,0,.4)!important}
+  html.theme-dark .global-nav .nl{color:#d8d0e3!important}
+  html.theme-dark .global-nav .nl.on{background:#392d4b!important;color:#fff!important}
+}
+@media(max-width:520px){
+  .global-nav .bell-pill{display:flex!important}
+  .global-nav .btn-add{display:flex!important;position:static!important;width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;border-radius:10px!important;box-shadow:none!important;font-size:0!important}
+  .global-nav .btn-add::before{content:'+';font-size:23px!important}
+  .global-nav .nav-brand{display:none!important}
+  .global-nav .global-search-wrap{flex:1 1 auto!important}
+  #s-ideas .ideas-scope-tabs{gap:22px!important;overflow-x:auto!important;overscroll-behavior-inline:contain}
+  #s-ideas .ideas-results-toolbar{align-items:stretch;flex-direction:column}
+}
 </style>
 </body>
 </html>
-
-
-
-
