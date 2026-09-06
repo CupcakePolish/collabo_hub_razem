@@ -86,7 +86,11 @@ test('new teams start as editable private drafts and publish to Discover', () =>
   assert.match(html, /id="team-draft-desc"/);
   assert.match(html, /function saveGlobalTeamDraft\(teamId,quiet=false\)/);
   assert.match(html, /function publishGlobalTeam\(teamId\)[\s\S]*discoverPosts\.unshift/);
-  assert.match(html, /Prywatny szkic zespołu/);
+  assert.match(html, /Prywatny szkic/);
+  assert.match(html, /function toggleTeamDraftEdit\(teamId\)/);
+  assert.match(html, /function addTeamDraftRequirement\(teamId\)/);
+  assert.match(html, /function removeTeamDraftRequirement\(teamId,index\)/);
+  assert.doesNotMatch(html, /const draftEditor=t\.draft/);
 });
 
 test('catalog filters use checkboxes and no explicit all option', () => {
