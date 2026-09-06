@@ -156,3 +156,15 @@ test('published team uses metadata, real tabs and profile-change votes', () => {
   assert.doesNotMatch(html, /Jesteś w zespole<\/span>/);
   assert.doesNotMatch(html, /document\.getElementById\('tp-discussion'\)\?\.scrollIntoView\(\{behavior:'smooth'\}\)/);
 });
+
+test('team board uses a centered visual feed with editable welcome post', () => {
+  assert.match(html, /function renderTeamBoard\(t,mine\)/);
+  assert.match(html, /class="tp-board-shell"/);
+  assert.match(html, /Przygotowujesz tablicę szkicu\. Wpisy nie są jeszcze publiczne/);
+  assert.match(html, /Poznaj \$\{t\.name/);
+  assert.match(html, /assets\/discover\/50-drzew\.jpg/);
+  assert.match(html, /openTeamBoardPostModal/);
+  assert.match(html, /async function saveTeamBoardPost/);
+  assert.match(html, /toggleTeamWelcomePin/);
+  assert.match(html, /\.tp-board-post-image\{display:block;width:100%;height:260px;object-fit:cover/);
+});
