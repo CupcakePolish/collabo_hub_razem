@@ -131,4 +131,28 @@ test('team catalog previews uploaded profile photos', () => {
   assert.match(html, /class="team-card-avatar">\$\{avatar\}/);
   assert.match(html, /t\.avatar\?`<img src="\$\{escAttr\(t\.avatar\)\}/);
   assert.match(html, /\.team-card-avatar img\{width:100%;height:100%;object-fit:cover\}/);
+  assert.match(html, /team-card-description\{grid-column:2\/-1/);
+});
+
+test('team draft separates editing, publishing and deletion', () => {
+  assert.match(html, /function confirmPublishGlobalTeam\(teamId\)/);
+  assert.match(html, /Opublikować zespół\?/);
+  assert.match(html, /class="tp-button tp-publish-quiet"[^>]*confirmPublishGlobalTeam/);
+  assert.match(html, /function confirmDeleteTeamDraft\(teamId\)/);
+  assert.match(html, /function deleteTeamDraft\(teamId\)/);
+  assert.match(html, /Usunąć szkic zespołu\?/);
+  assert.match(html, /editing\?`<button class="tp-button" onclick="saveTeamProfileEdit/);
+  assert.doesNotMatch(html, /editing\?`[^`]*publishGlobalTeam/);
+});
+
+test('published team uses metadata, real tabs and profile-change votes', () => {
+  assert.match(html, /Opublikowano: \$\{escHtml\(t\.publishedDate/);
+  assert.match(html, /Ostatnia aktywność: \$\{escHtml\(t\.lastActive/);
+  assert.match(html, /setTeamProfileTab\('\$\{escAttr\(t\.id\)\}','board'\)\">Tablica/);
+  assert.match(html, />Członkowie<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Rejestr<\/button>/);
+  assert.match(html, /teamAcceptedMembers\(t\)\.length>1/);
+  assert.match(html, /kind:'team-profile-edit'/);
+  assert.match(html, /function rejectTeamDecision\(teamId,decisionId\)/);
+  assert.doesNotMatch(html, /Jesteś w zespole<\/span>/);
+  assert.doesNotMatch(html, /document\.getElementById\('tp-discussion'\)\?\.scrollIntoView\(\{behavior:'smooth'\}\)/);
 });
