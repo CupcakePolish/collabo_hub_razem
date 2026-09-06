@@ -4797,12 +4797,12 @@ body>nav.global-nav{height:66px!important;padding:0 28px!important;gap:18px!impo
 #s-ideas .idea-skill-search svg{width:19px;height:19px;flex:0 0 19px}
 #s-ideas .idea-skill-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--txt);font:500 13px 'DM Sans',sans-serif}
 #s-ideas .idea-skill-search input::placeholder{color:var(--txs)}
-#s-ideas .idea-skill-options{max-height:176px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--p200) transparent}
-#s-ideas .idea-skill-option{display:grid;grid-template-columns:21px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:44px;color:var(--txm);font-size:14px;cursor:pointer}
+#s-ideas .idea-skill-options{max-height:176px;padding-right:14px;box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--p200) transparent}
+#s-ideas .idea-skill-option{display:grid;grid-template-columns:21px minmax(0,1fr) 24px;align-items:center;gap:10px;min-height:44px;color:var(--txm);font-size:14px;cursor:pointer}
 #s-ideas .idea-skill-option input{appearance:none;width:19px;height:19px;margin:0;border:1.5px solid var(--bdr2,#aeb4c5);border-radius:5px;background:var(--surf);cursor:pointer}
 #s-ideas .idea-skill-option input:checked{border-color:var(--p600);background:var(--p600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10 3 3 7-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat}
 #s-ideas .idea-skill-option:has(input:checked){color:var(--p700);font-weight:700}
-#s-ideas .idea-skill-option i{color:var(--txs);font-style:normal;font-size:13px}
+#s-ideas .idea-skill-option i{min-width:24px;color:var(--txs);font-style:normal;font-size:13px;text-align:right}
 #s-ideas .idea-skill-empty{padding:12px 2px;color:var(--txs);font-size:12px}
 #s-ideas .ideas-clear-sidebar{font-size:14px}
 
@@ -5533,14 +5533,24 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
         <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="archived" onclick="setIdeaListChoice('archive','archived')"><span></span>Archiwalne</button>
         <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="all" onclick="setIdeaListChoice('archive','all')"><span></span>Wszystkie</button>
       </section>
-      <section class="ideas-sidebar-section" id="idea-competency-filter">
-        <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Kompetencje</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
+      <section class="ideas-sidebar-section" id="idea-needed-competency-filter">
+        <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Szukają kompetencji</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
         <div class="idea-skill-filter-body">
           <label class="idea-skill-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-            <input id="idea-skill-search" type="search" autocomplete="off" aria-label="Szukaj kompetencji" placeholder="Szukaj kompetencji…" oninput="setIdeaSkillSearch(this.value)">
+            <input id="idea-needed-skill-search" type="search" autocomplete="off" aria-label="Szukaj kompetencji potrzebnych projektom" placeholder="Szukaj kompetencji…" oninput="setIdeaSkillSearch('needed',this.value)">
           </label>
-          <div class="idea-skill-options" id="idea-skill-options"></div>
+          <div class="idea-skill-options" id="idea-needed-skill-options"></div>
+        </div>
+      </section>
+      <section class="ideas-sidebar-section" id="idea-present-competency-filter">
+        <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Mają kompetencje</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
+        <div class="idea-skill-filter-body">
+          <label class="idea-skill-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+            <input id="idea-present-skill-search" type="search" autocomplete="off" aria-label="Szukaj kompetencji obecnych w projektach" placeholder="Szukaj kompetencji…" oninput="setIdeaSkillSearch('present',this.value)">
+          </label>
+          <div class="idea-skill-options" id="idea-present-skill-options"></div>
         </div>
       </section>
       <section class="ideas-sidebar-section">
@@ -6648,43 +6658,57 @@ const IC=(()=>{
 let currentTab='all';
 let searchQ='';
 const ideaListFilters={status:'all',type:'all',archive:'active',openNeeds:false,followed:false,sort:'activity-desc'};
-const selectedIdeaSkills=new Set();
-let ideaSkillQ='';
+const selectedIdeaNeededSkills=new Set();
+const selectedIdeaPresentSkills=new Set();
+const ideaSkillQueries={needed:'',present:''};
 let proposeTarget=null;
 
-function ideaCompetencyNames(idea){
+function addIdeaRoleCompetencies(names,role){
+  const skills=(role?.skills||[]).map(skill=>String(skill?.name||'').trim()).filter(Boolean);
+  if(skills.length)skills.forEach(skill=>names.add(skill));
+  else if(role?.role)names.add(String(role.role).trim());
+}
+function ideaNeededCompetencyNames(idea){
   const names=new Set();
-  (idea.skillsNeeded||[]).forEach(row=>{if(row?.skill)names.add(String(row.skill).trim());});
-  (idea.roleRequirements||[]).forEach(role=>{
-    if(role?.role)names.add(String(role.role).trim());
-    (role?.skills||[]).forEach(skill=>{if(skill?.name)names.add(String(skill.name).trim());});
-  });
+  (idea.skillsNeeded||[]).filter(row=>!row?.filled).forEach(row=>{if(row?.skill)names.add(String(row.skill).trim());});
+  (idea.roleRequirements||[]).filter(role=>!roleStatus(role)).forEach(role=>addIdeaRoleCompetencies(names,role));
+  return [...names].filter(Boolean);
+}
+function ideaPresentCompetencyNames(idea){
+  const names=new Set();
+  (idea.skillsNeeded||[]).filter(row=>row?.filled).forEach(row=>{if(row?.skill)names.add(String(row.skill).trim());});
+  (idea.roleRequirements||[]).filter(role=>roleStatus(role)).forEach(role=>addIdeaRoleCompetencies(names,role));
   participantsOf(idea).forEach(person=>{
     const member=members.find(row=>row.name===person);
     (member?.skills||[]).forEach(skill=>names.add(String(skill).trim()));
   });
   return [...names].filter(Boolean);
 }
-function ideaHasCompetency(idea,skill){
+function ideaCompetencyNames(idea,kind){return kind==='needed'?ideaNeededCompetencyNames(idea):ideaPresentCompetencyNames(idea);}
+function ideaHasCompetency(idea,skill,kind){
   const wanted=normNeed(skill);
-  return ideaCompetencyNames(idea).some(name=>normNeed(name)===wanted);
+  return ideaCompetencyNames(idea,kind).some(name=>normNeed(name)===wanted);
 }
-function ideaCompetencyCatalog(){
+function ideaCompetencyCatalog(kind){
   const names=new Set();
   if(typeof platformCapabilities==='function')platformCapabilities().forEach(item=>{if(item?.name)names.add(String(item.name).trim());});
-  ideas.filter(idea=>idea?.isDraft!==true).forEach(idea=>ideaCompetencyNames(idea).forEach(name=>names.add(name)));
-  return [...names].filter(Boolean).map(name=>[name,ideas.filter(idea=>idea?.isDraft!==true&&ideaHasCompetency(idea,name)).length]).sort((a,b)=>a[0].localeCompare(b[0],'pl'));
+  ideas.filter(idea=>idea?.isDraft!==true).forEach(idea=>ideaCompetencyNames(idea,kind).forEach(name=>names.add(name)));
+  return [...names].filter(Boolean).map(name=>[name,ideas.filter(idea=>idea?.isDraft!==true&&ideaHasCompetency(idea,name,kind)).length]).sort((a,b)=>a[0].localeCompare(b[0],'pl'));
 }
-function renderIdeaSkillFilters(){
-  const host=document.getElementById('idea-skill-options');if(!host)return;
-  const query=normNeed(ideaSkillQ);
-  const rows=ideaCompetencyCatalog().filter(([name])=>!query||normNeed(name).includes(query));
-  host.innerHTML=rows.map(([name,count])=>`<label class="idea-skill-option"><input type="checkbox" ${selectedIdeaSkills.has(name)?'checked':''} onchange="setIdeaSkill(decodeURIComponent('${encodeURIComponent(name)}'),this.checked)"><span>${escHtml(name)}</span><i>${count}</i></label>`).join('')||'<div class="idea-skill-empty">Brak pasujących kompetencji.</div>';
-  const input=document.getElementById('idea-skill-search');if(input&&input.value!==ideaSkillQ)input.value=ideaSkillQ;
+function ideaSkillSelection(kind){return kind==='needed'?selectedIdeaNeededSkills:selectedIdeaPresentSkills;}
+function renderIdeaSkillFilter(kind){
+  const host=document.getElementById(`idea-${kind}-skill-options`);if(!host)return;
+  const query=normNeed(ideaSkillQueries[kind]);
+  const selected=ideaSkillSelection(kind);
+  const rows=ideaCompetencyCatalog(kind).filter(([name])=>!query||normNeed(name).includes(query));
+  host.innerHTML=rows.map(([name,count])=>`<label class="idea-skill-option"><input type="checkbox" ${selected.has(name)?'checked':''} onchange="setIdeaSkill('${kind}',decodeURIComponent('${encodeURIComponent(name)}'),this.checked)"><span>${escHtml(name)}</span><i>${count}</i></label>`).join('')||'<div class="idea-skill-empty">Brak pasujących kompetencji.</div>';
+  const input=document.getElementById(`idea-${kind}-skill-search`);if(input&&input.value!==ideaSkillQueries[kind])input.value=ideaSkillQueries[kind];
 }
-function setIdeaSkillSearch(value){ideaSkillQ=String(value||'');renderIdeaSkillFilters();}
-function setIdeaSkill(skill,checked){
-  if(checked)selectedIdeaSkills.add(skill);else selectedIdeaSkills.delete(skill);
+function renderIdeaSkillFilters(){renderIdeaSkillFilter('needed');renderIdeaSkillFilter('present');}
+function setIdeaSkillSearch(kind,value){if(!Object.prototype.hasOwnProperty.call(ideaSkillQueries,kind))return;ideaSkillQueries[kind]=String(value||'');renderIdeaSkillFilter(kind);}
+function setIdeaSkill(kind,skill,checked){
+  const selected=ideaSkillSelection(kind);
+  if(checked)selected.add(skill);else selected.delete(skill);
   syncIdeaQueryControls();renderIdeas();
 }
 
@@ -6740,7 +6764,7 @@ function removeIdeaFilter(key){
   ideaListFilters[key]=defaults[key];syncIdeaQueryControls();renderIdeas();
 }
 function clearIdeaListFilters(){
-  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});selectedIdeaSkills.clear();ideaSkillQ='';syncIdeaQueryControls();renderIdeas();
+  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';syncIdeaQueryControls();renderIdeas();
 }
 function syncIdeaQueryControls(){
   const sortLabel=document.getElementById('idea-sort-label');if(sortLabel)sortLabel.textContent=IDEA_FILTER_LABELS.sort[ideaListFilters.sort]||'';
@@ -6750,7 +6774,7 @@ function syncIdeaQueryControls(){
   document.getElementById('idea-type-variants')?.classList.toggle('on',ideaListFilters.type!=='ideas');
   document.getElementById('idea-filter-open-needs')?.classList.toggle('on',ideaListFilters.openNeeds);
   document.getElementById('idea-filter-followed')?.classList.toggle('on',ideaListFilters.followed);
-  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='active')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed)+selectedIdeaSkills.size;
+  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='active')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed)+selectedIdeaNeededSkills.size+selectedIdeaPresentSkills.size;
   document.getElementById('ideas-clear-sidebar')?.classList.add('show');
   const mobileCount=document.getElementById('ideas-mobile-filter-count');if(mobileCount)mobileCount.textContent=activeCount?`(${activeCount})`:'';
   document.getElementById('ideas-catalog-layout')?.classList.toggle('draft-mode',currentTab==='drafts');
@@ -7686,7 +7710,8 @@ function renderIdeas(){
   else if(ideaListFilters.type==='variants')filtered=filtered.filter(i=>ideaIsVariant(i));
   if(ideaListFilters.openNeeds)filtered=filtered.filter(i=>missingRoleCount(i)>0);
   if(ideaListFilters.followed)filtered=filtered.filter(i=>followedIdeas.has(i.id));
-  if(selectedIdeaSkills.size)filtered=filtered.filter(i=>[...selectedIdeaSkills].some(skill=>ideaHasCompetency(i,skill)));
+  if(selectedIdeaNeededSkills.size)filtered=filtered.filter(i=>[...selectedIdeaNeededSkills].some(skill=>ideaHasCompetency(i,skill,'needed')));
+  if(selectedIdeaPresentSkills.size)filtered=filtered.filter(i=>[...selectedIdeaPresentSkills].some(skill=>ideaHasCompetency(i,skill,'present')));
   const q=searchQ.toLowerCase().trim();
   if(q){
     filtered=filtered.filter(i=>{
