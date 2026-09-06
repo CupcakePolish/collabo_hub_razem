@@ -97,3 +97,12 @@ test('catalog filters use checkboxes and no explicit all option', () => {
   assert.match(html, /dictionaryCategory===value\?'all':value/);
   assert.match(html, /ideaListFilters\[key\]===value\?'all':value/);
 });
+
+test('team profile is centered and has no sidebar layout', () => {
+  assert.match(html, /class="tp-breadcrumb"/);
+  assert.match(html, /class="tp-tabs"/);
+  assert.match(html, /class="tp-page-grid"/);
+  assert.match(html, /#s-team-profile\.on\{display:block/);
+  assert.match(html, /width:min\(1240px,100%\);max-width:1240px;margin:0 auto/);
+  assert.doesNotMatch(html, /team-profile-header'\)\.innerHTML=`<div class="tp-side-card"/);
+});
