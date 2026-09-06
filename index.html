@@ -4782,6 +4782,7 @@ body>nav.global-nav{height:66px!important;padding:0 28px!important;gap:18px!impo
 #s-ideas .ideas-section-toggle:hover .ideas-section-chevron{color:var(--p700)}
 #s-ideas .ideas-sidebar-section.collapsed .ideas-section-chevron{transform:rotate(-90deg)}
 #s-ideas .ideas-sidebar-section.collapsed>.idea-side-option{display:none}
+#s-ideas .ideas-sidebar-section.collapsed>.idea-skill-filter-body{display:none}
 #s-ideas .idea-side-option{min-height:42px;padding:7px 6px;gap:11px;font-size:15px;line-height:1.3}
 #s-ideas .idea-side-option>span{width:19px;height:19px;flex:0 0 19px;box-sizing:border-box;border:1.5px solid var(--bdr2,#aeb4c5);background:var(--surf)}
 #s-ideas .idea-side-option:not(.check):not(.selected)>span,
@@ -4790,6 +4791,19 @@ body>nav.global-nav{height:66px!important;padding:0 28px!important;gap:18px!impo
 #s-ideas .idea-side-option.check>span{border-radius:5px;color:transparent;font-size:12px;font-weight:900}
 #s-ideas .idea-side-option.check.on>span{border-color:var(--p600);background:var(--p600);color:#fff;box-shadow:none}
 #s-ideas .idea-side-option.selected,#s-ideas .idea-side-option.check.on{font-weight:700;color:var(--p700)}
+#s-ideas .idea-skill-filter-body{display:grid;gap:10px;padding:2px 4px 0}
+#s-ideas .idea-skill-search{display:flex;align-items:center;gap:9px;height:44px;padding:0 12px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf2);color:var(--txs)}
+#s-ideas .idea-skill-search:focus-within{border-color:var(--p400);box-shadow:0 0 0 3px rgba(125,91,195,.1)}
+#s-ideas .idea-skill-search svg{width:19px;height:19px;flex:0 0 19px}
+#s-ideas .idea-skill-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--txt);font:500 13px 'DM Sans',sans-serif}
+#s-ideas .idea-skill-search input::placeholder{color:var(--txs)}
+#s-ideas .idea-skill-options{max-height:176px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--p200) transparent}
+#s-ideas .idea-skill-option{display:grid;grid-template-columns:21px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:44px;color:var(--txm);font-size:14px;cursor:pointer}
+#s-ideas .idea-skill-option input{appearance:none;width:19px;height:19px;margin:0;border:1.5px solid var(--bdr2,#aeb4c5);border-radius:5px;background:var(--surf);cursor:pointer}
+#s-ideas .idea-skill-option input:checked{border-color:var(--p600);background:var(--p600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10 3 3 7-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat}
+#s-ideas .idea-skill-option:has(input:checked){color:var(--p700);font-weight:700}
+#s-ideas .idea-skill-option i{color:var(--txs);font-style:normal;font-size:13px}
+#s-ideas .idea-skill-empty{padding:12px 2px;color:var(--txs);font-size:12px}
 #s-ideas .ideas-clear-sidebar{font-size:14px}
 
 #s-ideas .search-wrap{max-width:1080px}
@@ -5479,7 +5493,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   <button type="button" class="bell-pill" onclick="go('watch')" title="Powiadomienia i obserwowane" aria-label="Powiadomienia i obserwowane"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 1.6 6.5 2 7H4c.4-.5 2-2 2-7Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bell-count" id="bell-count" style="display:none">0</span></button>
   <div class="nav-pill" onclick="go('ideas');switchTab('for-me')">
     <div class="dot"></div>
-    Dopasowane <span class="for-me-count" id="for-me-nav-count">0</span>
+    Dla mnie <span class="for-me-count" id="for-me-nav-count">0</span>
   </div>
   <button class="btn-add" onclick="beginNewIdea()">+ Dodaj pomysł</button>
 </nav>
@@ -5519,6 +5533,16 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
         <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="archived" onclick="setIdeaListChoice('archive','archived')"><span></span>Archiwalne</button>
         <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="all" onclick="setIdeaListChoice('archive','all')"><span></span>Wszystkie</button>
       </section>
+      <section class="ideas-sidebar-section" id="idea-competency-filter">
+        <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Kompetencje</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
+        <div class="idea-skill-filter-body">
+          <label class="idea-skill-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+            <input id="idea-skill-search" type="search" autocomplete="off" aria-label="Szukaj kompetencji" placeholder="Szukaj kompetencji…" oninput="setIdeaSkillSearch(this.value)">
+          </label>
+          <div class="idea-skill-options" id="idea-skill-options"></div>
+        </div>
+      </section>
       <section class="ideas-sidebar-section">
         <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Współpraca</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
         <button type="button" class="idea-side-option check" id="idea-filter-open-needs" onclick="toggleIdeaListFilter('openNeeds')"><span>✓</span>Szukają współpracowników</button>
@@ -5531,7 +5555,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
         <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')">Wszystkie</button>
-        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')">✦ Dopasowane <span class="for-me-count" id="for-me-tab-count">0</span></button>
+        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')">✦ Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
         <button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')">Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
       </div>
       <div class="ideas-results-toolbar">
@@ -6260,7 +6284,7 @@ html.theme-dark #s-profile-me .mp-composer-field{color:var(--txm)}
     <div class="about-grid">
       <div class="about-card">
         <h3>Dla osoby, która chce pomóc</h3>
-        <p>Wchodzisz w „Dopasowane” i widzisz projekty, które czekają dokładnie na twoje umiejętności. Nie musisz pytać, gdzie się przydasz.</p>
+        <p>Wchodzisz w „Dla mnie” i widzisz projekty, które czekają dokładnie na twoje umiejętności. Nie musisz pytać, gdzie się przydasz.</p>
       </div>
       <div class="about-card">
         <h3>Dla autora pomysłu</h3>
@@ -6624,7 +6648,45 @@ const IC=(()=>{
 let currentTab='all';
 let searchQ='';
 const ideaListFilters={status:'all',type:'all',archive:'active',openNeeds:false,followed:false,sort:'activity-desc'};
+const selectedIdeaSkills=new Set();
+let ideaSkillQ='';
 let proposeTarget=null;
+
+function ideaCompetencyNames(idea){
+  const names=new Set();
+  (idea.skillsNeeded||[]).forEach(row=>{if(row?.skill)names.add(String(row.skill).trim());});
+  (idea.roleRequirements||[]).forEach(role=>{
+    if(role?.role)names.add(String(role.role).trim());
+    (role?.skills||[]).forEach(skill=>{if(skill?.name)names.add(String(skill.name).trim());});
+  });
+  participantsOf(idea).forEach(person=>{
+    const member=members.find(row=>row.name===person);
+    (member?.skills||[]).forEach(skill=>names.add(String(skill).trim()));
+  });
+  return [...names].filter(Boolean);
+}
+function ideaHasCompetency(idea,skill){
+  const wanted=normNeed(skill);
+  return ideaCompetencyNames(idea).some(name=>normNeed(name)===wanted);
+}
+function ideaCompetencyCatalog(){
+  const names=new Set();
+  if(typeof platformCapabilities==='function')platformCapabilities().forEach(item=>{if(item?.name)names.add(String(item.name).trim());});
+  ideas.filter(idea=>idea?.isDraft!==true).forEach(idea=>ideaCompetencyNames(idea).forEach(name=>names.add(name)));
+  return [...names].filter(Boolean).map(name=>[name,ideas.filter(idea=>idea?.isDraft!==true&&ideaHasCompetency(idea,name)).length]).sort((a,b)=>a[0].localeCompare(b[0],'pl'));
+}
+function renderIdeaSkillFilters(){
+  const host=document.getElementById('idea-skill-options');if(!host)return;
+  const query=normNeed(ideaSkillQ);
+  const rows=ideaCompetencyCatalog().filter(([name])=>!query||normNeed(name).includes(query));
+  host.innerHTML=rows.map(([name,count])=>`<label class="idea-skill-option"><input type="checkbox" ${selectedIdeaSkills.has(name)?'checked':''} onchange="setIdeaSkill(decodeURIComponent('${encodeURIComponent(name)}'),this.checked)"><span>${escHtml(name)}</span><i>${count}</i></label>`).join('')||'<div class="idea-skill-empty">Brak pasujących kompetencji.</div>';
+  const input=document.getElementById('idea-skill-search');if(input&&input.value!==ideaSkillQ)input.value=ideaSkillQ;
+}
+function setIdeaSkillSearch(value){ideaSkillQ=String(value||'');renderIdeaSkillFilters();}
+function setIdeaSkill(skill,checked){
+  if(checked)selectedIdeaSkills.add(skill);else selectedIdeaSkills.delete(skill);
+  syncIdeaQueryControls();renderIdeas();
+}
 
 function toggleIdeaListFilter(key){
   if(!['openNeeds','followed'].includes(key))return;
@@ -6678,7 +6740,7 @@ function removeIdeaFilter(key){
   ideaListFilters[key]=defaults[key];syncIdeaQueryControls();renderIdeas();
 }
 function clearIdeaListFilters(){
-  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});syncIdeaQueryControls();renderIdeas();
+  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});selectedIdeaSkills.clear();ideaSkillQ='';syncIdeaQueryControls();renderIdeas();
 }
 function syncIdeaQueryControls(){
   const sortLabel=document.getElementById('idea-sort-label');if(sortLabel)sortLabel.textContent=IDEA_FILTER_LABELS.sort[ideaListFilters.sort]||'';
@@ -6688,10 +6750,11 @@ function syncIdeaQueryControls(){
   document.getElementById('idea-type-variants')?.classList.toggle('on',ideaListFilters.type!=='ideas');
   document.getElementById('idea-filter-open-needs')?.classList.toggle('on',ideaListFilters.openNeeds);
   document.getElementById('idea-filter-followed')?.classList.toggle('on',ideaListFilters.followed);
-  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='active')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed);
+  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='active')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed)+selectedIdeaSkills.size;
   document.getElementById('ideas-clear-sidebar')?.classList.add('show');
   const mobileCount=document.getElementById('ideas-mobile-filter-count');if(mobileCount)mobileCount.textContent=activeCount?`(${activeCount})`:'';
   document.getElementById('ideas-catalog-layout')?.classList.toggle('draft-mode',currentTab==='drafts');
+  renderIdeaSkillFilters();
 }
 
 const PL_MON=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
@@ -6756,7 +6819,7 @@ function pendingInviteByRef(idea,ref){
 function myDirectInvitations(){const out=[];ideas.filter(idea=>!isPrivateIdeaDraft(idea)&&!projectIsArchived(idea)&&projectLifecycleStatus(idea)==='in_progress').forEach(idea=>{(idea.tasks||[]).forEach(t=>(t.fazy||[]).forEach(f=>{if((f.zaproszeni||[]).includes(MY_NAME))out.push({kind:'phase',idea,t,f});}));ensurePendingInviteIds(idea).forEach(inv=>{if(inv.person===MY_NAME)out.push({kind:inv.kind==='project'?'project':'role',idea,inv,inviteId:inv.id});});});return out;}
 function renderForMeInvites(){
   const rows=myDirectInvitations();if(!rows.length)return '';
-  return `<section class="for-me-invites"><div class="for-me-invites-head"><div><span>Zaproszenia</span><b>Dopasowane</b></div><strong>${rows.length}</strong></div><div class="for-me-invite-list">${rows.map(x=>{
+  return `<section class="for-me-invites"><div class="for-me-invites-head"><div><span>Zaproszenia</span><b>Dla mnie</b></div><strong>${rows.length}</strong></div><div class="for-me-invite-list">${rows.map(x=>{
     if(x.kind==='phase')return `<article class="for-me-invite-card"><div><span class="for-me-invite-kind">Faza zadania</span><b>${escHtml(x.f.tytul)}</b><p>${escHtml(x.idea.title)} · zadanie: ${escHtml(x.t.tytul||x.t.title||'')}</p></div><div class="for-me-invite-actions"><button type="button" class="view" onclick="openIdea(${x.idea.id})">Zobacz projekt</button><button type="button" class="accept" onclick="acceptTaskPhaseInvite(${x.idea.id},'${x.t.id}','${x.f.id}')">Przyjmij</button><button type="button" onclick="declineTaskPhaseInvite(${x.idea.id},'${x.t.id}','${x.f.id}')">Odrzuć</button></div></article>`;
     const project=x.kind==='project';return `<article class="for-me-invite-card"><div><span class="for-me-invite-kind">${project?'Projekt':'Rola w projekcie'}</span><b>${escHtml(project?x.idea.title:x.inv.role)}</b><p>${project?'Zaproszenie do współtworzenia':'Projekt: '+escHtml(x.idea.title)} · zaprasza: ${escHtml(x.inv.by||'członek projektu')}${x.inv.why?`<span class="invite-reason-copy invite-saved-message"><b>Dlaczego:</b> ${mdRender(x.inv.why)}</span>`:''}</p></div><div class="for-me-invite-actions"><button type="button" class="view" onclick="openIdea(${x.idea.id})">Zobacz projekt</button><button type="button" class="accept" onclick="acceptMyInvite(${x.idea.id},'${x.inviteId}')">Przyjmij</button><button type="button" onclick="declineMyInvite(${x.idea.id},'${x.inviteId}')">Odrzuć</button></div></article>`;
   }).join('')}</div></section>`;
@@ -6978,7 +7041,7 @@ function renderRoleRequirements(idea,ideaId){
   const needCards=roles.map((r,idx)=>`<div class="need-card-wrap" style="--need-order:${idx}">${buildCard(r,idx)}</div>`);
   const needsSec=needCards.length?`<div class="need-cards-grid"><div class="need-cards-column">${needCards.filter((_,index)=>index%2===0).join('')}</div><div class="need-cards-column">${needCards.filter((_,index)=>index%2===1).join('')}</div></div>`:'<div style="font-size:13px;color:var(--txf);margin-bottom:8px">Zespół nie dodał jeszcze żadnych potrzeb.</div>';
   const pendingInvites=ensurePendingInviteIds(idea);
-  const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dopasowane”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dopasowane”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
+  const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dla mnie”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dla mnie”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
   return needsSec + invitesSec;
 }
 
@@ -7623,6 +7686,7 @@ function renderIdeas(){
   else if(ideaListFilters.type==='variants')filtered=filtered.filter(i=>ideaIsVariant(i));
   if(ideaListFilters.openNeeds)filtered=filtered.filter(i=>missingRoleCount(i)>0);
   if(ideaListFilters.followed)filtered=filtered.filter(i=>followedIdeas.has(i.id));
+  if(selectedIdeaSkills.size)filtered=filtered.filter(i=>[...selectedIdeaSkills].some(skill=>ideaHasCompetency(i,skill)));
   const q=searchQ.toLowerCase().trim();
   if(q){
     filtered=filtered.filter(i=>{

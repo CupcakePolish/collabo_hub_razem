@@ -32,3 +32,15 @@ test('add idea still starts the existing private-draft flow', () => {
   assert.match(html, /onclick="beginNewIdea\(\)"/);
   assert.match(html, /function beginNewIdea\(\)/);
 });
+
+test('idea competency filter is searchable and filters project cards', () => {
+  assert.match(html, /id="idea-skill-search"/);
+  assert.match(html, /function renderIdeaSkillFilters\(\)/);
+  assert.match(html, /selectedIdeaSkills\.size/);
+  assert.match(html, /ideaHasCompetency\(i,skill\)/);
+});
+
+test('personalized ideas use the Dla mnie label', () => {
+  assert.match(html, /id="tab-for-me"[^>]*>✦ Dla mnie/);
+  assert.doesNotMatch(html, /Dopasowane/);
+});
