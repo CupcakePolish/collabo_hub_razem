@@ -126,3 +126,9 @@ test('focus styling uses a thin border without heavy rings', () => {
   assert.match(html, /:focus-visible\{outline:1px solid var\(--p400\)!important/);
   assert.match(html, /tp-hero\.is-editing\{border-color:var\(--bdr\);outline:0;box-shadow:none\}/);
 });
+
+test('team catalog previews uploaded profile photos', () => {
+  assert.match(html, /class="team-card-avatar">\$\{avatar\}/);
+  assert.match(html, /t\.avatar\?`<img src="\$\{escAttr\(t\.avatar\)\}/);
+  assert.match(html, /\.team-card-avatar img\{width:100%;height:100%;object-fit:cover\}/);
+});
