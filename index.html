@@ -4807,6 +4807,10 @@ body>nav.global-nav{height:66px!important;padding:0 28px!important;gap:18px!impo
 #s-ideas .ideas-clear-sidebar{font-size:14px}
 
 #s-ideas .search-wrap{max-width:1080px}
+#s-ideas .ideas-search-row{display:flex;align-items:center;gap:16px;max-width:1080px;margin:0 auto}
+#s-ideas .ideas-search-row .search-wrap{flex:1;min-width:0;max-width:none;margin:0}
+#s-ideas .ideas-add-button{height:52px;flex:0 0 auto;padding:0 20px;border:1px solid var(--p200);border-radius:12px;background:var(--p700);color:#fff;font:750 14px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer;transition:background .13s,transform .13s}
+#s-ideas .ideas-add-button:hover{background:var(--p800);transform:translateY(-1px)}
 #s-ideas .search-wrap input{height:52px;font-size:16px}
 #s-ideas .search-hint{max-width:1080px;font-size:13px}
 #s-ideas .ideas-scope-tabs{align-items:stretch;gap:34px;max-width:1080px;margin:14px auto 18px;padding:0;border-bottom:1px solid var(--bdr);overflow:visible}
@@ -4832,6 +4836,7 @@ body>nav.global-nav{height:66px!important;padding:0 28px!important;gap:18px!impo
  #s-ideas .ideas-catalog-main{padding:0}
  #s-ideas .ideas-filter-sidebar{top:0;height:100vh;max-height:none;padding-top:25px;border-right:1px solid var(--bdr);border-radius:0 20px 20px 0}
  #s-ideas .ideas-scope-tabs,#s-ideas .ideas-results-toolbar,#s-ideas .ideas-list{max-width:none}
+ #s-ideas .ideas-search-row{max-width:none}
  #s-ideas .ideas-scope-tabs{gap:24px;overflow-x:auto}
  #s-ideas .ic{padding:18px}
 }
@@ -5495,7 +5500,6 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
     <div class="dot"></div>
     Dla mnie <span class="for-me-count" id="for-me-nav-count">0</span>
   </div>
-  <button class="btn-add" onclick="beginNewIdea()">+ Dodaj pomysł</button>
 </nav>
 <div id="toast-host" class="toast-host" aria-live="polite"></div>
 <div id="app-modal-bg" class="app-modal-bg" onclick="handleAppModalBackdrop(event)"><div class="app-modal" id="app-modal"></div></div>
@@ -5561,7 +5565,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <button type="button" class="ideas-clear-sidebar" id="ideas-clear-sidebar" onclick="clearIdeaListFilters()">Wyczyść filtry</button>
     </aside>
     <main class="ideas-catalog-main">
-      <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj propozycji…" oninput="searchQ=this.value;renderIdeas()" /></div>
+      <div class="ideas-search-row">
+        <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj propozycji…" oninput="searchQ=this.value;renderIdeas()" /></div>
+        <button type="button" class="ideas-add-button" onclick="beginNewIdea()">+ Dodaj pomysł</button>
+      </div>
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
         <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')">Wszystkie</button>
@@ -16804,11 +16811,11 @@ html.theme-dark .task-summary .t-overdue{background:#38211f;border-color:#693b34
 }
 @media(max-width:520px){
   .global-nav .bell-pill{display:flex!important}
-  .global-nav .btn-add{display:flex!important;position:static!important;width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;border-radius:10px!important;box-shadow:none!important;font-size:0!important}
-  .global-nav .btn-add::before{content:'+';font-size:23px!important}
   .global-nav .nav-brand{display:none!important}
   .global-nav .global-search-wrap{flex:1 1 auto!important}
   #s-ideas .ideas-scope-tabs{gap:22px!important;overflow-x:auto!important;overscroll-behavior-inline:contain}
+  #s-ideas .ideas-search-row{align-items:stretch;flex-direction:column;gap:10px}
+  #s-ideas .ideas-add-button{width:100%;height:46px}
   #s-ideas .ideas-results-toolbar{align-items:stretch;flex-direction:column}
 }
 </style>

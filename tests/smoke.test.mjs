@@ -29,7 +29,9 @@ test('team join requests require confirmation and can be withdrawn', () => {
 });
 
 test('add idea still starts the existing private-draft flow', () => {
-  assert.match(html, /onclick="beginNewIdea\(\)"/);
+  assert.match(html, /class="ideas-add-button" onclick="beginNewIdea\(\)"/);
+  assert.doesNotMatch(html, /<button[^>]*class="btn-add"[^>]*onclick="beginNewIdea\(\)"/);
+  assert.match(html, /ideas-search-row/);
   assert.match(html, /function beginNewIdea\(\)/);
 });
 
