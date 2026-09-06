@@ -28,6 +28,15 @@ test('team join requests require confirmation and can be withdrawn', () => {
   assert.match(html, /function withdrawGlobalTeamRequest\(teamId\)/);
 });
 
+test('discover board has navigation, composer and publish interactions', () => {
+  assert.match(html, /id="nl-discover"[^>]*onclick="go\('discover'/);
+  assert.match(html, /id="s-discover" class="screen discover-screen"/);
+  assert.match(html, /id="discover-composer-text"/);
+  assert.match(html, /function publishDiscoverPost\(\)/);
+  assert.match(html, /function toggleDiscoverLike\(id\)/);
+  assert.match(html, /function addDiscoverComment\(id\)/);
+});
+
 test('team catalog toolbar keeps search and create action together', () => {
   assert.match(html, /class="teams-catalog-tools"[\s\S]*id="teams-search"[\s\S]*class="teams-create-button"[^>]*onclick="startGlobalTeamForm\(\)"/);
   assert.match(html, /class="teams-results-toolbar"/);
