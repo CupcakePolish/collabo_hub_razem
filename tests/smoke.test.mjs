@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
@@ -65,4 +66,16 @@ test('needed and present competency filters are searchable and filter project ca
 test('personalized ideas use the Dla mnie label', () => {
   assert.match(html, /id="tab-for-me"[^>]*>✦ Dla mnie/);
   assert.doesNotMatch(html, /Dopasowane/);
+});
+
+test('discover board includes the green courtyard visual mockup', () => {
+  assert.match(html, /assets\/discover\/odkrywaj-illustration\.png/);
+  assert.match(html, /assets\/teams\/zielone-podworka\.jpg/);
+  assert.match(html, /assets\/discover\/50-drzew\.jpg/);
+  assert.match(html, /id:'tm-green'/);
+  assert.match(html, /Posadźmy 100 drzew/);
+  assert.match(html, /Kamień milowy: posadzono pierwsze 50 drzew/);
+  assert.ok(existsSync(new URL('../assets/discover/odkrywaj-illustration.png', import.meta.url)));
+  assert.ok(existsSync(new URL('../assets/teams/zielone-podworka.jpg', import.meta.url)));
+  assert.ok(existsSync(new URL('../assets/discover/50-drzew.jpg', import.meta.url)));
 });
