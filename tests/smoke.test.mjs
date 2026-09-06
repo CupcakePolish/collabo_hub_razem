@@ -79,3 +79,21 @@ test('discover board includes the green courtyard visual mockup', () => {
   assert.ok(existsSync(new URL('../assets/teams/zielone-podworka.jpg', import.meta.url)));
   assert.ok(existsSync(new URL('../assets/discover/50-drzew.jpg', import.meta.url)));
 });
+
+test('new teams start as editable private drafts and publish to Discover', () => {
+  assert.match(html, /function startGlobalTeamForm\(\)[\s\S]*draft:true/);
+  assert.match(html, /id="team-draft-name"/);
+  assert.match(html, /id="team-draft-desc"/);
+  assert.match(html, /function saveGlobalTeamDraft\(teamId,quiet=false\)/);
+  assert.match(html, /function publishGlobalTeam\(teamId\)[\s\S]*discoverPosts\.unshift/);
+  assert.match(html, /Prywatny szkic zespołu/);
+});
+
+test('catalog filters use checkboxes and no explicit all option', () => {
+  assert.doesNotMatch(html, /data-filter-value="all"/);
+  assert.doesNotMatch(html, /dictionaryChoice\('Wszystkie'/);
+  assert.doesNotMatch(html, /teamRadioOption\('mode','all'/);
+  assert.match(html, /teamModeFilters=\[\],teamLocationFilters=\[\]/);
+  assert.match(html, /dictionaryCategory===value\?'all':value/);
+  assert.match(html, /ideaListFilters\[key\]===value\?'all':value/);
+});

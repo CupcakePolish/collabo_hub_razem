@@ -4583,10 +4583,10 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .team-radio-options{display:grid;gap:2px;margin-top:13px}
 .team-radio-option{appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:36px;padding:6px 4px;border:0;border-radius:9px;background:transparent;color:var(--txs);font:600 13.5px 'DM Sans',sans-serif;text-align:left;cursor:pointer}
 .team-radio-option:hover{background:var(--p050);color:var(--p700)}
-.team-radio-option>span{position:relative;width:17px;height:17px;flex:0 0 17px;border:1.5px solid #aeb6c7;border-radius:50%;background:var(--surf)}
+.team-radio-option>span{position:relative;width:17px;height:17px;flex:0 0 17px;border:1.5px solid #aeb6c7;border-radius:4px;background:var(--surf);display:grid;place-items:center;color:transparent;font-size:12px;font-weight:900}
 .team-radio-option.on{color:var(--p700);font-weight:750}
-.team-radio-option.on>span{border-color:var(--p700);background:var(--p700)}
-.team-radio-option.on>span:after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+.team-radio-option.on>span{border-color:var(--p700);background:var(--p700);color:#fff}
+.team-radio-option.on>span:after{content:none}
 .team-filter-empty{padding:12px 3px;color:var(--txf);font-size:12px}
 .teams-catalog-main{min-width:0;padding:43px clamp(28px,4vw,68px) 80px}
 .teams-catalog-heading{margin:0 0 30px}
@@ -4981,8 +4981,8 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   .dictionary-choice.active{background:#f1ebfb;color:#54319f;font-weight:750}
   .dictionary-choice .dict-count{margin-left:auto;color:#85879a;font-size:13px;font-weight:600}
   .dict-radio,.dict-check{width:17px;height:17px;box-sizing:border-box;border:1.5px solid #aeb3c4;flex:0 0 auto;display:grid;place-items:center}
-  .dict-radio{border-radius:50%}.dict-check{border-radius:4px}
-  .dictionary-choice.active .dict-radio{border:5px solid #6945bd}.dictionary-choice.active .dict-check{background:#6945bd;border-color:#6945bd;color:#fff}
+  .dict-radio,.dict-check{border-radius:4px}
+  .dictionary-choice.active .dict-radio,.dictionary-choice.active .dict-check{background:#6945bd;border-color:#6945bd;color:#fff}
   .dictionary-clear{width:100%;height:44px;border:1px solid #d8c9f4;border-radius:11px;background:#fff;color:#5632a1;font-weight:750;font-size:14px;cursor:pointer;margin-top:18px}
   .dictionary-clear:hover,.dictionary-propose:hover{background:#f4effc;border-color:#a98be2;transform:translateY(-1px)}
   .dictionary-main{padding:42px 46px 72px;min-width:0}
@@ -5549,11 +5549,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="ideas-sidebar-head"><b>Filtry</b><svg class="ideas-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.3V18l-3 1.6v-7.3L4 5Z"/></svg><button type="button" onclick="toggleIdeaMobileFilters(false)" aria-label="Zamknij">×</button></div>
       <section class="ideas-sidebar-section">
         <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Status</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
-        <button type="button" class="idea-side-option" data-filter-key="status" data-filter-value="all" onclick="setIdeaListChoice('status','all')"><span></span>Wszystkie</button>
-        <button type="button" class="idea-side-option" data-filter-key="status" data-filter-value="in_progress" onclick="setIdeaListChoice('status','in_progress')"><span></span>W toku</button>
-        <button type="button" class="idea-side-option" data-filter-key="status" data-filter-value="completed" onclick="setIdeaListChoice('status','completed')"><span></span>Projekt zakończony</button>
-        <button type="button" class="idea-side-option" data-filter-key="status" data-filter-value="evaluation" onclick="setIdeaListChoice('status','evaluation')"><span></span>W ocenie</button>
-        <button type="button" class="idea-side-option" data-filter-key="status" data-filter-value="evaluation_completed" onclick="setIdeaListChoice('status','evaluation_completed')"><span></span>Ocena zakończona</button>
+        <button type="button" class="idea-side-option check" data-filter-key="status" data-filter-value="in_progress" onclick="setIdeaListChoice('status','in_progress')"><span>✓</span>W toku</button>
+        <button type="button" class="idea-side-option check" data-filter-key="status" data-filter-value="completed" onclick="setIdeaListChoice('status','completed')"><span>✓</span>Projekt zakończony</button>
+        <button type="button" class="idea-side-option check" data-filter-key="status" data-filter-value="evaluation" onclick="setIdeaListChoice('status','evaluation')"><span>✓</span>W ocenie</button>
+        <button type="button" class="idea-side-option check" data-filter-key="status" data-filter-value="evaluation_completed" onclick="setIdeaListChoice('status','evaluation_completed')"><span>✓</span>Ocena zakończona</button>
       </section>
       <section class="ideas-sidebar-section">
         <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Typ</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
@@ -5562,9 +5561,8 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       </section>
       <section class="ideas-sidebar-section">
         <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Archiwum</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
-        <button type="button" class="idea-side-option selected" data-filter-key="archive" data-filter-value="active" onclick="setIdeaListChoice('archive','active')"><span></span>Aktywne</button>
-        <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="archived" onclick="setIdeaListChoice('archive','archived')"><span></span>Archiwalne</button>
-        <button type="button" class="idea-side-option" data-filter-key="archive" data-filter-value="all" onclick="setIdeaListChoice('archive','all')"><span></span>Wszystkie</button>
+        <button type="button" class="idea-side-option check" data-filter-key="archive" data-filter-value="active" onclick="setIdeaListChoice('archive','active')"><span>✓</span>Aktywne</button>
+        <button type="button" class="idea-side-option check" data-filter-key="archive" data-filter-value="archived" onclick="setIdeaListChoice('archive','archived')"><span>✓</span>Archiwalne</button>
       </section>
       <section class="ideas-sidebar-section" id="idea-needed-competency-filter">
         <h3><button type="button" class="ideas-section-toggle" onclick="toggleIdeaSidebarSection(this)" aria-expanded="true"><span>Szukają kompetencji</span><svg class="ideas-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
@@ -6695,7 +6693,7 @@ const IC=(()=>{
 
 let currentTab='all';
 let searchQ='';
-const ideaListFilters={status:'all',type:'all',archive:'active',openNeeds:false,followed:false,sort:'activity-desc'};
+const ideaListFilters={status:'all',type:'all',archive:'all',openNeeds:false,followed:false,sort:'activity-desc'};
 const selectedIdeaNeededSkills=new Set();
 const selectedIdeaPresentSkills=new Set();
 const ideaSkillQueries={needed:'',present:''};
@@ -6774,16 +6772,10 @@ function toggleIdeaFilterMenu(name,event){
 }
 function setIdeaListChoice(key,value){
   if(!Object.prototype.hasOwnProperty.call(IDEA_FILTER_LABELS,key)||!Object.prototype.hasOwnProperty.call(IDEA_FILTER_LABELS[key],value))return;
-  ideaListFilters[key]=value;closeIdeaFilterMenus();syncIdeaQueryControls();renderIdeas();
+  ideaListFilters[key]=ideaListFilters[key]===value?'all':value;closeIdeaFilterMenus();syncIdeaQueryControls();renderIdeas();
 }
 function toggleIdeaTypeChoice(kind){
-  if(kind==='ideas'){
-    if(ideaListFilters.type==='all')ideaListFilters.type='variants';
-    else if(ideaListFilters.type==='variants')ideaListFilters.type='all';
-  }else if(kind==='variants'){
-    if(ideaListFilters.type==='all')ideaListFilters.type='ideas';
-    else if(ideaListFilters.type==='ideas')ideaListFilters.type='all';
-  }
+  ideaListFilters.type=ideaListFilters.type===kind?'all':kind;
   syncIdeaQueryControls();renderIdeas();
 }
 function toggleIdeaMobileFilters(force){
@@ -6798,21 +6790,21 @@ function toggleIdeaSidebarSection(button){
   button.setAttribute('aria-expanded',String(!collapsed));
 }
 function removeIdeaFilter(key){
-  const defaults={status:'all',type:'all',archive:'active',openNeeds:false,followed:false};if(!Object.prototype.hasOwnProperty.call(defaults,key))return;
+  const defaults={status:'all',type:'all',archive:'all',openNeeds:false,followed:false};if(!Object.prototype.hasOwnProperty.call(defaults,key))return;
   ideaListFilters[key]=defaults[key];syncIdeaQueryControls();renderIdeas();
 }
 function clearIdeaListFilters(){
-  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';syncIdeaQueryControls();renderIdeas();
+  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'all',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';syncIdeaQueryControls();renderIdeas();
 }
 function syncIdeaQueryControls(){
   const sortLabel=document.getElementById('idea-sort-label');if(sortLabel)sortLabel.textContent=IDEA_FILTER_LABELS.sort[ideaListFilters.sort]||'';
   document.querySelectorAll('#idea-sort-menu button').forEach(row=>row.classList.toggle('selected',String(row.getAttribute('onclick')||'').includes(`'${ideaListFilters.sort}'`)));
-  document.querySelectorAll('.idea-side-option[data-filter-key]').forEach(button=>button.classList.toggle('selected',ideaListFilters[button.dataset.filterKey]===button.dataset.filterValue));
-  document.getElementById('idea-type-ideas')?.classList.toggle('on',ideaListFilters.type!=='variants');
-  document.getElementById('idea-type-variants')?.classList.toggle('on',ideaListFilters.type!=='ideas');
+  document.querySelectorAll('.idea-side-option[data-filter-key]').forEach(button=>button.classList.toggle('on',ideaListFilters[button.dataset.filterKey]===button.dataset.filterValue));
+  document.getElementById('idea-type-ideas')?.classList.toggle('on',ideaListFilters.type==='ideas');
+  document.getElementById('idea-type-variants')?.classList.toggle('on',ideaListFilters.type==='variants');
   document.getElementById('idea-filter-open-needs')?.classList.toggle('on',ideaListFilters.openNeeds);
   document.getElementById('idea-filter-followed')?.classList.toggle('on',ideaListFilters.followed);
-  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='active')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed)+selectedIdeaNeededSkills.size+selectedIdeaPresentSkills.size;
+  const activeCount=Number(ideaListFilters.status!=='all')+Number(ideaListFilters.type!=='all')+Number(ideaListFilters.archive!=='all')+Number(ideaListFilters.openNeeds)+Number(ideaListFilters.followed)+selectedIdeaNeededSkills.size+selectedIdeaPresentSkills.size;
   document.getElementById('ideas-clear-sidebar')?.classList.add('show');
   const mobileCount=document.getElementById('ideas-mobile-filter-count');if(mobileCount)mobileCount.textContent=activeCount?`(${activeCount})`:'';
   document.getElementById('ideas-catalog-layout')?.classList.toggle('draft-mode',currentTab==='drafts');
@@ -7587,7 +7579,7 @@ function initDemoAccounts(){
   document.addEventListener('click',event=>{if(!event.target.closest?.('#demo-account-wrap'))document.getElementById('demo-account-menu')?.classList.remove('on');});
 }
 
-let teamSearchQ='',teamSkillSearchQ='',teamSkillFilters=[],teamModeFilter='all',teamLocationFilter='all',teamSort='activity-new';
+let teamSearchQ='',teamSkillSearchQ='',teamSkillFilters=[],teamModeFilters=[],teamLocationFilters=[],teamSort='activity-new';
 let teamFilterSections={skills:true,mode:true,location:true};
 let projectTeams=[
   {id:'tm-leg',name:'Zespół Legislacyjny',desc:'Stała grupa do projektów ustaw, regulaminów i analiz prawnych.',members:['Anna Wiśniewska','Magdalena Lis','Piotr Kowalczyk'],pendingMembers:[],projectIds:[1],createdBy:'Anna Wiśniewska',date:'7 cze 2026',workMode:'online',location:'Online',wantedSkills:['Analiza prawna','Analiza danych','Komunikacja'],activityRank:0,lastActive:'dzisiaj',discussion:[{by:'Anna Wiśniewska',text:'Zbieramy argumenty prawne i polityczne w jednym miejscu.',date:'18 cze 2026'}],portfolio:[{type:'Dokument',title:'Pakiet reformy zamrażarki sejmowej',desc:'Projekt przepisów, uzasadnienie i mapa ryzyk formalnych.',projectId:1}]},
@@ -12303,16 +12295,16 @@ function teamWantedSkills(t){return Array.from(new Set([...(t.wantedSkills||[]),
 function toggleTeamFilterSidebar(open){document.getElementById('teams-filter-sidebar')?.classList.toggle('on',!!open);}
 function toggleTeamFilterSection(key){teamFilterSections[key]=!teamFilterSections[key];renderTeams();}
 function toggleTeamSkillFilter(skill){teamSkillFilters=teamSkillFilters.includes(skill)?teamSkillFilters.filter(s=>s!==skill):[...teamSkillFilters,skill];renderTeams();}
-function setTeamModeFilter(value){teamModeFilter=value;renderTeams();}
-function setTeamLocationFilter(value){teamLocationFilter=value;renderTeams();}
-function clearTeamFilters(){teamSkillFilters=[];teamModeFilter='all';teamLocationFilter='all';teamSkillSearchQ='';renderTeams();}
+function setTeamModeFilter(value){teamModeFilters=teamModeFilters.includes(value)?teamModeFilters.filter(row=>row!==value):[...teamModeFilters,value];renderTeams();}
+function setTeamLocationFilter(value){teamLocationFilters=teamLocationFilters.includes(value)?teamLocationFilters.filter(row=>row!==value):[...teamLocationFilters,value];renderTeams();}
+function clearTeamFilters(){teamSkillFilters=[];teamModeFilters=[];teamLocationFilters=[];teamSkillSearchQ='';renderTeams();}
 function toggleTeamSort(event){event?.stopPropagation();document.getElementById('teams-sort')?.classList.toggle('on');}
 function closeTeamSort(event){
   const sort=document.getElementById('teams-sort');
   if(sort&&(!event||!event.target.closest?.('#teams-sort')))sort.classList.remove('on');
 }
 function setTeamSort(value){teamSort=value;document.getElementById('teams-sort')?.classList.remove('on');renderTeams();}
-function teamRadioOption(group,value,label,current,action){return `<button type="button" class="team-radio-option${current===value?' on':''}" onclick="${action}('${escAttr(value)}')"><span></span>${escHtml(label)}</button>`;}
+function teamRadioOption(group,value,label,current,action){const on=current.includes(value);return `<button type="button" class="team-radio-option${on?' on':''}" aria-pressed="${on}" onclick="${action}('${escAttr(value)}')"><span>${on?'✓':''}</span>${escHtml(label)}</button>`;}
 function renderTeamFilterSidebar(teams){
   const allSkills=Array.from(new Set(teams.flatMap(teamWantedSkills))).sort((a,b)=>a.localeCompare(b,'pl'));
   const skillQ=String(teamSkillSearchQ||'').toLowerCase().trim();
@@ -12320,11 +12312,11 @@ function renderTeamFilterSidebar(teams){
   const skillBox=document.getElementById('team-skill-filter-list');
   if(skillBox)skillBox.innerHTML=shown.map(skill=>{const count=teams.filter(t=>teamWantedSkills(t).includes(skill)).length;return `<label class="members-skill-option"><input type="checkbox" ${teamSkillFilters.includes(skill)?'checked':''} onchange="toggleTeamSkillFilter('${escAttr(skill)}')"><span>${escHtml(skill)}</span><i>${count}</i></label>`;}).join('')||'<div class="team-filter-empty">Brak takiej kompetencji.</div>';
   const skillInp=document.getElementById('team-skill-search');if(skillInp&&skillInp.value!==teamSkillSearchQ)skillInp.value=teamSkillSearchQ;
-  const modeBox=document.getElementById('team-mode-filter-list');if(modeBox)modeBox.innerHTML=teamRadioOption('mode','all','Wszystkie',teamModeFilter,'setTeamModeFilter')+teamRadioOption('mode','online','Online',teamModeFilter,'setTeamModeFilter')+teamRadioOption('mode','local','Lokalnie',teamModeFilter,'setTeamModeFilter')+teamRadioOption('mode','hybrid','Hybrydowo',teamModeFilter,'setTeamModeFilter');
+  const modeBox=document.getElementById('team-mode-filter-list');if(modeBox)modeBox.innerHTML=teamRadioOption('mode','online','Online',teamModeFilters,'setTeamModeFilter')+teamRadioOption('mode','local','Lokalnie',teamModeFilters,'setTeamModeFilter')+teamRadioOption('mode','hybrid','Hybrydowo',teamModeFilters,'setTeamModeFilter');
   const locations=Array.from(new Set(teams.map(t=>t.location).filter(l=>l&&l!=='Online'))).sort((a,b)=>a.localeCompare(b,'pl'));
-  const locationBox=document.getElementById('team-location-filter-list');if(locationBox)locationBox.innerHTML=teamRadioOption('location','all','Wszystkie miejsca',teamLocationFilter,'setTeamLocationFilter')+teamRadioOption('location','Online','Online',teamLocationFilter,'setTeamLocationFilter')+locations.map(l=>teamRadioOption('location',l,l,teamLocationFilter,'setTeamLocationFilter')).join('');
+  const locationBox=document.getElementById('team-location-filter-list');if(locationBox)locationBox.innerHTML=teamRadioOption('location','Online','Online',teamLocationFilters,'setTeamLocationFilter')+locations.map(l=>teamRadioOption('location',l,l,teamLocationFilters,'setTeamLocationFilter')).join('');
   Object.entries(teamFilterSections).forEach(([key,open])=>document.getElementById(`team-filter-title-${key}`)?.setAttribute('aria-expanded',String(open)));
-  const clear=document.getElementById('teams-clear-filters');if(clear)clear.disabled=!teamSkillFilters.length&&teamModeFilter==='all'&&teamLocationFilter==='all'&&!teamSkillSearchQ;
+  const clear=document.getElementById('teams-clear-filters');if(clear)clear.disabled=!teamSkillFilters.length&&!teamModeFilters.length&&!teamLocationFilters.length&&!teamSkillSearchQ;
 }
 function renderTeams(){
   const teams=ensureIdeaTeams({});renderTeamFilterSidebar(teams);
@@ -12333,8 +12325,8 @@ function renderTeams(){
     const wanted=teamWantedSkills(t),projects=teamProjects(t);
     const hay=[t.name,t.desc,t.location,t.workMode,...teamAcceptedMembers(t),...wanted,...projects.map(i=>i.title)].join(' ').toLowerCase();
     const skillOk=!teamSkillFilters.length||teamSkillFilters.some(s=>wanted.includes(s));
-    const modeOk=teamModeFilter==='all'||t.workMode===teamModeFilter;
-    const locationOk=teamLocationFilter==='all'||(teamLocationFilter==='Online'?t.workMode==='online':t.location===teamLocationFilter);
+    const modeOk=!teamModeFilters.length||teamModeFilters.includes(t.workMode);
+    const locationOk=!teamLocationFilters.length||teamLocationFilters.some(value=>value==='Online'?t.workMode==='online':t.location===value);
     return (!q||hay.includes(q))&&skillOk&&modeOk&&locationOk;
   });
   list.sort((a,b)=>teamSort==='members-desc'?teamAcceptedMembers(b).length-teamAcceptedMembers(a).length:teamSort==='projects-desc'?teamProjects(b).length-teamProjects(a).length:teamSort==='name-asc'?a.name.localeCompare(b.name,'pl'):(a.activityRank||0)-(b.activityRank||0));
@@ -12344,12 +12336,16 @@ function renderTeams(){
   const count=document.getElementById('teams-result-count');if(count)count.textContent=`Znaleziono ${list.length} ${polishCountWord(list.length,'zespół','zespoły','zespołów')}`;
   const box=document.getElementById('teams-list');if(!box)return;
   box.innerHTML=list.map(t=>{
-    const membersList=teamAcceptedMembers(t),projects=teamProjects(t),wanted=teamWantedSkills(t),mode=t.workMode==='hybrid'?`Hybrydowo · ${t.location}`:t.workMode==='local'?`Lokalnie · ${t.location}`:'Online';
-    return `<article class="team-catalog-card" onclick="openTeam('${t.id}')" tabindex="0" onkeydown="if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openTeam('${t.id}')}" aria-label="Otwórz zespół ${escAttr(t.name)}"><div class="team-catalog-top"><div><h2>${escHtml(t.name)}</h2><p>${escHtml(t.desc||'Zespół roboczy platformy.')}</p></div><div class="team-card-badges"><span class="team-card-badge location"><svg viewBox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg>${escHtml(mode)}</span><span class="team-card-badge open">Otwarty</span><span class="team-card-badge active">Aktywny</span></div></div><div class="team-catalog-members">${membersList.slice(0,3).map(n=>personChip(n)).join('')}${membersList.length>3?`<span class="team-more-members">+${membersList.length-3}</span>`:''}</div><div class="team-wanted-label">Szukają kompetencji</div><div class="team-wanted-skills">${wanted.map(s=>`<span>${escHtml(s)}</span>`).join('')||'<i>Obecnie zespół nie prowadzi rekrutacji.</i>'}</div><footer><span>${membersList.length} członków</span><span>${projects.length} ${polishCountWord(projects.length,'projekt','projekty','projektów')}</span><span class="team-last-active"><i></i>Ostatnia aktywność: ${escHtml(t.lastActive)}</span></footer></article>`;
+    const membersList=teamAcceptedMembers(t),projects=teamProjects(t),wanted=teamWantedSkills(t),mode=t.workMode==='hybrid'?`Hybrydowo · ${t.location}`:t.workMode==='local'?`Lokalnie · ${t.location}`:'Online',stateBadges=t.draft?'<span class="team-card-badge location">Prywatny szkic</span>':'<span class="team-card-badge open">Otwarty</span><span class="team-card-badge active">Aktywny</span>';
+    return `<article class="team-catalog-card" onclick="openTeam('${t.id}')" tabindex="0" onkeydown="if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openTeam('${t.id}')}" aria-label="Otwórz zespół ${escAttr(t.name||'Nowy zespół')}" ${t.draft?'data-team-draft="true"':''}><div class="team-catalog-top"><div><h2>${escHtml(t.name||'Nowy zespół')}</h2><p>${escHtml(t.desc||'Uzupełnij prywatny szkic przed publikacją.')}</p></div><div class="team-card-badges"><span class="team-card-badge location">${escHtml(mode)}</span>${stateBadges}</div></div><div class="team-catalog-members">${membersList.slice(0,3).map(n=>personChip(n)).join('')}${membersList.length>3?`<span class="team-more-members">+${membersList.length-3}</span>`:''}</div><div class="team-wanted-label">Szukają kompetencji</div><div class="team-wanted-skills">${wanted.map(s=>`<span>${escHtml(s)}</span>`).join('')||'<i>Obecnie zespół nie prowadzi rekrutacji.</i>'}</div><footer><span>${membersList.length} członków</span><span>${projects.length} ${polishCountWord(projects.length,'projekt','projekty','projektów')}</span><span class="team-last-active"><i></i>Ostatnia aktywność: ${escHtml(t.lastActive)}</span></footer></article>`;
   }).join('')||'<div class="empty-inline teams-empty">Brak zespołów pasujących do wybranych filtrów.</div>';
   const inp=document.getElementById('teams-search');if(inp&&inp.value!==teamSearchQ)inp.value=teamSearchQ;
 }
-function startGlobalTeamForm(){window.globalTeamFormOpen=true;appModal('<div id="teams-form">'+renderGlobalTeamForm()+'</div>','team-create-modal');document.getElementById('app-modal').setAttribute('aria-label','Nowy zespół');document.getElementById('global-team-name')?.focus();}
+function startGlobalTeamForm(){
+  const id='tm'+Date.now(),founderRole=memberExistingTeamRoles(myProfile)[0]||'Założyciel/ka';
+  projectTeams.push({id,name:'',desc:'',members:[MY_NAME],pendingMembers:[],pendingInvites:[],memberRoles:{[MY_NAME]:founderRole},governance:{approvalPct:60,quorumPct:50,minVoters:1,voteHours:72,fastMode:'weekend',fastApprovalPct:50,fastQuorumPct:10,fastMinVoters:1,fastVoteMinutes:5,inactiveDays:30,inactiveVotes:5,unlockDays:14},recruitment:{capabilities:[],note:''},recruitmentPosts:[],charter:{firstFocus:'Ustalić pierwszy projekt lub zadanie dla zespołu.'},decisions:[],projectIds:[],createdBy:MY_NAME,date:TODAY,discussion:[],portfolio:[],wantedSkills:[],workMode:'online',location:'Online',activityRank:0,lastActive:'teraz',draft:true});
+  queuePersistence();openTeam(id);setTimeout(()=>document.getElementById('team-draft-name')?.focus(),0);toast('Powstał prywatny szkic zespołu.','ok');
+}
 function cancelGlobalTeamForm(){window.globalTeamFormOpen=false;closeAppModal();}
 function createGlobalTeam(){
   const invalid=[...document.querySelectorAll('#teams-form input[type=number]')].find(el=>!el.checkValidity());if(invalid){invalid.reportValidity();return;}
@@ -12385,7 +12381,8 @@ function createGlobalTeam(){
   projectTeams.push({id:'tm'+Date.now(),name,desc,members:[MY_NAME],pendingMembers:pending,pendingInvites:selected,memberRoles,governance,recruitment:{capabilities:[],note:''},recruitmentPosts:[],charter,decisions:[],projectIds:[],createdBy:MY_NAME,date:TODAY,discussion:[],portfolio:[],draft:true});
   queuePersistence();window.globalTeamFormOpen=false;closeAppModal();openTeam(projectTeams[projectTeams.length-1].id);toast('Szkic zespołu utworzony. Uzupełnij go i opublikuj, gdy będzie gotowy.','ok');
 }
-function publishGlobalTeam(teamId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!t.draft)return;t.draft=false;t.discussion=t.discussion||[];t.discussion.push({by:MY_NAME,text:'Zespół został opublikowany i jest otwarty na współpracę.',date:TODAY});discoverPosts.unshift({id:'discover-team-'+Date.now(),author:t.name,sourceType:'team',sourceId:t.id,sourceLabel:`Zespół · ${t.name}`,title:`Nowy zespół: ${t.name}`,text:t.desc||'Dołącz do wspólnej pracy.',date:'Dzisiaj',likes:0,comments:[],liked:false,topic:'all'});queuePersistence();openTeam(teamId);toast('Zespół opublikowany na platformie i tablicy Odkrywaj.','ok');}
+function saveGlobalTeamDraft(teamId,quiet=false){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!t.draft)return false;t.name=String(document.getElementById('team-draft-name')?.value||'').trim();t.desc=String(document.getElementById('team-draft-desc')?.value||'').trim();t.workMode=document.getElementById('team-draft-mode')?.value||'online';t.location=t.workMode==='online'?'Online':String(document.getElementById('team-draft-location')?.value||'').trim();t.wantedSkills=String(document.getElementById('team-draft-skills')?.value||'').split(',').map(row=>row.trim()).filter(Boolean);queuePersistence();if(!quiet){openTeam(teamId);toast('Szkic zespołu zapisany.','ok');}return true;}
+function publishGlobalTeam(teamId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!t.draft)return;saveGlobalTeamDraft(teamId,true);if(!t.name)return toast('Uzupełnij nazwę zespołu.','warn');if(!t.desc)return toast('Uzupełnij cel i sens współpracy.','warn');t.draft=false;t.discussion=t.discussion||[];t.discussion.push({by:MY_NAME,text:'Zespół został opublikowany i jest otwarty na współpracę.',date:TODAY});discoverPosts.unshift({id:'discover-team-'+Date.now(),author:t.name,sourceType:'team',sourceId:t.id,sourceLabel:`Zespół · ${t.name}`,title:`Nowy zespół: ${t.name}`,text:t.desc,date:'Dzisiaj',likes:0,comments:[],liked:false,topic:'all'});queuePersistence();openTeam(teamId);toast('Zespół opublikowany i ogłoszony na tablicy Odkrywaj. Od teraz wspólne zmiany przechodzą przez decyzje zespołu.','ok');}
 // Team profile shares the personal profile's sidebar, cover and activity structure.
 function teamAction(code){return escAttr(code);}
 function openTeam(teamId,opts={}){
@@ -12410,7 +12407,8 @@ function openTeam(teamId,opts={}){
   if(!mine){announcements=announcements.replace(/<div class="role-actions"[\s\S]*$/,'');rules=rules.replace(/<div class="role-actions">[\s\S]*$/,'</div>');}
   const discussion=[...(t.discussion||[])].reverse().map(m=>`<article class="tp-post"><div class="tp-post-avatar">${IC.chat}</div><div><div class="tp-post-by"><strong>${escHtml(m.by)}</strong><time>${escHtml(m.date||'')}</time></div><p>${escHtml(m.text)}</p></div></article>`).join('');
   const options=ideas.filter(i=>!(t.projectIds||[]).includes(i.id)&&!(i.votes||[]).some(v=>v.open&&v.kind==='project-team-join'&&v.teamId===t.id)).map(i=>`<option value="${escAttr(i.id)}">${escHtml(i.title)}</option>`).join('');
-  document.getElementById('team-profile-body').innerHTML=`${t.draft&&mine?`<div class="team-draft-banner"><strong>Szkic zespołu</strong><span>Masz pełną kontrolę nad ustawieniami. Opublikuj, gdy zespół będzie gotowy.</span><button class="tp-button primary" onclick="publishGlobalTeam('${escAttr(t.id)}')">Opublikuj zespół</button></div>`:''}<section class="tp-hero"><div class="tp-identity"><div class="tp-avatar">${teamAvatar}</div><div><span class="tp-eyebrow">ZESPÓŁ · ${escHtml(mode)}</span><h1>${escHtml(t.name)}</h1><p>${escHtml(t.desc||'Zespół roboczy platformy.')}</p></div></div><div class="tp-stats">${[[people.length,'Osoby'],[projects.length,'Projekty'],[(t.portfolio||[]).length,'Portfolio'],[skills.length,'Kompetencje']].map(([n,label])=>`<div><strong>${n}</strong><span>${label}</span></div>`).join('')}</div></section>
+  const draftEditor=t.draft&&mine?`<section class="team-draft-editor"><div class="team-draft-banner"><div><strong>Prywatny szkic zespołu</strong><span>Tylko Ty go widzisz i masz pełną kontrolę. Po publikacji kolejne ważne zmiany przejdą przez głosowania zespołu.</span></div><div class="team-draft-actions"><button class="tp-button" onclick="saveGlobalTeamDraft('${escAttr(t.id)}')">Zapisz szkic</button><button class="tp-button primary" onclick="publishGlobalTeam('${escAttr(t.id)}')">Opublikuj zespół</button></div></div><div class="team-draft-fields"><label>Nazwa zespołu<input id="team-draft-name" value="${escAttr(t.name)}" placeholder="Nadaj zespołowi nazwę"></label><label>Cel i sens współpracy<textarea id="team-draft-desc" placeholder="Po co powstaje ten zespół i co chce wspólnie osiągnąć?">${escHtml(t.desc)}</textarea></label><div class="team-draft-row"><label>Tryb współpracy<select id="team-draft-mode"><option value="online" ${t.workMode==='online'?'selected':''}>Online</option><option value="local" ${t.workMode==='local'?'selected':''}>Lokalnie</option><option value="hybrid" ${t.workMode==='hybrid'?'selected':''}>Hybrydowo</option></select></label><label>Miejsce<input id="team-draft-location" value="${escAttr(t.location==='Online'?'':t.location||'')}" placeholder="np. Warszawa"></label></div><label>Szukane kompetencje<input id="team-draft-skills" value="${escAttr((t.wantedSkills||[]).join(', '))}" placeholder="np. analiza prawna, komunikacja, grafika"></label></div></section>`:'';
+  document.getElementById('team-profile-body').innerHTML=`${draftEditor}<section class="tp-hero"><div class="tp-identity"><div class="tp-avatar">${teamAvatar}</div><div><span class="tp-eyebrow">${t.draft?'SZKIC ZESPOŁU':`ZESPÓŁ · ${escHtml(mode)}`}</span><h1>${escHtml(t.name||'Nowy zespół')}</h1><p>${escHtml(t.desc||'Uzupełnij cel i sens współpracy zespołu.')}</p></div></div><div class="tp-stats">${[[people.length,'Osoby'],[projects.length,'Projekty'],[(t.portfolio||[]).length,'Portfolio'],[skills.length,'Kompetencje']].map(([n,label])=>`<div><strong>${n}</strong><span>${label}</span></div>`).join('')}</div></section>
     <section class="tp-card tp-competencies"><div class="tp-section-head"><h2>Co wnosimy jako zespół</h2><span class="tp-meta">Kompetencje członków</span></div><div class="tp-chips">${chipList(skills)||'<p class="tp-empty">Członkowie nie dodali jeszcze kompetencji.</p>'}</div></section>
     <div class="tp-dashboard"><section class="tp-card"><div class="tp-section-head"><h2>Projekty zespołu</h2><span class="tp-count">${projects.length}</span></div>${projectCards||'<p class="tp-empty">Ten zespół nie jest jeszcze przypisany do projektu.</p>'}${mine&&options?`<details class="tp-details"><summary>Zgłoś zespół do projektu</summary><label for="team-project-target-${escAttr(t.id)}">Wybierz projekt</label><select class="fsel" id="team-project-target-${escAttr(t.id)}">${options}</select><button class="tp-button" onclick="${action('submitTeamToProjectFromProfile',t.id)}">Zgłoś zespół</button></details>`:''}</section>
     <section class="tp-card"><div class="tp-section-head"><h2>Ludzie w zespole</h2><span class="tp-count">${people.length}</span></div><div class="tp-people">${memberCards||'<p class="tp-empty">Zespół nie ma jeszcze członków.</p>'}</div>${pendingCards?`<details class="tp-details"><summary>Zgłoszenia do rozpatrzenia (${t.pendingMembers.length})</summary>${pendingCards}</details>`:''}</section>
@@ -16386,7 +16384,7 @@ function resetCollaboHubData(){
 }
 
 // === PLATFORM DICTIONARY ===
-let dictionaryCategory='all',dictionaryStatus='active',dictionarySearch='',dictionarySort='az',dictionaryPage=1;
+let dictionaryCategory='all',dictionaryStatus='all',dictionarySearch='',dictionarySort='az',dictionaryPage=1;
 const dictionaryPageSize=10;
 let dictionaryProposalTypes=new Set();
 let dictionaryBaseEntries=[
@@ -16441,7 +16439,7 @@ function dictionaryFilteredEntries(){
 function dictionaryChoice(label,value,current,kind,count){
   const active=kind==='proposal'?dictionaryProposalTypes.has(value):current===value;
   const action=kind==='category'?`setDictionaryCategory('${value}')`:kind==='status'?`setDictionaryStatus('${value}')`:`toggleDictionaryProposalType('${value}')`;
-  return `<button class="dictionary-choice${active?' active':''}" type="button" aria-pressed="${active}" onclick="${action}"><span class="dict-${kind==='proposal'?'check':'radio'}">${active?'✓':''}</span><span>${escHtml(label)}</span>${count!==undefined?`<span class="dictionary-count">${count}</span>`:''}</button>`;
+  return `<button class="dictionary-choice${active?' active':''}" type="button" aria-pressed="${active}" onclick="${action}"><span class="dict-check">${active?'✓':''}</span><span>${escHtml(label)}</span>${count!==undefined?`<span class="dictionary-count">${count}</span>`:''}</button>`;
 }
 function renderDictionarySidebar(all){
   const side=document.getElementById('dictionary-sidebar');if(!side)return;
@@ -16449,7 +16447,7 @@ function renderDictionarySidebar(all){
   const scount=status=>all.filter(x=>x.status===status).length;
   side.innerHTML=`<div class="dictionary-sidebar-heading">FILTRY</div>
     <section class="dictionary-filter-section"><button class="dictionary-section-title" onclick="toggleDictionarySection(this)">Kategorie <span>⌃</span></button><div class="dictionary-filter-options">
-      ${dictionaryChoice('Wszystkie','all',dictionaryCategory,'category',count('all'))}${dictionaryChoice('Kompetencje','competency',dictionaryCategory,'category',count('competency'))}${dictionaryChoice('Miasta','city',dictionaryCategory,'category',count('city'))}${dictionaryChoice('Regiony','region',dictionaryCategory,'category',count('region'))}${dictionaryChoice('Zasoby','resource',dictionaryCategory,'category',count('resource'))}</div></section>
+      ${dictionaryChoice('Kompetencje','competency',dictionaryCategory,'category',count('competency'))}${dictionaryChoice('Miasta','city',dictionaryCategory,'category',count('city'))}${dictionaryChoice('Regiony','region',dictionaryCategory,'category',count('region'))}${dictionaryChoice('Zasoby','resource',dictionaryCategory,'category',count('resource'))}</div></section>
     <section class="dictionary-filter-section"><button class="dictionary-section-title" onclick="toggleDictionarySection(this)">Status <span>⌃</span></button><div class="dictionary-filter-options">
       ${dictionaryChoice('Aktywne','active',dictionaryStatus,'status',scount('active'))}${dictionaryChoice('W głosowaniu','voting',dictionaryStatus,'status',scount('voting'))}${dictionaryChoice('Archiwalne','archived',dictionaryStatus,'status',scount('archived'))}</div></section>
     <section class="dictionary-filter-section"><button class="dictionary-section-title" onclick="toggleDictionarySection(this)">Typ propozycji <span>⌃</span></button><div class="dictionary-filter-options">
@@ -16484,10 +16482,10 @@ function renderPlatform(){
   const input=document.getElementById('dictionary-search');if(input&&input.value!==dictionarySearch)input.value=dictionarySearch;
 }
 function setDictionarySearch(value){dictionarySearch=value;dictionaryPage=1;renderPlatform();setTimeout(()=>{const el=document.getElementById('dictionary-search');el?.focus();if(el)el.setSelectionRange(el.value.length,el.value.length)},0)}
-function setDictionaryCategory(value){dictionaryCategory=value;dictionaryPage=1;renderPlatform()}
-function setDictionaryStatus(value){dictionaryStatus=value;dictionaryPage=1;renderPlatform()}
+function setDictionaryCategory(value){dictionaryCategory=dictionaryCategory===value?'all':value;dictionaryPage=1;renderPlatform()}
+function setDictionaryStatus(value){dictionaryStatus=dictionaryStatus===value?'all':value;dictionaryPage=1;renderPlatform()}
 function toggleDictionaryProposalType(value){dictionaryProposalTypes.has(value)?dictionaryProposalTypes.delete(value):dictionaryProposalTypes.add(value);dictionaryPage=1;renderPlatform()}
-function clearDictionaryFilters(){dictionaryCategory='all';dictionaryStatus='active';dictionaryProposalTypes.clear();dictionarySearch='';dictionarySort='az';dictionaryPage=1;renderPlatform()}
+function clearDictionaryFilters(){dictionaryCategory='all';dictionaryStatus='all';dictionaryProposalTypes.clear();dictionarySearch='';dictionarySort='az';dictionaryPage=1;renderPlatform()}
 function setDictionaryPage(page){dictionaryPage=page;renderPlatform();document.querySelector('.dictionary-main')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function toggleDictionarySection(button){button.closest('.dictionary-filter-section')?.classList.toggle('collapsed')}
 function toggleDictionarySidebar(){document.getElementById('dictionary-sidebar')?.classList.toggle('open')}
@@ -16715,7 +16713,7 @@ html.ch-dialog-open,html.ch-dialog-open body{overflow:hidden!important}
 #s-team-profile .tp-info{font-size:14px}
 #s-team-profile .tp-info dt{color:var(--txs);font-size:12px;margin-top:12px}
 #s-team-profile .tp-info dd{margin-top:3px;overflow-wrap:anywhere}
-#s-team-profile .tp-hero{border:1px solid var(--bdr);border-radius:18px;padding:30px;margin-bottom:18px;background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.95) 45%,rgba(255,255,255,.35) 100%),url('assets/profile-banner-lilac-landscape.png') right center/cover}.team-draft-banner{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:14px 18px;border:1px solid var(--p300);border-radius:14px;background:var(--p50);color:var(--txt)}.team-draft-banner strong{font-size:15px}.team-draft-banner span{flex:1;color:var(--txs);font-size:13px}
+#s-team-profile .tp-hero{border:1px solid var(--bdr);border-radius:18px;padding:30px;margin-bottom:18px;background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.95) 45%,rgba(255,255,255,.35) 100%),url('assets/profile-banner-lilac-landscape.png') right center/cover}.team-draft-editor{margin-bottom:18px;border:1px solid var(--p300);border-radius:18px;background:var(--surf);overflow:hidden}.team-draft-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 20px;background:var(--p50);color:var(--txt)}.team-draft-banner strong{display:block;font-size:16px}.team-draft-banner span{display:block;margin-top:3px;color:var(--txs);font-size:13px}.team-draft-actions{display:flex;gap:8px;flex:0 0 auto}.team-draft-fields{display:grid;gap:14px;padding:20px}.team-draft-fields label{display:grid;gap:6px;color:var(--txt);font-size:13px;font-weight:750}.team-draft-fields input,.team-draft-fields textarea,.team-draft-fields select{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);color:var(--txt);font:13px 'DM Sans',sans-serif}.team-draft-fields textarea{min-height:100px;resize:vertical}.team-draft-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 #s-team-profile .tp-identity{display:grid;grid-template-columns:100px minmax(0,1fr);gap:24px;align-items:center;max-width:850px}
 #s-team-profile .tp-avatar{display:grid;place-items:center;width:100px;height:100px;border:5px solid white;border-radius:26px;background:var(--p200);box-shadow:0 6px 20px #37216615;color:var(--p700);font-family:'DM Serif Display',serif;font-size:32px}
 #s-team-profile .tp-eyebrow{font-size:12px;letter-spacing:.08em;font-weight:600;color:var(--p700)}
@@ -16771,6 +16769,7 @@ html.theme-dark #s-profile-me .mp-identity h1,html.theme-dark #s-profile-me .mp-
 @media(max-width:1150px){#s-team-profile.on{grid-template-columns:230px minmax(0,1fr);gap:18px;padding-left:18px;padding-right:18px}#s-team-profile .tp-dashboard{grid-template-columns:1fr}#s-team-profile .tp-wide{grid-column:auto}#s-profile-me .mp-compose-types{flex-wrap:wrap}}
 @media(max-width:820px){#s-team-profile.on{display:block;padding:80px 16px 100px}#s-team-profile>.profile-header{position:static;max-height:none;display:grid;grid-template-columns:1fr 1fr;gap:14px;overflow:visible}#s-team-profile .tp-side-card:first-child{grid-column:1/-1}#s-team-profile .tp-hero{padding:22px}#s-profile-me .mp-feed-card{grid-template-columns:38px minmax(0,1fr)}#s-profile-me .mp-feed-media{display:none}}
 @media(max-width:540px){#s-team-profile>.profile-header{display:block}#s-team-profile .tp-identity{grid-template-columns:64px minmax(0,1fr);gap:14px}#s-team-profile .tp-avatar{width:64px;height:64px;border-radius:18px;border-width:3px;font-size:24px}#s-team-profile .tp-stats{grid-template-columns:repeat(2,1fr);gap:18px}#s-team-profile .tp-stats>div{padding:0;border:0}#s-team-profile .tp-card{padding:18px}#s-team-profile .tp-hero{padding:18px}.app-modal-bg{padding:10px}#app-modal{max-height:calc(100dvh - 20px)}#app-modal .form-action-modal{display:block;max-height:none;height:auto}#app-modal .form-action-side{display:none}#app-modal .form-action-main{padding:48px 20px 24px}#s-profile-me .mp-feed-row{grid-template-columns:1fr;gap:5px}#s-profile-me .mp-feed-date{text-align:left;padding-top:16px}#s-profile-me .mp-feed:before,#s-profile-me .mp-feed-dot{display:none}#s-profile-me .mp-hero-metrics{margin:0 18px;width:calc(100% - 36px);grid-template-columns:repeat(2,1fr);gap:16px}#s-profile-me .mp-hero-metrics>div{padding:0;border:0}}
+@media(max-width:700px){.team-draft-banner{display:block}.team-draft-actions{margin-top:12px;flex-wrap:wrap}.team-draft-row{grid-template-columns:1fr}}
 @media(max-width:760px){#app-modal.team-create-modal .team-settings-grid,#app-modal.team-create-modal .team-form-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:540px){#app-modal.team-create-modal .team-settings-grid,#app-modal.team-create-modal .team-form-grid{grid-template-columns:1fr}#app-modal.team-create-modal .team-member-option{grid-template-columns:22px minmax(0,1fr)}#app-modal.team-create-modal .team-member-role-list,#app-modal.team-create-modal .team-member-note{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
