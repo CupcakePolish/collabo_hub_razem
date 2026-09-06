@@ -84,7 +84,7 @@ test('new teams start as editable private drafts and publish to Discover', () =>
   assert.match(html, /function startGlobalTeamForm\(\)[\s\S]*draft:true/);
   assert.match(html, /id="team-draft-name"/);
   assert.match(html, /id="team-draft-desc"/);
-  assert.match(html, /function saveGlobalTeamDraft\(teamId,quiet=false\)/);
+  assert.match(html, /function saveGlobalTeamDraft\(teamId,quiet=false,/);
   assert.match(html, /function publishGlobalTeam\(teamId\)[\s\S]*discoverPosts\.unshift/);
   assert.match(html, /Prywatny szkic/);
   assert.match(html, /function toggleTeamDraftEdit\(teamId\)/);
@@ -109,4 +109,20 @@ test('team profile is centered and has no sidebar layout', () => {
   assert.match(html, /#s-team-profile\.on\{display:block/);
   assert.match(html, /width:min\(1240px,100%\);max-width:1240px;margin:0 auto/);
   assert.doesNotMatch(html, /team-profile-header'\)\.innerHTML=`<div class="tp-side-card"/);
+});
+
+test('team draft supports avatar upload and dictionary-backed locations', () => {
+  assert.match(html, /function updateTeamDraftAvatar\(teamId,input\)/);
+  assert.match(html, /accept="image\/\*"[^>]*updateTeamDraftAvatar/);
+  assert.match(html, /function teamLocationDictionaryMatches\(query\)/);
+  assert.match(html, /\['city','region'\]\.includes\(row\.category\)/);
+  assert.match(html, /Wybierz miasto lub region ze Słownika/);
+  assert.match(html, /id="team-location-suggestions"/);
+  assert.match(html, /Brak pojęcia w Słowniku/);
+  assert.match(html, /Przejdź do Słownika i dodaj/);
+});
+
+test('focus styling uses a thin border without heavy rings', () => {
+  assert.match(html, /:focus-visible\{outline:1px solid var\(--p400\)!important/);
+  assert.match(html, /tp-hero\.is-editing\{border-color:var\(--bdr\);outline:0;box-shadow:none\}/);
 });
