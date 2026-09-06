@@ -28,6 +28,12 @@ test('team join requests require confirmation and can be withdrawn', () => {
   assert.match(html, /function withdrawGlobalTeamRequest\(teamId\)/);
 });
 
+test('team catalog toolbar keeps search and create action together', () => {
+  assert.match(html, /class="teams-catalog-tools"[\s\S]*id="teams-search"[\s\S]*class="teams-create-button"[^>]*onclick="startGlobalTeamForm\(\)"/);
+  assert.match(html, /class="teams-results-toolbar"/);
+  assert.match(html, /\.teams-create-button\{[\s\S]*white-space:nowrap/);
+});
+
 test('add idea still starts the existing private-draft flow', () => {
   assert.match(html, /class="ideas-add-button" onclick="beginNewIdea\(\)"/);
   assert.doesNotMatch(html, /<button[^>]*class="btn-add"[^>]*onclick="beginNewIdea\(\)"/);

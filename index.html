@@ -4594,7 +4594,11 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .teams-catalog-heading h1{margin:0;color:var(--txt);font:400 clamp(42px,4vw,58px)/1.03 'DM Serif Display',serif}
 .teams-catalog-heading h1 em{color:var(--p600);font-weight:400}
 .teams-catalog-heading p{margin:9px 0 0;color:var(--txs);font-size:15px}
-.teams-catalog-tools{display:grid;grid-template-columns:minmax(320px,1fr) auto;gap:14px;align-items:center}
+.teams-catalog-tools{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.teams-catalog-tools .members-main-search{flex:1;min-width:0}
+.teams-create-button{height:48px;flex:0 0 auto;padding:0 20px;border:1px solid var(--p200);border-radius:12px;background:var(--p700);color:#fff;font:750 14px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer;transition:background .13s,transform .13s}
+.teams-create-button:hover{background:var(--p800);transform:translateY(-1px)}
+.teams-results-toolbar{display:flex;align-items:center;justify-content:flex-start;margin-bottom:4px}
 .teams-catalog-results{margin:17px 0 15px;color:var(--txs);font-size:14px}
 .teams-catalog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .team-catalog-card{min-width:0;padding:22px 24px 18px;border:1px solid var(--bdr);border-radius:18px;background:var(--surf);box-shadow:0 6px 20px rgba(37,31,65,.04);cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}
@@ -4621,7 +4625,7 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .team-catalog-card footer b{margin-left:auto;color:var(--p700);font-size:12px}
 .teams-empty{grid-column:1/-1;min-height:260px;display:grid;place-items:center;padding:30px;border:1px dashed var(--p200);border-radius:18px;background:var(--surf);color:var(--txs);text-align:center}
 @media(max-width:1120px){.teams-catalog-layout{grid-template-columns:248px minmax(0,1fr)}.teams-catalog-grid{grid-template-columns:1fr}.teams-catalog-main{padding-left:28px;padding-right:28px}}
-@media(max-width:820px){.teams-catalog-layout{display:block}.teams-catalog-main{padding:26px 18px 60px}.teams-catalog-tools{grid-template-columns:1fr}.teams-catalog-tools .members-sort{justify-self:stretch}.teams-catalog-tools .members-sort-trigger{width:100%}.teams-catalog-heading h1{font-size:42px}}
+@media(max-width:820px){.teams-catalog-layout{display:block}.teams-catalog-main{padding:26px 18px 60px}.teams-catalog-tools{align-items:stretch;flex-direction:column}.teams-catalog-tools .members-main-search{width:100%}.teams-create-button{width:100%}.teams-catalog-heading h1{font-size:42px}}
 @media(max-width:600px){.team-catalog-top{display:block}.team-card-badges{max-width:none;justify-content:flex-start;margin-top:12px}.team-catalog-card footer b{width:100%;margin-left:0}}
 </style>
 <style>
@@ -5702,8 +5706,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
         <p>Stałe grupy współpracy, ich skład, historia projektów i wspólnie dowiezione rezultaty.</p>
       </header>
       <div class="teams-catalog-tools">
-        <button class="vbtn voted-yes" type="button" onclick="startGlobalTeamForm()">+ Utwórz zespół</button>
         <label class="members-main-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="teams-search" aria-label="Szukaj zespołów" placeholder="Szukaj zespołów…" oninput="teamSearchQ=this.value;renderTeams()"></label>
+        <button class="teams-create-button" type="button" onclick="startGlobalTeamForm()">+ Utwórz zespół</button>
+      </div>
+      <div class="teams-results-toolbar">
         <div class="members-sort teams-sort" id="teams-sort">
           <button type="button" class="members-sort-trigger" onclick="toggleTeamSort(event)">Sortuj: <b id="teams-sort-label">Ostatnia aktywność</b><svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
           <div class="members-sort-menu" id="teams-sort-menu"></div>
