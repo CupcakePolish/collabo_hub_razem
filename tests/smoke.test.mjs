@@ -168,3 +168,19 @@ test('team board uses a centered visual feed with editable welcome post', () => 
   assert.match(html, /toggleTeamWelcomePin/);
   assert.match(html, /\.tp-board-post-image\{display:block;width:100%;height:260px;object-fit:cover/);
 });
+
+test('team board post composer supports rich media, drafts and platform mentions', () => {
+  assert.match(html, /class="tbp-composer"/);
+  assert.match(html, /composerKey='team-board-post-body'/);
+  assert.match(html, /id="mb-inp-\$\{composerKey\}"/);
+  assert.match(html, /Wybierz emotkę lub GIF/);
+  assert.match(html, /saveTeamBoardPost\('[^']*','[^']*','draft'\)/);
+  assert.match(html, /saveTeamBoardPost\('[^']*','[^']*','published'\)/);
+  assert.match(html, /function handleTeamBoardMention\(input\)/);
+  assert.match(html, /buildGlobalSearchIndex\(\)/);
+  assert.match(html, /function insertTeamBoardMention\(index\)/);
+  assert.match(html, /function renderTeamBoardText\(raw\)/);
+  assert.match(html, /class="tp-board-mention"/);
+  assert.match(html, /function previewTeamBoardPostImage\(input\)/);
+  assert.match(html, /function setTeamBoardComposerLayout\(layout\)/);
+});
