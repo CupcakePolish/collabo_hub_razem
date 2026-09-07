@@ -174,7 +174,8 @@ test('team board uses a centered visual feed with editable welcome post', () => 
   assert.match(html, /openTeamBoardPostModal/);
   assert.match(html, /async function saveTeamBoardPost/);
   assert.match(html, /toggleTeamWelcomePin/);
-  assert.match(html, /#s-team-profile\.on\{display:block;padding:96px 24px 70px!important/);
+  assert.match(html, /#s-team-profile\.on\{display:block;padding:84px 24px 70px!important/);
+  assert.match(html, /#s-team-profile \.tp-hero\{[^}]*overflow:visible/);
   assert.match(html, /#s-team-profile \.tp-board-feed\{width:min\(900px,100%\);margin:18px auto 0\}/);
   assert.match(html, /\.tp-board-post-image\{display:block;width:100%;height:260px;object-fit:cover/);
 });
@@ -194,7 +195,14 @@ test('team board post composer supports rich media, drafts and platform mentions
   assert.match(html, /function previewTeamBoardPostImage\(input\)/);
   assert.match(html, /function setTeamBoardComposerLayout\(layout\)/);
   assert.match(html, /\.member-action-close,\.ch-modal-close,\.tbp-close/);
-  assert.match(html, /\.app-modal\.team-board-post-modal\{width:min\(880px/);
+  assert.match(html, /\.app-modal\.team-board-post-modal\{width:min\(980px/);
+  assert.match(html, /class="tbp-audience-menu"/);
+  assert.match(html, /Tylko zespół/);
+  assert.match(html, /Dla członków platformy · także w Odkrywaj/);
+  assert.match(html, /placeholder="Tytuł \(opcjonalnie\)"/);
+  assert.match(html, /class="tbp-layout-icon right"/);
+  assert.match(html, /function teamBoardComposerIcon\(kind\)/);
+  assert.match(html, /discover-team-board-/);
   assert.match(html, /\.tbp-mention-pop\{position:absolute;z-index:120;top:0;left:calc\(100% \+ 18px\)/);
   assert.match(html, /slice\(0,6\)/);
   assert.match(html, /test\(match\[1\]\)\)\{hide\(\);return;\}/);
