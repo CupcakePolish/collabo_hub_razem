@@ -135,7 +135,9 @@ test('team catalog previews uploaded profile photos', () => {
   assert.match(html, /team-card-description\{grid-column:2;/);
   assert.match(html, /team-catalog-card\{display:flex;[\s\S]*flex-direction:column/);
   assert.match(html, /team-catalog-card footer\{[\s\S]*margin-top:auto/);
-  assert.match(html, /team-card-badges\{[\s\S]*grid-column:2;[\s\S]*justify-content:flex-start/);
+  assert.match(html, /team-card-copy\{display:grid;[\s\S]*align-content:start/);
+  assert.match(html, /<h2>\$\{escHtml\(t\.name\|\|'Nowy zespół'\)\}<\/h2><div class="team-card-badges">/);
+  assert.match(html, /team-catalog-card footer\{[\s\S]*border-top:0/);
 });
 
 test('team draft separates editing, publishing and deletion', () => {
@@ -180,12 +182,12 @@ test('team board uses a centered visual feed with editable welcome post', () => 
   assert.match(html, /\.tp-board-post-image\{display:block;width:100%;height:260px;object-fit:cover/);
 });
 
-test('team board post composer supports rich media, drafts and platform mentions', () => {
+test('team board post composer supports rich media and categorized platform mentions', () => {
   assert.match(html, /class="tbp-composer"/);
   assert.match(html, /composerKey='team-board-post-body'/);
   assert.match(html, /id="mb-inp-\$\{composerKey\}"/);
   assert.match(html, /Wybierz emotkę lub GIF/);
-  assert.match(html, /saveTeamBoardPost\('[^']*','[^']*','draft'\)/);
+  assert.doesNotMatch(html, /class="tbp-save-draft"/);
   assert.match(html, /saveTeamBoardPost\('[^']*','[^']*','published'\)/);
   assert.match(html, /function handleTeamBoardMention\(input\)/);
   assert.match(html, /buildGlobalSearchIndex\(\)/);
@@ -200,11 +202,15 @@ test('team board post composer supports rich media, drafts and platform mentions
   assert.match(html, /Tylko zespół/);
   assert.match(html, /Dla członków platformy · także w Odkrywaj/);
   assert.match(html, /placeholder="Tytuł \(opcjonalnie\)"/);
-  assert.match(html, /class="tbp-layout-icon right"/);
+  assert.match(html, /function teamBoardLayoutIcon\(layout\)/);
+  assert.match(html, /TEAM_BOARD_MENTION_CATEGORIES/);
+  assert.match(html, /Kategorie elementów platformy/);
+  assert.match(html, /\['project','resource','member','vote','doc','team'\]/);
   assert.match(html, /function teamBoardComposerIcon\(kind\)/);
   assert.match(html, /discover-team-board-/);
   assert.match(html, /\.tbp-mention-pop\{position:absolute;z-index:120;top:0;left:calc\(100% \+ 18px\)/);
   assert.match(html, /slice\(0,6\)/);
   assert.match(html, /test\(match\[1\]\)\)\{hide\(\);return;\}/);
   assert.match(html, /teamBoardMentionResults=\[\];/);
+  assert.match(html, /#s-team-profile>\.profile-header\{[^}]*border:0!important/);
 });
