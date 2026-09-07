@@ -187,4 +187,6 @@ test('team board post composer supports rich media, drafts and platform mentions
   assert.match(html, /\.app-modal\.team-board-post-modal\{width:min\(880px/);
   assert.match(html, /\.tbp-mention-pop\{position:absolute;z-index:120;top:0;left:calc\(100% \+ 18px\)/);
   assert.match(html, /slice\(0,6\)/);
+  assert.match(html, /test\(match\[1\]\)\)\{hide\(\);return;\}/);
+  assert.match(html, /teamBoardMentionResults=\[\];/);
 });
