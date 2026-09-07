@@ -183,4 +183,8 @@ test('team board post composer supports rich media, drafts and platform mentions
   assert.match(html, /class="tp-board-mention"/);
   assert.match(html, /function previewTeamBoardPostImage\(input\)/);
   assert.match(html, /function setTeamBoardComposerLayout\(layout\)/);
+  assert.match(html, /\.member-action-close,\.ch-modal-close,\.tbp-close/);
+  assert.match(html, /\.app-modal\.team-board-post-modal\{width:min\(880px/);
+  assert.match(html, /\.tbp-mention-pop\{position:absolute;z-index:120;top:0;left:calc\(100% \+ 18px\)/);
+  assert.match(html, /slice\(0,6\)/);
 });
