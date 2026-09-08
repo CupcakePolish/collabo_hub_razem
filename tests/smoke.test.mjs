@@ -49,10 +49,15 @@ test('discover board has navigation, composer and publish interactions', () => {
 
 test('discover board filters and sorts community posts', () => {
   assert.match(html, /data-filter-kind="topic"/);
-  assert.match(html, /data-filter-kind="type"/);
+  assert.doesNotMatch(html, /data-filter-kind="type"/);
+  assert.doesNotMatch(html, /Rodzaj wpisu/);
+  assert.doesNotMatch(html, /id="discover-composer-kind"/);
+  assert.doesNotMatch(html, /discover-kind-badge/);
   assert.match(html, /id="discover-author-search"/);
   assert.match(html, /Najbardziej doceniane/);
+  assert.match(html, /Najczęściej komentowane/);
   assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
+  assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
   assert.match(html, /function openDiscoverAuthor\(id\)/);
   assert.match(html, /function openDiscoverSource\(id\)/);
 });
@@ -229,7 +234,9 @@ test('team board post composer supports rich media and categorized platform ment
   assert.match(html, /discover-team-board-/);
   assert.match(html, /\.tbp-mention-pop\{position:absolute;z-index:120;top:0;left:calc\(100% \+ 18px\)/);
   assert.match(html, /slice\(0,6\)/);
-  assert.match(html, /test\(match\[1\]\)\)\{hide\(\);return;\}/);
+  assert.match(html, /query=match\?\.\[1\]\|\|''/);
+  assert.match(html, /test\(query\)\)\{hide\(\);return;\}/);
+  assert.match(html, /teamBoardMentionQuery='';/);
   assert.match(html, /teamBoardMentionResults=\[\];/);
   assert.match(html, /#s-team-profile>\.profile-header\{[^}]*border:0!important/);
 });
