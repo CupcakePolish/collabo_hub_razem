@@ -45,6 +45,8 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
+  assert.match(html, /#s-discover \.discover-sidebar\{[^}]*max-height:calc\(100dvh - 104px\)[^}]*overflow-y:auto/);
+  assert.match(html, /\.discover-add-post\{[^}]*border:2px solid #cbb8ee[^}]*background:#fff[^}]*color:#57329f/);
 });
 
 test('discover board filters and sorts community posts', () => {
@@ -92,17 +94,34 @@ test('personalized ideas use the Dla mnie label', () => {
   assert.doesNotMatch(html, /Dopasowane/);
 });
 
-test('discover board includes the green courtyard visual mockup', () => {
+test('discover board keeps its visual assets without the orphaned green courtyard demo', () => {
   assert.match(html, /assets\/discover\/odkrywaj-illustration\.png/);
-  assert.match(html, /assets\/teams\/zielone-podworka\.jpg/);
   assert.match(html, /assets\/discover\/50-drzew\.jpg/);
   assert.match(html, /\^assets\\\/\[a-z0-9_\.\/-\]\+\\\.\(\?:png\|jpe\?g\|gif\|webp\)\$/);
-  assert.match(html, /id:'tm-green'/);
   assert.match(html, /Posadźmy 100 drzew/);
   assert.match(html, /Kamień milowy: posadzono pierwsze 50 drzew/);
+  assert.doesNotMatch(html, /\{id:'discover-demo-2'/);
+  assert.doesNotMatch(html, /projectTeams\.push\(\{id:'tm-green'/);
+  assert.match(html, /data\.projectTeams\.filter\(row=>String\(row\?\.id\)!=='tm-green'\)/);
+  assert.match(html, /data\.discoverPosts\.filter\(row=>String\(row\?\.id\)!=='discover-demo-2'\)/);
   assert.ok(existsSync(new URL('../assets/discover/odkrywaj-illustration.png', import.meta.url)));
-  assert.ok(existsSync(new URL('../assets/teams/zielone-podworka.jpg', import.meta.url)));
   assert.ok(existsSync(new URL('../assets/discover/50-drzew.jpg', import.meta.url)));
+});
+
+test('discover composer chooses between the member and their published teams', () => {
+  assert.match(html, /ownTeams=\(projectTeams\|\|\[\]\)\.filter\(row=>!row\.draft&&teamAcceptedMembers\(row\)\.includes\(MY_NAME\)\)/);
+  assert.match(html, /<option value="profile">Mój profil<\/option>\$\{identityOptions\}/);
+  assert.match(html, /<option value="team:\$\{escAttr\(row\.id\)\}">Zespół · \$\{escHtml\(row\.name\)\}<\/option>/);
+  assert.doesNotMatch(html, /id="discover-composer-source-id"/);
+  assert.doesNotMatch(html, /<h3>Nowy wpis<\/h3>/);
+  assert.match(html, /\.discover-composer-identity,\.discover-modal-public\{width:190px;min-height:42px\}/);
+});
+
+test('discover team posts resolve the current team avatar with a fallback', () => {
+  assert.match(html, /function discoverPostAvatar\(post,team=null\)/);
+  assert.match(html, /safeUserUrl\(team\?\.avatar\|\|post\.avatarImage\|\|'','image'\)/);
+  assert.match(html, /class="discover-avatar-fallback"/);
+  assert.match(html, /onerror="this\.remove\(\)"/);
 });
 
 test('new teams start as editable private drafts and publish to Discover', () => {
