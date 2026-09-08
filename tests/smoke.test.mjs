@@ -40,10 +40,21 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /id="nl-discover"[^>]*onclick="go\('discover'/);
   assert.match(html, /class="nav-brand"[^>]*aria-label="Przejdź do Odkrywaj"[^>]*onclick="go\('discover'\)"[^>]*onkeydown="[^"]*go\('discover'\)/);
   assert.match(html, /id="s-discover" class="screen discover-screen"/);
-  assert.match(html, /id="discover-composer-text"/);
+  assert.match(html, /class="discover-add-post"[^>]*onclick="openDiscoverComposerModal\(\)"/);
+  assert.match(html, /function openDiscoverComposerModal\(\)[\s\S]*class="tbp-composer"/);
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
+});
+
+test('discover board filters and sorts community posts', () => {
+  assert.match(html, /data-filter-kind="topic"/);
+  assert.match(html, /data-filter-kind="type"/);
+  assert.match(html, /id="discover-author-search"/);
+  assert.match(html, /Najbardziej doceniane/);
+  assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
+  assert.match(html, /function openDiscoverAuthor\(id\)/);
+  assert.match(html, /function openDiscoverSource\(id\)/);
 });
 
 test('team catalog toolbar keeps search and create action together', () => {
