@@ -38,6 +38,7 @@ test('team join requests require confirmation and can be withdrawn', () => {
 
 test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /id="nl-discover"[^>]*onclick="go\('discover'/);
+  assert.match(html, /class="nav-brand"[^>]*aria-label="Przejdź do Odkrywaj"[^>]*onclick="go\('discover'\)"[^>]*onkeydown="[^"]*go\('discover'\)/);
   assert.match(html, /id="s-discover" class="screen discover-screen"/);
   assert.match(html, /id="discover-composer-text"/);
   assert.match(html, /function publishDiscoverPost\(\)/);
