@@ -41,7 +41,7 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /class="nav-brand"[^>]*aria-label="Przejdź do Odkrywaj"[^>]*onclick="go\('discover'\)"[^>]*onkeydown="[^"]*go\('discover'\)/);
   assert.match(html, /id="s-discover" class="screen discover-screen"/);
   assert.match(html, /class="discover-add-post"[^>]*onclick="openDiscoverComposerModal\(\)"/);
-  assert.match(html, /function openDiscoverComposerModal\(\)[\s\S]*class="tbp-composer"/);
+  assert.match(html, /function openDiscoverComposerModal\(\)[\s\S]*class="tbp-composer[^"]*"/);
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
@@ -131,11 +131,18 @@ test('discover board keeps its visual assets without the orphaned green courtyar
 
 test('discover composer chooses between the member and their published teams', () => {
   assert.match(html, /ownTeams=\(projectTeams\|\|\[\]\)\.filter\(row=>!row\.draft&&teamAcceptedMembers\(row\)\.includes\(MY_NAME\)\)/);
-  assert.match(html, /<option value="profile">Mój profil<\/option>\$\{identityOptions\}/);
-  assert.match(html, /<option value="team:\$\{escAttr\(row\.id\)\}">Zespół · \$\{escHtml\(row\.name\)\}<\/option>/);
+  assert.match(html, /id="discover-composer-identity-picker"/);
+  assert.match(html, /class="discover-identity-menu" role="listbox"/);
+  assert.match(html, /data-identity="profile" role="option"/);
+  assert.match(html, /data-identity="team:\$\{escAttr\(row\.id\)\}" role="option"/);
+  assert.match(html, /function selectDiscoverComposerIdentity\(value,event\)/);
+  assert.doesNotMatch(html, /<select id="discover-composer-source"/);
+  assert.match(html, /<input type="hidden" id="discover-composer-source" value="profile">/);
   assert.doesNotMatch(html, /id="discover-composer-source-id"/);
   assert.doesNotMatch(html, /<h3>Nowy wpis<\/h3>/);
-  assert.match(html, /\.discover-composer-identity,\.discover-modal-public\{width:190px;min-height:42px\}/);
+  assert.match(html, /\.discover-composer-identity,\.discover-modal-public\{width:158px;min-height:36px\}/);
+  assert.match(html, /\.discover-composer-head\{position:absolute;[^}]*top:16px;right:18px;padding:0\}/);
+  assert.match(html, /\.discover-composer-shell\{position:relative;min-height:520px\}/);
 });
 
 test('discover team posts resolve the current team avatar with a fallback', () => {
