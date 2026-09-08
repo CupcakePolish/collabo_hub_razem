@@ -5,6 +5,13 @@ import test from 'node:test';
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
+test('page uses one stable zoom value from the first render', () => {
+  assert.match(html, /body\{[^}]*zoom:1\}/);
+  assert.match(html, /html\.is-mac body\{zoom:1\}/);
+  assert.doesNotMatch(html, /zoom:1\.18/);
+  assert.doesNotMatch(html, /html\.is-mac body\{zoom:\.94\}/);
+});
+
 test('all inline scripts have valid syntax', () => {
   const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
     .map(match => match[1])
