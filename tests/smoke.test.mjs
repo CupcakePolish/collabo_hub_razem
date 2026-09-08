@@ -49,6 +49,27 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /\.discover-add-post\{[^}]*border:2px solid #cbb8ee[^}]*background:#fff[^}]*color:#57329f/);
 });
 
+test('discover side rail only reveals its scrollbar while scrolling', () => {
+  assert.match(html, /class="discover-sidebar"[^>]*onscroll="showDiscoverSidebarScrollbar\(this\)"/);
+  assert.match(html, /function showDiscoverSidebarScrollbar\(sidebar\)/);
+  assert.match(html, /scrollbar-color:transparent transparent/);
+  assert.match(html, /\.discover-sidebar\.is-scrolling\{scrollbar-color:#c9b9e8 transparent\}/);
+  assert.match(html, /setTimeout\(\(\)=>sidebar\.classList\.remove\('is-scrolling'\),650\)/);
+});
+
+test('discover right rail renders an interactive meeting calendar', () => {
+  assert.match(html, /aria-label="Kalendarz spotkań"/);
+  assert.match(html, /id="discover-calendar"/);
+  assert.match(html, /function renderDiscoverCalendar\(\)/);
+  assert.match(html, /Kalendarz spotkań/);
+  assert.match(html, /Najbliższe spotkanie/);
+  assert.match(html, /function shiftDiscoverCalendar\(delta\)/);
+  assert.match(html, /function openDiscoverMeetingModal\(\)/);
+  assert.match(html, /function saveDiscoverMeeting\(\)/);
+  assert.match(html, /discoverPosts,discoverCalendarEvents,myProfile/);
+  assert.doesNotMatch(html, /id="discover-opportunities"/);
+});
+
 test('discover board filters and sorts community posts', () => {
   assert.match(html, /data-filter-kind="topic"/);
   assert.doesNotMatch(html, /data-filter-kind="type"/);
