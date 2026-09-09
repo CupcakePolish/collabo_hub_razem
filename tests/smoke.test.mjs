@@ -51,9 +51,12 @@ test('discover board has navigation, composer and publish interactions', () => {
 
 test('discover side rail only reveals its scrollbar while scrolling', () => {
   assert.match(html, /class="discover-sidebar"[^>]*onscroll="showDiscoverSidebarScrollbar\(this\)"/);
+  assert.match(html, /class="discover-right-rail"[^>]*onscroll="showDiscoverSidebarScrollbar\(this\)"/);
   assert.match(html, /function showDiscoverSidebarScrollbar\(sidebar\)/);
   assert.match(html, /scrollbar-color:transparent transparent/);
   assert.match(html, /\.discover-sidebar\.is-scrolling\{scrollbar-color:#c9b9e8 transparent\}/);
+  assert.match(html, /\.discover-right-rail\.is-scrolling\{scrollbar-color:#c9b9e8 transparent\}/);
+  assert.match(html, /#s-discover \.discover-right-rail\{[^}]*max-height:calc\(100dvh - 104px\)[^}]*overflow-y:auto/);
   assert.match(html, /setTimeout\(\(\)=>sidebar\.classList\.remove\('is-scrolling'\),650\)/);
 });
 
@@ -64,14 +67,16 @@ test('discover right rail renders an interactive meeting calendar', () => {
   assert.match(html, /Kalendarz spotkań/);
   assert.match(html, /Najbliższe spotkanie/);
   assert.match(html, /function shiftDiscoverCalendar\(delta\)/);
-  assert.match(html, /function openDiscoverMeetingModal\(\)/);
-  assert.match(html, /function saveDiscoverMeeting\(\)/);
-  assert.match(html, /discoverPosts,discoverCalendarEvents,myProfile/);
+  assert.doesNotMatch(html, /function openDiscoverMeetingModal\(\)/);
+  assert.doesNotMatch(html, /function saveDiscoverMeeting\(\)/);
+  assert.doesNotMatch(html, /Dodaj spotkanie/);
+  assert.doesNotMatch(html, /discoverPosts,discoverCalendarEvents,myProfile/);
   assert.doesNotMatch(html, /id="discover-opportunities"/);
 });
 
 test('discover board filters and sorts community posts', () => {
-  assert.match(html, /data-filter-kind="topic"/);
+  assert.doesNotMatch(html, /data-filter-kind="topic"/);
+  assert.doesNotMatch(html, />Tematy</);
   assert.doesNotMatch(html, /data-filter-kind="type"/);
   assert.doesNotMatch(html, /Rodzaj wpisu/);
   assert.doesNotMatch(html, /id="discover-composer-kind"/);
@@ -82,7 +87,24 @@ test('discover board filters and sorts community posts', () => {
   assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
   assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
   assert.match(html, /function openDiscoverAuthor\(id\)/);
-  assert.match(html, /function openDiscoverSource\(id\)/);
+  assert.match(html, /function toggleDiscoverFilterSection\(button\)/);
+  assert.match(html, /class="discover-filter-toggle"[^>]*aria-expanded="true"/);
+  assert.doesNotMatch(html, /function openDiscoverSource\(id\)/);
+});
+
+test('discover post menu supports author actions and community reports', () => {
+  assert.match(html, /function discoverPostCanManage\(post\)/);
+  assert.match(html, /function discoverPostMenu\(post\)/);
+  assert.match(html, /Opcje autora/);
+  assert.match(html, /Edytuj wpis/);
+  assert.match(html, /Usuń wpis/);
+  assert.match(html, /Zgłoś wpis/);
+  assert.match(html, /function openDiscoverReportModal\(id\)/);
+  assert.match(html, /function submitDiscoverPostReport\(id\)/);
+  assert.match(html, /post\.reports\.push\(/);
+  assert.doesNotMatch(html, /Edytuj powiązanie/);
+  assert.doesNotMatch(html, /class="discover-post-source"/);
+  assert.match(html, /#s-discover \.discover-post-text \.tp-board-mention\{[^}]*background:transparent[^}]*text-decoration:none/);
 });
 
 test('team catalog toolbar keeps search and create action together', () => {
