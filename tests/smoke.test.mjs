@@ -86,6 +86,10 @@ test('discover board filters and sorts community posts', () => {
   assert.match(html, /Najczęściej komentowane/);
   assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
   assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
+  assert.match(html, /function discoverPostTime\(post,index=0,referenceNow=Date\.now\(\)\)/);
+  assert.match(html, /if\(value\.includes\('dzisiaj'\)\)return referenceNow-index/);
+  assert.match(html, /discoverPosts\.map\(\(post,index\)=>\(\{post,index,time:discoverPostTime\(post,index,referenceNow\)\}\)\)/);
+  assert.match(html, /return rows\.map\(row=>row\.post\)/);
   assert.match(html, /function openDiscoverAuthor\(id\)/);
   assert.match(html, /function toggleDiscoverFilterSection\(button\)/);
   assert.match(html, /class="discover-filter-toggle"[^>]*aria-expanded="true"/);
@@ -105,6 +109,17 @@ test('discover post menu supports author actions and community reports', () => {
   assert.doesNotMatch(html, /Edytuj powiązanie/);
   assert.doesNotMatch(html, /class="discover-post-source"/);
   assert.match(html, /#s-discover \.discover-post-text \.tp-board-mention\{[^}]*background:transparent[^}]*text-decoration:none/);
+});
+
+test('discover post editing reuses the full composer and marks edited posts', () => {
+  assert.match(html, /function openDiscoverEditPostModal\(id\)[\s\S]*openDiscoverComposerModal\(\)/);
+  assert.match(html, /teamBoardComposerImage=safeUserUrl\(post\.image\|\|''/);
+  assert.match(html, /setTeamBoardComposerLayout\(teamBoardComposerLayout\)/);
+  assert.match(html, /publish\.textContent='Zapisz zmiany'/);
+  assert.match(html, /Object\.assign\(editingPost,\{title,text,image,layout,editedAt:Date\.now\(\)\}\)/);
+  assert.match(html, /post\.editedAt\?' · Edytowane':''/);
+  assert.doesNotMatch(html, /id="discover-edit-title"/);
+  assert.doesNotMatch(html, /function saveDiscoverPostEdits\(id\)/);
 });
 
 test('team catalog toolbar keeps search and create action together', () => {

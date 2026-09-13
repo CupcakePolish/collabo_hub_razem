@@ -16302,14 +16302,16 @@ function discoverComposerIdentity(){
   return team?{type:'team',sourceId,team}:{type:'profile',sourceId:'',team:null};
 }
 function discoverAuthorKey(post){return post.sourceType==='team'?`team:${post.sourceId||post.author}`:`person:${post.author}`;}
-function discoverPostTime(post,index=0){
-  const direct=Number(post.createdAt||0);if(direct)return direct;
-  const value=String(post.date||'').toLowerCase();const now=Date.now();
-  if(value.includes('dzisiaj'))return now-index*60000;
-  const ago=value.match(/(\d+)\s+dni?/);if(ago)return now-Number(ago[1])*86400000;
+function discoverPostTime(post,index=0,referenceNow=Date.now()){
+  const rawCreatedAt=post.createdAt,numericCreatedAt=Number(rawCreatedAt);if(Number.isFinite(numericCreatedAt)&&numericCreatedAt>0)return numericCreatedAt;
+  const parsedCreatedAt=typeof rawCreatedAt==='string'?Date.parse(rawCreatedAt):NaN;if(Number.isFinite(parsedCreatedAt))return parsedCreatedAt;
+  const idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop();if(idTimestamp)return Number(idTimestamp);
+  const value=String(post.date||'').toLowerCase();
+  if(value.includes('dzisiaj'))return referenceNow-index;
+  const ago=value.match(/(\d+)\s+dni?/);if(ago)return referenceNow-Number(ago[1])*86400000-index;
   const months={sty:0,lut:1,mar:2,kwi:3,maj:4,cze:5,lip:6,sie:7,wrz:8,paź:9,paz:9,lis:10,gru:11};
   const dated=value.match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\s+(\d{4})/i);if(dated)return new Date(Number(dated[3]),months[dated[2]]??0,Number(dated[1]),12).getTime();
-  return now-(index+30)*86400000;
+  return referenceNow-30*86400000-index;
 }
 function discoverTimeThreshold(){
   const now=new Date();
@@ -16319,18 +16321,19 @@ function discoverTimeThreshold(){
   if(discoverTime==='year')return new Date(now.getFullYear(),0,1).getTime();
   return 0;
 }
-function discoverPostMatches(post){
+function discoverPostMatches(post,index=0,referenceNow=Date.now()){
   if(discoverFeedMode==='projects'&&!['idea','team'].includes(post.sourceType))return false;
   if(discoverFeedMode==='saved'&&!post.saved)return false;
   if(discoverFeedMode==='following'&&!post.following){const member=members.find(row=>row.name===post.author);if(!member||!followedMemberProfiles.has(member.id))return false;}
   if(discoverAuthorFilters.size&&!discoverAuthorFilters.has(discoverAuthorKey(post)))return false;
   if(discoverSearch){const hay=[post.author,post.title,post.text,post.topic,discoverSourceLabel(post)].join(' ').toLocaleLowerCase('pl');if(!hay.includes(discoverSearch))return false;}
-  if(['appreciated','commented'].includes(discoverSort)&&discoverTime!=='all'&&discoverPostTime(post)<discoverTimeThreshold())return false;
+  if(['appreciated','commented'].includes(discoverSort)&&discoverTime!=='all'&&discoverPostTime(post,index,referenceNow)<discoverTimeThreshold())return false;
   return true;
 }
 function sortedDiscoverPosts(){
-  const rows=discoverPosts.filter(discoverPostMatches);
-  return rows.sort((a,b)=>discoverSort==='appreciated'?(Number(b.likes||0)+Number(!!b.liked))-(Number(a.likes||0)+Number(!!a.liked)):discoverSort==='commented'?(b.comments||[]).length-(a.comments||[]).length:discoverPostTime(b)-discoverPostTime(a));
+  const referenceNow=Date.now(),rows=discoverPosts.map((post,index)=>({post,index,time:discoverPostTime(post,index,referenceNow)})).filter(row=>discoverPostMatches(row.post,row.index,referenceNow));
+  rows.sort((a,b)=>{const primary=discoverSort==='appreciated'?(Number(b.post.likes||0)+Number(!!b.post.liked))-(Number(a.post.likes||0)+Number(!!a.post.liked)):discoverSort==='commented'?(b.post.comments||[]).length-(a.post.comments||[]).length:b.time-a.time;return primary||b.time-a.time||a.index-b.index;});
+  return rows.map(row=>row.post);
 }
 function renderDiscoverAuthorFilters(query=''){
   const host=document.getElementById('discover-author-list');if(!host)return;
@@ -16347,7 +16350,7 @@ function updateDiscoverToolbar(){
   document.querySelectorAll('#discover-sort-dropdown [data-sort]').forEach(button=>{button.classList.toggle('on',button.dataset.sort===discoverSort);button.querySelector('.discover-option-icon').innerHTML=discoverIcon(button.querySelector('.discover-option-icon').dataset.icon);});
   document.querySelectorAll('#discover-time-dropdown [data-time]').forEach(button=>button.classList.toggle('on',button.dataset.time===discoverTime));
 }
-function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')} · ${post.sourceType==='team'?'Zespół':'Osoba'}</span></span></button>`;}
+function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')}${post.editedAt?' · Edytowane':''} · ${post.sourceType==='team'?'Zespół':'Osoba'}</span></span></button>`;}
 function discoverPostAvatar(post,team=null){
   if(post.sourceType!=='team'){
     const member=members.find(row=>row.name===post.author)||personProfileByName(post.author);
@@ -16374,17 +16377,15 @@ function discoverPostMenu(post){
 }
 function closeDiscoverPostMenus(exceptId=''){document.querySelectorAll('.discover-post-menu.on').forEach(menu=>{if(menu.id===exceptId)return;menu.classList.remove('on');menu.querySelector('.discover-post-menu-button')?.setAttribute('aria-expanded','false');});}
 function toggleDiscoverPostMenu(id,event){event?.stopPropagation();const menu=document.getElementById(`discover-post-menu-${safeId(id)}`);if(!menu)return;const open=!menu.classList.contains('on');closeDiscoverPostMenus(menu.id);menu.classList.toggle('on',open);menu.querySelector('.discover-post-menu-button')?.setAttribute('aria-expanded',String(open));}
+let discoverComposerEditingId='';
 function openDiscoverEditPostModal(id){
   const post=discoverPosts.find(row=>String(row.id)===String(id));if(!post||!discoverPostCanManage(post))return;
-  closeDiscoverPostMenus();
-  appModal(`<div class="discover-post-form"><h3>Edytuj wpis</h3><label>Tytuł <span>(opcjonalnie)</span><input id="discover-edit-title" maxlength="140" value="${escAttr(post.title||'')}"></label><label>Treść<textarea id="discover-edit-text" maxlength="12000">${escHtml(post.text||'')}</textarea></label><p>Oznaczenia zapisane przez @ pozostaną klikalne we wpisie.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="saveDiscoverPostEdits('${escAttr(post.id)}')">Zapisz zmiany</button></div></div>`,'discover-post-action-modal');
-  setTimeout(()=>document.getElementById('discover-edit-text')?.focus(),30);
-}
-function saveDiscoverPostEdits(id){
-  const post=discoverPosts.find(row=>String(row.id)===String(id)),title=String(document.getElementById('discover-edit-title')?.value||'').trim(),text=String(document.getElementById('discover-edit-text')?.value||'').trim();if(!post||!discoverPostCanManage(post))return;if(!text)return toast('Napisz treść wpisu.','warn');
-  post.title=title;post.text=text;
-  if(post.sourceType==='team'&&post.teamBoardPostId){const team=(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId));if(team){if(String(post.teamBoardPostId)==='welcome'){team.boardWelcomeTitle=title;team.boardWelcomeText=text;}else{const boardPost=(team.boardPosts||[]).find(row=>String(row.id)===String(post.teamBoardPostId));if(boardPost){boardPost.title=title;boardPost.text=text;}}}}
-  queuePersistence();closeAppModal();renderDiscover();toast('Zmiany we wpisie zostały zapisane.','ok');
+  closeDiscoverPostMenus();openDiscoverComposerModal();discoverComposerEditingId=String(post.id);
+  const sourceValue=post.sourceType==='team'?`team:${post.sourceId}`:'profile',title=document.getElementById('team-board-post-title'),text=document.getElementById('mb-inp-team-board-post-body'),publish=document.querySelector('#app-modal .tbp-publish'),identityTrigger=document.querySelector('#app-modal .discover-identity-trigger');
+  if(title)title.value=post.title||'';if(text)text.value=post.text||'';
+  selectDiscoverComposerIdentity(sourceValue);if(identityTrigger){identityTrigger.onclick=event=>event.preventDefault();identityTrigger.setAttribute('aria-disabled','true');identityTrigger.setAttribute('aria-label','Autor wpisu pozostaje bez zmian podczas edycji');}
+  teamBoardComposerImage=safeUserUrl(post.image||'','image');teamBoardComposerLayout=['full','right','left','below'].includes(post.layout)?post.layout:'full';renderTeamBoardComposerPreview();setTeamBoardComposerLayout(teamBoardComposerLayout);
+  if(publish)publish.textContent='Zapisz zmiany';setTimeout(()=>text?.focus(),30);
 }
 function confirmDeleteDiscoverPost(id){
   const post=discoverPosts.find(row=>String(row.id)===String(id));if(!post||!discoverPostCanManage(post))return;closeDiscoverPostMenus();
@@ -16432,12 +16433,23 @@ function closeDiscoverComposerIdentity(){const picker=document.getElementById('d
 function selectDiscoverComposerIdentity(value,event){event?.stopPropagation();const input=document.getElementById('discover-composer-source');if(!input)return;input.value=value;document.querySelectorAll('.discover-identity-option').forEach(button=>{const active=button.dataset.identity===value;button.classList.toggle('on',active);button.setAttribute('aria-selected',String(active));button.querySelector('i').innerHTML=active?teamBoardComposerIcon('check'):'';});closeDiscoverComposerIdentity();updateDiscoverComposerIdentity();}
 function updateDiscoverComposerIdentity(){const identity=discoverComposerIdentity(),avatarHost=document.getElementById('discover-composer-modal-avatar'),labelHost=document.getElementById('discover-composer-identity-label'),me=members.find(row=>row.name===MY_NAME);if(avatarHost)avatarHost.innerHTML=identity.team?teamBoardAvatar(identity.team):memberAvatarContent(MY_NAME,me?.ini||'?');if(labelHost)labelHost.textContent=identity.team?identity.team.name:'Mój profil';}
 function openDiscoverComposerModal(){
+  discoverComposerEditingId='';
   teamBoardComposerImage='';teamBoardComposerLayout='full';teamBoardMentionResults=[];teamBoardMentionCategory='all';teamBoardMentionQuery='';
   const composerKey='team-board-post-body',me=members.find(row=>row.name===MY_NAME),avatar=memberAvatarContent(MY_NAME,me?.ini||'?'),ownTeams=(projectTeams||[]).filter(row=>!row.draft&&teamAcceptedMembers(row).includes(MY_NAME)),identityOptions=`<button type="button" class="discover-identity-option on" data-identity="profile" role="option" aria-selected="true" onclick="selectDiscoverComposerIdentity('profile',event)"><span class="discover-identity-avatar">${avatar}</span><span><b>Mój profil</b><small>${escHtml(MY_NAME)}</small></span><i>${teamBoardComposerIcon('check')}</i></button>${ownTeams.map(row=>`<button type="button" class="discover-identity-option" data-identity="team:${escAttr(row.id)}" role="option" aria-selected="false" onclick="selectDiscoverComposerIdentity(decodeURIComponent('${encodeURIComponent(`team:${row.id}`)}'),event)"><span class="discover-identity-avatar">${teamBoardAvatar(row)}</span><span><b>${escHtml(row.name)}</b><small>Zespół</small></span><i></i></button>`).join('')}`;
   appModal(`<div class="tbp-composer discover-composer-shell"><header class="tbp-composer-head discover-composer-head"><button type="button" class="tbp-close" onclick="closeAppModal()" aria-label="Zamknij">×</button></header><div class="tbp-context discover-composer-context"><span class="tbp-context-avatar" id="discover-composer-modal-avatar">${avatar}</span><input type="hidden" id="discover-composer-source" value="profile"><div class="discover-composer-identity" id="discover-composer-identity-picker"><button type="button" class="discover-identity-trigger" onclick="toggleDiscoverComposerIdentity(event)" aria-haspopup="listbox" aria-expanded="false"><b id="discover-composer-identity-label">Mój profil</b>${teamBoardComposerIcon('chevron')}</button><div class="discover-identity-menu" role="listbox" aria-label="Publikuj jako">${identityOptions}</div></div><span class="tbp-context-select discover-modal-public">${teamBoardComposerIcon('globe')}<b>Publiczne</b></span></div><div class="tbp-compose-grid"><div class="tbp-writing"><input id="team-board-post-title" class="tbp-title" maxlength="140" placeholder="Tytuł (opcjonalnie)"><div class="tbp-text-wrap"><textarea id="mb-inp-${composerKey}" maxlength="12000" placeholder="Napisz coś…" onfocus="activeComposerKey='${composerKey}'" oninput="handleTeamBoardMention(this)"></textarea><div class="tbp-mention-pop" id="team-board-mention-pop"></div></div><p class="tbp-mention-hint">Wpisz @, aby powiązać element platformy.</p></div><aside class="tbp-media"><div class="tbp-image-preview" id="team-board-post-preview"><button type="button" class="tbp-image-empty" onclick="document.getElementById('team-board-post-image').click()">${teamBoardComposerIcon('image')}<b>Dodaj zdjęcie</b><small>PNG, JPG, GIF, WebP</small></button><input id="team-board-post-image" class="tbp-file-input" type="file" accept="image/*" onchange="previewTeamBoardPostImage(this)"></div><div class="tbp-layouts" aria-label="Układ wpisu"><button type="button" data-layout="full" class="on" onclick="setTeamBoardComposerLayout('full')" aria-label="Zdjęcie na całą szerokość">${teamBoardLayoutIcon('full')}</button><button type="button" data-layout="left" onclick="setTeamBoardComposerLayout('left')" aria-label="Zdjęcie po lewej">${teamBoardLayoutIcon('left')}</button><button type="button" data-layout="right" onclick="setTeamBoardComposerLayout('right')" aria-label="Zdjęcie po prawej">${teamBoardLayoutIcon('right')}</button><button type="button" data-layout="below" onclick="setTeamBoardComposerLayout('below')" aria-label="Zdjęcie pod tekstem">${teamBoardLayoutIcon('below')}</button></div></aside></div><footer class="tbp-toolbar"><div class="tbp-tools"><button type="button" title="Dodaj załącznik" onclick="document.getElementById('team-board-post-image').click()">${teamBoardComposerIcon('paperclip')}</button><i></i><button type="button" title="Pogrubienie" onclick="mdWrap('${composerKey}','**','**')"><b>B</b></button><button type="button" title="Kursywa" onclick="mdWrap('${composerKey}','*','*')"><em>I</em></button><button type="button" class="mb-emoji" title="Wybierz emotkę lub GIF" onclick="toggleEmojiPanel('${composerKey}')">${teamBoardComposerIcon('smile')}</button><div class="emoji-panel emoji-pop" id="epanel-${composerKey}" data-reaction-tab="emoji"></div></div><div class="tbp-actions"><button type="button" class="tbp-publish" onclick="publishDiscoverPost()">Opublikuj</button></div></footer></div>`,'team-board-post-modal');
   setTimeout(()=>document.getElementById('team-board-post-title')?.focus(),30);
 }
-function publishDiscoverPost(){const input=document.getElementById('mb-inp-team-board-post-body'),text=String(input?.value||'').trim();if(!text){toast('Napisz treść wpisu.','warn');input?.focus();return;}const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),identity=discoverComposerIdentity();let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+Date.now(),author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:'Dzisiaj',createdAt:Date.now(),likes:0,comments:[],liked:false,topic:'all',image:safeUserUrl(teamBoardComposerImage,'image'),layout:teamBoardComposerLayout,avatarImage});queuePersistence();closeAppModal();renderDiscover();toast('Wpis został opublikowany na tablicy.','ok');}
+function publishDiscoverPost(){
+  const input=document.getElementById('mb-inp-team-board-post-body'),text=String(input?.value||'').trim();if(!text){toast('Napisz treść wpisu.','warn');input?.focus();return;}
+  const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),image=safeUserUrl(teamBoardComposerImage,'image'),layout=teamBoardComposerLayout,editingPost=discoverComposerEditingId?discoverPosts.find(row=>String(row.id)===String(discoverComposerEditingId)):null;
+  if(editingPost){
+    if(!discoverPostCanManage(editingPost))return;
+    Object.assign(editingPost,{title,text,image,layout,editedAt:Date.now()});
+    if(editingPost.sourceType==='team'&&editingPost.teamBoardPostId){const team=(projectTeams||[]).find(row=>String(row.id)===String(editingPost.sourceId));if(team){if(String(editingPost.teamBoardPostId)==='welcome'){team.boardWelcomeTitle=title;team.boardWelcomeText=text;team.boardWelcomeImage=image;team.boardWelcomeLayout=layout;team.boardWelcomeEditedAt=editingPost.editedAt;}else{const boardPost=(team.boardPosts||[]).find(row=>String(row.id)===String(editingPost.teamBoardPostId));if(boardPost)Object.assign(boardPost,{title,text,image,layout,editedAt:editingPost.editedAt});}}}
+    queuePersistence();closeAppModal();renderDiscover();toast('Zmiany we wpisie zostały zapisane.','ok');return;
+  }
+  const identity=discoverComposerIdentity();let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+Date.now(),author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:'Dzisiaj',createdAt:Date.now(),likes:0,comments:[],liked:false,topic:'all',image,layout,avatarImage});queuePersistence();closeAppModal();renderDiscover();toast('Wpis został opublikowany na tablicy.','ok');
+}
 document.addEventListener('pointerdown',event=>{if(!event.target.closest('.discover-dropdown'))closeDiscoverDropdowns();if(!event.target.closest('.discover-composer-identity'))closeDiscoverComposerIdentity();if(!event.target.closest('.discover-post-menu'))closeDiscoverPostMenus();});
 
 
