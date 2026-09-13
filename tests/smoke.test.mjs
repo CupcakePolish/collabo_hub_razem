@@ -75,6 +75,8 @@ test('discover right rail renders an interactive meeting calendar', () => {
 });
 
 test('discover board filters and sorts community posts', () => {
+  assert.match(html, /const APP_TIME_ZONE='Europe\/Warsaw'/);
+  assert.match(html, /const NOW_TIME=\(\)=>new Intl\.DateTimeFormat\('pl-PL',\{timeZone:APP_TIME_ZONE/);
   assert.doesNotMatch(html, /data-filter-kind="topic"/);
   assert.doesNotMatch(html, />Tematy</);
   assert.doesNotMatch(html, /data-filter-kind="type"/);
@@ -88,6 +90,7 @@ test('discover board filters and sorts community posts', () => {
   assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
   assert.match(html, /function discoverPostTime\(post,index=0,referenceNow=Date\.now\(\)\)/);
   assert.match(html, /function discoverPostClock\(post,index=0,referenceNow=Date\.now\(\)\)/);
+  assert.ok(html.indexOf('const raw=post.createdAt') < html.indexOf("const explicit=String(post.time||'')"));
   assert.match(html, /if\(value\.includes\('dzisiaj'\)\)return dayStart\+timeOfDay-index/);
   assert.ok(html.indexOf("if(value.includes('dzisiaj'))") < html.indexOf('const rawCreatedAt=post.createdAt'));
   assert.match(html, /discoverPosts\.map\(\(post,index\)=>\(\{post,index,time:discoverPostTime\(post,index,referenceNow\)\}\)\)/);

@@ -14772,7 +14772,8 @@ let notifications=[
   {text:'Nowe głosowanie w obserwowanym projekcie „Ustawa ograniczająca możliwości Marszałka Sejmu": kierunek reformy',date:'22 cze 2026',time:'15:20',ideaId:1,unread:true},
   {text:'Anna Wiśniewska dodała cytat z sekcji 2 w dyskusji dokumentu „Projekt reformy: ograniczenie sejmowej zamrażarki"',date:'20 cze 2026',time:'11:02',ideaId:1,unread:true},
 ];
-const NOW_TIME=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+const APP_TIME_ZONE='Europe/Warsaw';
+const NOW_TIME=()=>new Intl.DateTimeFormat('pl-PL',{timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
 
 function authorOf(idea){
   const bySubject=idea.authorSubject&&Object.values(demoAccounts||{}).find(account=>account.subject===idea.authorSubject)?.profile;
@@ -16303,9 +16304,10 @@ function discoverComposerIdentity(){
 }
 function discoverAuthorKey(post){return post.sourceType==='team'?`team:${post.sourceId||post.author}`:`person:${post.author}`;}
 function discoverPostClock(post,index=0,referenceNow=Date.now()){
+  const raw=post.createdAt,numeric=Number(raw),parsed=typeof raw==='string'?Date.parse(raw):NaN,idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop(),stamp=Number.isFinite(numeric)&&numeric>0?numeric:Number.isFinite(parsed)?parsed:idTimestamp?Number(idTimestamp):NaN;
+  if(Number.isFinite(stamp))return new Date(stamp).toLocaleTimeString('pl-PL',{timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
   const explicit=String(post.time||'').match(/^(\d{1,2}):(\d{2})/);if(explicit)return `${String(Math.min(23,Number(explicit[1]))).padStart(2,'0')}:${String(Math.min(59,Number(explicit[2]))).padStart(2,'0')}`;
-  const raw=post.createdAt,numeric=Number(raw),parsed=typeof raw==='string'?Date.parse(raw):NaN,idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop(),stamp=Number.isFinite(numeric)&&numeric>0?numeric:Number.isFinite(parsed)?parsed:idTimestamp?Number(idTimestamp):referenceNow-index*60000;
-  return new Date(stamp).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',hour12:false});
+  return new Date(referenceNow-index*60000).toLocaleTimeString('pl-PL',{timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 }
 function discoverPostTime(post,index=0,referenceNow=Date.now()){
   const value=String(post.date||'').toLowerCase(),clock=discoverPostClock(post,index,referenceNow).split(':').map(Number),today=new Date(referenceNow),dayStart=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime(),timeOfDay=(clock[0]*60+clock[1])*60000;
