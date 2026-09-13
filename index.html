@@ -16308,14 +16308,14 @@ function discoverPostClock(post,index=0,referenceNow=Date.now()){
   return new Date(stamp).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',hour12:false});
 }
 function discoverPostTime(post,index=0,referenceNow=Date.now()){
-  const rawCreatedAt=post.createdAt,numericCreatedAt=Number(rawCreatedAt);if(Number.isFinite(numericCreatedAt)&&numericCreatedAt>0)return numericCreatedAt;
-  const parsedCreatedAt=typeof rawCreatedAt==='string'?Date.parse(rawCreatedAt):NaN;if(Number.isFinite(parsedCreatedAt))return parsedCreatedAt;
-  const idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop();if(idTimestamp)return Number(idTimestamp);
   const value=String(post.date||'').toLowerCase(),clock=discoverPostClock(post,index,referenceNow).split(':').map(Number),today=new Date(referenceNow),dayStart=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime(),timeOfDay=(clock[0]*60+clock[1])*60000;
   if(value.includes('dzisiaj'))return dayStart+timeOfDay-index;
   const ago=value.match(/(\d+)\s+dni?/);if(ago)return dayStart-Number(ago[1])*86400000+timeOfDay-index;
   const months={sty:0,lut:1,mar:2,kwi:3,maj:4,cze:5,lip:6,sie:7,wrz:8,paź:9,paz:9,lis:10,gru:11};
-  const dated=value.match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\s+(\d{4})/i);if(dated)return new Date(Number(dated[3]),months[dated[2]]??0,Number(dated[1]),12).getTime();
+  const dated=value.match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\s+(\d{4})/i);if(dated)return new Date(Number(dated[3]),months[dated[2]]??0,Number(dated[1])).getTime()+timeOfDay-index;
+  const rawCreatedAt=post.createdAt,numericCreatedAt=Number(rawCreatedAt);if(Number.isFinite(numericCreatedAt)&&numericCreatedAt>0)return numericCreatedAt;
+  const parsedCreatedAt=typeof rawCreatedAt==='string'?Date.parse(rawCreatedAt):NaN;if(Number.isFinite(parsedCreatedAt))return parsedCreatedAt;
+  const idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop();if(idTimestamp)return Number(idTimestamp);
   return referenceNow-30*86400000-index;
 }
 function discoverTimeThreshold(){
@@ -16355,7 +16355,7 @@ function updateDiscoverToolbar(){
   document.querySelectorAll('#discover-sort-dropdown [data-sort]').forEach(button=>{button.classList.toggle('on',button.dataset.sort===discoverSort);button.querySelector('.discover-option-icon').innerHTML=discoverIcon(button.querySelector('.discover-option-icon').dataset.icon);});
   document.querySelectorAll('#discover-time-dropdown [data-time]').forEach(button=>button.classList.toggle('on',button.dataset.time===discoverTime));
 }
-function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')} · ${escHtml(discoverPostClock(post))}${post.editedAt?' · Edytowane':''} · ${post.sourceType==='team'?'Zespół':'Osoba'}</span></span></button>`;}
+function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')} · ${escHtml(discoverPostClock(post))}${post.editedAt?' · Edytowane':''}${post.sourceType==='team'?' · Zespół':''}</span></span></button>`;}
 function discoverPostAvatar(post,team=null){
   if(post.sourceType!=='team'){
     const member=members.find(row=>row.name===post.author)||personProfileByName(post.author);
