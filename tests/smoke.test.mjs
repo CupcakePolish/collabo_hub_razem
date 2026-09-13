@@ -87,9 +87,11 @@ test('discover board filters and sorts community posts', () => {
   assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
   assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
   assert.match(html, /function discoverPostTime\(post,index=0,referenceNow=Date\.now\(\)\)/);
-  assert.match(html, /if\(value\.includes\('dzisiaj'\)\)return referenceNow-index/);
+  assert.match(html, /function discoverPostClock\(post,index=0,referenceNow=Date\.now\(\)\)/);
+  assert.match(html, /if\(value\.includes\('dzisiaj'\)\)return dayStart\+timeOfDay-index/);
   assert.match(html, /discoverPosts\.map\(\(post,index\)=>\(\{post,index,time:discoverPostTime\(post,index,referenceNow\)\}\)\)/);
   assert.match(html, /return rows\.map\(row=>row\.post\)/);
+  assert.match(html, /date:'Dzisiaj',time:NOW_TIME\(\),createdAt/);
   assert.match(html, /function openDiscoverAuthor\(id\)/);
   assert.match(html, /function toggleDiscoverFilterSection\(button\)/);
   assert.match(html, /class="discover-filter-toggle"[^>]*aria-expanded="true"/);

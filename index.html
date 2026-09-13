@@ -16258,8 +16258,8 @@ const discoverCalendarEvents=[
   {id:'calendar-vote',date:'2026-09-30',time:'12:00',title:'Głosowanie zespołu',desc:'Decyzja dotycząca kolejnego etapu wspólnej pracy.',scope:'Zespół · Online',icon:'team',teamId:'tm-leg'}
 ];
 let discoverPosts=[
-  {id:'discover-demo-1',author:'Anna Wiśniewska',sourceType:'idea',sourceId:1,sourceLabel:'Pomysł · Ustawa ograniczająca możliwości Marszałka Sejmu',title:'Mapa miejsc, w których projekty mogą utknąć',text:'Przygotowujemy mapę miejsc, w których projekty mogą utknąć. Jawność procesu to pierwszy krok do dobrej zmiany. @[Ustawa ograniczająca możliwości Marszałka Sejmu](#idea/1)',date:'Dzisiaj',createdAt:Date.now(),likes:24,comments:[{author:'Magdalena Lis',text:'To ważny kierunek — dzięki za zebranie tego w jednym miejscu.'}],liked:false,topic:'Sprawy lokalne'},
-  {id:'discover-demo-3',author:'Katarzyna Zielińska',sourceType:'profile',sourceLabel:'Profil · Katarzyna Zielińska',title:'Dobre projekty zaczynają się od następnego kroku',text:'Najbardziej cieszą mnie projekty, w których pomysł szybko zamienia się w konkretny następny krok.',date:'4 dni temu',createdAt:Date.now()-4*86400000,likes:11,comments:[],liked:false,topic:'Środowisko'}
+  {id:'discover-demo-1',author:'Anna Wiśniewska',sourceType:'idea',sourceId:1,sourceLabel:'Pomysł · Ustawa ograniczająca możliwości Marszałka Sejmu',title:'Mapa miejsc, w których projekty mogą utknąć',text:'Przygotowujemy mapę miejsc, w których projekty mogą utknąć. Jawność procesu to pierwszy krok do dobrej zmiany. @[Ustawa ograniczająca możliwości Marszałka Sejmu](#idea/1)',date:'Dzisiaj',time:'12:40',createdAt:Date.now(),likes:24,comments:[{author:'Magdalena Lis',text:'To ważny kierunek — dzięki za zebranie tego w jednym miejscu.'}],liked:false,topic:'Sprawy lokalne'},
+  {id:'discover-demo-3',author:'Katarzyna Zielińska',sourceType:'profile',sourceLabel:'Profil · Katarzyna Zielińska',title:'Dobre projekty zaczynają się od następnego kroku',text:'Najbardziej cieszą mnie projekty, w których pomysł szybko zamienia się w konkretny następny krok.',date:'4 dni temu',time:'09:15',createdAt:Date.now()-4*86400000,likes:11,comments:[],liked:false,topic:'Środowisko'}
 ];
 function discoverIcon(kind){
   const paths={clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',star:'<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/>',comment:'<path d="M4 5h16v11H9l-5 4V5Z"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',heart:'<path d="M20.8 5.8a5.4 5.4 0 0 0-7.6 0L12 7l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.6a5.4 5.4 0 0 0 0-7.6Z"/>',bookmark:'<path d="M6 3.5h12v17L12 16l-6 4.5v-17Z"/>',link:'<path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/>'};
@@ -16302,13 +16302,18 @@ function discoverComposerIdentity(){
   return team?{type:'team',sourceId,team}:{type:'profile',sourceId:'',team:null};
 }
 function discoverAuthorKey(post){return post.sourceType==='team'?`team:${post.sourceId||post.author}`:`person:${post.author}`;}
+function discoverPostClock(post,index=0,referenceNow=Date.now()){
+  const explicit=String(post.time||'').match(/^(\d{1,2}):(\d{2})/);if(explicit)return `${String(Math.min(23,Number(explicit[1]))).padStart(2,'0')}:${String(Math.min(59,Number(explicit[2]))).padStart(2,'0')}`;
+  const raw=post.createdAt,numeric=Number(raw),parsed=typeof raw==='string'?Date.parse(raw):NaN,idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop(),stamp=Number.isFinite(numeric)&&numeric>0?numeric:Number.isFinite(parsed)?parsed:idTimestamp?Number(idTimestamp):referenceNow-index*60000;
+  return new Date(stamp).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
 function discoverPostTime(post,index=0,referenceNow=Date.now()){
   const rawCreatedAt=post.createdAt,numericCreatedAt=Number(rawCreatedAt);if(Number.isFinite(numericCreatedAt)&&numericCreatedAt>0)return numericCreatedAt;
   const parsedCreatedAt=typeof rawCreatedAt==='string'?Date.parse(rawCreatedAt):NaN;if(Number.isFinite(parsedCreatedAt))return parsedCreatedAt;
   const idTimestamp=String(post.id||'').match(/\d{13}/g)?.pop();if(idTimestamp)return Number(idTimestamp);
-  const value=String(post.date||'').toLowerCase();
-  if(value.includes('dzisiaj'))return referenceNow-index;
-  const ago=value.match(/(\d+)\s+dni?/);if(ago)return referenceNow-Number(ago[1])*86400000-index;
+  const value=String(post.date||'').toLowerCase(),clock=discoverPostClock(post,index,referenceNow).split(':').map(Number),today=new Date(referenceNow),dayStart=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime(),timeOfDay=(clock[0]*60+clock[1])*60000;
+  if(value.includes('dzisiaj'))return dayStart+timeOfDay-index;
+  const ago=value.match(/(\d+)\s+dni?/);if(ago)return dayStart-Number(ago[1])*86400000+timeOfDay-index;
   const months={sty:0,lut:1,mar:2,kwi:3,maj:4,cze:5,lip:6,sie:7,wrz:8,paź:9,paz:9,lis:10,gru:11};
   const dated=value.match(/(\d{1,2})\s+([a-ząćęłńóśźż]{3})\s+(\d{4})/i);if(dated)return new Date(Number(dated[3]),months[dated[2]]??0,Number(dated[1]),12).getTime();
   return referenceNow-30*86400000-index;
@@ -16350,7 +16355,7 @@ function updateDiscoverToolbar(){
   document.querySelectorAll('#discover-sort-dropdown [data-sort]').forEach(button=>{button.classList.toggle('on',button.dataset.sort===discoverSort);button.querySelector('.discover-option-icon').innerHTML=discoverIcon(button.querySelector('.discover-option-icon').dataset.icon);});
   document.querySelectorAll('#discover-time-dropdown [data-time]').forEach(button=>button.classList.toggle('on',button.dataset.time===discoverTime));
 }
-function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')}${post.editedAt?' · Edytowane':''} · ${post.sourceType==='team'?'Zespół':'Osoba'}</span></span></button>`;}
+function discoverPostAuthorButton(post,avatar){return `<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(post.date||'Dzisiaj')} · ${escHtml(discoverPostClock(post))}${post.editedAt?' · Edytowane':''} · ${post.sourceType==='team'?'Zespół':'Osoba'}</span></span></button>`;}
 function discoverPostAvatar(post,team=null){
   if(post.sourceType!=='team'){
     const member=members.find(row=>row.name===post.author)||personProfileByName(post.author);
@@ -16448,7 +16453,7 @@ function publishDiscoverPost(){
     if(editingPost.sourceType==='team'&&editingPost.teamBoardPostId){const team=(projectTeams||[]).find(row=>String(row.id)===String(editingPost.sourceId));if(team){if(String(editingPost.teamBoardPostId)==='welcome'){team.boardWelcomeTitle=title;team.boardWelcomeText=text;team.boardWelcomeImage=image;team.boardWelcomeLayout=layout;team.boardWelcomeEditedAt=editingPost.editedAt;}else{const boardPost=(team.boardPosts||[]).find(row=>String(row.id)===String(editingPost.teamBoardPostId));if(boardPost)Object.assign(boardPost,{title,text,image,layout,editedAt:editingPost.editedAt});}}}
     queuePersistence();closeAppModal();renderDiscover();toast('Zmiany we wpisie zostały zapisane.','ok');return;
   }
-  const identity=discoverComposerIdentity();let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+Date.now(),author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:'Dzisiaj',createdAt:Date.now(),likes:0,comments:[],liked:false,topic:'all',image,layout,avatarImage});queuePersistence();closeAppModal();renderDiscover();toast('Wpis został opublikowany na tablicy.','ok');
+  const identity=discoverComposerIdentity(),createdAt=Date.now();let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+createdAt,author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:'Dzisiaj',time:NOW_TIME(),createdAt,likes:0,comments:[],liked:false,topic:'all',image,layout,avatarImage});queuePersistence();closeAppModal();renderDiscover();toast('Wpis został opublikowany na tablicy.','ok');
 }
 document.addEventListener('pointerdown',event=>{if(!event.target.closest('.discover-dropdown'))closeDiscoverDropdowns();if(!event.target.closest('.discover-composer-identity'))closeDiscoverComposerIdentity();if(!event.target.closest('.discover-post-menu'))closeDiscoverPostMenus();});
 
