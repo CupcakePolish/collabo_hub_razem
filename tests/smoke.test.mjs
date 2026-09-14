@@ -123,10 +123,10 @@ test('discover post menu supports author actions and community reports', () => {
 
 test('discover post editing reuses the full composer and marks edited posts', () => {
   assert.match(html, /function openDiscoverEditPostModal\(id\)[\s\S]*openDiscoverComposerModal\(\)/);
-  assert.match(html, /teamBoardComposerImage=safeUserUrl\(post\.image\|\|''/);
-  assert.match(html, /setTeamBoardComposerLayout\(teamBoardComposerLayout\)/);
+  assert.match(html, /teamBoardComposerImages=teamBoardPostImages\(post\)/);
+  assert.match(html, /teamBoardComposerDocuments=teamBoardPostDocuments\(post\)/);
   assert.match(html, /publish\.textContent='Zapisz zmiany'/);
-  assert.match(html, /Object\.assign\(editingPost,\{title,text,image,layout,editedAt:Date\.now\(\)\}\)/);
+  assert.match(html, /Object\.assign\(editingPost,\{title,text,image,images,documents,editedAt:Date\.now\(\)\}\)/);
   assert.match(html, /post\.editedAt\?' · Edytowane':''/);
   assert.doesNotMatch(html, /id="discover-edit-title"/);
   assert.doesNotMatch(html, /function saveDiscoverPostEdits\(id\)/);
@@ -313,14 +313,23 @@ test('team board post composer supports rich media and categorized platform ment
   assert.match(html, /function renderTeamBoardText\(raw\)/);
   assert.match(html, /class="tp-board-mention"/);
   assert.match(html, /function previewTeamBoardPostImage\(input\)/);
-  assert.match(html, /function setTeamBoardComposerLayout\(layout\)/);
+  assert.match(html, /function previewTeamBoardPostDocuments\(input\)/);
+  assert.match(html, /id="team-board-post-image"[^>]*multiple/);
+  assert.match(html, /id="team-board-post-document"[^>]*multiple/);
+  assert.match(html, /function teamBoardPostMediaHTML\(post,context='discover',teamId=''\)/);
+  assert.match(html, /images\.slice\(0,4\)/);
+  assert.match(html, /class="post-auto-more">\+\$\{images\.length-4\}/);
+  assert.match(html, /class="post-document-list"/);
+  assert.match(html, /function downloadBoardDocument\(context,postId,index,teamId=''\)/);
+  assert.doesNotMatch(html, /function setTeamBoardComposerLayout\(layout\)/);
+  assert.doesNotMatch(html, /aria-label="Układ wpisu"/);
   assert.match(html, /\.member-action-close,\.ch-modal-close,\.tbp-close/);
   assert.match(html, /\.app-modal\.team-board-post-modal\{width:min\(980px/);
   assert.match(html, /class="tbp-audience-menu"/);
   assert.match(html, /Tylko zespół/);
   assert.match(html, /Dla członków platformy · także w Odkrywaj/);
   assert.match(html, /placeholder="Tytuł \(opcjonalnie\)"/);
-  assert.match(html, /function teamBoardLayoutIcon\(layout\)/);
+  assert.doesNotMatch(html, /function teamBoardLayoutIcon\(layout\)/);
   assert.match(html, /TEAM_BOARD_MENTION_CATEGORIES/);
   assert.match(html, /Kategorie elementów platformy/);
   assert.match(html, /\['project','resource','member','vote','doc','team'\]/);
