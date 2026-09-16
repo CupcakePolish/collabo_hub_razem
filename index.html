@@ -2976,7 +2976,7 @@ html.theme-dark .doc-workspace .task-disc-panel .disc-more{color:#c9b8ff}
 .emoji-pop.reaction-portal{z-index:20000!important}
 
 /* final: document discussion uses page scroll until the message list actually overflows */
-.doc-workspace.doc-discussion-open{
+.doc-workspace.doc-discussion-open:not(.doc-fullscreen){
   grid-template-rows:auto auto!important;
   height:auto!important;
   max-height:none!important;
@@ -3424,7 +3424,7 @@ html.theme-dark .res-caret:hover,
 html.theme-dark .res-card .role-more:hover{
   background:#302744!important;
 }
-.doc-workspace.doc-discussion-open{
+.doc-workspace.doc-discussion-open:not(.doc-fullscreen){
   display:grid!important;
   grid-template-columns:minmax(0,1fr) var(--task-disc-width)!important;
   grid-template-rows:auto minmax(0,1fr)!important;
@@ -8217,15 +8217,18 @@ function openIdea(id,preserveScroll=false,opts={}){
             <div class="doc-section-list">${sectionCards}</div>
           </div>`;
       tabDokumenty=`
-        <div class="doc-workspace${d._discussionOpen?' doc-discussion-open':''}" data-idea-id="${id}" data-doc-id="${escAttr(d.did)}">
+        <div class="doc-workspace doc-fullscreen${d._discussionOpen?' doc-discussion-open':''}" data-idea-id="${id}" data-doc-id="${escAttr(d.did)}">
           <div class="doc-workspace-head">
             <div class="doc-workspace-title">
-              <div class="doc-workspace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5M9 12h6M9 16h6"></path></svg></div>
+              <button type="button" class="doc-back" onclick="closeDocToIdea(${id})">← Wróć do pomysłu</button>
               <div><h3 onclick="openDocRename(${id},'${d.did}')">${escHtml(d.title)}</h3><p>${docSections.length||1} ${(docSections.length||1)===1?'sekcja':'sekcje'} · ${acceptedSections} przyjęte · ${workingSections} w toku${rejectedSections?` · ${rejectedSections} odrzucone`:''}</p>${linkedTaskHTML}</div>
             </div>
             <div class="doc-head-actions">${d.adopted?'<span class="adopted-meta" style="margin-right:6px;align-self:center">✓ Uchwalony — widok podglądu</span>':docPrimary}<button type="button" class="task-disc-toggle${d._discussionOpen?' on':''}" onclick="toggleDocDiscussion(${id},'${d.did}')">Dyskusje (${docThreads.length})</button>${docMenu}</div>
           </div>
-          ${docMainView}
+          <div class="doc-ribbon"><span>Dokument współtworzony</span><button type="button" onclick="downloadCombinedDoc(${id},'${d.did}')">Pobierz dokument</button><button type="button" onclick="openDocRename(${id},'${d.did}')">Zmień nazwę</button><button type="button" onclick="toggleDocDiscussion(${id},'${d.did}')">Komentarze · ${docThreads.length}</button><span class="doc-ribbon-note">Pióro i zatwierdzanie osobno dla każdej sekcji</span></div>
+          ${renderDocOutline(idea,d)}
+          <main class="doc-fullscreen-page">${docMainView}</main>
+          ${!d._discussionOpen?renderDocReviewPanel(idea,d):''}
           ${d._discussionOpen?renderDocDiscussion(id,d):''}
         </div>
         `;
@@ -10472,6 +10475,20 @@ function toggleKebab(kid){
 }
 window.addEventListener('scroll',()=>document.querySelectorAll('.kmenu.work-product-floating.on').forEach(positionWorkProductMenu),true);
 window.addEventListener('resize',()=>document.querySelectorAll('.kmenu.work-product-floating.on').forEach(positionWorkProductMenu));
+function renderDocOutline(idea,d){
+  const sections=ensureDocSections(d),labels={accepted:'Zatwierdzona',pending:'W głosowaniu',writing:'W edycji',draft:'Szkic',rejected:'Do poprawy'};
+  return `<aside class="doc-outline"><h3>Sekcje dokumentu <small>${sections.length}</small></h3>${sections.map((s,index)=>`<button type="button" class="doc-outline-item" onclick="focusDocumentSection(${idea.id},'${d.did}','${s.id}')"><span class="doc-outline-number">${index+1}</span><span><b>${escHtml(s.title)}</b><small class="doc-section-state ${s.state||'draft'}">${labels[s.state]||'Szkic'}</small></span></button>`).join('')}<button type="button" class="doc-outline-collapse" onclick="collapseDocumentSections(${idea.id},'${d.did}')">${sections.some(s=>s.open)?'⌃ Zwiń wszystkie':'⌄ Rozwiń wszystkie'}</button>${!d.adopted?`<button type="button" class="doc-add-section" onclick="addDocSection(${idea.id},'${d.did}')">+ Dodaj sekcję</button>`:''}</aside>`;
+}
+function focusDocumentSection(ideaId,did,sid){
+  saveDocHtml(ideaId);const {d,section}=docSectionOf(ideaId,did,sid);if(!section)return;d.previewOpen=false;section.open=true;openIdea(ideaId,true);
+  requestAnimationFrame(()=>document.querySelector(`.doc-section-card[data-doc-section-id="${CSS.escape(sid)}"]`)?.scrollIntoView({behavior:'smooth',block:'start'}));
+}
+function collapseDocumentSections(ideaId,did){saveDocHtml(ideaId);const {d}=docSectionOf(ideaId,did);if(!d)return;const sections=ensureDocSections(d),open=!sections.some(s=>s.open);sections.forEach(s=>s.open=open);openIdea(ideaId,true);}
+function renderDocReviewPanel(idea,d){
+  const sections=ensureDocSections(d),accepted=sections.filter(s=>s.state==='accepted').length;
+  const rows=sections.map(s=>{const vote=(idea.votes||[]).find(v=>v.open&&v.kind==='doc-section-approve'&&v.did===d.did&&v.sectionId===s.id),owns=(s.penHolders||[]).includes(MY_NAME);let action='';if(vote)action=`<button onclick="openVote(${idea.id},'${vote.id}')">Zobacz głosowanie →</button>`;else if(s.state==='accepted')action=`<span class="doc-review-approved">✓ Zatwierdzona</span>`;else if(owns&&!s.editing)action=`<button onclick="focusDocumentSection(${idea.id},'${d.did}','${s.id}');startDocSectionApproval(${idea.id},'${d.did}','${s.id}')">Wyślij do głosowania →</button>`;else action=`<button onclick="focusDocumentSection(${idea.id},'${d.did}','${s.id}')">${s.editing?'Dokończ redakcję':'Przejdź do sekcji'} →</button>`;return `<div class="doc-review-row"><b>${escHtml(s.title)}</b>${action}</div>`;}).join('');
+  return `<aside class="doc-review"><section><h3>Sekcje i zatwierdzanie</h3><p>${accepted} z ${sections.length} sekcji zatwierdzonych</p><progress max="${sections.length||1}" value="${accepted}"></progress>${rows}<div class="doc-review-hint">Po przyjęciu treść sekcji zostaje zablokowana. Dalsze zmiany wymagają ponownego otwarcia.</div></section><section><h3>Dyskusja o dokumencie</h3><p>${ensureDocThreads(d).length} wątków · komentarze zespołu</p><button class="doc-save-btn secondary" onclick="toggleDocDiscussion(${idea.id},'${d.did}')">Otwórz rozmowę →</button></section></aside>`;
+}
 function openDoc(ideaId,did){const i=ideas.find(x=>x.id===ideaId);if(!i)return;i.openDoc=did;i.viewTab='dokumenty';openIdea(ideaId,true,{replaceRoute:false});}
 function closeDoc(ideaId){const i=ideas.find(x=>x.id===ideaId);if(!i)return;saveDocHtml(ideaId);i.openDoc=null;openIdea(ideaId,true,{replaceRoute:true});}
 function closeDocToIdea(ideaId){const i=ideas.find(x=>x.id===ideaId);if(!i)return;saveDocHtml(ideaId);i.openDoc=null;i.viewTab='przeglad';openIdea(ideaId,true,{replaceRoute:true});}
@@ -17461,6 +17478,22 @@ html.theme-dark #s-discover{background:var(--bg);color:var(--txt)}html.theme-dar
 @media(max-width:580px){#s-discover .discover-heading{align-items:flex-start;gap:12px}#s-discover .discover-heading h1{font-size:24px}.discover-add-post{padding:0 12px}.discover-add-post span{display:none}.discover-toolbar{grid-template-columns:1fr}.discover-dropdown,.discover-time-dropdown{grid-column:auto}.discover-dropdown-trigger{width:100%;justify-content:flex-start}.discover-dropdown-trigger>svg{margin-left:auto}.discover-dropdown-menu{right:auto;left:0;width:100%}#s-discover .discover-post{padding:14px 13px}.discover-post-actions button{padding:0 7px}.discover-post-actions button span{display:none}}
 @media(max-width:760px){.tbp-media{display:block}.post-auto-gallery.media-count-1{height:290px}.post-auto-gallery.media-count-2{height:230px}.post-auto-gallery.media-count-3{grid-template-rows:repeat(2,115px)}.post-auto-gallery.media-count-4{grid-template-rows:repeat(2,125px)}}
 @media(max-width:480px){.post-auto-gallery.media-count-1{height:240px}.post-auto-gallery.media-count-2{height:190px}.post-auto-gallery.media-count-3{grid-template-rows:repeat(2,95px)}.post-auto-gallery.media-count-4{grid-template-rows:repeat(2,105px)}.post-document-row{grid-template-columns:36px minmax(0,1fr) 14px;padding:7px 8px}.post-document-icon{width:34px;height:34px}}
+</style>
+<style>
+.doc-workspace.doc-fullscreen,.doc-workspace.doc-fullscreen.doc-discussion-open{position:fixed;inset:0;z-index:800;display:grid;grid-template-columns:250px minmax(0,1fr) 310px;grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"dwhead dwhead dwhead" "ribbon ribbon ribbon" "outline page dwdisc";height:100dvh;max-height:100dvh;border:0;border-radius:0;background:var(--surf2);box-shadow:none;overflow:hidden}
+.doc-workspace.doc-fullscreen.doc-discussion-open{display:grid!important;grid-template-columns:250px minmax(0,1fr) 310px!important;grid-template-rows:auto auto minmax(0,1fr)!important;grid-template-areas:"dwhead dwhead dwhead" "ribbon ribbon ribbon" "outline page dwdisc"!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important}
+@media(max-width:1100px) and (min-width:801px){.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:190px minmax(0,1fr) 250px!important}}
+@media(max-width:800px){.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"dwhead" "ribbon" "page"!important}}
+body:has(#s-idea.on .doc-fullscreen){overflow:hidden}
+.doc-fullscreen .doc-workspace-head{grid-area:dwhead;padding:14px 22px;border-radius:0!important;gap:20px;min-height:72px}.doc-fullscreen .doc-workspace-title{flex:1}.doc-fullscreen .doc-workspace-title>div{min-width:0}.doc-back{border:0;border-right:1px solid var(--bdr);padding:10px 22px 10px 0;margin-right:8px;background:transparent;color:var(--p700);font:600 13px inherit;white-space:nowrap;cursor:pointer}.doc-fullscreen .doc-workspace-title h3{font-size:16px;max-width:46vw}.doc-fullscreen .doc-head-actions{flex-shrink:0}
+.doc-ribbon{grid-area:ribbon;display:flex;align-items:center;gap:10px;padding:10px 22px;background:var(--surf);border-bottom:1px solid var(--bdr);font-size:12px;overflow-x:auto}.doc-ribbon>span:first-child{font-weight:700;margin-right:18px;white-space:nowrap}.doc-ribbon button{border:0;background:transparent;color:var(--txt);padding:7px 12px;border-radius:7px;white-space:nowrap;cursor:pointer}.doc-ribbon button:hover{background:var(--p100)}.doc-ribbon-note{margin-left:auto;color:var(--txs);white-space:nowrap}
+.doc-outline{grid-area:outline;padding:24px 16px;overflow:auto;border-right:1px solid var(--bdr)}.doc-outline h3{display:flex;justify-content:space-between;margin:0 6px 24px;font-size:16px}.doc-outline h3 small{font-weight:400;color:var(--txs)}.doc-outline-item{display:flex;gap:12px;width:100%;padding:14px 10px;margin-bottom:7px;border:0;border-radius:10px;text-align:left;background:transparent;color:var(--txt);cursor:pointer}.doc-outline-item:hover{background:var(--p100)}.doc-outline-item b{display:block;font-size:13px;font-weight:600;margin-bottom:8px}.doc-outline-item small{display:inline-block}.doc-outline-number{color:var(--p700);font-weight:700;padding-top:1px}.doc-outline-collapse{display:block;margin:25px 0 16px;border:0;background:transparent;color:var(--txs);cursor:pointer}.doc-outline .doc-add-section{width:100%}
+.doc-fullscreen-page{grid-area:page;min-width:0;overflow:auto;padding:28px 24px 70px;scroll-behavior:smooth}.doc-fullscreen .doc-section-collection{max-width:900px;min-height:100%;margin:auto;padding:30px 36px 60px;background:var(--surf)!important;border:1px solid var(--bdr);border-radius:5px;box-shadow:0 5px 28px #24204a0a}.doc-fullscreen .doc-collection-intro{display:none}.doc-fullscreen .doc-section-list{gap:0}.doc-fullscreen .doc-section-card{border:0;border-bottom:1px solid var(--bdr);border-radius:0;box-shadow:none;margin:0 0 22px;scroll-margin-top:20px;background:transparent!important}.doc-fullscreen .doc-section-head{padding:20px 0;background:transparent}.doc-fullscreen .doc-section-title{font-size:19px}.doc-fullscreen .doc-section-body{padding:0;border:0}.doc-fullscreen .doc-section-read{padding:8px 0 24px;font-size:16px;line-height:1.85}.doc-fullscreen .doc-section-pen{padding:12px 0;background:transparent!important}.doc-fullscreen .doc-section-edit-shell{border:0;border-radius:0;background:transparent!important;overflow:visible}.doc-fullscreen .doc-section-paper-wrap{padding:0;max-height:none;overflow:visible;background:transparent!important}.doc-fullscreen .doc-section-paper{border:0;box-shadow:none;max-width:none;min-height:240px}.doc-fullscreen .doc-section-editor{padding:24px 12px;font-size:16px;line-height:1.85;min-height:240px}.doc-fullscreen .doc-section-toolbar{top:-28px;border:1px solid var(--bdr);border-radius:8px;box-shadow:0 4px 16px #24204a0a}.doc-fullscreen .doc-preview-wrap{margin:0;padding:0;background:transparent}
+.doc-review{grid-area:dwdisc;overflow:auto;padding:22px 16px 30px 0}.doc-review>section{padding:20px;margin-bottom:16px;background:var(--surf);border:1px solid var(--bdr);border-radius:12px}.doc-review h3{font-size:16px;margin:0 0 12px}.doc-review p{font-size:13px;color:var(--txs)}.doc-review progress{width:100%;height:6px;accent-color:var(--p700);margin-bottom:12px}.doc-review-row{padding:15px 0;border-bottom:1px solid var(--bdr)}.doc-review-row b{display:block;font-size:13px;font-weight:600;margin-bottom:9px}.doc-review-row button{border:0;padding:0;background:transparent;color:var(--p700);font-size:12px;text-align:left;cursor:pointer}.doc-review-approved{font-size:12px;color:#268346}.doc-review-hint{padding:12px;margin-top:20px;border-radius:8px;background:var(--surf2);font-size:12px;line-height:1.6;color:var(--txs)}
+.doc-fullscreen.doc-discussion-open>.task-disc-panel{grid-area:dwdisc;position:static!important;width:auto!important;min-height:0;height:100%;border-radius:0;z-index:auto;display:flex;flex-direction:column}.doc-fullscreen .doc-section-state.pending{background:#fff0c2;color:#805b13}
+@media(min-width:1550px){.doc-workspace.doc-fullscreen,.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:280px minmax(0,1fr) 350px}.doc-fullscreen-page{padding:32px 40px 80px}.doc-fullscreen .doc-section-collection{padding:40px 50px 70px}}
+@media(max-width:1100px){.doc-workspace.doc-fullscreen,.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:190px minmax(0,1fr) 250px}.doc-fullscreen-page{padding:16px 12px 40px}.doc-fullscreen .doc-section-collection{padding:18px}.doc-ribbon-note{display:none}.doc-fullscreen .doc-workspace-title h3{max-width:32vw}.doc-back{padding-right:10px}.doc-fullscreen .doc-section-head{flex-wrap:wrap}}
+@media(max-width:800px){.doc-workspace.doc-fullscreen,.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"dwhead" "ribbon" "page"}.doc-outline,.doc-review{display:none}.doc-fullscreen .doc-workspace-head{padding:10px 14px;flex-direction:column;align-items:stretch;gap:10px}.doc-fullscreen .doc-workspace-title h3{max-width:55vw;font-size:14px}.doc-fullscreen .doc-head-actions{justify-content:flex-end;width:auto}.doc-fullscreen.doc-discussion-open>.task-disc-panel{position:absolute!important;inset:140px 0 0;width:100%!important;height:calc(100% - 140px);z-index:20}.doc-ribbon{padding:6px 12px}.doc-ribbon>span:first-child{display:none}.doc-fullscreen .doc-section-toolbar{top:-16px}}
 </style>
 </body>
 </html>
