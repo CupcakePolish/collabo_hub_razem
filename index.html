@@ -7887,6 +7887,7 @@ function renderIdeaBreadcrumb(idea,d=null,previewMode=false){
 
 
 function openIdea(id,preserveScroll=false,opts={}){
+  const documentScroll=preserveScroll?[...document.querySelectorAll('.doc-fullscreen-page,.doc-outline,.doc-review,.doc-fullscreen .task-disc-feed')].map(el=>({selector:el.classList.contains('task-disc-feed')?'.doc-fullscreen .task-disc-feed':'.'+el.classList[0],top:el.scrollTop,left:el.scrollLeft})):[];
   if(Number(id)===2&&!ideas.some(row=>Number(row.id)===2))ideas.push({id:2,title:'Posadźmy 100 drzew',desc:'Wspólnie zazielenić podwórka i skwery, sadząc 100 młodych drzew razem z sąsiadami.',stage:'active',_phaseKey:'active',cat:'środowisko',authorId:3,authorName:'Katarzyna Zielińska',date:'1 wrz 2024',workMode:'hybrid',followers:18,coalition:[],skillsNeeded:[{skill:'Organizacja wydarzeń',why:'Koordynacja sobotnich akcji sadzenia.',minLvl:1,filled:true,person:'Katarzyna Zielińska',date:'2 wrz 2024'}],roleRequirements:[],tasks:[],docs:[],files:[],budgetItems:[],log:[{text:'Kamień milowy: posadzono pierwsze 50 drzew',date:'6 wrz 2024',time:'16:30',type:'etap'}],votes:[],discussion:[],proposals:[],approvals:{},coalitionNeeded:2,coalitionHave:2});
   const idea=ideas.find(i=>i.id===id);
   if(!idea) return;
@@ -8199,7 +8200,9 @@ function openIdea(id,preserveScroll=false,opts={}){
       const sectionCards=docSections.map((section,index)=>renderDocumentPageSection(idea,d,section,index)).join('');
       const historyMode=false;
       const previewMode=!historyMode&&(d.adopted?true:d.previewOpen);
-      const combinedPreview=renderCombinedDocPreview(id,d);
+      const previewParts=document.createElement('template');previewParts.innerHTML=renderCombinedDocPreview(id,d);
+      const previewSidebar=previewParts.content.querySelector('.doc-preview-side'),previewSidebarHTML=previewSidebar?.outerHTML||'';previewSidebar?.remove();
+      const combinedPreview=previewParts.innerHTML;
       ideaBreadcrumb=renderIdeaBreadcrumb(idea,d,previewMode);
       const docThreads=ensureDocThreads(d);
       const linkedTask=d.taskId?(idea.tasks||[]).find(t=>t.id===d.taskId):null;
@@ -8228,7 +8231,7 @@ function openIdea(id,preserveScroll=false,opts={}){
           ${renderDocumentRibbon(idea,d)}
           ${renderDocOutline(idea,d)}
           <main class="doc-fullscreen-page">${docMainView}<div class="document-selection-bar" id="document-selection-bar">${renderDocumentSelectionBar(idea,d)}</div></main>
-          ${!d._discussionOpen?renderDocReviewPanel(idea,d):''}
+          ${!d._discussionOpen?(previewMode?`<aside class="doc-review document-preview-inspector">${previewSidebarHTML}</aside>`:renderDocReviewPanel(idea,d)):''}
           ${d._discussionOpen?renderDocDiscussion(id,d):''}
         </div>
         `;
@@ -8300,6 +8303,7 @@ function openIdea(id,preserveScroll=false,opts={}){
   if(isPrivateIdeaDraft(idea))applyPrivateDraftPolicy(document.getElementById('idea-body'));
 
   go('idea',null,null,{preserveScroll,fromRoute:true});
+  documentScroll.forEach(saved=>{const el=document.querySelector(saved.selector);if(el){el.scrollTop=saved.top;el.scrollLeft=saved.left;}});
   requestAnimationFrame(()=>{fitDocDiscussionPanel();setupDocMessageClamps();});
 }
 
@@ -10499,15 +10503,18 @@ function renderDocumentPageSection(idea,d,s,index){
   if(editor){['onfocus','onkeyup','onmouseup'].forEach(attr=>editor.setAttribute(attr,'rememberDocumentEditor(this)'));}
   const state=card.querySelector('.doc-section-state');if(state)state.textContent=s.state==='accepted'?'✓ Zatwierdzona':s.state==='pending'?'◷ W głosowaniu':'W edycji';
   if(s.state==='accepted'){const action=document.createElement('button');action.className='document-reopen';action.textContent=s.reopenRequested?'Prośba wysłana':'Poproś o ponowne otwarcie';action.setAttribute('onclick',`requestDocSectionReopen(${idea.id},'${d.did}','${s.id}')`);card.querySelector('.doc-section-body')?.appendChild(action);}
+  const head=card.querySelector('.doc-section-head');if(head){const row=document.createElement('div');row.className=head.className;row.innerHTML=head.innerHTML;head.replaceWith(row);const indexEl=row.querySelector('.doc-section-index');if(indexEl){const toggle=document.createElement('button');toggle.type='button';toggle.className=indexEl.className;toggle.setAttribute('aria-label',(s.open?'Zwiń':'Rozwiń')+' sekcję '+s.title);toggle.setAttribute('onclick',`toggleDocSection(${idea.id},'${d.did}','${s.id}')`);indexEl.replaceWith(toggle);}const titleEl=row.querySelector('.doc-section-title');if(titleEl&&(s.penHolders||[]).includes(MY_NAME)&&!['accepted','pending'].includes(s.state)){const button=document.createElement('button');button.type='button';button.className='doc-section-title document-rename-section';button.textContent=titleEl.textContent;button.title='Zmień tytuł sekcji';button.setAttribute('onclick',`openDocumentSectionRename(${idea.id},'${d.did}','${s.id}')`);titleEl.replaceWith(button);}}
   return card.outerHTML;
 }
+function openDocumentSectionRename(ideaId,did,sid){saveDocHtml(ideaId);const {section}=docSectionOf(ideaId,did,sid);if(!section||!(section.penHolders||[]).includes(MY_NAME)||['accepted','pending'].includes(section.state))return;appModal(`<h3>Zmień tytuł sekcji</h3><input class="finp" id="document-section-name" aria-label="Tytuł sekcji" value="${escAttr(section.title)}"><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="saveDocumentSectionName(${ideaId},'${did}','${sid}')">Zapisz tytuł</button></div>`);}
+function saveDocumentSectionName(ideaId,did,sid){const {idea,d,section}=docSectionOf(ideaId,did,sid),title=(document.getElementById('document-section-name')?.value||'').trim();if(!section||!title||!(section.penHolders||[]).includes(MY_NAME)||['accepted','pending'].includes(section.state))return;const tmp=document.createElement('template');tmp.innerHTML=section.html||'';const heading=tmp.content.querySelector('h1,h2,h3');if(heading)heading.textContent=title;else{const h=document.createElement('h2');h.textContent=title;tmp.content.prepend(h);}section.html=sanitizeRichHtml(tmp.innerHTML);section.title=title;section._editHistory=[section.html];section._editHistoryIndex=0;syncDocHtmlFromSections(d);idea.log.push({text:'Zmieniono tytuł sekcji na „'+title+'”',date:TODAY,time:NOW_TIME(),type:'dokument'});closeAppModal();queuePersistence();openIdea(ideaId,true);}
 function renderDocOutline(idea,d){
   const sections=ensureDocSections(d),selected=documentSelectedSections(idea,d),eligible=sections.filter(s=>documentSectionEligible(idea,d,s)),labels={accepted:'Zatwierdzona',pending:'W głosowaniu',writing:'W edycji',draft:'W edycji',rejected:'Do poprawy'};
   return `<aside class="doc-outline"><h3>Sekcje dokumentu <small>${selected.length} z ${sections.length}</small></h3><label class="document-select-all"><input type="checkbox" ${eligible.length&&selected.length===eligible.length?'checked':''} ${!eligible.length?'disabled':''} onchange="selectDocumentSections(${idea.id},'${d.did}',null,this.checked)"> Zaznacz wszystkie do głosowania</label>${sections.map((s,index)=>`<div class="document-outline-row"><input type="checkbox" aria-label="Zaznacz sekcję ${escAttr(s.title)}" ${selected.includes(s)?'checked':''} ${!documentSectionEligible(idea,d,s)?'disabled':''} onchange="selectDocumentSections(${idea.id},'${d.did}','${s.id}',this.checked)"><button type="button" class="doc-outline-item" onclick="focusDocumentSection(${idea.id},'${d.did}','${s.id}')"><span class="doc-outline-number">${s.state==='accepted'||s.state==='pending'?documentEditorIcon('lock'):documentEditorIcon('file')}</span><span><b>${escHtml(/^Art\./i.test(s.title)?s.title:'Art. '+(index+1)+'. '+s.title)}</b><small class="doc-section-state ${s.state||'draft'}">${labels[s.state]||'W edycji'}</small></span></button></div>`).join('')}<button type="button" class="doc-outline-collapse" onclick="collapseDocumentSections(${idea.id},'${d.did}')">${sections.some(s=>s.open)?'⌃ Zwiń wszystkie':'⌄ Rozwiń wszystkie'}</button>${!d.adopted?`<button type="button" class="doc-add-section" onclick="addDocSection(${idea.id},'${d.did}')">+ Dodaj sekcję</button>`:''}</aside>`;
 }
 function focusDocumentSection(ideaId,did,sid){
   saveDocHtml(ideaId);const {d,section}=docSectionOf(ideaId,did,sid);if(!section)return;d.previewOpen=false;section.open=true;openIdea(ideaId,true);
-  requestAnimationFrame(()=>document.querySelector(`.doc-section-card[data-doc-section-id="${CSS.escape(sid)}"]`)?.scrollIntoView({behavior:'smooth',block:'start'}));
+  requestAnimationFrame(()=>{const page=document.querySelector('.doc-fullscreen-page'),section=document.querySelector(`.doc-section-card[data-doc-section-id="${CSS.escape(sid)}"]`);if(page&&section)page.scrollTo({top:page.scrollTop+section.getBoundingClientRect().top-page.getBoundingClientRect().top-24,behavior:'smooth'});});
 }
 function collapseDocumentSections(ideaId,did){saveDocHtml(ideaId);const {d}=docSectionOf(ideaId,did);if(!d)return;const sections=ensureDocSections(d),open=!sections.some(s=>s.open);sections.forEach(s=>s.open=open);openIdea(ideaId,true);}
 function renderDocReviewPanel(idea,d){
@@ -17546,6 +17553,11 @@ html.theme-dark .doc-workspace.doc-fullscreen .document-word-ribbon nav button.s
 html.theme-dark .doc-workspace.doc-fullscreen select,html.theme-dark .doc-workspace.doc-fullscreen .document-field input,html.theme-dark .doc-workspace.doc-fullscreen .document-field textarea{background:white!important;color:#353960!important;border-color:#dddfea!important;color-scheme:light}
 html.theme-dark .doc-workspace.doc-fullscreen input[type=checkbox],html.theme-dark .doc-workspace.doc-fullscreen input[type=radio]{color-scheme:light;background:white!important}
 .doc-workspace.doc-fullscreen .doc-outline,.doc-workspace.doc-fullscreen .doc-fullscreen-page,.doc-workspace.doc-fullscreen .doc-review{scrollbar-width:thin;scrollbar-color:#d7d6e5 transparent}
+</style>
+<style>
+/* One reserved inspector column; the paper never reflows when a panel changes. */
+@media(min-width:801px){.doc-workspace.doc-fullscreen,.doc-workspace.doc-fullscreen.doc-discussion-open{grid-template-columns:240px minmax(0,1fr) 310px!important}.doc-workspace.doc-fullscreen .doc-section-collection,.doc-workspace.doc-fullscreen .doc-preview-paper{box-sizing:border-box;width:820px!important;min-width:820px!important;max-width:820px!important;margin:0 auto!important}.doc-workspace.doc-fullscreen .doc-fullscreen-page{overflow:auto!important}.doc-workspace.doc-fullscreen .doc-preview-layout,.doc-workspace.doc-fullscreen .doc-preview-layout.no-side{display:block!important;width:820px!important;min-width:820px!important;max-width:820px!important;margin:0 auto!important}.doc-workspace.doc-fullscreen .doc-preview-wrap{width:820px;min-width:820px;padding:0!important}.doc-workspace.doc-fullscreen .document-selection-bar{box-sizing:border-box;width:820px;max-width:820px;min-width:820px}}
+.doc-fullscreen .document-preview-inspector>.doc-preview-side{position:static;width:auto;max-width:none;margin:0;background:white!important;color:#353960!important}.doc-fullscreen .doc-preview-layout>.doc-preview-side{display:none!important}.doc-fullscreen .doc-section-head{cursor:default}.doc-fullscreen button.doc-section-index{padding:0;cursor:pointer;flex-shrink:0}.doc-fullscreen .document-rename-section{display:block;text-align:left;border:0;background:transparent;padding:0;font:inherit;cursor:text;line-height:inherit}.doc-fullscreen .document-rename-section:hover{text-decoration:underline;text-decoration-color:#bfa8eb;text-underline-offset:5px}
 </style>
 </body>
 </html>
