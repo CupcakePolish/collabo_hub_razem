@@ -7887,7 +7887,8 @@ function renderIdeaBreadcrumb(idea,d=null,previewMode=false){
 
 
 function openIdea(id,preserveScroll=false,opts={}){
-  const documentScroll=preserveScroll?[...document.querySelectorAll('.doc-fullscreen-page,.doc-outline,.doc-review,.doc-fullscreen .task-disc-feed')].map(el=>({selector:el.classList.contains('task-disc-feed')?'.doc-fullscreen .task-disc-feed':'.'+el.classList[0],top:el.scrollTop,left:el.scrollLeft})):[];
+  const documentWindowScroll=preserveScroll&&document.querySelector('.doc-fullscreen')?{top:window.scrollY,left:window.scrollX}:null;
+  const documentScroll=preserveScroll?['.doc-workspace.doc-fullscreen','.doc-fullscreen-page','.doc-outline','.doc-review','.doc-fullscreen .task-disc-feed'].flatMap(selector=>{const el=document.querySelector(selector);return el?[{selector,top:el.scrollTop,left:el.scrollLeft}]:[];}):[];
   if(Number(id)===2&&!ideas.some(row=>Number(row.id)===2))ideas.push({id:2,title:'Posadźmy 100 drzew',desc:'Wspólnie zazielenić podwórka i skwery, sadząc 100 młodych drzew razem z sąsiadami.',stage:'active',_phaseKey:'active',cat:'środowisko',authorId:3,authorName:'Katarzyna Zielińska',date:'1 wrz 2024',workMode:'hybrid',followers:18,coalition:[],skillsNeeded:[{skill:'Organizacja wydarzeń',why:'Koordynacja sobotnich akcji sadzenia.',minLvl:1,filled:true,person:'Katarzyna Zielińska',date:'2 wrz 2024'}],roleRequirements:[],tasks:[],docs:[],files:[],budgetItems:[],log:[{text:'Kamień milowy: posadzono pierwsze 50 drzew',date:'6 wrz 2024',time:'16:30',type:'etap'}],votes:[],discussion:[],proposals:[],approvals:{},coalitionNeeded:2,coalitionHave:2});
   const idea=ideas.find(i=>i.id===id);
   if(!idea) return;
@@ -8303,7 +8304,10 @@ function openIdea(id,preserveScroll=false,opts={}){
   if(isPrivateIdeaDraft(idea))applyPrivateDraftPolicy(document.getElementById('idea-body'));
 
   go('idea',null,null,{preserveScroll,fromRoute:true});
-  documentScroll.forEach(saved=>{const el=document.querySelector(saved.selector);if(el){el.scrollTop=saved.top;el.scrollLeft=saved.left;}});
+  // Restore immediately: CSS smooth scrolling otherwise animates from the new
+  // container's initial position (the top) on every document action.
+  documentScroll.forEach(saved=>{const el=document.querySelector(saved.selector);if(el)el.scrollTo({top:saved.top,left:saved.left,behavior:'instant'});});
+  if(documentWindowScroll)window.scrollTo({...documentWindowScroll,behavior:'instant'});
   requestAnimationFrame(()=>{fitDocDiscussionPanel();setupDocMessageClamps();});
 }
 
