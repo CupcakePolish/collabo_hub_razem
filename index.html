@@ -10232,7 +10232,19 @@ function passDocSectionPen(ideaId,did,sid){const {idea,d,section}=docSectionOf(i
 function startDocSectionApproval(ideaId,did,sid){const {d,section}=docSectionOf(ideaId,did,sid);if(!section||section.state==='accepted')return;if(section.editing){toast('Najpierw zapisz sekcję.','warn');return;}saveDocHtml(ideaId);d._approvalSectionId=sid;section.open=true;openIdea(ideaId,true);setTimeout(()=>document.getElementById('doc-section-why-'+sid)?.focus(),50);}
 function cancelDocSectionApproval(ideaId,did){const {d}=docSectionOf(ideaId,did,'');if(d){d._approvalSectionId=null;openIdea(ideaId,true);}}
 function submitDocSectionApproval(ideaId,did,sid){const {idea,d,section}=docSectionOf(ideaId,did,sid),why=(document.getElementById('doc-section-why-'+sid)?.value||'').trim();if(!section||!why){toast('Zgłoszenie sekcji wymaga krótkiego uzasadnienia.','warn');return;}const vId='v'+Date.now();section.state='pending';section.penHolder='';section.penHolders=[];section.editing=false;idea.votes.push({id:vId,kind:'doc-section-approve',did,sectionId:sid,prop:`Przyjąć sekcję dokumentu: „${section.title}"`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:why,date:TODAY,supporters:[],debunks:[]}]});d._approvalSectionId=null;syncDocHtmlFromSections(d);idea.log.push({text:`Sekcja „${section.title}" zgłoszona do przyjęcia`,date:TODAY,time:NOW_TIME(),type:'dokument',detail:'<b>Powód:</b> '+escHtml(why)});notifyVote(idea);toast('Sekcja trafiła do osobnego głosowania.','ok');openIdea(ideaId,true);}
-function addDocSection(ideaId,did){const {idea,d}=docSectionOf(ideaId,did,'');if(!d)return;const sections=ensureDocSections(d),n=sections.length+1;const initHtml=`<h2>Nowa sekcja ${n}</h2><p>Zacznij pisać tutaj…</p>`;sections.push({id:'ds-'+Date.now(),title:'Nowa sekcja '+n,html:initHtml,_initialHtml:initHtml,isNew:true,state:'writing',penHolder:MY_NAME,penHolders:[MY_NAME],penRequests:[],open:true,editing:true});syncDocHtmlFromSections(d);openIdea(ideaId,true);setTimeout(()=>document.querySelector(`[data-doc-section-id="${sections[sections.length-1].id}"] .doc-section-editor`)?.focus(),30);}
+function addDocSection(ideaId,did){
+  const {idea,d}=docSectionOf(ideaId,did,'');if(!d||d.adopted||d.frozen||d.voting||!isActiveProjectMember(idea))return;
+  saveDocHtml(ideaId);
+  const sections=ensureDocSections(d),n=sections.length+1,sid='ds-'+Date.now(),initHtml=`<h2>Nowa sekcja ${n}</h2><p><br></p>`;
+  sections.push({id:sid,title:'Nowa sekcja '+n,html:initHtml,_initialHtml:initHtml,isNew:true,state:'writing',penHolder:MY_NAME,penHolders:[MY_NAME],penRequests:[],open:true,editing:true});
+  d.previewOpen=false;d.historyOpen=false;syncDocHtmlFromSections(d);queuePersistence();openIdea(ideaId,true);
+  requestAnimationFrame(()=>{
+    const card=document.querySelector(`.doc-section-card[data-doc-section-id="${CSS.escape(sid)}"]`),editor=card?.querySelector('.doc-section-editor');if(!editor)return;
+    editor.focus({preventScroll:true});
+    const range=document.createRange(),selection=window.getSelection();range.selectNodeContents(editor.querySelector('p')||editor);range.collapse(true);selection.removeAllRanges();selection.addRange(range);rememberDocumentEditor(editor);
+    const page=editor.closest('.doc-fullscreen-page');if(page)page.scrollTo({top:page.scrollTop+card.getBoundingClientRect().top-page.getBoundingClientRect().top-24,behavior:'instant'});
+  });
+}
 function saveDocSectionDraft(ideaId,did,sid){
   const {idea,d,section}=docSectionOf(ideaId,did,sid);if(!section||!(section.penHolders||[]).includes(MY_NAME))return;
   const card=document.querySelector(`[data-doc-id="${did}"] [data-doc-section-id="${sid}"]`),editor=card?.querySelector('.doc-section-editor');
