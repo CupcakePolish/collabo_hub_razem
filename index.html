@@ -9697,6 +9697,11 @@ function ensureDocThreads(d){
     d.watki=legacy.length?[{id:'dw-'+(d.did||'doc')+'-legacy',tytul:'Ogólna dyskusja dokumentu',autor:legacy[0]?.who||legacy[0]?.osoba||MY_NAME,kiedy:legacy[0]?.date||TODAY,posty:legacy.map(c=>({id:c.cid||c.id||'dp'+Math.random().toString(36).slice(2),osoba:c.who||c.osoba||MY_NAME,tekst:c.text||c.tekst||'',kiedy:[c.date,c.time].filter(Boolean).join(' ')||c.kiedy||TODAY,pliki:[],reakcje:c.reactions||c.reakcje||{},odpowiedzi:c.replies||c.odpowiedzi||[]}))}]:[];
   }
   d.watki.forEach(w=>{w.posty=w.posty||[];});
+  (d.sections||[]).forEach((s,index)=>{
+    let thread=d.watki.find(w=>w.sectionId===s.id&&w.sectionHome)||d.watki.find(w=>w.sectionId===s.id);
+    if(!thread){thread={id:'dw-section-'+d.did+'-'+s.id,tytul:s.title,autor:'',kiedy:'',posty:[],sectionId:s.id};d.watki.push(thread);}
+    thread.sectionHome=true;thread.sectionNumber=index+1;thread.sectionTitle=s.title;
+  });
   return d.watki;
 }
 function threadPostList(posts,out=[]){
@@ -9896,8 +9901,8 @@ function docThreadSectionMeta(d,sid){
 function docThreadSectionOptions(d,selected=''){
   return `<option value="">Brak powiązania</option>`+ensureDocSections(d).map((s,i)=>`<option value="${escAttr(s.id)}" ${s.id===selected?'selected':''}>${escHtml(docSectionShortLabel(i+1,s.title))}</option>`).join('');
 }
-function docSectionThreadCount(d,sid){return ensureDocThreads(d).filter(w=>w.sectionId===sid).length;}
-function openDocSectionThreads(ideaId,did,sid){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._discussionOpen=true;d._discussionThread='';d._discussionSectionFilter=sid;openIdea(ideaId,true);}
+function docSectionThreadCount(d,sid){const thread=ensureDocThreads(d).find(w=>w.sectionId===sid&&w.sectionHome);return threadPostList(thread?.posty||[]).length;}
+function openDocSectionThreads(ideaId,did,sid){saveDocHtml(ideaId);const {d}=docSectionOf(ideaId,did,'');if(!d)return;const thread=ensureDocThreads(d).find(w=>w.sectionId===sid&&w.sectionHome);if(!thread)return;ensureDocSections(d).forEach(s=>s.menuOpen=false);d._discussionSectionFilter=sid;queuePersistence();openDocThread(ideaId,did,thread.id);}
 function showAllDocThreads(ideaId,did){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._discussionSectionFilter='';d._discussionThread='';d._discussionOpen=true;openIdea(ideaId,true);}
 function docSubthreadEntries(threads){
   const out=[];
@@ -10517,8 +10522,19 @@ function renderDocumentPageSection(idea,d,s,index){
   const title=card.querySelector('.doc-section-title');if(title)title.textContent=heading?.textContent||(/^Art\./i.test(s.title)?s.title:'Art. '+(index+1)+'. '+s.title);
   if(read&&heading)heading.remove();const toolbar=card.querySelector('.doc-section-toolbar');if(toolbar){const input=toolbar.querySelector('input[type=file]');if(input)card.appendChild(input);toolbar.remove();}
   if(editor){editor.lang=s.proofLanguage||'pl';['onfocus','onkeyup','onmouseup'].forEach(attr=>editor.setAttribute(attr,'rememberDocumentEditor(this)'));}
-  const state=card.querySelector('.doc-section-state');if(state)state.textContent=s.state==='accepted'?'✓ Zatwierdzona':s.state==='pending'?'◷ W głosowaniu':'W edycji';
-  if(s.state==='accepted'){const action=document.createElement('button');action.className='document-reopen';action.textContent=s.reopenRequested?'Prośba wysłana':'Poproś o ponowne otwarcie';action.setAttribute('onclick',`requestDocSectionReopen(${idea.id},'${d.did}','${s.id}')`);card.querySelector('.doc-section-body')?.appendChild(action);}
+  const state=card.querySelector('.doc-section-state');if(state){
+    const accepted=s.state==='accepted',locked=accepted||s.state==='pending'||(s.penHolders||[]).length>0;
+    state.className='document-section-status';state.title=accepted?'Zamknięta i zatwierdzona':s.state==='pending'?'Zablokowana na czas głosowania — jeszcze niezatwierdzona':locked?'Edycja zarezerwowana przez osoby z piórem':'Otwarta — niezatwierdzona';
+    state.innerHTML=(locked?documentEditorIcon('lock'):'')+(accepted?'<span class="document-section-approved" aria-label="Zatwierdzona">✓</span>':'');
+  }
+  card.querySelector('.doc-section-disc-badge')?.remove();
+  const comment=document.createElement('button');comment.type='button';comment.className='document-section-comments';comment.title='Dyskusja sekcji';comment.setAttribute('aria-label','Dyskusja sekcji: '+docSectionThreadCount(d,s.id)+' wiadomości');comment.innerHTML=documentEditorIcon('comment')+'<span>'+docSectionThreadCount(d,s.id)+'</span>';comment.setAttribute('onclick',`event.stopPropagation();openDocSectionThreads(${idea.id},'${d.did}','${s.id}')`);card.querySelector('.doc-section-headside')?.prepend(comment);
+  let menu=card.querySelector('.doc-section-menu');if(!menu){menu=document.createElement('div');menu.className='doc-section-menu'+(s.menuOpen?'':' is-hidden');card.appendChild(menu);}
+  const addMenu=(label,handler)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('onclick',handler);menu.appendChild(b);};
+  if(!menu.querySelector('[onclick^="copyDocSection"]'))addMenu('Kopiuj sekcję',`copyDocSection(${idea.id},'${d.did}','${s.id}')`);
+  addMenu(docSectionThreadCount(d,s.id)?'Otwórz dyskusję sekcji':'Rozpocznij dyskusję sekcji',`openDocSectionThreads(${idea.id},'${d.did}','${s.id}')`);
+  if(!card.querySelector('.doc-section-more')){const more=document.createElement('span');more.className='doc-section-more';more.textContent='•••';more.setAttribute('onclick',`event.stopPropagation();toggleDocSectionMenu(${idea.id},'${d.did}','${s.id}')`);card.querySelector('.doc-section-headside')?.appendChild(more);}
+  const more=card.querySelector('.doc-section-more');if(more){const button=document.createElement('button');button.type='button';button.className=more.className;button.textContent=more.textContent;button.setAttribute('aria-label','Opcje sekcji');button.setAttribute('aria-expanded',String(!!s.menuOpen));button.setAttribute('onclick',more.getAttribute('onclick'));more.replaceWith(button);}
   const head=card.querySelector('.doc-section-head');if(head){const row=document.createElement('div');row.className=head.className;row.innerHTML=head.innerHTML;head.replaceWith(row);const indexEl=row.querySelector('.doc-section-index');if(indexEl){const toggle=document.createElement('button');toggle.type='button';toggle.className=indexEl.className;toggle.setAttribute('aria-label',(s.open?'Zwiń':'Rozwiń')+' sekcję '+s.title);toggle.setAttribute('onclick',`toggleDocSection(${idea.id},'${d.did}','${s.id}')`);indexEl.replaceWith(toggle);}const titleEl=row.querySelector('.doc-section-title');if(titleEl&&(s.penHolders||[]).includes(MY_NAME)&&!['accepted','pending'].includes(s.state)){const button=document.createElement('button');button.type='button';button.className='doc-section-title document-rename-section';button.textContent=titleEl.textContent;button.title='Zmień tytuł sekcji';button.setAttribute('onclick',`openDocumentSectionRename(${idea.id},'${d.did}','${s.id}')`);titleEl.replaceWith(button);}}
   return card.outerHTML;
 }
@@ -17642,6 +17658,16 @@ html.theme-dark #document-context-menu{background:#fff!important;color:#292c51!i
 html.theme-dark #document-context-menu button,html.theme-dark #document-context-menu label{color:#292c51!important;background:transparent!important}
 html.theme-dark #document-context-menu select{background:#fff!important;color:#292c51!important;border-color:#ddd7e8!important;color-scheme:light}
 html.theme-dark #document-context-menu button:hover,html.theme-dark #document-context-menu button:focus-visible{background:#f0eafa!important}
+</style>
+<style>
+.doc-fullscreen .document-section-status{display:inline-flex;align-items:center;gap:7px;color:#9295ad;background:none}
+.doc-fullscreen .document-section-status svg,.doc-fullscreen .document-section-comments svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7}
+.doc-fullscreen .document-section-approved{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#eee7ff;color:#6936cc;font-size:16px;font-weight:800}
+.doc-fullscreen .document-section-comments{display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;color:#333963;padding:6px 8px;cursor:pointer;font:inherit;font-size:13px}
+.doc-fullscreen .document-section-comments:hover,.doc-fullscreen button.doc-section-more:hover{background:#f2edfc;border-radius:6px}
+.doc-fullscreen button.doc-section-more{border:0;background:transparent;cursor:pointer;padding:6px 8px}
+.doc-fullscreen .doc-section-menu{right:0;left:auto;min-width:230px;padding:6px;border:1px solid #e5e3ef;border-radius:10px;box-shadow:0 8px 24px #2724471a}
+.doc-fullscreen .doc-section-menu button{width:100%;text-align:left;padding:10px 12px;border-radius:6px}
 </style>
 </body>
 </html>
