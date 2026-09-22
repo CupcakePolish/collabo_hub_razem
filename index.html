@@ -17745,5 +17745,16 @@ html.theme-dark #document-context-menu button:hover,html.theme-dark #document-co
 .doc-workspace.doc-fullscreen.document-panel-hidden .doc-preview-wrap,
 .doc-workspace.doc-fullscreen.document-panel-hidden .document-selection-bar{margin-left:auto!important;margin-right:auto!important}
 </style>
+<style>
+@media(min-width:801px){
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden){grid-template-columns:minmax(0,calc(210mm + 64px)) minmax(320px,1fr)!important}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page{box-sizing:border-box;padding:24px 0 32px 32px!important;scrollbar-width:auto;scrollbar-gutter:stable}
+  /* The 32px scroll gutter is also the right paper margin. */
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar{width:32px;height:12px}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-track{background:transparent}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-thumb{background:#ceccde;background-clip:padding-box;border:13px solid transparent;border-radius:20px}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-thumb:horizontal{border:3px solid transparent}
+}
+</style>
 </body>
 </html>
