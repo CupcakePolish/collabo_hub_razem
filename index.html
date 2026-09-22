@@ -10181,21 +10181,7 @@ function buildDocQuoteFromSelection(){
   if(!d||!section)return null;
   return {documentId:did,documentVersionId:d.versionId||String((d.versions||[]).length||1),sectionId:sid,sectionNumber:ensureDocSections(d).findIndex(s=>s.id===sid)+1,sectionTitle:section.title||'Sekcja',quotedText:text,createdFromSelection:true};
 }
-function ensureDocQuoteBubble(){
-  let bubble=document.getElementById('doc-quote-bubble');
-  if(!bubble){bubble=document.createElement('button');bubble.type='button';bubble.id='doc-quote-bubble';bubble.className='doc-quote-bubble';bubble.textContent='Cytuj';bubble.onclick=insertPendingDocQuote;document.body.appendChild(bubble);}
-  return bubble;
-}
-function hideDocQuoteBubble(){document.getElementById('doc-quote-bubble')?.classList.remove('on');}
-function showDocQuoteBubble(){
-  const quote=buildDocQuoteFromSelection(),bubble=ensureDocQuoteBubble();
-  if(!quote){hideDocQuoteBubble();return;}
-  pendingDocQuote=quote;
-  const r=window.getSelection().getRangeAt(0).getBoundingClientRect();
-  bubble.style.left=Math.max(12,Math.min(window.innerWidth-90,r.left+r.width/2-34))+'px';
-  bubble.style.top=Math.max(12,r.top-42)+'px';
-  bubble.classList.add('on');
-}
+function hideDocQuoteBubble(){document.getElementById('doc-quote-bubble')?.remove();}
 function quoteComposerKey(){
   if(activeComposerKey&&document.getElementById('mb-inp-'+activeComposerKey))return activeComposerKey;
   const visible=[...document.querySelectorAll('.doc-workspace.doc-discussion-open textarea[id^="mb-inp-"]')].find(x=>x.offsetParent!==null);
@@ -16601,7 +16587,6 @@ document.addEventListener('pointerdown',e=>{
   document.querySelectorAll('.task-invite-picker.open').forEach(x=>{if(!x.contains(e.target))x.classList.remove('open');});
   document.querySelectorAll('.task-cap-picker.open').forEach(x=>{if(!x.contains(e.target))x.classList.remove('open');});
 },true);
-document.addEventListener('mouseup',e=>{if(!e.target.closest?.('.doc-section-card'))hideDocQuoteBubble();else setTimeout(showDocQuoteBubble,0);});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&String(e.key).toLowerCase()==='q'){const q=buildDocQuoteFromSelection();if(q){e.preventDefault();pendingDocQuote=q;insertPendingDocQuote();}}});
 
 document.addEventListener('click',e=>{
@@ -17618,7 +17603,7 @@ function openDocumentContext(event){
   const ideaId=Number(ws.dataset.ideaId),did=ws.dataset.docId,{d,section}=docSectionOf(ideaId,did,sid);if(!section)return;
   docContext={ideaId,did,sid,surface,editor:surface.matches('.doc-section-editor')?surface:null,range:range.cloneRange(),text:range.toString(),quote:{documentId:did,documentVersionId:d.versionId||String((d.versions||[]).length||1),sectionId:sid,sectionNumber:ensureDocSections(d).indexOf(section)+1,sectionTitle:section.title,quotedText:range.toString(),createdFromSelection:true}};
   const editable=documentContextEditable(),hasText=!!docContext.text.trim(),member=isActiveProjectMember(ideas.find(i=>i.id===ideaId)),mac=/Mac|iPhone|iPad/.test(navigator.platform),key=mac?'⌘':'Ctrl';
-  const row=(action,label,shortcut='',enabled=true)=>`<button type="button" role="menuitem" ${enabled?'':'disabled'} onclick="documentContextAction('${action}')"><span>${label}</span><kbd>${shortcut}</kbd></button>`;
+  const row=(action,label,shortcut='',enabled=true)=>action==='quote'&&!hasText?'':`<button type="button" role="menuitem" ${enabled?'':'disabled'} onclick="documentContextAction('${action}')"><span>${label}</span><kbd>${shortcut}</kbd></button>`;
   const tool=(command,label,title)=>`<button type="button" title="${title}" aria-label="${title}" ${editable?'':'disabled'} onmousedown="event.preventDefault()" onclick="documentContextFormat('${command}')">${label}</button>`;
   const menu=document.createElement('div');menu.id='document-context-menu';menu.className='document-context-menu';menu.setAttribute('role','dialog');menu.setAttribute('aria-label','Opcje tekstu');
   menu.innerHTML=`<div class="document-context-tools" role="toolbar" aria-label="Formatowanie zaznaczenia"><select aria-label="Czcionka zaznaczenia" ${editable?'':'disabled'} onchange="documentContextFormat('fontName',this.value)"><option>Inter</option><option>Arial</option><option>Georgia</option></select><select aria-label="Wielkość zaznaczenia" ${editable?'':'disabled'} onchange="documentContextFormat('fontSize',this.value)">${[12,14,16,18,20,24,28].map(n=>`<option ${n===16?'selected':''}>${n}</option>`).join('')}</select>${tool('bold','<b>B</b>','Pogrubienie')}${tool('italic','<i>I</i>','Kursywa')}${tool('underline','<u>U</u>','Podkreślenie')}<label title="Kolor tekstu">A<input type="color" aria-label="Kolor tekstu" ${editable?'':'disabled'} value="#5930b5" onchange="documentContextFormat('foreColor',this.value)"></label><label title="Wyróżnienie tekstu">▰<input type="color" aria-label="Wyróżnienie tekstu" ${editable?'':'disabled'} value="#fff4a3" onchange="documentContextFormat('hiliteColor',this.value)"></label>${tool('insertUnorderedList','• ≡','Lista punktowana')}</div><div role="menu" aria-label="Akcje zaznaczenia">${row('cut','Wytnij',key+'+X',editable&&hasText)}${row('copy','Kopiuj',key+'+C',hasText)}${row('paste','Wklej',key+'+V',editable)}${row('pasteText','Wklej tylko tekst',key+'+Shift+V',editable)}${row('pasteMerge','Wklej i dopasuj formatowanie','',editable)}<hr>${row('copyFormat','Kopiuj formatowanie','',hasText)}${row('applyFormat','Zastosuj skopiowane formatowanie','',editable&&!!docCopiedFormat)}${row('translate','Przetłumacz…','',hasText)}${row('language','Język sprawdzania pisowni…','',editable)}${row('paragraph','Opcje akapitu…','',editable)}<hr>${row('link','Dodaj lub zmień link…','',editable&&hasText)}${row('comment','Nowy komentarz…','',member)}${row('quote','Cytuj w dyskusji…','❞',member&&hasText)}</div>`;
