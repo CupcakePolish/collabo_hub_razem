@@ -8228,10 +8228,9 @@ function openIdea(id,preserveScroll=false,opts={}){
               <button type="button" class="doc-back" onclick="closeDocToIdea(${id})">← Wróć do pomysłu</button>
               <div><h3 onclick="openDocRename(${id},'${d.did}')">${escHtml(d.title)}</h3><p>${docSections.length||1} ${(docSections.length||1)===1?'sekcja':'sekcje'} · ${acceptedSections} przyjęte · ${workingSections} w toku${rejectedSections?` · ${rejectedSections} odrzucone`:''}</p>${linkedTaskHTML}</div>
             </div>
-            <div class="doc-head-actions">${d.adopted?'<span class="adopted-meta" style="margin-right:6px;align-self:center">✓ Uchwalony — widok podglądu</span>':docPrimary}<button type="button" class="task-disc-toggle${d._discussionOpen?' on':''}" onclick="toggleDocDiscussion(${id},'${d.did}')">Dyskusje (${docThreads.length})</button>${docMenu}</div>
+            <div class="doc-head-actions">${d.adopted?'<span class="adopted-meta" style="margin-right:6px;align-self:center">✓ Uchwalony — widok podglądu</span>':docPrimary}<button type="button" class="document-panel-toggle" aria-expanded="${!d._panelHidden}" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">${d._panelHidden?'Pokaż panel':'Schowaj panel'}</button>${docMenu}</div>
           </div>
           ${renderDocumentRibbon(idea,d)}
-          <button type="button" class="document-panel-toggle" aria-expanded="${!d._panelHidden}" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">${d._panelHidden?'Pokaż panel':'Schowaj panel'}</button>
           <main class="doc-fullscreen-page">${docMainView}<div class="document-selection-bar" id="document-selection-bar">${renderDocumentSelectionBar(idea,d)}</div></main>
           <aside class="document-split-sidebar" aria-label="Panel dokumentu">
             <nav class="document-panel-tabs" aria-label="Zakładki panelu"><button type="button" aria-pressed="${!!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',true)">Dyskusje (${docThreads.length})</button><button type="button" aria-pressed="${!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',false)">Sekcje</button></nav>
@@ -9926,7 +9925,7 @@ function renderDocDiscussion(ideaId,d){
   const replyParent=thread._replyPost&&findTaskThreadPost(thread.posty,thread._replyPost);
   if(replyParent)return renderDocReplyThread(ideaId,d,thread,replyParent);
   const posts=(thread.posty||[]).map(p=>renderDocThreadPost(ideaId,d,thread,p)).join('');
-  return `<aside class="task-disc-panel" onclick="event.stopPropagation()"><div class="task-disc-head"><div><button class="task-thread-back" onclick="openDocThread(${ideaId},'${d.did}','')">← Wszystkie wątki</button><b>${escHtml(thread.tytul)}</b><span>${(thread.posty||[]).length} ${plural((thread.posty||[]).length,['wiadomość','wiadomości','wiadomości'])}</span></div><button class="task-disc-close" onclick="toggleDocDiscussion(${ideaId},'${d.did}')">×</button></div><div class="task-disc-feed">${posts||'<div class="task-disc-empty">Wątek jest pusty. Dodaj pierwszą wiadomość.</div>'}</div><div class="task-disc-compose rich">${commentBox('doc-thread-'+thread.id,`addDocThreadPost(${ideaId},'${d.did}','${thread.id}')`,'Napisz wiadomość…',undefined,true)}</div></aside>`;
+return `<aside class="task-disc-panel" onclick="event.stopPropagation()"><div class="task-disc-head"><div><button class="task-thread-back" onclick="openDocThread(${ideaId},'${d.did}','')">← Wszystkie wątki</button><b>${escHtml(thread.tytul)}</b><span>${threadPostList(thread.posty||[]).length} ${plural(threadPostList(thread.posty||[]).length,['wiadomość','wiadomości','wiadomości'])}</span></div><button class="task-disc-close" onclick="toggleDocDiscussion(${ideaId},'${d.did}')">×</button></div><div class="task-disc-feed">${posts||'<div class="task-disc-empty">Wątek jest pusty. Dodaj pierwszą wiadomość.</div>'}</div><div class="task-disc-compose rich">${commentBox('doc-thread-'+thread.id,`addDocThreadPost(${ideaId},'${d.did}','${thread.id}')`,'Napisz wiadomość…',undefined,true)}</div></aside>`;
 }
 const docMsgExpanded=new Set();
 function fitDocDiscussionPanel(){
@@ -9986,7 +9985,7 @@ function setDocumentPanel(ideaId,did,discussion){saveDocHtml(ideaId);const {d}=d
 function toggleDocDiscussion(ideaId,did){const {d}=docSectionOf(ideaId,did,'');if(d)setDocumentPanel(ideaId,did,!d._discussionOpen);}
 function toggleNewDocThread(ideaId,did){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._newThread=!d._newThread;openIdea(ideaId,true);setTimeout(()=>document.getElementById('doc-thread-title-'+did)?.focus(),30);}
 function createDocThread(ideaId,did){const {idea,d}=docSectionOf(ideaId,did,''),title=(document.getElementById('doc-thread-title-'+did)?.value||'').trim();if(!idea||!d||!title){toast('Nadaj wątkowi nazwę.','warn');return;}const sid=document.getElementById('doc-thread-section-'+did)?.value||'',meta=docThreadSectionMeta(d,sid);const w={id:'dw'+Date.now(),tytul:title,autor:MY_NAME,kiedy:TODAY+' '+NOW_TIME(),posty:[],sectionId:meta.sectionId,sectionNumber:meta.sectionNumber,sectionTitle:meta.sectionTitle};ensureDocThreads(d).push(w);d._newThread=false;d._discussionOpen=true;d._discussionThread=w.id;idea.log.push({text:`Rozpoczęto wątek dokumentu: ${title}`,date:TODAY,time:NOW_TIME(),type:'dyskusja',detail:`Dokument: ${d.title}`});autoWatchNotificationThread(ideaId,'doc:'+w.id);openIdea(ideaId,true);}
-function openDocThread(ideaId,did,wid){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._discussionOpen=true;d._discussionThread=wid;if(wid){const w=d.watki?.find(x=>x.id===wid);if(w)w._replyPost='';}openIdea(ideaId,true);}
+function openDocThread(ideaId,did,wid){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._panelHidden=false;d._discussionOpen=true;d._discussionThread=wid;if(wid){const w=d.watki?.find(x=>x.id===wid);if(w)w._replyPost='';}openIdea(ideaId,true);}
 function openDocThreadFromDiscussion(ideaId,did,wid){const {d}=docSectionOf(ideaId,did,'');if(!d)return;d._discussionOpen=true;d._discussionThread=wid;openDoc(ideaId,did);}
 function toggleDocThreadReply(ideaId,did,wid,pid){openDocReplyThread(ideaId,did,wid,pid);}
 function stripComposerQuotePreview(text,quote){if(!quote)return text;const preview=`Cytat z ${docSectionArticleLabel(quote.sectionNumber,quote.sectionTitle)}\n„${quote.quotedText}”`;return String(text||'').replace(preview,'').trim();}
@@ -10326,7 +10325,7 @@ function renderDocSectionCard(idea,d,section,index){
   if(state==='pending'&&pendingVote)visibleActions=`<button type="button" class="doc-section-action" onclick="openVote(${idea.id},'${pendingVote.id}')">Zobacz głosowanie</button>`;
   else if(state!=='accepted'){
     if(!section.penHolder)visibleActions+=`<button type="button" class="doc-section-action" onclick="takeDocSectionPen(${idea.id},'${d.did}','${section.id}')">Weź pióro</button>`;
-    else if(!owns)visibleActions+=`<button type="button" class="doc-section-action" onclick="requestDocSectionPen(${idea.id},'${d.did}','${section.id}')">Poproś o pióro</button>`;
+    else if(!owns)visibleActions+=`<button type="button" class="doc-section-action" ${(section.penRequests||[]).includes(MY_NAME)?'disabled aria-disabled="true"':''} onclick="requestDocSectionPen(${idea.id},'${d.did}','${section.id}')">${(section.penRequests||[]).includes(MY_NAME)?'Prośba wysłana':'Poproś o pióro'}</button>`;
     if(isEditing)visibleActions+=`<button type="button" class="doc-section-action" onclick="cancelDocSectionEdit(${idea.id},'${d.did}','${section.id}')">Anuluj</button><button type="button" class="doc-section-action primary" onclick="saveDocSectionDraft(${idea.id},'${d.did}','${section.id}')">Zapisz sekcję</button>`;
     else if(canOwnEdit)menuActions+=`<button type="button" onclick="editDocSection(${idea.id},'${d.did}','${section.id}')">Edytuj dalej</button>`;
     if(canPass)menuActions+=`<button type="button" onclick="openPassDocSectionPen(${idea.id},'${d.did}','${section.id}')">Podziel pióro</button>`;
@@ -17692,6 +17691,17 @@ html.theme-dark #document-context-menu button:hover,html.theme-dark #document-co
 .document-panel-hidden>.document-split-sidebar{display:none}
 .doc-workspace.document-panel-hidden .doc-fullscreen-page{padding-left:24px!important;padding-right:24px!important}
 @media(max-width:800px){.document-panel-toggle{top:12px;right:14px}.doc-fullscreen .doc-workspace-title{padding-right:120px}.doc-fullscreen .doc-head-actions{padding-right:0}}
+</style>
+<style>
+.doc-fullscreen .document-panel-toggle{position:static;flex-shrink:0;white-space:nowrap}
+.doc-fullscreen .doc-head-actions{padding-right:0;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.doc-fullscreen .doc-workspace-title{min-width:0;padding-right:0}
+.doc-fullscreen .doc-workspace-title h3{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-fullscreen .document-formatting{flex-wrap:wrap;overflow:visible;gap:6px;padding:10px 16px}
+.doc-fullscreen .document-formatting select{max-width:120px}
+.doc-fullscreen .doc-section-action:disabled{opacity:.6;cursor:default}
+.doc-fullscreen .doc-section-card+.doc-section-card{border-top:1px solid #eceaf3!important;padding-top:18px}
+@media(max-width:1100px){.doc-fullscreen .doc-workspace-head{flex-wrap:wrap}.doc-fullscreen .doc-head-actions{margin-left:auto}}
 </style>
 </body>
 </html>
