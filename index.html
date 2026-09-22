@@ -8219,6 +8219,7 @@ function openIdea(id,preserveScroll=false,opts={}){
         : (!d.adopted&&!previewMode&&!historyMode?`<button type="button" class="doc-save-btn secondary" onclick="openDocPreview(${id},'${d.did}')">Podgląd dokumentu</button>`:'');
       const docMainView=previewMode?combinedPreview:`<div class="doc-section-collection" data-doc-id="${d.did}">
             <div class="doc-collection-intro"><p>Dokument składa się z niezależnych sekcji. Rozwiń tylko tę, którą chcesz czytać lub redagować. Każda sekcja ma własne pióro i osobne głosowanie nad przyjęciem.</p><button type="button" class="doc-add-section" onclick="addDocSection(${id},'${d.did}')">+ Dodaj sekcję</button></div>
+            <header class="document-paper-heading"><small>Dokument współtworzony</small><h1>${escHtml(d.title)}</h1><p>${d.adopted?'Wersja zatwierdzona':'Wersja robocza'} · ${docSections.length} sekcji</p></header>
             <div class="doc-section-list">${sectionCards}</div>
           </div>`;
       tabDokumenty=`
@@ -8233,7 +8234,7 @@ function openIdea(id,preserveScroll=false,opts={}){
           ${renderDocumentRibbon(idea,d)}
           <main class="doc-fullscreen-page">${docMainView}<div class="document-selection-bar" id="document-selection-bar">${renderDocumentSelectionBar(idea,d)}</div></main>
           <aside class="document-split-sidebar" aria-label="Panel dokumentu">
-            <nav class="document-panel-tabs" aria-label="Zakładki panelu"><button type="button" aria-pressed="${!!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',true)">Dyskusje (${docThreads.length})</button><button type="button" aria-pressed="${!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',false)">Sekcje</button></nav>
+            <nav class="document-panel-tabs" aria-label="Zakładki panelu"><button type="button" aria-pressed="${!!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',true)">Dyskusje (${docThreads.length})</button><button type="button" aria-pressed="${!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',false)">Sekcje</button><button type="button" class="document-panel-close" aria-label="Schowaj panel" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">×</button></nav>
             <div class="document-panel-content">${d._discussionOpen?renderDocDiscussion(id,d):`<div class="document-sections-panel">${renderDocOutline(idea,d)}${previewMode?`<aside class="doc-review document-preview-inspector">${previewSidebarHTML}</aside>`:renderDocReviewPanel(idea,d)}</div>`}</div>
           </aside>
         </div>
@@ -9887,7 +9888,7 @@ function renderDocThreadPost(ideaId,d,thread,p,opts={}){
   const hoverActions=opts.context?'':renderHoverReactionActions('doc-'+p.id,reactTpl,actionButtons,{compact:true});
   const edit=(!opts.context&&p._edit)?`<div class="task-reply-box">${commentBox('doc-edit-'+p.id,`saveDocThreadPostEdit(${ideaId},'${d.did}','${thread.id}','${p.id}')`,'Edytuj wiadomość…',undefined,true,`editDocThreadPost(${ideaId},'${d.did}','${thread.id}','${p.id}')`)}</div>`:'';
   const clickAttr=opts.context?'':` onclick="docMessageOpen(event,${ideaId},'${d.did}','${thread.id}','${p.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openReplyCall}}"`;
-  return `<div class="task-disc-msg${opts.context?' doc-context-msg':''}" data-msg-id="${escAttr(p.id)}"${clickAttr}>${hoverActions}<b>${escHtml(p.osoba)}</b><small>${escHtml(p.kiedy||'')}${p.edytowano?' · edytowano':''}</small>${renderDocQuote(p.quote,ideaId,d.did)}<div class="disc-text">${mdRender(p.tekst||'')}</div>${files}${reactionSummary}${replyCount}${edit}</div>`;
+  return `<div class="task-disc-msg${opts.context?' doc-context-msg':''}" data-msg-id="${escAttr(p.id)}"${clickAttr}>${hoverActions}<span class="document-message-avatar">${memberAvatarContent(p.osoba,memberInitials(p.osoba))}</span><b>${escHtml(p.osoba)}</b><small>${escHtml(p.kiedy||'')}${p.edytowano?' · edytowano':''}</small>${renderDocQuote(p.quote,ideaId,d.did)}<div class="disc-text">${mdRender(p.tekst||'')}</div>${files}${reactionSummary}${replyCount}${edit}</div>`;
 }
 function renderDocReplyThread(ideaId,d,thread,parent){
   const replies=(parent.odpowiedzi||[]).map(p=>renderDocThreadPost(ideaId,d,thread,p)).join('');
@@ -10526,6 +10527,9 @@ function renderDocumentPageSection(idea,d,s,index){
   if(!card.querySelector('.doc-section-more')){const more=document.createElement('span');more.className='doc-section-more';more.textContent='•••';more.setAttribute('onclick',`event.stopPropagation();toggleDocSectionMenu(${idea.id},'${d.did}','${s.id}')`);card.querySelector('.doc-section-headside')?.appendChild(more);}
   const more=card.querySelector('.doc-section-more');if(more){const button=document.createElement('button');button.type='button';button.className=more.className;button.textContent=more.textContent;button.setAttribute('aria-label','Opcje sekcji');button.setAttribute('aria-expanded',String(!!s.menuOpen));button.setAttribute('onclick',more.getAttribute('onclick'));more.replaceWith(button);}
   const head=card.querySelector('.doc-section-head');if(head){const row=document.createElement('div');row.className=head.className;row.innerHTML=head.innerHTML;head.replaceWith(row);const indexEl=row.querySelector('.doc-section-index');if(indexEl){const toggle=document.createElement('button');toggle.type='button';toggle.className=indexEl.className;toggle.setAttribute('aria-label',(s.open?'Zwiń':'Rozwiń')+' sekcję '+s.title);toggle.setAttribute('onclick',`toggleDocSection(${idea.id},'${d.did}','${s.id}')`);indexEl.replaceWith(toggle);}const titleEl=row.querySelector('.doc-section-title');if(titleEl&&(s.penHolders||[]).includes(MY_NAME)&&!['accepted','pending'].includes(s.state)){const button=document.createElement('button');button.type='button';button.className='doc-section-title document-rename-section';button.textContent=titleEl.textContent;button.title='Zmień tytuł sekcji';button.setAttribute('onclick',`openDocumentSectionRename(${idea.id},'${d.did}','${s.id}')`);titleEl.replaceWith(button);}}
+  const summary=card.querySelector('.doc-section-summary');
+  card.querySelectorAll('.doc-section-actions button').forEach(button=>{if(/^(Weź pióro|Poproś o pióro|Prośba wysłana)$/.test(button.textContent.trim()))summary?.appendChild(button);});
+  if(s.state==='accepted'&&summary)summary.hidden=true;
   return card.outerHTML;
 }
 function openDocumentSectionRename(ideaId,did,sid){
@@ -17702,6 +17706,30 @@ html.theme-dark #document-context-menu button:hover,html.theme-dark #document-co
 .doc-fullscreen .doc-section-action:disabled{opacity:.6;cursor:default}
 .doc-fullscreen .doc-section-card+.doc-section-card{border-top:1px solid #eceaf3!important;padding-top:18px}
 @media(max-width:1100px){.doc-fullscreen .doc-workspace-head{flex-wrap:wrap}.doc-fullscreen .doc-head-actions{margin-left:auto}}
+</style>
+<style>
+.document-paper-heading{padding:0 0 24px;margin-bottom:12px;border-bottom:1px solid #eceaf3;color:#191d48}
+.document-paper-heading small,.document-paper-heading p{font-size:13px;color:#83879c;margin:8px 0}
+.document-paper-heading h1{font-size:25px;line-height:1.3;margin:8px 0;font-weight:750}
+.doc-workspace.doc-fullscreen .doc-section-collection{padding:34px 42px 50px}
+.doc-fullscreen .doc-section-summary{align-items:center;gap:12px}
+.doc-fullscreen .doc-section-summary[hidden]{display:none}
+.doc-fullscreen .doc-section-summary .doc-section-action{padding:4px 10px!important;border-radius:9px;line-height:1.3}
+.doc-fullscreen .doc-section-pen:has(.doc-section-actions:empty){display:none}
+.doc-fullscreen .doc-section-read,.doc-fullscreen .doc-section-editor{line-height:1.65!important}
+.doc-fullscreen .doc-section-card+.doc-section-card{border-top:0!important;padding-top:6px}
+.doc-fullscreen .doc-section-list{gap:16px}
+.document-split-sidebar .task-disc-msg{position:relative;padding:14px 18px 18px 66px!important;margin-bottom:6px}
+.document-message-avatar{position:absolute;left:14px;top:14px;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;overflow:hidden;background:#eee8fc;color:#6134bc;font-size:12px}
+.document-message-avatar img{width:100%;height:100%;object-fit:cover}
+.document-split-sidebar .disc-text{font-size:14px!important;line-height:1.6!important}
+.document-split-sidebar .task-disc-msg small{font-size:11px}
+.document-split-sidebar .task-disc-head{padding:20px 24px!important}
+.document-panel-tabs{justify-content:flex-start;gap:12px;padding:0 24px}
+.document-panel-tabs button{flex:0 1 auto;padding:0 16px}
+.document-panel-tabs .document-panel-close{margin-left:auto;font-size:24px;font-weight:400;padding:0 8px}
+.document-split-sidebar .task-disc-compose{padding:12px 16px!important}
+@media(max-width:800px){.doc-workspace.doc-fullscreen .doc-section-collection{padding:22px 18px}.document-paper-heading h1{font-size:21px}}
 </style>
 </body>
 </html>
