@@ -8229,12 +8229,14 @@ function openIdea(id,preserveScroll=false,opts={}){
               <button type="button" class="doc-back" onclick="closeDocToIdea(${id})">← Wróć do pomysłu</button>
               <div><h3 onclick="openDocRename(${id},'${d.did}')">${escHtml(d.title)}</h3><p>${docSections.length||1} ${(docSections.length||1)===1?'sekcja':'sekcje'} · ${acceptedSections} przyjęte · ${workingSections} w toku${rejectedSections?` · ${rejectedSections} odrzucone`:''}</p>${linkedTaskHTML}</div>
             </div>
-            <div class="doc-head-actions">${d.adopted?'<span class="adopted-meta" style="margin-right:6px;align-self:center">✓ Uchwalony — widok podglądu</span>':docPrimary}<button type="button" class="document-panel-toggle" aria-expanded="${!d._panelHidden}" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">${d._panelHidden?'Pokaż panel':'Schowaj panel'}</button>${docMenu}</div>
+            <div class="doc-head-actions">${d.adopted?'<span class="adopted-meta" style="margin-right:6px;align-self:center">✓ Uchwalony — widok podglądu</span>':docPrimary}${docMenu}</div>
           </div>
           ${renderDocumentRibbon(idea,d)}
+          ${d._panelHidden?`<button type="button" class="document-panel-reopen" aria-label="Pokaż panel" title="Pokaż panel" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">‹</button>`:''}
           <main class="doc-fullscreen-page">${docMainView}<div class="document-selection-bar" id="document-selection-bar">${renderDocumentSelectionBar(idea,d)}</div></main>
           <aside class="document-split-sidebar" aria-label="Panel dokumentu">
-            <nav class="document-panel-tabs" aria-label="Zakładki panelu"><button type="button" aria-pressed="${!!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',true)">Dyskusje (${docThreads.length})</button><button type="button" aria-pressed="${!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',false)">Sekcje</button><button type="button" class="document-panel-close" aria-label="Schowaj panel" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">×</button></nav>
+            <nav class="document-panel-tabs" aria-label="Zakładki panelu"><button type="button" aria-pressed="${!!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',true)">Dyskusje (${docThreads.length})</button><button type="button" aria-pressed="${!d._discussionOpen}" onclick="setDocumentPanel(${id},'${d.did}',false)">Sekcje</button></nav>
+            <button type="button" class="document-panel-collapse" aria-label="Schowaj panel" title="Schowaj panel" onclick="toggleDocumentPanelVisibility(${id},'${d.did}')">›</button>
             <div class="document-panel-content">${d._discussionOpen?renderDocDiscussion(id,d):`<div class="document-sections-panel">${renderDocOutline(idea,d)}${previewMode?`<aside class="doc-review document-preview-inspector">${previewSidebarHTML}</aside>`:renderDocReviewPanel(idea,d)}</div>`}</div>
           </aside>
         </div>
@@ -17754,6 +17756,20 @@ html.theme-dark #document-context-menu button:hover,html.theme-dark #document-co
   .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-track{background:transparent}
   .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-thumb{background:#ceccde;background-clip:padding-box;border:13px solid transparent;border-radius:20px}
   .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-thumb:horizontal{border:3px solid transparent}
+}
+</style>
+<style>
+.document-split-sidebar{position:relative}
+.document-panel-collapse,.document-panel-reopen{border:0;background:var(--surf);color:#656580;font-size:25px;line-height:1;width:30px;height:30px;border-radius:6px;cursor:pointer;z-index:10}
+.document-panel-collapse{position:absolute;right:12px;top:57px}
+.document-panel-reopen{grid-area:page;justify-self:end;align-self:start;margin:10px 10px 0 0}
+.document-panel-collapse:hover,.document-panel-reopen:hover{background:#eee8fc;color:#6334bd}
+.document-split-sidebar .task-disc-head{padding-right:48px!important}
+@media(min-width:801px){
+  /* Move the scroll container itself, rather than styling an overlay scrollbar. */
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page{margin-right:13px;padding-right:13px!important;scrollbar-width:thin;scrollbar-gutter:stable}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar{width:6px}
+  .doc-workspace.doc-fullscreen:not(.document-panel-hidden) .doc-fullscreen-page::-webkit-scrollbar-thumb{border:0;border-radius:6px;background:#ceccde}
 }
 </style>
 </body>
