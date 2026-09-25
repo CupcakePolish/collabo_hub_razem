@@ -44,13 +44,14 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /class="nav-brand"[^>]*aria-label="Przejdź do Odkrywaj"[^>]*onclick="go\('discover'\)"[^>]*onkeydown="[^"]*go\('discover'\)/);
   assert.match(html, /id="s-discover" class="screen discover-screen"/);
   assert.match(html, /class="discover-composer-prompt"[^>]*onclick="openDiscoverComposerModal\(\)"/);
-  assert.match(html, /id="discover-author-search"[\s\S]*?class="discover-author-search discover-post-search"[\s\S]*?id="discover-search-input"/);
+  assert.doesNotMatch(html, /id="discover-search-input"/);
+  assert.doesNotMatch(html, /id="discover-results-summary"/);
   assert.match(html, /function openDiscoverComposerModal\(\)[\s\S]*class="tbp-composer[^"]*"/);
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
   assert.match(html, /#s-discover \.discover-sidebar\{[^}]*max-height:calc\(100dvh - 104px\)[^}]*overflow-y:auto/);
-  assert.match(html, /\.discover-composer-prompt\{[^}]*height:66px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
+  assert.match(html, /\.discover-composer-prompt\{[^}]*height:43px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
 });
 
 test('discover side rail only reveals its scrollbar while scrolling', () => {
