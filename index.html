@@ -9,6 +9,8 @@
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#fbfbfd">
 <title>CollaboHub · Zespoły i profile</title>
+<link rel="icon" type="image/png" sizes="256x256" href="assets/collabohub-mark.png?v=1">
+<link rel="apple-touch-icon" href="assets/collabohub-mark.png?v=1">
 <script>
 (() => {
   const uaPlatform = navigator.userAgentData?.platform || navigator.platform || '';
@@ -4246,9 +4248,10 @@ body>nav.global-nav{
 .screen{padding-top:58px!important}
 .global-nav .nav-brand{min-width:auto!important;gap:10px!important}
 .global-nav .nav-logo{
-  width:28px!important;height:28px!important;border-radius:7px!important;background:transparent!important;
-  box-shadow:none!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:2px!important
+  width:36px!important;height:36px!important;border-radius:50%!important;background:transparent!important;
+  box-shadow:none!important;display:block!important;overflow:hidden!important
 }
+.global-nav .nav-logo img{display:block;width:100%;height:100%;object-fit:cover}
 .brand-bar{display:block;width:4px;border-radius:4px;background:linear-gradient(180deg,#a78cf0,#633fae)}
 .brand-bar:nth-child(1){height:12px}.brand-bar:nth-child(2){height:19px}.brand-bar:nth-child(3){height:15px}.brand-bar:nth-child(4){height:22px;opacity:.55}
 .global-nav .nav-name{font-family:'DM Sans',sans-serif!important;font-size:15px!important;font-weight:800!important;letter-spacing:-.025em!important}
@@ -5478,8 +5481,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 
 <nav class="global-nav">
   <div class="nav-brand" role="button" tabindex="0" aria-label="Przejdź do Odkrywaj" onclick="go('discover')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('discover')}">
-    <div class="nav-logo" aria-hidden="true"><span class="brand-bar"></span><span class="brand-bar"></span><span class="brand-bar"></span><span class="brand-bar"></span></div>
-    <div class="nav-name">CollaboHub <span style="font-weight:300;color:var(--txs);font-size:13px">· Razem Demokracja</span></div>
+    <div class="nav-logo" aria-hidden="true"><img src="assets/collabohub-mark.png" alt=""></div>
   </div>
   <div class="nav-links">
     <button class="nl" id="nl-discover" onclick="go('discover',this,'nl-discover')" title="Odkrywaj"><svg data-icon="compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3 6.3-2.1Z"/><circle cx="12" cy="12" r="1"/></svg><span>Odkrywaj</span></button>
