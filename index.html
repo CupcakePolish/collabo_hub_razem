@@ -14591,6 +14591,7 @@ function memberPublicFeedHTML(member,thanksAuthor){
     <div class="mp-feed-date"><strong>${escHtml(row.date||'Ostatnio')}</strong><span>${escHtml(row.time||'')}</span></div>
     <div class="mp-feed-dot"></div>
     <div class="mp-feed-card">
+      <header class="profile-post-header"><span class="profile-post-avatar">${memberAvatarContent(row.by||member.name,member.ini)}</span><div><strong>${escHtml(row.by||member.name)}</strong><time>${escHtml(row.date||'')} ${escHtml(row.time||'')}</time></div></header>
       <div class="mp-feed-icon">${myProfileFeedIcon(row.type)}</div>
       <div class="mp-feed-content"><div class="mp-feed-kind">${myProfileFeedLabel(row.type)}</div><div class="mp-feed-title">${escHtml(row.title)}</div>${row.text?`<div class="mp-feed-text">${escHtml(row.text)}</div>`:''}<div class="mp-feed-meta">${(row.tags||[]).map(tag=>`<span>${escHtml(tag)}</span>`).join('')}${row.status?`<span class="mp-feed-status">${escHtml(row.status)}</span>`:''}</div></div>
       ${row.media?.length?`<div class="mp-feed-media">${row.media.map((name,index)=>`<div class="mp-media-tile mp-media-${index}">${escHtml(name)}</div>`).join('')}</div>`:''}
@@ -14686,6 +14687,7 @@ function openMember(id,opts={}){
     ${profileCompetenciesSectionHTML(m,false)}
     ${memberPublicFeedHTML(m,thanksAuthor)}`;
 
+  layoutPersonProfile(document.getElementById('profile-body'),m,false);
   go('profile',null,null,{fromRoute:true});
 }
 
@@ -15487,7 +15489,7 @@ function myProfileSideAction(type){
 }
 
 var myProfilePageTab='board';
-function setMyProfilePageTab(tab){if(!['board','about','projects','teams'].includes(tab))return;myProfilePageTab=tab;renderMyProfile();}
+function setMyProfilePageTab(tab){if(!['board','portfolio','about','projects','teams'].includes(tab))return;myProfilePageTab=tab;if(tab==='portfolio')myProfileFeedFilter='portfolio';else if(tab==='board')myProfileFeedFilter='all';renderMyProfile();}
 function renderMyProfile(){
   const screen=document.getElementById('s-profile-me');
   if(!screen) return;
@@ -15567,6 +15569,29 @@ function renderMyProfile(){
         </div>
       </main>
     </div>`;
+  layoutPersonProfile(screen.querySelector('.mp-main'),myProfile,true);
+}
+var memberLayoutTabs={};
+function setMemberLayoutTab(id,tab){memberLayoutTabs[id]=tab;openMember(id,{fromRoute:true});}
+function layoutPersonProfile(host,person,own){
+ if(!host)return;host.classList.add('social-profile');const hero=host.querySelector(own?'.profile-person-hero':'.member-profile-hero'),board=host.querySelector(own?'.profile-person-board':'.member-board');if(!hero||!board)return;
+ hero.classList.add('social-profile-hero');const banner=document.createElement('div');banner.className='social-profile-banner';banner.setAttribute('aria-hidden','true');hero.prepend(banner);
+ const peopleTeams=teamsForPerson(person.name),projects=ideas.filter(i=>authorOf(i).name===person.name||participantsOf(i).includes(person.name));
+ const sidebar=document.createElement('aside');sidebar.className='social-profile-sidebar';
+ sidebar.innerHTML=`<section class="social-info-card"><header><h2>O mnie</h2>${own?'<button onclick="openProfileEdit(\'bio\')">Edytuj</button>':''}</header><p>${escHtml(person.bio||'Ta osoba nie dodała jeszcze opisu.')}</p>${person.looking?`<details><summary>Więcej o współpracy</summary><p>${escHtml(person.looking)}</p></details>`:''}<div class="social-profile-counts"><div><b>${(person.profileFeed||[]).length}</b><span>Wpisów</span></div><div><b>${projects.length}</b><span>Pomysłów</span></div><div><b>${peopleTeams.length}</b><span>Zespołów</span></div></div></section>${profileCompetenciesSectionHTML(person,own)}<section class="social-info-card"><header><h2>Zespoły</h2></header>${peopleTeams.map(t=>`<a class="social-team-link" href="${escAttr(teamHash(t.id))}">${IC.users}<span>${escHtml(t.name)}</span></a>`).join('')||'<p>Brak zespołów.</p>'}</section>`;
+ const columns=document.createElement('div');columns.className='social-profile-columns';board.before(columns);columns.append(sidebar,board);
+ if(own){columns.hidden=!['board','portfolio'].includes(myProfilePageTab);board.hidden=columns.hidden;const tabs=hero.querySelector('.tp-tabs'),portfolio=document.createElement('button');portfolio.textContent='Portfolio';portfolio.classList.toggle('on',myProfilePageTab==='portfolio');portfolio.setAttribute('aria-current',myProfilePageTab==='portfolio'?'page':'false');portfolio.onclick=()=>setMyProfilePageTab('portfolio');tabs.children[0].after(portfolio);}
+ else{
+   host.querySelectorAll(':scope > .ch-profile-competencies,:scope > .profile-competencies').forEach(el=>el.remove());
+   hero.querySelectorAll('.member-hero-bio,.member-hero-stats,.ch-profile-context').forEach(el=>el.remove());
+   const tabs=document.createElement('nav');tabs.className='social-profile-tabs';tabs.setAttribute('aria-label','Sekcje profilu');const selected=memberLayoutTabs[person.id]||'board';tabs.innerHTML=[['board','Tablica'],['portfolio','Portfolio'],['about','O mnie'],['projects','Pomysły'],['teams','Zespoły']].map(([key,label])=>`<button class="${selected===key?'on':''}" aria-current="${selected===key?'page':'false'}" onclick="setMemberLayoutTab(${person.id},'${key}')">${label}</button>`).join('');hero.append(tabs);
+   columns.hidden=selected!=='board';const content=document.createElement('section');content.className='social-profile-detail';
+   if(selected==='about')content.innerHTML=`<section class="social-info-card"><h2>O mnie</h2><p>${escHtml(person.bio||'Brak opisu.')}</p>${profileCollaborationLine(person)}</section>${profileCompetenciesSectionHTML(person,false)}`;
+   if(selected==='portfolio')content.innerHTML=`<section class="social-info-card"><h2>Portfolio</h2>${(person.portfolio||[]).map(item=>`<article class="social-portfolio-item"><h3>${escHtml(item.title||'Praca w portfolio')}</h3><p>${escHtml(item.desc||item.type||'')}</p></article>`).join('')||'<p>Brak prac w portfolio.</p>'}</section>`;
+   if(selected==='projects')content.innerHTML=`<section class="social-info-card"><h2>Pomysły i projekty</h2>${projects.map(i=>`<a class="social-team-link" href="${escAttr(ideaHash(i))}">${IC.bulb}<span>${escHtml(i.title)}</span></a>`).join('')||'<p>Brak projektów.</p>'}</section>`;
+   if(selected==='teams')content.innerHTML=`<section class="social-info-card"><h2>Zespoły</h2>${peopleTeams.map(t=>`<a class="social-team-link" href="${escAttr(teamHash(t.id))}">${IC.users}<span>${escHtml(t.name)}</span></a>`).join('')||'<p>Brak zespołów.</p>'}</section>`;
+   if(selected!=='board')host.append(content);
+ }
 }
 var profileEditSkillsDraft=[];
 var profileEditSkillLevelsDraft={};
@@ -17978,6 +18003,47 @@ html.theme-dark .word-menu button{color:#30344e!important}
 #s-profile-me .tp-section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}#s-profile-me .tp-section-head h2{margin:0;font-size:20px}#s-profile-me .tp-button{padding:8px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--p700);font:600 13px 'DM Sans',sans-serif;cursor:pointer}
 #s-profile-me .tp-project{display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--bdr);color:var(--txt);text-decoration:none}#s-profile-me .tp-project>div{flex:1;min-width:0}#s-profile-me .tp-project h3{margin:0 0 6px;font-size:17px}#s-profile-me .tp-project p{margin:0;color:var(--txs);font-size:14px;line-height:1.5}#s-profile-me .tp-project-icon svg{width:24px;height:24px;color:var(--p700)}#s-profile-me .tp-chip{font-size:12px;color:var(--p700);padding:5px 8px;background:var(--p50);border-radius:6px}
 @media(max-width:800px){#s-profile-me .profile-person-hero{grid-template-columns:1fr}#s-profile-me .profile-person-hero .tp-hero-actions{grid-column:1;grid-row:2;justify-content:flex-start;margin-bottom:16px}#s-profile-me .profile-person-hero .tp-tabs{grid-row:3}#s-profile-me .profile-person-board .mp-compose-types{padding-left:0}#s-profile-me .tp-tabs>button{padding-left:14px;padding-right:14px}}
+</style>
+<style>
+/* Shared person profile: cover, identity and an information/feed split. */
+#s-profile-me .profile-team-layout,#s-profile>#profile-body.social-profile{width:calc(100% - 48px)!important;max-width:1240px!important;margin:24px auto!important;padding:0 0 48px!important}
+.social-profile [hidden]{display:none!important}
+#s-profile-me .social-profile-hero,#s-profile .social-profile-hero{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:0!important;padding:0!important;margin:0 0 20px!important;border:1px solid var(--bdr);border-radius:14px;overflow:hidden;background:var(--surf)!important}
+.social-profile .social-profile-banner{grid-column:1/-1;height:144px;background:linear-gradient(90deg,#b9b4dc22,#e4bfd344),url('assets/profile-banner-lilac-landscape.png') center 44%/cover}
+.social-profile .ch-cover-blue .social-profile-banner{background:linear-gradient(120deg,#c4ddf6,#aaa6dc)}
+.social-profile .ch-cover-plain .social-profile-banner{background:var(--p100)}
+#s-profile-me .social-profile-hero .tp-hero-main,#s-profile .social-profile-hero .member-hero-identity{grid-column:1;grid-row:2;display:flex;align-items:center;gap:22px;margin:0;padding:0 24px 20px;min-width:0}
+#s-profile-me .social-profile-hero .tp-avatar,#s-profile .social-profile-hero .member-hero-avatar{width:136px!important;height:136px!important;flex:0 0 136px!important;margin-top:-42px;border:5px solid var(--surf);border-radius:50%!important;overflow:hidden;position:relative;box-shadow:none}
+.social-profile .member-hero-avatar img{position:static!important;display:block;width:100%!important;height:100%!important;object-fit:cover}
+#s-profile-me .social-profile-hero h1,#s-profile .social-profile-hero h1{font-size:28px;line-height:1.2;margin:16px 0 6px}
+#s-profile-me .social-profile-hero .tp-identity p,#s-profile .social-profile-hero .member-hero-tags{font-size:14px;line-height:1.5;color:var(--txs);margin:0 0 8px}
+#s-profile-me .social-profile-hero .tp-hero-meta,#s-profile .social-profile-hero .member-hero-person-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--txs)}
+#s-profile-me .social-profile-hero .tp-hero-actions,#s-profile .social-profile-hero .ch-profile-actions{position:static!important;grid-column:2;grid-row:2;display:flex;align-self:center;align-items:center;gap:8px;padding:14px 24px;margin:0!important}
+#s-profile-me .social-profile-hero .tp-tabs,#s-profile .social-profile-tabs{grid-column:1/-1;grid-row:3;display:flex;gap:8px;padding:0 20px;margin:0!important;border-top:1px solid var(--bdr);overflow:auto}
+#s-profile-me .social-profile-hero .tp-tabs button,#s-profile .social-profile-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:15px 18px;color:var(--txs);font:500 14px inherit;white-space:nowrap;cursor:pointer}
+#s-profile-me .social-profile-hero .tp-tabs button.on,#s-profile .social-profile-tabs button.on{color:var(--p700);border-bottom-color:var(--p600);font-weight:700}
+.social-profile-columns{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:20px;align-items:start}
+.social-profile-sidebar{display:grid;gap:16px;min-width:0}
+.social-profile .social-info-card,.social-profile-sidebar .profile-competencies{padding:20px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);margin:0}
+.social-info-card header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.social-info-card h2{font-size:17px;margin:0}.social-info-card p{font-size:14px;line-height:1.65;margin:10px 0;color:var(--txs)}
+.social-info-card button,.social-info-card summary{border:0;background:none;color:var(--p700);font-size:12px;cursor:pointer}
+.social-profile-counts{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;padding-top:16px;border-top:1px solid var(--bdr);text-align:center}
+.social-profile-counts b{display:block;font-size:18px}.social-profile-counts span{font-size:11px;color:var(--txs)}
+.social-profile-sidebar .profile-competencies-grid{display:grid;grid-template-columns:1fr!important;gap:8px}.social-profile-sidebar .profile-competency-card{padding:12px;min-width:0}.social-profile-sidebar .profile-competencies-title{font-size:17px}.social-profile-sidebar .profile-competencies-title small{display:none}
+.social-team-link{display:flex;align-items:center;gap:12px;padding:12px 0;color:var(--txt);text-decoration:none;font-size:14px;border-bottom:1px solid var(--bdr)}.social-team-link svg{width:20px;height:20px;flex:none;color:var(--p700)}
+#s-profile-me .social-profile .profile-person-board,#s-profile .social-profile .member-board{width:100%;min-width:0;max-width:none;margin:0;padding:0;border:0;background:none}
+.social-profile .member-board-title{display:none}
+#s-profile .social-profile .mp-feed{display:flex;flex-direction:column;gap:16px;padding:0;margin:0}
+#s-profile .social-profile .mp-feed-row{display:block;padding:0;margin:0;border:0}
+#s-profile .social-profile .mp-feed-date,#s-profile .social-profile .mp-feed-dot,#s-profile .social-profile .mp-feed-icon,#s-profile .social-profile .mp-feed:before,#s-profile .social-profile .mp-feed-row:before{display:none}
+#s-profile .social-profile .mp-feed-card{display:flex;flex-direction:column;align-items:stretch;padding:20px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);gap:12px;margin:0}
+#s-profile .social-profile .mp-feed-content{padding:0!important;width:100%}
+.social-profile .profile-post-header{display:flex;align-items:center;gap:10px;width:100%;text-align:left}.social-profile .profile-post-avatar{display:block;flex:0 0 40px;width:40px;height:40px;border-radius:50%;overflow:hidden}.social-profile .profile-post-avatar img{position:static!important;width:100%!important;height:100%!important;object-fit:cover}.social-profile .profile-post-header strong{display:block;font-size:14px}.social-profile .profile-post-header time{display:block;color:var(--txs);font-size:12px;margin-top:4px}
+.social-profile .mp-feed-toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:10px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);margin:0 0 14px}.social-profile .mp-feed-tabs{display:flex;flex-wrap:wrap;gap:5px}.social-profile .mp-feed-tabs button{font-size:12px;padding:7px 10px}
+#s-profile .social-profile .mp-composer{display:flex;flex-wrap:wrap;gap:10px;padding:16px;margin-bottom:14px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf)}.social-profile .mp-composer input{min-width:0;flex:1;background:var(--surf2);border:1px solid var(--bdr);border-radius:24px;padding:12px;font-size:14px}.social-profile .mp-compose-types{display:flex;gap:8px;flex-wrap:wrap}.social-profile-detail{display:grid;gap:16px}.social-portfolio-item{border-top:1px solid var(--bdr);padding:16px 0}.social-portfolio-item h3{font-size:17px}
+@media(max-width:850px){.social-profile-columns{grid-template-columns:260px minmax(0,1fr)}#s-profile-me .social-profile-hero .tp-hero-actions,#s-profile .social-profile-hero .ch-profile-actions{grid-column:1/-1;grid-row:3;padding:0 24px 16px}#s-profile-me .social-profile-hero .tp-tabs,#s-profile .social-profile-tabs{grid-row:4}}
+@media(max-width:650px){#s-profile-me .profile-team-layout,#s-profile>#profile-body.social-profile{width:calc(100% - 24px)!important;margin:12px auto!important}.social-profile-columns{grid-template-columns:1fr}.social-profile-sidebar{order:2}.social-profile .social-profile-banner{height:112px}#s-profile-me .social-profile-hero .tp-avatar,#s-profile .social-profile-hero .member-hero-avatar{width:88px!important;height:88px!important;flex-basis:88px!important;margin-top:-28px}#s-profile-me .social-profile-hero h1,#s-profile .social-profile-hero h1{font-size:23px}.social-profile-hero{grid-template-columns:1fr!important}}
 </style>
 </body>
 </html>
