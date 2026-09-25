@@ -51,7 +51,7 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
   assert.match(html, /#s-discover \.discover-sidebar\{[^}]*max-height:calc\(100dvh - 104px\)[^}]*overflow-y:auto/);
-  assert.match(html, /\.discover-composer-prompt\{[^}]*height:43px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
+  assert.match(html, /\.discover-composer-prompt\{[^}]*height:50px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
 });
 
 test('discover side rail only reveals its scrollbar while scrolling', () => {
