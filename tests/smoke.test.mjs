@@ -444,6 +444,11 @@ test('idea catalogs show visual cards without dead overflow actions', () => {
   assert.match(html, /function ideaCatalogPhoto\(idea\)/);
   assert.match(html, /class="idea-card-thumb"/);
   assert.match(html, /class="idea-card-content"/);
+  assert.match(html, /#s-ideas \.ic\{\s*display:grid!important;min-height:0!important;grid-template-columns:132px/);
+  assert.match(html, /#s-ideas \.idea-card-thumb\{[^}]*width:132px;height:132px/);
+  assert.match(html, /class="ic-title-wrap"><div class="ic-title">/);
+  assert.match(html, /\.team-idea-card\{[^}]*grid-template-columns:132px/);
+  assert.match(html, /\.team-idea-card \.team-idea-cover\{[^}]*width:132px;height:132px/);
   assert.doesNotMatch(html, /idea-card-more/);
   assert.match(html, /\.members-skill-options\{[^}]*scrollbar-gutter:stable/);
   assert.match(html, /\.members-skill-option i\{[^}]*min-width:24px/);
