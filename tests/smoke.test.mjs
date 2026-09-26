@@ -61,6 +61,11 @@ test('communicator stays available across collaboration screens but not inside d
   assert.match(html, /if\(typeof renderDiscoverChats==='function'\)renderDiscoverChats\(\);[\s\S]*if\(!opts\.preserveScroll\)/);
   assert.match(html, /:is\(#s-discover,#s-ideas,#s-idea,#s-members,#s-teams,#s-team-profile,#s-platform,#s-profile-me,#s-profile\)\{box-sizing:border-box;padding-right:82px!important\}/);
   assert.match(html, /#s-idea:has\(\.doc-workspace\)\{padding-right:0!important\}/);
+  assert.match(html, /function openChatPersonMenu\(anchor,name,ui\)/);
+  assert.match(html, /dataset\.personName=m\.by/);
+  assert.match(html, /Wyślij wiadomość.*Zobacz profil.*Zablokuj.*Połączenie głosowe.*Czat wideo/s);
+  assert.match(html, /function toggleChatPersonBlocked\(name\)/);
+  assert.match(html, /\.dc-message-avatar:hover:after,.dc-message-avatar:focus-visible:after/);
 });
 
 test('discover side rail only reveals its scrollbar while scrolling', () => {
@@ -352,6 +357,8 @@ test('team voting tab is a searchable master-detail workflow with proposals and 
   assert.match(html, /team-vote-author-yes/);
   assert.match(html, /d\.ballots\[MY_NAME\]=choice/);
   assert.match(html, /if\(c\.type!==['"]team-vote['"]&&themeGrid\)/);
+  assert.doesNotMatch(html, /content:'Głos: za'/);
+  assert.doesNotMatch(html, /data-vote-stance/);
   assert.match(html, /class="team-vote-simulator"/);
   assert.match(html, /function simulateTeamVoteResult\(teamId,decisionId,scenario\)/);
   assert.match(html, /\['consensus','objection','deadline'\]\.includes\(scenario\)/);
