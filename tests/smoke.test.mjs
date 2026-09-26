@@ -238,9 +238,10 @@ test('project header metadata is uniform and aligned with the top of its photo',
 test('project overview uses the lifecycle strip and requires a reason for stage votes', () => {
   assert.match(html, /function renderProjectOverviewTop\(idea,id\)\{return projectOverviewLifecycle\(idea,id\);\}/);
   assert.match(html, /class="idea-lifecycle-strip" aria-label="Etapy projektu"/);
-  assert.match(html, /class="idea-lifecycle-arrow forward"[\s\S]*confirmProjectLifecycleVote/);
+  assert.match(html, /class="idea-lifecycle-arrow forward icon-only"[\s\S]*confirmProjectLifecycleVote/);
   assert.match(html, /class="idea-lifecycle-arrow back"[\s\S]*confirmProjectLifecycleVote/);
   assert.doesNotMatch(html, /<small>Przejdź dalej<\/small>/);
+  assert.match(html, /\.idea-lifecycle-arrow\.icon-only\{width:100%;min-width:0;grid-template-columns:1fr;grid-template-rows:1fr;place-items:center/);
   assert.match(html, /id="project-lifecycle-reason"/);
   assert.match(html, /function submitProjectLifecycleVote\(ideaId,targetStatus\)[\s\S]*if\(!reason\)return toast\('Dodaj uzasadnienie zmiany etapu\.'/);
   assert.match(html, /text:reason\|\|`Projekt powinien przejść do stanu/);
