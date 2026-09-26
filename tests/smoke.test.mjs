@@ -330,6 +330,24 @@ test('published team uses metadata, real tabs and profile-change votes', () => {
   assert.doesNotMatch(html, /document\.getElementById\('tp-discussion'\)\?\.scrollIntoView\(\{behavior:'smooth'\}\)/);
 });
 
+test('team voting tab is a searchable master-detail workflow with proposals and discussions', () => {
+  assert.match(html, /function renderTeamDecisionsTab\(t\)/);
+  assert.match(html, /class="team-voting-heading"><h1>Głosowania zespołu<\/h1>/);
+  assert.match(html, /placeholder="Szukaj głosowania…"/);
+  assert.match(html, /filter\('open','Trwające'\).*filter\('closed','Zakończone'\).*filter\('cancelled','Anulowane'\)/s);
+  assert.match(html, /class="team-voting-layout"/);
+  assert.match(html, /function selectTeamVote\(teamId,decisionId\)/);
+  assert.match(html, /function submitTeamDecisionVote\(teamId,decisionId\)/);
+  assert.match(html, /value="yes"[\s\S]*value="no"[\s\S]*value="abstain"/);
+  assert.match(html, /Wstrzymanie liczy się do kworum, ale nie do większości/);
+  assert.match(html, /function openTeamVoteProposal\(teamId\)/);
+  assert.match(html, /function submitTeamVoteProposal\(teamId\)/);
+  assert.match(html, /function openTeamVoteDiscussion\(teamId,decisionId\)/);
+  assert.match(html, /function addTeamVoteComment\(teamId,decisionId\)/);
+  assert.match(html, /\.team-voting-layout\{display:grid;grid-template-columns:minmax\(300px,38%\) minmax\(0,62%\)/);
+  assert.match(html, /preserveScroll:!!opts\.preserveVoteScroll/);
+});
+
 test('team board uses a centered visual feed with editable welcome post', () => {
   assert.match(html, /function renderTeamBoard\(t,mine\)/);
   assert.match(html, /class="tp-board-feed"/);

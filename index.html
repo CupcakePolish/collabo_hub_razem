@@ -12471,12 +12471,89 @@ function selectTeamInviteRole(input){
 function teamFastModeLabel(v){
   return ({weekend:'weekend',monday:'poniedziałek',tuesday:'wtorek',wednesday:'środa',thursday:'czwartek',friday:'piątek',saturday:'sobota',sunday:'niedziela',manual:'ręcznie włączone spotkanie'})[v]||'ustalone okno';
 }
+function teamDemoDecisionRows(){
+  return [
+    {id:'td-demo-meet',kind:'general',prop:'Zmiana zasad organizacji spotkań',description:'Proponujemy jedno spotkanie zespołu w miesiącu, z możliwością udziału online.',sourceLabel:'Zasady zespołu · Organizacja spotkań',proposedBy:'Anna Wiśniewska',yes:1,no:0,abstain:0,myVote:null,open:true,date:'18 cze 2026',deadline:'21 cze 2026, 18:00',thresholdPct:50,quorumPct:50,minVoters:2,eligibleCount:3,comments:[{by:'Magdalena Lis',text:'Warto zostawić możliwość spotkania hybrydowego.',date:'18 cze 2026'}],order:8},
+    {id:'td-demo-tools',kind:'general',prop:'Zakup narzędzi do analizy prawnej',description:'Roczny dostęp do wspólnego narzędzia do porównywania wersji dokumentów.',sourceLabel:'Zasoby · Narzędzia zespołu',proposedBy:'Piotr Kowalczyk',yes:2,no:0,abstain:0,myVote:'yes',open:true,date:'16 cze 2026',deadline:'22 cze 2026, 12:00',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:7},
+    {id:'td-demo-rules',kind:'general',prop:'Przyjęcie nowych zasad zespołu',description:'Porządkujemy sposób zgłaszania uwag i terminy odpowiedzi.',sourceLabel:'Zasady zespołu',proposedBy:'Anna Wiśniewska',yes:3,no:0,abstain:0,myVote:'yes',open:false,accepted:true,date:'10 cze 2026',closedDate:'14 cze 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:6},
+    {id:'td-demo-trip',kind:'general',prop:'Wspólny wyjazd roboczy',description:'Dwudniowy wyjazd na warsztat strategiczny poza miastem.',sourceLabel:'Zasoby · Spotkania',proposedBy:'Magdalena Lis',yes:1,no:2,abstain:0,myVote:'no',open:false,accepted:false,date:'5 cze 2026',closedDate:'9 cze 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:5},
+    {id:'td-demo-consult',kind:'general',prop:'Konsultacja projektu z ekspertką',description:'Zaproszenie ekspertki do niezależnego przeglądu projektu regulaminu.',sourceLabel:'Pomysły · Konsultacje',proposedBy:'Piotr Kowalczyk',yes:3,no:0,abstain:0,myVote:'yes',open:false,accepted:true,date:'1 cze 2026',closedDate:'4 cze 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:4},
+    {id:'td-demo-cancel',kind:'general',prop:'Zmiana terminu publikacji materiałów',description:'Propozycja została wycofana po zmianie harmonogramu projektu.',sourceLabel:'Pomysły · Harmonogram',proposedBy:'Anna Wiśniewska',yes:0,no:0,abstain:0,myVote:null,open:false,cancelled:true,date:'28 maj 2026',closedDate:'29 maj 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:3},
+    {id:'td-demo-brief',kind:'general',prop:'Publikacja wspólnego briefu',description:'Publikujemy krótkie podsumowanie problemu i rekomendacji zespołu.',sourceLabel:'Pomysły · Materiały',proposedBy:'Magdalena Lis',yes:3,no:0,abstain:0,myVote:'yes',open:false,accepted:true,date:'20 maj 2026',closedDate:'24 maj 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:2},
+    {id:'td-demo-role',kind:'general',prop:'Utworzenie roli koordynatora konsultacji',description:'Rola odpowiada za kontakt z ekspertami i porządkowanie odpowiedzi.',sourceLabel:'Członkowie · Role',proposedBy:'Anna Wiśniewska',yes:3,no:0,abstain:0,myVote:'yes',open:false,accepted:true,date:'12 maj 2026',closedDate:'16 maj 2026',thresholdPct:60,quorumPct:50,minVoters:2,eligibleCount:3,comments:[],order:1}
+  ];
+}
+let teamVoteUI={teamId:'',search:'',filters:{open:false,closed:false,cancelled:false,mine:false},selectedId:'',sort:'newest',expanded:false};
+function ensureTeamVoteDemo(t){
+  if(String(t?.id)!=='tm-leg'||t.demoVotesSeeded)return;
+  if(!(t.decisions||[]).length)t.decisions=teamDemoDecisionRows();
+  t.demoVotesSeeded=true;
+}
+function teamDecisionStatus(d){return d.cancelled?'cancelled':d.open?'open':'closed';}
+function teamDecisionStatusLabel(d){return d.cancelled?'Anulowane':d.open?'Trwa':d.accepted?'Przyjęte':'Odrzucone';}
+function teamDecisionTurnout(d){return Number(d.yes||0)+Number(d.no||0)+Number(d.abstain||0);}
+function teamDecisionEligible(t,d){return Math.max(1,Number(d.eligibleCount||teamAcceptedMembers(t).length||1));}
+function teamDecisionAccepted(t,d){const turnout=teamDecisionTurnout(d),eligible=teamDecisionEligible(t,d),quorum=Math.max(Number(d.minVoters||1),Math.ceil(eligible*Number(d.quorumPct||teamGovernance(t).quorumPct)/100)),decisive=Number(d.yes||0)+Number(d.no||0),approval=decisive?Number(d.yes||0)/decisive*100:0;return turnout>=quorum&&approval>Number(d.thresholdPct||teamGovernance(t).approvalPct);}
+function teamVoteStatusPill(d){const status=teamDecisionStatus(d),label=teamDecisionStatusLabel(d);return `<span class="team-vote-status ${status}${!d.open&&!d.cancelled&&d.accepted?' accepted':''}"><i></i>${escHtml(label)}</span>`;}
+function teamVoteNeedLabel(d,canVote){return !canVote?'':d.open&&!d.myVote?'<span class="team-vote-needed">Twój głos potrzebny</span>':d.open&&d.myVote?'<span class="team-vote-cast">Oddano głos</span>':'';}
+function resetTeamVoteUI(teamId){teamVoteUI={teamId:String(teamId),search:'',filters:{open:false,closed:false,cancelled:false,mine:false},selectedId:'',sort:'newest',expanded:false};}
+function updateTeamVoteSearch(teamId,value){teamVoteUI.search=String(value||'');teamVoteUI.expanded=false;const caret=teamVoteUI.search.length;openTeam(teamId,{preserveVoteScroll:true});requestAnimationFrame(()=>{const input=document.querySelector('.team-vote-search input');input?.focus();input?.setSelectionRange(caret,caret);});}
+function toggleTeamVoteFilter(teamId,key,checked){if(!(key in teamVoteUI.filters))return;teamVoteUI.filters[key]=!!checked;teamVoteUI.expanded=false;openTeam(teamId,{preserveVoteScroll:true});}
+function setTeamVoteSort(teamId,value){teamVoteUI.sort=value==='oldest'?'oldest':'newest';openTeam(teamId,{preserveVoteScroll:true});}
+function selectTeamVote(teamId,decisionId){teamVoteUI.selectedId=String(decisionId);openTeam(teamId,{preserveVoteScroll:true});}
+function expandTeamVoteList(teamId){teamVoteUI.expanded=true;openTeam(teamId,{preserveVoteScroll:true});}
+function teamVoteFilteredRows(t){
+  const q=teamVoteUI.search.toLocaleLowerCase('pl-PL').trim(),active=Object.entries(teamVoteUI.filters).filter(([,on])=>on).map(([key])=>key);
+  return [...(t.decisions||[])].filter(d=>{const status=teamDecisionStatus(d),matchesStatus=!active.length||active.some(key=>key==='mine'?(teamAcceptedMembers(t).includes(MY_NAME)&&d.open&&!d.myVote):key===status);const hay=[d.prop,d.description,d.sourceLabel,d.proposedBy].join(' ').toLocaleLowerCase('pl-PL');return matchesStatus&&(!q||hay.includes(q));}).sort((a,b)=>teamVoteUI.sort==='oldest'?Number(a.order||0)-Number(b.order||0):Number(b.order||0)-Number(a.order||0));
+}
+function teamVoteListItem(t,d,selected){const turnout=teamDecisionTurnout(d),eligible=teamDecisionEligible(t,d),canVote=teamAcceptedMembers(t).includes(MY_NAME);return `<button type="button" class="team-vote-list-item${selected?' on':''}" onclick="selectTeamVote('${escAttr(t.id)}','${escAttr(d.id)}')"><span class="team-vote-list-title">${escHtml(d.prop||'Decyzja zespołu')}</span><span class="team-vote-list-badges">${teamVoteStatusPill(d)}${teamVoteNeedLabel(d,canVote)}</span><span class="team-vote-list-meta">${turnout} z ${eligible} uprawnionych zagłosowało</span><span class="team-vote-list-meta">${d.open?'Do '+escHtml(d.deadline||'zakończenia głosowania'):'Zakończono '+escHtml(d.closedDate||d.date||'')}</span><i class="team-vote-list-arrow">›</i></button>`;}
+function teamVoteAuthor(d){const name=d.proposedBy||'Członek zespołu';return `<span class="team-vote-author-avatar">${memberAvatarContent(name,memberInitials(name))}</span><span><b>${escHtml(name)}</b><small>· ${escHtml(d.date||'')}</small></span>`;}
+function teamVoteDetail(t,d){
+  if(!d)return '<section class="team-vote-detail team-vote-empty"><h2>Wybierz głosowanie</h2><p>Po lewej stronie znajdziesz wszystkie decyzje tego zespołu.</p></section>';
+  const eligible=teamDecisionEligible(t,d),turnout=teamDecisionTurnout(d),pct=Math.min(100,Math.round(turnout/eligible*100)),g=teamGovernance(t),threshold=Number(d.thresholdPct||g.approvalPct),quorumPct=Number(d.quorumPct||g.quorumPct),quorumNeed=Math.max(Number(d.minVoters||g.minVoters),Math.ceil(eligible*quorumPct/100)),canVote=d.open&&teamAcceptedMembers(t).includes(MY_NAME),comments=d.comments||[],existing=d.myVote||'',source=d.sourceLabel||'Sprawa zespołu';
+  const sourceLink=d.sourceIdeaId?`onclick="openIdea(${Number(d.sourceIdeaId)})"`:`onclick="toast('Powiązana propozycja jest opisana w szczegółach głosowania.','ok')"`;
+  const result=!d.open?`<div class="team-vote-result ${d.cancelled?'cancelled':d.accepted?'accepted':'rejected'}"><b>${d.cancelled?'Głosowanie anulowane':d.accepted?'Propozycja została przyjęta':'Propozycja została odrzucona'}</b><span>${d.cancelled?'Nie wpłynęła na zasady zespołu.':`${Number(d.yes||0)} za · ${Number(d.no||0)} przeciw · ${Number(d.abstain||0)} wstrzymujących się`}</span></div>`:'';
+  const choices=canVote?`<section class="team-vote-choice"><h3>Twój głos</h3><div class="team-vote-options"><label class="${existing==='yes'?'on':''}"><input type="radio" name="team-vote-choice-${escAttr(d.id)}" value="yes" ${existing==='yes'?'checked':''} onchange="this.closest('.team-vote-options').querySelectorAll('label').forEach(x=>x.classList.toggle('on',x===this.parentElement));document.getElementById('team-vote-submit-${escAttr(d.id)}').disabled=false"><span></span>Za</label><label class="${existing==='no'?'on':''}"><input type="radio" name="team-vote-choice-${escAttr(d.id)}" value="no" ${existing==='no'?'checked':''} onchange="this.closest('.team-vote-options').querySelectorAll('label').forEach(x=>x.classList.toggle('on',x===this.parentElement));document.getElementById('team-vote-submit-${escAttr(d.id)}').disabled=false"><span></span>Przeciw</label><label class="${existing==='abstain'?'on':''}"><input type="radio" name="team-vote-choice-${escAttr(d.id)}" value="abstain" ${existing==='abstain'?'checked':''} onchange="this.closest('.team-vote-options').querySelectorAll('label').forEach(x=>x.classList.toggle('on',x===this.parentElement));document.getElementById('team-vote-submit-${escAttr(d.id)}').disabled=false"><span></span>Wstrzymuję się</label></div><div class="team-vote-submit-row"><button type="button" id="team-vote-submit-${escAttr(d.id)}" ${existing?'':'disabled'} onclick="submitTeamDecisionVote('${escAttr(t.id)}','${escAttr(d.id)}')">${existing?'Zmień głos':'Oddaj głos'}</button><span>${existing?'Twój głos jest zapisany. Możesz go zmienić do końca głosowania.':'Wybierz jedną odpowiedź.'}</span></div></section>`:d.open?'<div class="team-vote-readonly">Dołącz do zespołu, aby oddać głos.</div>':'';
+  return `<article class="team-vote-detail"><header><div><div class="team-vote-title-line"><h2>${escHtml(d.prop||'Decyzja zespołu')}</h2>${teamVoteStatusPill(d)}</div><div class="team-vote-author">${teamVoteAuthor(d)}</div></div></header><button type="button" class="team-vote-source" ${sourceLink}><span>▧</span><b>${escHtml(source)}</b><i>Otwórz propozycję ↗</i></button><p class="team-vote-description">${escHtml(d.description||d.reason||'Propozycja zmiany dotyczącej pracy zespołu.')}</p><dl class="team-vote-facts"><div><dt>Uprawnieni:</dt><dd>${eligible} ${polishCountWord(eligible,'członek','członków','członków')}</dd><dt>Termin:</dt><dd>${escHtml(d.deadline||d.closedDate||'zakończone')}</dd><dt>Kworum:</dt><dd>${quorumNeed} z ${eligible} ${turnout>=quorumNeed?'— osiągnięte':'— jeszcze nieosiągnięte'}</dd></div><div><dt>Próg przyjęcia:</dt><dd>więcej niż ${threshold}% głosów za i przeciw</dd><dt>Jawność:</dt><dd>wyniki po zakończeniu</dd></div></dl><p class="team-vote-fact-note">Wstrzymanie liczy się do kworum, ale nie do większości.</p><section class="team-vote-turnout"><div><b>Frekwencja</b><strong>${turnout}/${eligible}, ${pct}%</strong></div><span><i style="width:${pct}%"></i></span></section>${result}${choices}<footer><button type="button" onclick="openTeamVoteDiscussion('${escAttr(t.id)}','${escAttr(d.id)}')"><span>▢</span><b>Dyskusja nad propozycją</b><small>· ${comments.length} ${polishCountWord(comments.length,'wiadomość','wiadomości','wiadomości')}</small></button><button type="button" onclick="openTeamVoteDiscussion('${escAttr(t.id)}','${escAttr(d.id)}')">Otwórz dyskusję →</button></footer></article>`;
+}
 function teamPendingDecisionHTML(t){
   const rows=(t.decisions||[]).filter(d=>d.open),canVote=teamAcceptedMembers(t).includes(MY_NAME);
   if(!rows.length)return '';
   return `<div class="team-vote-pending"><b>Zmiany zespołu czekają na głosowanie</b>${rows.map(d=>`<article class="tp-vote-row"><span>${escHtml(d.prop)} · próg ${Number(d.thresholdPct||teamGovernance(t).approvalPct)}%, kworum ${Number(d.quorumPct||teamGovernance(t).quorumPct)}%, min. ${Number(d.minVoters||teamGovernance(t).minVoters)} głosujących · zamknięcie po ${Number(d.voteHours||teamGovernance(t).voteHours)}h</span>${canVote?`<div class="role-actions"><button class="vbtn voted-yes" onclick="acceptTeamGovernanceDecision('${t.id}','${d.id}')">Zatwierdź</button><button class="vbtn" onclick="rejectTeamDecision('${t.id}','${d.id}')">Odrzuć</button></div>`:''}</article>`).join('')}</div>`;
 }
-function renderTeamDecisionsTab(t){const all=t.decisions||[],closed=all.filter(row=>!row.open).slice().reverse();return `<section class="tp-card"><div class="tp-section-head"><h2>Głosowania zespołu</h2><span class="tp-count">${all.filter(row=>row.open).length}</span></div>${teamPendingDecisionHTML(t)||'<p class="tp-empty">Nie ma obecnie otwartych głosowań.</p>'}${closed.length?`<div class="tp-decision-history"><h3>Zakończone</h3>${closed.map(row=>`<article><b>${escHtml(row.prop||'Decyzja zespołu')}</b><span>${row.accepted?'Zatwierdzono':'Odrzucono'} · ${escHtml(row.closedDate||row.date||'')}</span></article>`).join('')}</div>`:''}</section>`;}
+function renderTeamDecisionsTab(t){
+  ensureTeamVoteDemo(t);if(teamVoteUI.teamId!==String(t.id))resetTeamVoteUI(t.id);
+  const all=t.decisions||[],memberCanVote=teamAcceptedMembers(t).includes(MY_NAME),rows=teamVoteFilteredRows(t),counts={open:all.filter(d=>d.open).length,closed:all.filter(d=>!d.open&&!d.cancelled).length,cancelled:all.filter(d=>d.cancelled).length,mine:memberCanVote?all.filter(d=>d.open&&!d.myVote).length:0};
+  if(!rows.some(d=>String(d.id)===teamVoteUI.selectedId))teamVoteUI.selectedId=String(rows[0]?.id||'');
+  const selected=rows.find(d=>String(d.id)===teamVoteUI.selectedId)||rows[0],limit=teamVoteUI.expanded?rows.length:4,shown=rows.slice(0,limit),canPropose=memberCanVote&&!t.draft;
+  const filter=(key,label)=>`<label class="team-vote-filter"><input type="checkbox" ${teamVoteUI.filters[key]?'checked':''} onchange="toggleTeamVoteFilter('${escAttr(t.id)}','${key}',this.checked)"><span></span><b>${label}</b><small>${counts[key]}</small></label>`;
+  return `<section class="team-voting-page"><div class="team-voting-heading"><h1>Głosowania zespołu</h1>${canPropose?`<button type="button" onclick="openTeamVoteProposal('${escAttr(t.id)}')"><span>＋</span>Zaproponuj głosowanie</button>`:''}</div><div class="team-voting-toolbar"><label class="team-vote-search"><span>⌕</span><input type="search" value="${escAttr(teamVoteUI.search)}" placeholder="Szukaj głosowania…" oninput="updateTeamVoteSearch('${escAttr(t.id)}',this.value)"></label><div class="team-vote-filters">${filter('open','Trwające')}${filter('closed','Zakończone')}${filter('cancelled','Anulowane')}<i></i>${filter('mine','Czeka na mój głos')}</div></div><div class="team-voting-layout"><aside class="team-vote-list"><header><b>${rows.length} ${polishCountWord(rows.length,'głosowanie','głosowania','głosowań')}</b><label>Najnowsze <select onchange="setTeamVoteSort('${escAttr(t.id)}',this.value)"><option value="newest" ${teamVoteUI.sort==='newest'?'selected':''}>Najnowsze</option><option value="oldest" ${teamVoteUI.sort==='oldest'?'selected':''}>Najstarsze</option></select></label></header><div>${shown.map(d=>teamVoteListItem(t,d,String(d.id)===String(selected?.id))).join('')||'<p class="team-vote-no-results">Brak głosowań pasujących do filtrów.</p>'}</div>${rows.length>shown.length?`<button type="button" class="team-vote-more" onclick="expandTeamVoteList('${escAttr(t.id)}')">Pokaż kolejne ${rows.length-shown.length}⌄</button>`:''}</aside>${teamVoteDetail(t,selected)}</div></section>`;
+}
+function openTeamVoteProposal(teamId){
+  const t=ensureIdeaTeams({}).find(x=>String(x.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return toast('Tylko członkowie zespołu mogą proponować głosowania.','warn');
+  appModal(`<div class="team-vote-proposal-modal"><span class="team-vote-modal-kicker">Nowa decyzja zespołu</span><h3>Zaproponuj głosowanie</h3><p>Opisz jedną konkretną decyzję. Uzasadnienie będzie widoczne przed oddaniem głosu.</p><label>Tytuł głosowania<input id="team-vote-proposal-title" maxlength="140" placeholder="Np. Zmiana zasad organizacji spotkań"></label><label>Powiązana sekcja<select id="team-vote-proposal-source"><option>Zasady zespołu</option><option>Członkowie i role</option><option>Pomysły zespołu</option><option>Zasoby</option><option>Inna sprawa</option></select></label><label>Opis i uzasadnienie<textarea id="team-vote-proposal-description" rows="5" maxlength="1200" placeholder="Wyjaśnij, co ma się zmienić i dlaczego."></textarea></label><label>Termin<input id="team-vote-proposal-deadline" type="datetime-local"></label><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="submitTeamVoteProposal('${escAttr(teamId)}')">Rozpocznij głosowanie</button></div></div>`,'team-vote-proposal-app-modal');setTimeout(()=>document.getElementById('team-vote-proposal-title')?.focus(),30);
+}
+function submitTeamVoteProposal(teamId){
+  const t=ensureIdeaTeams({}).find(x=>String(x.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;
+  const title=(document.getElementById('team-vote-proposal-title')?.value||'').trim(),description=(document.getElementById('team-vote-proposal-description')?.value||'').trim(),source=document.getElementById('team-vote-proposal-source')?.value||'Sprawa zespołu',deadlineValue=document.getElementById('team-vote-proposal-deadline')?.value;
+  if(!title)return toast('Podaj tytuł głosowania.','warn');if(!description)return toast('Dodaj opis i uzasadnienie.','warn');
+  const g=teamGovernance(t),deadline=deadlineValue?new Date(deadlineValue).toLocaleString('pl-PL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):`za ${Number(g.voteHours)} godz.`;
+  const decision={id:'td'+Date.now(),kind:'general',prop:title,description,sourceLabel:source,proposedBy:MY_NAME,yes:1,no:0,abstain:0,myVote:'yes',open:true,date:TODAY,deadline,thresholdPct:g.approvalPct,quorumPct:g.quorumPct,minVoters:g.minVoters,eligibleCount:teamAcceptedMembers(t).length,comments:[],order:Date.now()};
+  t.decisions=t.decisions||[];t.decisions.push(decision);teamVoteUI.selectedId=decision.id;teamVoteUI.search='';teamVoteUI.filters={open:false,closed:false,cancelled:false,mine:false};closeAppModal();queuePersistence();openTeam(teamId);toast('Głosowanie zostało rozpoczęte. Twój głos „za” zapisano automatycznie.','ok');
+}
+function applyAcceptedTeamDecision(t,d){if(d.kind==='governance-edit'&&d.proposedGovernance)t.governance={...teamGovernance(t),...d.proposedGovernance};if(d.kind==='team-profile-edit'&&d.proposedTeam)Object.assign(t,d.proposedTeam,{lastActive:'teraz'});}
+function submitTeamDecisionVote(teamId,decisionId){
+  const t=ensureIdeaTeams({}).find(x=>String(x.id)===String(teamId)),d=t?.decisions?.find(x=>String(x.id)===String(decisionId));if(!t||!d||!d.open||!teamAcceptedMembers(t).includes(MY_NAME))return;
+  const choice=document.querySelector('.team-vote-detail .team-vote-options input:checked')?.value;if(!choice)return toast('Wybierz jedną odpowiedź.','warn');
+  if(d.myVote&&['yes','no','abstain'].includes(d.myVote))d[d.myVote]=Math.max(0,Number(d[d.myVote]||0)-1);d[choice]=Number(d[choice]||0)+1;d.myVote=choice;
+  const eligible=teamDecisionEligible(t,d);if(teamDecisionTurnout(d)>=eligible){d.open=false;d.accepted=teamDecisionAccepted(t,d);d.closedDate=TODAY;if(d.accepted)applyAcceptedTeamDecision(t,d);}
+  queuePersistence();openTeam(teamId,{preserveVoteScroll:true});toast(d.open?'Twój głos został zapisany.':d.accepted?'Głosowanie zakończone — propozycja przyjęta.':'Głosowanie zakończone — propozycja odrzucona.','ok');
+}
+function openTeamVoteDiscussion(teamId,decisionId){
+  const t=ensureIdeaTeams({}).find(x=>String(x.id)===String(teamId)),d=t?.decisions?.find(x=>String(x.id)===String(decisionId));if(!t||!d)return;d.comments=d.comments||[];const canComment=teamAcceptedMembers(t).includes(MY_NAME),rows=d.comments.map(row=>`<article><span>${memberAvatarContent(row.by,memberInitials(row.by))}</span><div><b>${escHtml(row.by)}</b><small>${escHtml(row.date||'')}</small><p>${escHtml(row.text||'')}</p></div></article>`).join('')||'<p class="team-vote-discussion-empty">Nie ma jeszcze wiadomości. Rozpocznij rozmowę o tej propozycji.</p>';
+  appModal(`<div class="team-vote-discussion-modal"><span class="team-vote-modal-kicker">Dyskusja nad propozycją</span><h3>${escHtml(d.prop)}</h3><div class="team-vote-discussion-list">${rows}</div>${canComment&&d.open?`<label>Dodaj wiadomość<textarea id="team-vote-comment" rows="3" maxlength="1000" placeholder="Napisz argument, pytanie lub uwagę…"></textarea></label><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zamknij</button><button class="vbtn voted-yes" onclick="addTeamVoteComment('${escAttr(teamId)}','${escAttr(decisionId)}')">Wyślij</button></div>`:'<div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zamknij</button></div>'}</div>`,'team-vote-discussion-app-modal');
+}
+function addTeamVoteComment(teamId,decisionId){const t=ensureIdeaTeams({}).find(x=>String(x.id)===String(teamId)),d=t?.decisions?.find(x=>String(x.id)===String(decisionId)),text=(document.getElementById('team-vote-comment')?.value||'').trim();if(!t||!d||!text)return toast('Wpisz wiadomość.','warn');d.comments=d.comments||[];d.comments.push({by:MY_NAME,text,date:TODAY});queuePersistence();openTeamVoteDiscussion(teamId,decisionId);toast('Wiadomość została dodana.','ok');}
 function renderTeamRegisterTab(t){const rows=[{label:'Utworzono szkic zespołu',date:t.date||''},...(t.publishedDate?[{label:'Opublikowano zespół',date:t.publishedDate}]:[]),...(t.decisions||[]).map(row=>({label:row.prop||'Decyzja zespołu',date:row.closedDate||row.date||''})),...(t.discussion||[]).map(row=>({label:row.text||'Aktualizacja zespołu',date:row.date||'',by:row.by||''}))].reverse();return `<section class="tp-card"><div class="tp-section-head"><h2>Rejestr zespołu</h2><span class="tp-count">${rows.length}</span></div><div class="tp-register-list">${rows.map(row=>`<article><i></i><div><b>${escHtml(row.label)}</b>${row.by?`<span>${escHtml(row.by)}</span>`:''}</div><time>${escHtml(row.date)}</time></article>`).join('')||'<p class="tp-empty">Rejestr jest jeszcze pusty.</p>'}</div></section>`;}
 function teamBoardAvatar(t){const initials=String(t.name||'Nowy zespół').split(/\s+/).filter(Boolean).slice(0,2).map(word=>word[0]).join('').toUpperCase();return t.avatar?`<img src="${escAttr(t.avatar)}" alt="">`:escHtml(initials);}
 function renderTeamBoardText(raw){
@@ -12776,7 +12853,7 @@ function openTeam(teamId,opts={}){
     <div class="tp-tab-pane${teamProfileTab==='members'?' on':''}"><div class="tp-page-grid"><main class="tp-main-column"><section class="tp-card" id="tp-members"><div class="tp-section-head"><h2><i>♧</i> Członkowie</h2><span class="tp-count">${people.length}</span></div><div class="tp-people">${memberCards||'<p class="tp-empty">Zespół nie ma jeszcze członków.</p>'}</div>${pendingCards?`<details class="tp-details"><summary>Zgłoszenia do rozpatrzenia (${t.pendingMembers.length})</summary>${pendingCards}</details>`:''}</section></main><aside class="tp-right-column"><section class="tp-card"><div class="tp-section-head"><h2>Kompetencje zespołu</h2></div><div class="tp-chips">${chipList(skills)||'<p class="tp-empty">Członkowie nie dodali jeszcze kompetencji.</p>'}</div></section></aside></div></div>
     <div class="tp-tab-pane${teamProfileTab==='votes'?' on':''}">${renderTeamDecisionsTab(t)}</div>
     <div class="tp-tab-pane${teamProfileTab==='register'?' on':''}">${renderTeamRegisterTab(t)}</div>`;
-  go('team-profile',null,null,{fromRoute:true});
+  go('team-profile',null,null,{fromRoute:true,preserveScroll:!!opts.preserveVoteScroll});
 }
 function addGlobalTeamPost(teamId){
   const t=ensureIdeaTeams({}).find(x=>x.id===teamId),input=document.getElementById(`team-profile-post-${teamId}`),text=(input?.value||'').trim();
@@ -17422,6 +17499,108 @@ html.theme-dark #s-profile-me .mp-identity h1,html.theme-dark #s-profile-me .mp-
 #s-team-profile .tp-decision-history article{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 12px;border:1px solid var(--bdr);border-radius:10px}
 #s-team-profile .tp-decision-history article b{font-size:13px}
 #s-team-profile .tp-decision-history article span{color:var(--txs);font-size:12px}
+#s-team-profile .team-voting-page{margin-top:18px;color:#171d43}
+#s-team-profile .team-voting-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 14px;padding:0 2px}
+#s-team-profile .team-voting-heading h1{margin:0;color:#111735;font-size:30px;font-weight:850;letter-spacing:-.035em}
+#s-team-profile .team-voting-heading>button{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:10px 17px;border:0;border-radius:9px;background:#6535bf;color:#fff;font:750 13px 'DM Sans',sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(88,45,174,.14)}
+#s-team-profile .team-voting-heading>button:hover{background:#5527ac}
+#s-team-profile .team-voting-heading>button span{font-size:23px;font-weight:400;line-height:1}
+#s-team-profile .team-voting-toolbar{display:grid;grid-template-columns:minmax(280px,.9fr) minmax(0,1.45fr);align-items:center;gap:16px;margin-bottom:16px}
+#s-team-profile .team-vote-search{display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border:1px solid #d7d9e6;border-radius:9px;background:#fff;color:#555e87}
+#s-team-profile .team-vote-search:focus-within{border-color:#8b68d1}
+#s-team-profile .team-vote-search>span{font-size:27px;line-height:1;transform:rotate(-18deg)}
+#s-team-profile .team-vote-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#252b52;font:500 13px 'DM Sans',sans-serif}
+#s-team-profile .team-vote-search input::placeholder{color:#8a8fa8}
+#s-team-profile .team-vote-filters{display:flex;align-items:center;justify-content:flex-end;gap:18px;min-width:0}
+#s-team-profile .team-vote-filters>i{width:1px;height:36px;background:#dddfea}
+#s-team-profile .team-vote-filter{display:flex;align-items:center;gap:7px;white-space:nowrap;cursor:pointer;color:#323958}
+#s-team-profile .team-vote-filter input{position:absolute;opacity:0;pointer-events:none}
+#s-team-profile .team-vote-filter>span{display:grid;place-items:center;width:22px;height:22px;border:1.5px solid #8c92aa;border-radius:4px;background:#fff}
+#s-team-profile .team-vote-filter input:checked+span{border-color:#6737bf;background:#6737bf}
+#s-team-profile .team-vote-filter input:checked+span:after{content:'✓';color:#fff;font-size:14px;font-weight:800}
+#s-team-profile .team-vote-filter b{font-size:12px;font-weight:650}
+#s-team-profile .team-vote-filter small{display:grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:#f1f0f8;color:#737891;font-size:10px}
+#s-team-profile .team-voting-layout{display:grid;grid-template-columns:minmax(300px,38%) minmax(0,62%);align-items:stretch;gap:10px;min-height:590px}
+#s-team-profile .team-vote-list,#s-team-profile .team-vote-detail{border:1px solid #e0e1ea;border-radius:11px;background:#fff;box-shadow:0 4px 18px rgba(42,31,83,.025)}
+#s-team-profile .team-vote-list{display:flex;min-width:0;flex-direction:column;overflow:hidden}
+#s-team-profile .team-vote-list>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:13px 18px;border-bottom:1px solid #e6e6ee}
+#s-team-profile .team-vote-list>header>b{font-size:14px}
+#s-team-profile .team-vote-list>header label{display:flex;align-items:center;gap:4px;color:#696e8a;font-size:11px}
+#s-team-profile .team-vote-list>header select{max-width:92px;border:0;background:transparent;color:#696e8a;font:650 11px 'DM Sans',sans-serif;outline:0;cursor:pointer}
+#s-team-profile .team-vote-list-item{position:relative;display:grid;gap:6px;width:100%;padding:14px 40px 14px 18px;border:0;border-bottom:1px solid #e8e8ef;background:#fff;color:#1b2148;text-align:left;cursor:pointer}
+#s-team-profile .team-vote-list-item:hover{background:#faf8ff}
+#s-team-profile .team-vote-list-item.on{background:linear-gradient(100deg,#f2ecff,#faf8ff)}
+#s-team-profile .team-vote-list-title{font-size:14px;font-weight:800;line-height:1.35}
+#s-team-profile .team-vote-list-item.on .team-vote-list-title{color:#6235b6}
+#s-team-profile .team-vote-list-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#s-team-profile .team-vote-list-meta{color:#707590;font-size:11px;line-height:1.35}
+#s-team-profile .team-vote-list-arrow{position:absolute;top:50%;right:17px;color:#515a81;font-size:28px;font-style:normal;font-weight:300;transform:translateY(-50%)}
+#s-team-profile .team-vote-status{display:inline-flex;align-items:center;gap:5px;width:max-content;padding:4px 8px;border-radius:999px;background:#dcf7e8;color:#188755;font-size:10px;font-weight:750}
+#s-team-profile .team-vote-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
+#s-team-profile .team-vote-status.closed{background:#ffe1e4;color:#c23a48}
+#s-team-profile .team-vote-status.closed.accepted{background:#dcf7e8;color:#188755}
+#s-team-profile .team-vote-status.cancelled{background:#edf0f5;color:#6e748a}
+#s-team-profile .team-vote-needed,#s-team-profile .team-vote-cast{display:inline-flex;padding:4px 8px;border-radius:999px;background:#ffedc9;color:#a56b12;font-size:10px;font-weight:750}
+#s-team-profile .team-vote-cast{background:#eeebfb;color:#67559e}
+#s-team-profile .team-vote-more{margin:12px 14px;border:1px solid #d5c8ef;border-radius:8px;background:#faf8ff;color:#6336b8;padding:10px;font:750 12px 'DM Sans',sans-serif;cursor:pointer}
+#s-team-profile .team-vote-no-results{padding:28px 18px;color:#7b8099;font-size:13px;line-height:1.5;text-align:center}
+#s-team-profile .team-vote-detail{display:flex;min-width:0;flex-direction:column;padding:22px 23px}
+#s-team-profile .team-vote-detail>header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+#s-team-profile .team-vote-title-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#s-team-profile .team-vote-title-line h2{margin:0;color:#121837;font-size:24px;line-height:1.2;letter-spacing:-.025em}
+#s-team-profile .team-vote-author{display:flex;align-items:center;gap:8px;margin-top:12px;color:#333a61;font-size:12px}
+#s-team-profile .team-vote-author>span:last-child{display:flex;align-items:center;gap:5px}
+#s-team-profile .team-vote-author small{color:#737894;font-size:11px}
+#s-team-profile .team-vote-author-avatar{display:grid;place-items:center;width:31px;height:31px;overflow:hidden;border-radius:50%;background:#eadffb;color:#5f36ae;font-size:10px;font-weight:800}
+#s-team-profile .team-vote-author-avatar img{width:100%;height:100%;object-fit:cover}
+#s-team-profile .team-vote-source{display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:9px;width:100%;margin:18px 0 0;padding:10px 12px;border:1px solid #ddddea;border-radius:8px;background:#fff;color:#6035b3;text-align:left;cursor:pointer}
+#s-team-profile .team-vote-source:hover{background:#faf8ff;border-color:#c9b5ec}
+#s-team-profile .team-vote-source>span{font-size:20px}
+#s-team-profile .team-vote-source b,#s-team-profile .team-vote-source i{font-size:11px}
+#s-team-profile .team-vote-source i{font-style:normal;font-weight:750}
+#s-team-profile .team-vote-description{margin:16px 0 14px;padding-bottom:16px;border-bottom:1px solid #e5e6ee;color:#444b6d;font-size:13px;line-height:1.55}
+#s-team-profile .team-vote-facts{display:grid;grid-template-columns:1fr 1.1fr;gap:24px;margin:0}
+#s-team-profile .team-vote-facts>div{display:grid;grid-template-columns:105px minmax(0,1fr);align-content:start;gap:8px 9px}
+#s-team-profile .team-vote-facts dt,#s-team-profile .team-vote-facts dd{margin:0;font-size:11px;line-height:1.35}
+#s-team-profile .team-vote-facts dt{color:#343a5b;font-weight:700}
+#s-team-profile .team-vote-facts dd{color:#59607d}
+#s-team-profile .team-vote-fact-note{margin:12px 0 0;color:#8a8ea4;font-size:10px}
+#s-team-profile .team-vote-turnout{margin:15px 0;padding:0 0 15px;border-bottom:1px solid #e3e4ec}
+#s-team-profile .team-vote-turnout>div{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+#s-team-profile .team-vote-turnout b,#s-team-profile .team-vote-turnout strong{font-size:12px}
+#s-team-profile .team-vote-turnout>span{display:block;height:9px;overflow:hidden;border-radius:999px;background:#e3e4ec}
+#s-team-profile .team-vote-turnout>span i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7b42dd,#6734bd)}
+#s-team-profile .team-vote-choice h3{margin:0 0 10px;font-size:14px}
+#s-team-profile .team-vote-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#s-team-profile .team-vote-options label{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 13px;border:1px solid #d8d9e4;border-radius:8px;color:#343a60;font-size:12px;font-weight:650;cursor:pointer}
+#s-team-profile .team-vote-options label:hover,#s-team-profile .team-vote-options label.on{border-color:#8053cf;background:#faf8ff;color:#5d32ae}
+#s-team-profile .team-vote-options input{position:absolute;opacity:0;pointer-events:none}
+#s-team-profile .team-vote-options label>span{width:21px;height:21px;flex:0 0 21px;border:1.5px solid #969bb0;border-radius:50%;background:#fff}
+#s-team-profile .team-vote-options label.on>span{border:6px solid #7140c6}
+#s-team-profile .team-vote-submit-row{display:flex;align-items:center;gap:15px;margin-top:11px}
+#s-team-profile .team-vote-submit-row button{min-width:125px;min-height:40px;border:0;border-radius:8px;background:#6435ba;color:#fff;font:750 12px 'DM Sans',sans-serif;cursor:pointer}
+#s-team-profile .team-vote-submit-row button:disabled{background:#c8c9d7;cursor:not-allowed}
+#s-team-profile .team-vote-submit-row span{color:#85899f;font-size:10px}
+#s-team-profile .team-vote-readonly{margin-top:3px;padding:12px;border-radius:8px;background:#f5f4f8;color:#747991;font-size:12px}
+#s-team-profile .team-vote-result{display:grid;gap:3px;margin:0 0 15px;padding:11px 13px;border-radius:8px;background:#e7f8ee;color:#226e48}
+#s-team-profile .team-vote-result.rejected{background:#ffe9eb;color:#a33a45}
+#s-team-profile .team-vote-result.cancelled{background:#eff1f5;color:#676d82}
+#s-team-profile .team-vote-result b{font-size:12px}.team-vote-result span{font-size:10px}
+#s-team-profile .team-vote-detail>footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:auto;padding-top:17px;border-top:1px solid #e3e4ec}
+#s-team-profile .team-vote-detail>footer button{display:flex;align-items:center;gap:7px;padding:0;border:0;background:transparent;color:#6335b5;font:750 11px 'DM Sans',sans-serif;cursor:pointer}
+#s-team-profile .team-vote-detail>footer button span{font-size:21px}.team-vote-detail>footer button small{color:#626985;font-size:10px;font-weight:500}
+#s-team-profile .team-vote-empty{align-items:center;justify-content:center;text-align:center;color:#7a7f97}
+#s-team-profile .team-vote-empty h2{margin-bottom:7px;color:#252b4e}
+.team-vote-modal-kicker{display:block;margin-bottom:5px;color:#6538b5;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.team-vote-proposal-modal>p{margin:0 0 18px!important}.team-vote-proposal-modal>label,.team-vote-discussion-modal>label{display:grid;gap:6px;margin-top:12px;color:var(--txt);font-size:12px;font-weight:750}
+.team-vote-proposal-modal input,.team-vote-proposal-modal select,.team-vote-proposal-modal textarea,.team-vote-discussion-modal textarea{width:100%;padding:11px 12px;border:1px solid var(--bdr);border-radius:9px;background:#fff;color:var(--txt);font:13px 'DM Sans',sans-serif;resize:vertical}
+.team-vote-discussion-list{display:grid;gap:9px;max-height:330px;margin:15px 0;overflow:auto}.team-vote-discussion-list article{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:11px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf)}.team-vote-discussion-list article>span{display:grid;place-items:center;width:34px;height:34px;overflow:hidden;border-radius:50%;background:var(--p100);font-size:10px}.team-vote-discussion-list article>span img{width:100%;height:100%;object-fit:cover}.team-vote-discussion-list article b,.team-vote-discussion-list article small{display:block;font-size:11px}.team-vote-discussion-list article small{color:var(--txs);margin-top:2px}.team-vote-discussion-list article p{margin:6px 0 0!important;color:var(--txm);font-size:12px!important;line-height:1.5!important}.team-vote-discussion-empty{padding:24px;color:var(--txs);text-align:center}
+html.theme-dark #s-team-profile .team-voting-heading h1,html.theme-dark #s-team-profile .team-vote-title-line h2,html.theme-dark #s-team-profile .team-vote-choice h3{color:var(--txt)}
+html.theme-dark #s-team-profile :is(.team-vote-search,.team-vote-list,.team-vote-detail,.team-vote-list-item,.team-vote-source,.team-vote-filter>span,.team-vote-options label,.team-vote-options label>span){background:var(--surf2);border-color:var(--bdr);color:var(--txt)}
+html.theme-dark #s-team-profile .team-vote-list-item.on,html.theme-dark #s-team-profile .team-vote-list-item:hover,html.theme-dark #s-team-profile .team-vote-options label.on{background:var(--surf)}
+html.theme-dark :is(.team-vote-proposal-modal input,.team-vote-proposal-modal select,.team-vote-proposal-modal textarea,.team-vote-discussion-modal textarea){background:var(--surf2);border-color:var(--bdr);color:var(--txt)}
+@media(max-width:1120px){#s-team-profile .team-voting-toolbar{grid-template-columns:1fr}#s-team-profile .team-vote-filters{justify-content:flex-start;overflow-x:auto;padding-bottom:3px}#s-team-profile .team-voting-layout{grid-template-columns:minmax(270px,36%) minmax(0,64%)}#s-team-profile .team-vote-options{grid-template-columns:1fr}#s-team-profile .team-vote-facts{grid-template-columns:1fr;gap:8px}}
+@media(max-width:760px){#s-team-profile .team-voting-heading{align-items:flex-start;flex-direction:column}#s-team-profile .team-voting-heading>button{width:100%;justify-content:center}#s-team-profile .team-voting-layout{grid-template-columns:1fr}#s-team-profile .team-vote-list{max-height:none}#s-team-profile .team-vote-detail{min-height:540px}#s-team-profile .team-vote-filters{gap:12px}#s-team-profile .team-vote-filter b{font-size:11px}#s-team-profile .team-vote-filter>span{width:20px;height:20px}#s-team-profile .team-vote-source{grid-template-columns:25px minmax(0,1fr)}#s-team-profile .team-vote-source i{grid-column:2}#s-team-profile .team-vote-detail>footer{align-items:flex-start;flex-direction:column}}
 #s-team-profile .tp-register-list{display:grid}
 #s-team-profile .tp-register-list article{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:start;gap:12px;padding:14px 0;border-top:1px solid var(--bdr)}
 #s-team-profile .tp-register-list article i{width:8px;height:8px;margin-top:5px;border-radius:50%;background:var(--p400)}
