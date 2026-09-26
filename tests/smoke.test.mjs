@@ -296,6 +296,25 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.doesNotMatch(teamTab, /renderAcceptedProjectTeams|Teamy w projekcie/);
 });
 
+test('joining an idea only starts in the team tab and uses two real steps', () => {
+  const contribution = html.match(/function renderIdeaContributionIntro\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(contribution, /if\(isActiveProjectMember\(idea\)\)return '';/);
+  assert.match(contribution, />Dołącz<\/button>/);
+  assert.doesNotMatch(contribution, /Zgłoś swój wkład/);
+
+  const headerMembership = html.match(/function projectHeaderMembershipButton\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(headerMembership, /if\(member\)return/);
+  assert.match(headerMembership, /return '';/);
+  assert.doesNotMatch(headerMembership, /projectHeaderJoin|join-primary|Kandydatura w toku/);
+
+  const joinForm = html.match(/function openJoinProjectModal\(ideaId,step=1\)\{([\s\S]*?)\n\}\nfunction captureProjectJoinDraft/)?.[1] || '';
+  assert.match(joinForm, /steps:\['Motywacja','Podsumowanie'\]/);
+  assert.match(joinForm, /projectJoinNext\(\$\{ideaId\}\)/);
+  assert.doesNotMatch(joinForm, /<svg|class="mi|w fazie opracowania|Wystarczy kilka zdań|Nie wysyłamy bez podsumowania/);
+  assert.match(html, /function renderProjectJoinSummary\(ideaId\)/);
+  assert.match(html, /onclick="submitProjectJoin\(\$\{ideaId\}\)">Wyślij zgłoszenie/);
+});
+
 test('discover team posts resolve the current team avatar with a fallback', () => {
   assert.match(html, /function discoverPostAvatar\(post,team=null\)/);
   assert.match(html, /safeUserUrl\(team\?\.avatar\|\|post\.avatarImage\|\|'','image'\)/);

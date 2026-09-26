@@ -987,6 +987,7 @@ html.is-mac .member-action-modal{grid-template-columns:290px 1fr;height:calc(100
 .form-action-side p{font-size:13px;color:var(--txs);line-height:1.6;margin:0 0 18px}
 .form-step-pill{display:flex;gap:9px;align-items:center;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--bdr);font-size:13px;color:var(--txm);margin-bottom:8px}
 .form-step-pill b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--p200);color:var(--p800);font-size:12px}
+.form-step-pill.active{border-color:var(--p400);background:var(--p100);color:var(--p800);font-weight:700}.form-step-pill.active b{background:var(--p700);color:#fff}
 .form-action-main{padding:30px 34px;overflow:auto;position:relative}
 .task-form-app-modal .form-action-main{padding:20px 28px;overflow-y:auto;min-height:0}
 .form-action-main h3{font-family:'DM Sans',sans-serif;font-size:22px;margin:0 0 6px}
@@ -1490,6 +1491,7 @@ html.theme-dark .invite-panel{background:var(--surf)}html.theme-dark .invite-per
 .join-project-modal .modal-form-grid label.join-cap-select{display:grid!important;grid-template-columns:20px minmax(0,1fr)!important;flex-direction:initial!important;align-items:start!important;gap:11px!important;font-weight:400!important;color:var(--txt)!important}.join-project-modal .modal-form-grid input.join-skill-check{width:18px!important;height:18px!important;min-width:18px!important;padding:0!important;margin:2px 0 0!important;border-radius:5px!important;box-shadow:none!important}.join-project-modal .join-cap-card{display:block;padding:13px 14px}.join-project-modal .join-cap-main b{flex-wrap:wrap;line-height:1.35}.join-project-modal .join-cap-main small{line-height:1.45}.join-project-modal .join-extra-confirm textarea{width:100%!important}.join-profile-source{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}.join-profile-source b{display:block;font-size:13px;color:var(--txt);margin-bottom:3px}.join-profile-source p{font-size:12px!important;line-height:1.5!important;margin:0!important;color:var(--txs)!important}.join-profile-source button{flex:0 0 auto;border:1px solid var(--bdr);border-radius:10px;background:#fff;color:var(--txt);padding:8px 11px;font:12px 'DM Sans',sans-serif;cursor:pointer}.join-profile-source button:hover{border-color:var(--p300);background:var(--p50)}
 .join-transition{display:flex;align-items:flex-start;gap:11px;margin:6px 0 2px;padding-top:16px;border-top:1px solid var(--bdr)}.join-transition>span{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--p700);background:var(--p100);border-radius:999px;padding:4px 8px}.join-transition h4{font-size:16px;color:var(--txt);margin:0 0 3px}.join-transition p{font-size:12px!important;color:var(--txs)!important;line-height:1.5!important;margin:0!important}.member-managed-needs{margin:12px 0 14px;padding:12px 14px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}.member-managed-needs>b{display:block;font-size:13px;margin-bottom:2px}.member-managed-needs>span{display:block;font-size:12px;color:var(--txs);line-height:1.45}.member-managed-needs .member-contribution{margin-top:9px}.member-managed-needs .member-contribution span{display:inline-flex}
 .join-transition.first{margin-top:0;padding-top:0;border-top:0}
+.join-project-summary{display:grid;gap:14px}.join-project-summary-card{padding:15px 16px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}.join-project-summary-card h4{margin:0 0 7px;font-size:14px;color:var(--txt)}.join-project-summary-card p{margin:0!important;color:var(--txm)!important;white-space:pre-wrap}.join-project-summary-skills{display:flex;flex-wrap:wrap;gap:7px}.join-project-summary-skills span{display:inline-flex;border-radius:999px;background:var(--p100);color:var(--p800);padding:6px 10px;font-size:12px;font-weight:650}.join-project-summary-extra{margin-top:9px!important;font-size:12px!important;color:var(--txs)!important}.join-project-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:4px}.join-project-actions .join-project-actions-main{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 html.theme-dark .join-project-modal .form-action-modal,html.theme-dark .join-project-modal .form-action-main,html.theme-dark .join-project-modal .join-cap-card,html.theme-dark .join-project-modal .join-profile-source,html.theme-dark .join-project-modal .join-extra-confirm,html.theme-dark .member-managed-needs{background:var(--surf)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-project-modal .form-action-side,html.theme-dark .join-project-modal .join-section-empty,html.theme-dark .join-project-modal .join-summary-note{background:var(--surf2)!important;color:var(--txs)!important}html.theme-dark .join-project-modal .join-cap-card.extra:has(.join-skill-check:checked),html.theme-dark .join-project-modal .join-cap-card:has(.join-skill-check:checked){background:var(--surf2)!important;border-color:var(--p400)!important}html.theme-dark .join-project-modal .join-profile-source button,html.theme-dark .join-project-modal .join-extra-confirm textarea{background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txt)!important}html.theme-dark .join-transition>span{background:var(--p200)!important;color:var(--p800)!important}
 @media(max-width:680px){.idea-page{padding-bottom:320px}}
 @media(max-width:680px){.join-profile-source{flex-direction:column}.join-profile-source button{width:100%}}
@@ -7143,8 +7145,8 @@ function renderIdeaParticipantsCard(idea,ideaId){
   return `<aside class="idea-participants-card"><div class="idea-participants-head"><div><h3>Uczestnicy tego pomysłu</h3><p>Osoby, które wnoszą swój czas i kompetencje.</p></div><span>${active.length}</span></div><div class="idea-participants-list">${rows||'<div class="idea-competency-empty">Nikt jeszcze nie dołączył.</div>'}</div>${renderProjectInviteAction(ideaId)}</aside>`;
 }
 function renderIdeaContributionIntro(idea,ideaId){
-  const action=isActiveProjectMember(idea)?'':`<button type="button" onclick="openJoinProjectModal(${ideaId})">Zgłoś swój wkład</button>`;
-  return `<section class="idea-team-intro"><div><h2>Wnieś swoje kompetencje</h2><p>Zobacz, czego potrzeba przy tym pomyśle, i zgłoś, w czym możesz pomóc jako osoba.</p></div>${action}</section>`;
+  if(isActiveProjectMember(idea))return '';
+  return `<section class="idea-team-intro"><div><h2>Wnieś swoje kompetencje</h2><p>Zobacz, czego potrzeba przy tym pomyśle, i zgłoś, w czym możesz pomóc jako osoba.</p></div><button type="button" onclick="openJoinProjectModal(${ideaId})">Dołącz</button></section>`;
 }
 function renderProjectInviteAction(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);
@@ -8904,11 +8906,7 @@ function projectHeaderFollowPopover(idea,isFollowed){
 function projectHeaderMembershipButton(idea,ideaId){
   const member=participantsOf(idea).includes(MY_NAME);
   if(member)return `<button type="button" class="project-head-action joined" data-tooltip="W projekcie" aria-label="W projekcie — opcje członkostwa" onclick="toggleProjectMembershipMenu(event,${ideaId})" aria-haspopup="menu" aria-expanded="${idea._headerActionMenu==='membership'}"><svg class="member-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><svg class="member-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>`;
-  const pending=projectJoinVote(idea);
-  if(pending)return `<button type="button" class="project-head-action pending" onclick="openVote(${ideaId},'${escAttr(pending.id)}')">Kandydatura w toku</button>`;
-  const rejoin=(idea.pendingRejoinInvites||[]).find(x=>x.person===MY_NAME&&x.status==='pending');
-  if(rejoin)return `<button type="button" class="project-head-action join-primary" onclick="openRejoinInvite(${ideaId},'${escAttr(rejoin.id)}')">Dołącz</button>`;
-  return `<button type="button" class="project-head-action join-primary" onclick="projectHeaderJoin(${ideaId})">Dołącz</button>`;
+  return '';
 }
 function projectHeaderMembershipPopover(idea){
   if(idea._headerActionMenu!=='membership')return '';
@@ -13229,31 +13227,37 @@ function toggleJoinExtra(ideaId,idx,on){
   const panel=document.getElementById(`join-extra-confirm-${ideaId}-${idx}`);if(panel)panel.classList.toggle('on',on);
   if(on)setTimeout(()=>document.getElementById(`join-extra-reason-${ideaId}-${idx}`)?.focus(),40);
 }
-function openJoinProjectModal(ideaId){
+let projectJoinDraft=null;
+function markProjectJoinStep(step){document.querySelectorAll('.join-project-modal .form-step-pill').forEach((pill,index)=>pill.classList.toggle('active',index===step-1));}
+function cancelProjectJoin(){projectJoinDraft=null;closeAppModal();}
+function openJoinProjectModal(ideaId,step=1){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
   if(participantsOf(idea).includes(MY_NAME)){toast('Jesteś już w tym projekcie.','ok');return;}
   if(projectIsAbandoned(idea)){joinAbandonedProject(ideaId);return;}
   if(projectJoinVote(idea)){toast('Twoja kandydatura już czeka na decyzję zespołu.','warn');return;}
+  if(!projectJoinDraft||projectJoinDraft.ideaId!==ideaId)projectJoinDraft={ideaId,motivation:'',selected:[],proposed:[]};
+  if(step===2){renderProjectJoinSummary(ideaId);return;}
+  const selectedNames=new Set(projectJoinDraft.selected.map(row=>row.name));
+  const proposedReasons=new Map(projectJoinDraft.proposed.map(row=>[row.name,row.reason]));
   const skills=(myProfile.skills||[]).map((name,idx)=>{const lvl=myProfile.skillLevels?.[name]||1;const matches=joinSkillMatches(idea,name);return {name,lvl,idx,matches,cat:joinSkillCategory(name)};});
-  const existing=skills.filter(s=>s.matches.length).map(s=>`<div class="join-cap-card"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-skill="${escAttr(s.name)}" data-level="${s.lvl}"><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · pokrywa: ${escHtml(s.matches.map(x=>needPrimaryCapability(x.r).name).join(', '))}</small></span></label></div>`).join('');
-  const additional=skills.filter(s=>!s.matches.length).map(s=>`<div class="join-cap-card extra"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-extra="1" data-idx="${s.idx}" data-skill="${escAttr(s.name)}" data-level="${s.lvl}" onchange="toggleJoinExtra(${ideaId},${s.idx},this.checked)"><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · tej potrzeby nie ma jeszcze w projekcie</small></span></label><div class="join-extra-confirm" id="join-extra-confirm-${ideaId}-${s.idx}"><p>Ta kompetencja utworzy propozycję nowej potrzeby zespołu. Napisz krótko, dlaczego przyda się w tym projekcie.</p><textarea id="join-extra-reason-${ideaId}-${s.idx}" placeholder="Np. przyda się do przygotowania czytelnych materiałów wyjaśniających ustawę"></textarea></div></div>`).join('');
+  const existing=skills.filter(s=>s.matches.length).map(s=>`<div class="join-cap-card"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-skill="${escAttr(s.name)}" data-level="${s.lvl}" ${selectedNames.has(s.name)?'checked':''}><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · pokrywa: ${escHtml(s.matches.map(x=>needPrimaryCapability(x.r).name).join(', '))}</small></span></label></div>`).join('');
+  const additional=skills.filter(s=>!s.matches.length).map(s=>{const chosen=selectedNames.has(s.name),reason=proposedReasons.get(s.name)||'';return `<div class="join-cap-card extra"><label class="join-cap-select"><input class="join-skill-check" type="checkbox" data-extra="1" data-idx="${s.idx}" data-skill="${escAttr(s.name)}" data-level="${s.lvl}" onchange="toggleJoinExtra(${ideaId},${s.idx},this.checked)" ${chosen?'checked':''}><span class="join-cap-main"><b>${escHtml(s.name)} <span class="need-cap-level">P${s.lvl}</span></b><small>${escHtml(s.cat)} · tej potrzeby nie ma jeszcze w projekcie</small></span></label><div class="join-extra-confirm${chosen?' on':''}" id="join-extra-confirm-${ideaId}-${s.idx}"><p>Ta kompetencja utworzy propozycję nowej potrzeby zespołu. Napisz krótko, dlaczego przyda się w tym projekcie.</p><textarea id="join-extra-reason-${ideaId}-${s.idx}" placeholder="Np. przyda się do przygotowania czytelnych materiałów wyjaśniających ustawę">${escHtml(reason)}</textarea></div></div>`;}).join('');
   const profileSource=`<div class="join-profile-source"><div><b>To są kompetencje zapisane na Twoim profilu</b><p>Jeśli masz inną kompetencję, najpierw dodaj ją w katalogu Platformy. Nie musisz robić tego teraz — profil i użyczenia możesz uzupełnić także po dołączeniu do projektu.</p></div><button type="button" onclick="closeAppModal();platformTab='skills';go('platform')">Przejdź do Platformy</button></div>`;
   actionModal({
-    sideTitle:'Dołącz do projektu',
-    sideText:'Wybierasz kompetencje ze swojego profilu. Każde użyczenie możesz później wycofać.',
-    steps:['Motywacja','Istniejące potrzeby','Dodatkowa pomoc'],
-    title:'Kandydatura do zespołu',
-    intro:'Zespół podejmie decyzję o przyjęciu Cię do projektu. Zacznij od krótkiej motywacji.',
-    body:`<div class="modal-form-grid"><label>Krótka motywacja <span class="req-star">*</span><textarea id="join-motivation-${ideaId}" placeholder="Dlaczego chcesz dołączyć i jak chcesz pomóc?" style="min-height:82px"></textarea></label><div class="join-transition"><span>Krok 2</span><div><h4>Kompetencje, które chcesz wnieść</h4><p>Teraz wybierz, w których potrzebach projektu możesz pomóc i co dodatkowo chcesz zaoferować.</p></div></div><div class="join-sections"><section class="join-section"><div class="join-section-head"><h4>Potrzebne już w projekcie</h4><p>Po przyjęciu do zespołu wybrane kompetencje zostaną przypisane automatycznie.</p></div><div class="join-cap-list">${existing||'<div class="join-section-empty">Żadna z kompetencji na Twoim profilu nie pasuje obecnie do otwartych potrzeb.</div>'}</div></section><section class="join-section"><div class="join-section-head"><h4>Możesz zaoferować dodatkowo</h4><p>Po zaznaczeniu wyjaśnisz, dlaczego projekt powinien dodać nową potrzebę.</p></div><div class="join-cap-list">${additional||'<div class="join-section-empty">Wszystkie Twoje kompetencje są już potrzebne w projekcie.</div>'}</div></section></div>${profileSource}<div class="join-summary-note">Przyjęcie Ciebie do zespołu i dodanie każdej nowej potrzeby to osobne decyzje.</div><div class="role-actions"><button class="vbtn voted-yes" onclick="submitProjectJoin(${ideaId})">Wyślij kandydaturę</button><button class="vbtn" onclick="closeAppModal()">Anuluj</button></div></div>`,
+    sideTitle:'Dołącz do pomysłu',
+    sideText:'Opisz motywację i wybierz kompetencje. Przed wysłaniem sprawdzisz podsumowanie.',
+    steps:['Motywacja','Podsumowanie'],
+    title:'Dołącz do pomysłu',
+    intro:'Autorzy pomysłu zobaczą Twoją motywację oraz kompetencje, które chcesz wnieść.',
+    body:`<div class="modal-form-grid"><label>Motywacja <span class="req-star">*</span><textarea id="join-motivation-${ideaId}" placeholder="Dlaczego chcesz dołączyć i jak chcesz pomóc?" style="min-height:92px">${escHtml(projectJoinDraft.motivation)}</textarea></label><div class="join-sections"><section class="join-section"><div class="join-section-head"><h4>Wybierz kompetencje z profilu</h4><p>Zaznacz kompetencje, których chcesz użyć w tym pomyśle.</p></div><div class="join-cap-list">${existing||'<div class="join-section-empty">Żadna z kompetencji na Twoim profilu nie pasuje obecnie do otwartych potrzeb.</div>'}</div></section><section class="join-section"><div class="join-section-head"><h4>Możesz zaoferować dodatkowo</h4><p>Możesz też zaproponować kompetencję, której pomysł jeszcze nie potrzebuje.</p></div><div class="join-cap-list">${additional||'<div class="join-section-empty">Wszystkie Twoje kompetencje są już potrzebne w pomyśle.</div>'}</div></section></div>${profileSource}<div class="join-project-actions"><button class="vbtn" onclick="cancelProjectJoin()">Anuluj</button><div class="join-project-actions-main"><button class="vbtn voted-yes" onclick="projectJoinNext(${ideaId})">Dalej: podsumowanie</button></div></div></div>`,
     cls:'task-form-app-modal join-project-modal'
   });
-  const joinGrid=document.querySelector('.join-project-modal .modal-form-grid');
-  if(joinGrid)joinGrid.insertAdjacentHTML('afterbegin','<div class="join-transition first"><span>Krok 1</span><div><h4>Motywacja</h4><p>Napisz krótko, dlaczego chcesz dołączyć do tego projektu.</p></div></div>');
+  document.querySelector('.join-project-modal .member-action-close')?.setAttribute('onclick','cancelProjectJoin()');
+  markProjectJoinStep(1);
   setTimeout(()=>document.getElementById('join-motivation-'+ideaId)?.focus(),60);
 }
-function submitProjectJoin(ideaId){
+function captureProjectJoinDraft(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
-  if(projectIsAbandoned(idea)){joinAbandonedProject(ideaId);return;}
   const motivation=(document.getElementById('join-motivation-'+ideaId)?.value||'').trim();if(!motivation){toast('Napisz krótką motywację.','warn');return;}
   const selected=[...document.querySelectorAll('.join-skill-check:checked')].map(x=>({name:x.dataset.skill,lvl:Number(x.dataset.level||1)}));
   if(!selected.length){toast('Wybierz przynajmniej jedną kompetencję.','warn');return;}
@@ -13263,12 +13267,36 @@ function submitProjectJoin(ideaId){
     if(!reason){toast(`Wyjaśnij, dlaczego kompetencja „${x.dataset.skill}” przyda się w projekcie.`,'warn');document.getElementById(`join-extra-reason-${ideaId}-${x.dataset.idx}`)?.focus();return;}
     proposed.push({name:x.dataset.skill,lvl:Number(x.dataset.level||1),cat:joinSkillCategory(x.dataset.skill),reason});
   }
+  projectJoinDraft={ideaId,motivation,selected,proposed};
+  return projectJoinDraft;
+}
+function projectJoinNext(ideaId){if(captureProjectJoinDraft(ideaId))openJoinProjectModal(ideaId,2);}
+function renderProjectJoinSummary(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId),draft=projectJoinDraft;if(!idea||!draft||draft.ideaId!==ideaId){openJoinProjectModal(ideaId,1);return;}
+  const extra=draft.proposed.map(row=>`<p class="join-project-summary-extra"><b>${escHtml(row.name)}:</b> ${escHtml(row.reason)}</p>`).join('');
+  actionModal({
+    sideTitle:'Dołącz do pomysłu',
+    sideText:'Opisz motywację i wybierz kompetencje. Przed wysłaniem sprawdzisz podsumowanie.',
+    steps:['Motywacja','Podsumowanie'],
+    title:'Podsumowanie',
+    intro:'Sprawdź zgłoszenie przed wysłaniem go autorom pomysłu.',
+    body:`<div class="join-project-summary"><section class="join-project-summary-card"><h4>Motywacja</h4><p>${escHtml(draft.motivation)}</p></section><section class="join-project-summary-card"><h4>Kompetencje</h4><div class="join-project-summary-skills">${draft.selected.map(row=>`<span>${escHtml(row.name)}</span>`).join('')}</div>${extra}</section><div class="join-project-actions"><button class="vbtn" onclick="cancelProjectJoin()">Anuluj</button><div class="join-project-actions-main"><button class="vbtn" onclick="openJoinProjectModal(${ideaId},1)">Wróć</button><button class="vbtn voted-yes" onclick="submitProjectJoin(${ideaId})">Wyślij zgłoszenie</button></div></div></div>`,
+    cls:'task-form-app-modal join-project-modal'
+  });
+  document.querySelector('.join-project-modal .member-action-close')?.setAttribute('onclick','cancelProjectJoin()');
+  markProjectJoinStep(2);
+}
+function submitProjectJoin(ideaId){
+  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
+  if(projectIsAbandoned(idea)){projectJoinDraft=null;joinAbandonedProject(ideaId);return;}
+  const draft=projectJoinDraft;if(!draft||draft.ideaId!==ideaId){openJoinProjectModal(ideaId);return;}
+  const {motivation,selected,proposed}=draft;
   const matched=Array.from(new Set(selected.flatMap(s=>joinSkillMatches(idea,s.name).map(x=>x.idx))));
   const vId='v'+Date.now();
   idea.votes.push({id:vId,kind:'project-join',person:MY_NAME,joinSkills:selected,matchedNeeds:matched,prop:`Przyjąć ${MY_NAME} do projektu`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:motivation,date:TODAY,supporters:[],debunks:[]}]});
   proposed.forEach((s,n)=>{const roleData={role:s.cat,task:s.reason,min:1,max:1,exclusive:false,skills:[{name:s.name,lvl:s.lvl}],filledBy:[],status:'open',offeredBy:MY_NAME};idea.votes.push({id:'v'+Date.now()+'n'+n,kind:'role',roleData,prop:`Dodać potrzebę zespołu: ${s.name} P${s.lvl}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now()+'n'+n,stance:'za',author:MY_NAME,text:s.reason,date:TODAY,supporters:[],debunks:[]}]});});
   idea.log.push({text:`${MY_NAME} zgłosiła kandydaturę do zespołu`,date:TODAY,time:NOW_TIME(),type:'zespół',detail:`<b>Motywacja:</b> ${escHtml(motivation)}<br><b>Oferowane kompetencje:</b> ${escHtml(selected.map(s=>s.name+' P'+s.lvl).join(', '))}${proposed.length?'<br><b>Nowe potrzeby do decyzji:</b> '+escHtml(proposed.map(s=>s.name).join(', ')):''}`});
-  notifyVote(idea);maybeNotify(idea,'Nowa kandydatura do zespołu: '+MY_NAME);closeAppModal();openIdea(ideaId,true);
+  projectJoinDraft=null;notifyVote(idea);maybeNotify(idea,'Nowa kandydatura do zespołu: '+MY_NAME);closeAppModal();openIdea(ideaId,true);
 }
 function withdrawNeedContribution(ideaId,idx){
   const idea=ideas.find(i=>i.id===ideaId);const r=idea?.roleRequirements?.[idx];if(!idea||!r)return;
