@@ -327,7 +327,7 @@ test('published team uses metadata, real tabs and profile-change votes', () => {
   assert.match(html, /Opublikowano: \$\{escHtml\(t\.publishedDate/);
   assert.match(html, /Ostatnia aktywność: \$\{escHtml\(t\.lastActive/);
   assert.match(html, /setTeamProfileTab\('\$\{escAttr\(t\.id\)\}','board'\)\">Tablica/);
-  assert.match(html, />Członkowie<\/button><button[^>]+>Dyskusje<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
+  assert.match(html, />Członkowie<\/button><button[^>]+>Pomysły<\/button><button[^>]+>Dyskusje<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
   assert.match(html, /teamAcceptedMembers\(t\)\.length>1/);
   assert.match(html, /kind:'team-profile-edit'/);
   assert.match(html, /function rejectTeamDecision\(teamId,decisionId\)/);
@@ -412,6 +412,23 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.doesNotMatch(html, /visible=document\.getElementById\('s-team-profile'\).*teamProfileTab==='votes'/);
   const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(discussions, /Członkowie online|Ostatnia aktywność/);
+});
+
+test('team ideas tab filters assigned projects and starts a team-owned private draft', () => {
+  assert.match(html, /function renderTeamIdeasTab\(t,mine\)/);
+  assert.match(html, /class="team-ideas-page"/);
+  assert.match(html, /Pomysły zespołu/);
+  assert.match(html, /placeholder="Szukaj pomysłów zespołu…"/);
+  assert.match(html, /Projekt zakończony/);
+  assert.match(html, /Ocena zakończona/);
+  assert.match(html, /Ostatnia aktywność/);
+  assert.match(html, /function beginTeamIdeaDraft\(teamId\)/);
+  assert.match(html, /const idea=createBlankPrivateIdeaDraft\(\)/);
+  assert.match(html, /idea\.teamOriginId=String\(t\.id\)/);
+  assert.match(html, /t\.projectIds\.push\(idea\.id\)/);
+  assert.match(html, /onclick="beginTeamIdeaDraft\('\$\{escAttr\(t\.id\)\}'\)"/);
+  const teamIdeas=html.match(/function renderTeamIdeasTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.doesNotMatch(teamIdeas, /Powiąż istniejący/);
 });
 
 test('team board uses a centered visual feed with editable welcome post', () => {
