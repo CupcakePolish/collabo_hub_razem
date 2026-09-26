@@ -344,6 +344,11 @@ test('team rules tab manages governance drafts and voted proposals', () => {
   assert.match(html, /osoba nie liczy się do kworum/);
   assert.match(html, /function openTeamGovernanceEdit\(teamId,draftId=''/);
   assert.match(html, /Przygotuj zmianę zasad/);
+  assert.match(html, /function renderTeamRulesEditor\(t,mine\)/);
+  assert.match(html, /class="team-rules-page team-rules-editing"/);
+  assert.match(html, /function updateTeamRulesEditorField\(key,value,type='text'\)/);
+  assert.match(html, /Możesz przechodzić między kartami/);
+  assert.match(html, /proposedTeamRules/);
   assert.match(html, /function updateTeamGovernanceProposalPreview\(\)/);
   assert.match(html, /function saveTeamGovernanceDraft\(teamId\)/);
   assert.match(html, /function submitTeamGovernanceEdit\(teamId\)/);
@@ -353,6 +358,7 @@ test('team rules tab manages governance drafts and voted proposals', () => {
   assert.match(html, /teamProfileTab='rules';openTeam\(teamId\)/);
   assert.match(html, /ballots:\{\[MY_NAME\]:'yes'\}/);
   assert.doesNotMatch(html, /team-rules-table[\s\S]{0,500}Zmień<\/button>/);
+  assert.doesNotMatch(html, /function openTeamGovernanceEdit\(teamId,draftId=''\)\{[^\n]*appModal/);
 });
 
 test('team voting tab is a searchable master-detail workflow with proposals and discussions', () => {
