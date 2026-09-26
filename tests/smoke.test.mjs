@@ -240,10 +240,23 @@ test('project overview uses the lifecycle strip and requires a reason for stage 
   assert.match(html, /class="idea-lifecycle-strip" aria-label="Etapy projektu"/);
   assert.match(html, /class="idea-lifecycle-arrow forward"[\s\S]*confirmProjectLifecycleVote/);
   assert.match(html, /class="idea-lifecycle-arrow back"[\s\S]*confirmProjectLifecycleVote/);
+  assert.doesNotMatch(html, /<small>Przejdź dalej<\/small>/);
   assert.match(html, /id="project-lifecycle-reason"/);
   assert.match(html, /function submitProjectLifecycleVote\(ideaId,targetStatus\)[\s\S]*if\(!reason\)return toast\('Dodaj uzasadnienie zmiany etapu\.'/);
   assert.match(html, /text:reason\|\|`Projekt powinien przejść do stanu/);
   assert.doesNotMatch(html, /<section class="idea-stage-summary"><h2>Etap projektu<\/h2>/);
+});
+
+test('project products use their cards and metrics fit without a direction column', () => {
+  assert.match(html, /class="work-result-copy"><b class="work-result-title">/);
+  assert.match(html, /detail=task\.produkt\|\|task\.deliverable\|\|task\.opis\|\|task\.desc/);
+  assert.match(html, /\.work-results-card \.work-result-row\{height:auto;min-height:82px/);
+  assert.match(html, /\.expected-results-table-wrap\{overflow-x:visible\}/);
+  assert.match(html, /\.expected-results-table\{width:100%;min-width:0\}/);
+  assert.match(html, /grid-template-columns:minmax\(0,1\.35fr\).*42px/);
+  const metrics=html.match(/function projectExpectedResultsOverview\(idea,id\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.doesNotMatch(metrics, /<span>Kierunek<\/span>|expected-result-direction/);
+  assert.match(metrics, /<span>Efekt<\/span><span>Miernik<\/span><span>Stan bazowy<\/span><span>Cel<\/span><span>Kiedy mierzymy<\/span>/);
 });
 
 test('discover team posts resolve the current team avatar with a fallback', () => {
