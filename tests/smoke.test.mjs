@@ -212,6 +212,9 @@ test('project header metadata is uniform and aligned with the top of its photo',
   assert.match(html, /#s-idea \.idea-title-meta,#s-idea \.idea-title-meta button\{font-size:12px;line-height:1\.45\}/);
   assert.match(html, /#s-idea \.idea-title-meta \.idea-meta-status\{[^}]*color:#6b52a4/);
   assert.match(html, /#s-idea \.ph-idea\{display:flex;align-items:flex-start;gap:24px\}/);
+  assert.match(html, /id="idea-ph-title"[\s\S]*id="idea-hero-actions"[\s\S]*id="idea-title-meta"/);
+  assert.match(html, /#s-idea \.ph-idea-actions\{position:static;max-width:none;[^}]*margin-top:12px\}/);
+  assert.match(html, /#s-idea \.idea-title-meta\{gap:10px;margin-top:16px\}/);
 });
 
 test('discover team posts resolve the current team avatar with a fallback', () => {
