@@ -327,12 +327,32 @@ test('published team uses metadata, real tabs and profile-change votes', () => {
   assert.match(html, /Opublikowano: \$\{escHtml\(t\.publishedDate/);
   assert.match(html, /Ostatnia aktywność: \$\{escHtml\(t\.lastActive/);
   assert.match(html, /setTeamProfileTab\('\$\{escAttr\(t\.id\)\}','board'\)\">Tablica/);
-  assert.match(html, />Członkowie<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Rejestr<\/button>/);
+  assert.match(html, />Członkowie<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
   assert.match(html, /teamAcceptedMembers\(t\)\.length>1/);
   assert.match(html, /kind:'team-profile-edit'/);
   assert.match(html, /function rejectTeamDecision\(teamId,decisionId\)/);
   assert.doesNotMatch(html, /Jesteś w zespole<\/span>/);
   assert.doesNotMatch(html, /document\.getElementById\('tp-discussion'\)\?\.scrollIntoView\(\{behavior:'smooth'\}\)/);
+});
+
+test('team rules tab manages governance drafts and voted proposals', () => {
+  assert.match(html, /function renderTeamRulesTab\(t,mine\)/);
+  assert.match(html, /Zasady i ustawienia zespołu/);
+  assert.match(html, /Zmiany wymagają głosowania/);
+  assert.match(html, /Podejmowanie decyzji.*Dołączanie.*Członkostwo.*Zasady opisowe/s);
+  assert.match(html, /Czas bez aktywności/);
+  assert.match(html, /osoba nie liczy się do kworum/);
+  assert.match(html, /function openTeamGovernanceEdit\(teamId,draftId=''/);
+  assert.match(html, /Przygotuj zmianę zasad/);
+  assert.match(html, /function updateTeamGovernanceProposalPreview\(\)/);
+  assert.match(html, /function saveTeamGovernanceDraft\(teamId\)/);
+  assert.match(html, /function submitTeamGovernanceEdit\(teamId\)/);
+  assert.match(html, /teamRuleProposalsHTML\(t,mine\)/);
+  assert.match(html, /function ensureTeamRulesDemo\(t\)/);
+  assert.match(html, /class="team-rule-author" data-person-name=/);
+  assert.match(html, /teamProfileTab='rules';openTeam\(teamId\)/);
+  assert.match(html, /ballots:\{\[MY_NAME\]:'yes'\}/);
+  assert.doesNotMatch(html, /team-rules-table[\s\S]{0,500}Zmień<\/button>/);
 });
 
 test('team voting tab is a searchable master-detail workflow with proposals and discussions', () => {
