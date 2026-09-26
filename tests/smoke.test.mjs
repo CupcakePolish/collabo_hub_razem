@@ -277,6 +277,25 @@ test('project products use their cards and metrics fit without a direction colum
   assert.match(metrics, /<span>Efekt<\/span><span>Miernik<\/span><span>Stan bazowy<\/span><span>Cel<\/span><span>Kiedy mierzymy<\/span>/);
 });
 
+test('idea team tab focuses on individual competencies and people', () => {
+  assert.match(html, /class="idea-team-intro"/);
+  assert.match(html, /class="sc-title">Nasze kompetencje<\/div>/);
+  assert.match(html, /class="idea-participants-card"/);
+  assert.match(html, /class="idea-participant-chat"[^>]*openDiscoverChat\('person:/);
+  assert.match(html, /class="idea-competency-person" data-person=/);
+  assert.match(html, /idea-competency-person:hover:after/);
+  assert.match(html, /const primary=needPrimaryCapability\(r\)[\s\S]*idea-competency-copy"><strong>\$\{escHtml\(primary\.name\)\}/);
+  const joinButton = html.match(/function projectJoinSplitButton\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(joinButton, /openJoinProjectModal\(\$\{ideaId\}\)/);
+  assert.doesNotMatch(joinButton, /ensureIdeaTeams|requestProjectTeamJoin|join-split/);
+  const applications = html.match(/function renderProjectJoinApplications\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(applications, /v\.open&&v\.kind==='project-join'/);
+  assert.doesNotMatch(applications, /project-team-join|teamName|teamMembers/);
+  const teamTab = html.match(/const tabZespol=`([\s\S]*?)`;\n\n  const tabBudzet/)?.[1] || '';
+  assert.match(teamTab, /renderIdeaParticipantsCard|partsBlock/);
+  assert.doesNotMatch(teamTab, /renderAcceptedProjectTeams|Teamy w projekcie/);
+});
+
 test('discover team posts resolve the current team avatar with a fallback', () => {
   assert.match(html, /function discoverPostAvatar\(post,team=null\)/);
   assert.match(html, /safeUserUrl\(team\?\.avatar\|\|post\.avatarImage\|\|'','image'\)/);

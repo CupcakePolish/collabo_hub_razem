@@ -7072,15 +7072,19 @@ function rolePersonWorkHTML(idea,person){
 function roleNeedMetaHTML(r,primary){
   return '';
 }
+function ideaCompetencyPersonButton(name){
+  const member=members.find(row=>row.name===name);
+  const initials=member?.ini||memberInitials(name);
+  if(!member)return `<span class="idea-competency-person" data-person="${escAttr(name)}" aria-label="${escAttr(name)}"><span>${memberAvatarContent(name,initials)}</span></span>`;
+  return `<button type="button" class="idea-competency-person" data-person="${escAttr(name)}" aria-label="Otwórz profil: ${escAttr(name)}" onclick="event.stopPropagation();openMember(${member.id})"><span>${memberAvatarContent(name,initials)}</span></button>`;
+}
 function renderRoleRequirements(idea,ideaId){
   const roles=idea.roleRequirements||[];
-  const buildCard=(r,idx)=>{
+  const buildRow=(r,idx)=>{
     const ok=roleStatus(r);
     const hasRoom=roleHasVacancy(r);
-    const slotReason=roleSlotBlockReason(r);
     const filledPeople=r.filledBy||[];
-    const filled=filledPeople.map(n=>personChip(n)).join('');
-    const max='';
+    const filled=filledPeople.map(ideaCompetencyPersonButton).join('');
     const cands=roleCandidatesFor(idea,idx,r);
     const candHtml=cands.length?`<div class="role-cands"><div class="role-cands-h">Kandydatury (${cands.length})</div>${cands.map(v=>`<div class="cand-row">${personChip(v.person,true)}<span class="dt">zgłoszono ${escHtml(v.date)} · ${v.yes}/${voteThreshold(idea)} za</span><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ głosuj</button></div>`).join('')}</div>`:'';
     // ongoing decisions touching this role: whole-role revoke, or recall of a person in this role
@@ -7106,26 +7110,41 @@ function renderRoleRequirements(idea,ideaId){
     const joinPanel=(idea&&idea.roleJoinIndex===idx&&hasRoom)?`<div class="role-join-panel"><div class="hint">Napisz, które wymagane kompetencje lub możliwości możesz wnieść.</div><textarea id="role-join-why-${ideaId}" placeholder="Jak możesz pomóc w tej potrzebie?"></textarea><div class="role-actions"><button class="vbtn voted-yes" onclick="submitJoinRole(${ideaId},${idx})">Zgłoś się</button><button class="vbtn" onclick="cancelRolePanels(${ideaId})">Anuluj</button></div></div>`:'';
     const invitePanel=(idea&&idea.roleInviteIndex===idx&&hasRoom)?`<div class="invite-panel"><div class="invite-panel-title">Zaproś osobę do tej potrzeby</div><div class="hint">Zaproszenie nie dopisuje osoby automatycznie — wybrana osoba sama zdecyduje, czy je przyjąć.</div>${roleSkillTags(r)||'<div class="hint">Ta potrzeba nie ma jeszcze formalnego poziomu kompetencji.</div>'}${invitePersonPicker('role-invite-person-'+ideaId)}<textarea id="role-invite-why-${ideaId}" placeholder="Dlaczego ta osoba pasuje do tej potrzeby?"></textarea><div class="role-actions"><button class="vbtn voted-yes" onclick="submitInviteRole(${ideaId},${idx})">Wyślij zaproszenie</button><button class="vbtn" onclick="cancelRolePanels(${ideaId})">Anuluj</button></div></div>`:'';
     const revokePanel=(idea&&idea.roleRevokeIndex===idx)?`<div class="prop-object-panel"><div class="hint">Usunięcie roli zmienia strukturę projektu. Jeśli rola jest obsadzona, osoby zostaną z niej zdjęte po przyjęciu wniosku.</div><textarea id="role-revoke-why-${ideaId}" placeholder="Dlaczego ta rola nie jest już potrzebna albo powinna zostać usunięta?"></textarea><div class="role-actions"><button class="vbtn voted-no" onclick="submitRevokeRole(${ideaId},${idx})">Wyślij</button><button class="vbtn" onclick="cancelRevokeRole(${ideaId})">Anuluj</button></div></div>`:'';
-    const editPanel='';
-    const filledRow=filled
-      ? `<div class="role-filled-row"><div class="role-filled-people">${filled}</div>${kebab}</div>`
-      : `<div class="role-mode-row" style="justify-content:flex-end">${kebab}</div>`;
     const acceptedCount=(r.filledBy||[]).length;
     const coverage=`${acceptedCount}/${Math.max(Number(r.min||1),acceptedCount)}`;
     const needState=ok?'ok':(cands.length?'candidate':'missing');
     const statusBadge=`<span class="need-status ${needState}">${coverage}</span>`;
     const primary=needPrimaryCapability(r);
-    return `<div class="role-req need-${needState}"><div class="role-req-top"><div class="role-req-name">${escHtml(primary.name)}${primary.lvl?`<span class="need-cap-level">P${primary.lvl}</span>`:''}</div>${statusBadge}</div>${roleNeedMetaHTML(r,primary)}<div class="role-purpose"><b>Po co tego potrzebujemy</b>${escHtml(r.task||'Ta kompetencja lub możliwość jest potrzebna zespołowi.')}</div>${filledRow}${ongoingHtml}${candHtml}${joinPanel}${invitePanel}${revokePanel}${editPanel}</div>`;
+    const inviteButton=!ok&&hasRoom&&canManageProjectMembers(idea)?`<button type="button" class="idea-competency-invite" onclick="startInviteRole(${ideaId},${idx})">Zaproś</button>`:'';
+    return `<article class="idea-competency-row need-${needState}">
+      <div class="idea-competency-copy"><strong>${escHtml(primary.name)}</strong><p>${escHtml(r.task||'Ta kompetencja jest potrzebna do rozwijania pomysłu.')}</p></div>
+      <div class="idea-competency-actions">${statusBadge}<div class="idea-competency-people">${filled}</div>${inviteButton}${kebab}</div>
+      <div class="idea-competency-details">${ongoingHtml}${candHtml}${joinPanel}${invitePanel}${revokePanel}</div>
+    </article>`;
   };
-  const needCards=roles.map((r,idx)=>`<div class="need-card-wrap" style="--need-order:${idx}">${buildCard(r,idx)}</div>`);
-  const needsSec=needCards.length?`<div class="need-cards-grid"><div class="need-cards-column">${needCards.filter((_,index)=>index%2===0).join('')}</div><div class="need-cards-column">${needCards.filter((_,index)=>index%2===1).join('')}</div></div>`:'<div style="font-size:13px;color:var(--txf);margin-bottom:8px">Zespół nie dodał jeszcze żadnych potrzeb.</div>';
+  const needsSec=roles.length?`<div class="idea-competency-list">${roles.map(buildRow).join('')}</div>`:'<div class="idea-competency-empty">Nie dodano jeszcze kompetencji potrzebnych przy tym pomyśle.</div>';
   const pendingInvites=ensurePendingInviteIds(idea);
   const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dla mnie”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dla mnie”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
   return needsSec + invitesSec;
 }
 
 function renderTeamAddActions(ideaId){
-  return `<div class="team-add-actions"><button class="prop-btn" onclick="startRoleForm(${ideaId})">+ Dodaj potrzebę zespołu</button></div>`;
+  return `<div class="team-add-actions"><button class="prop-btn" onclick="startRoleForm(${ideaId})">+ Dodaj kompetencję</button></div>`;
+}
+function renderIdeaParticipantsCard(idea,ideaId){
+  const active=ensureProjectMembers(idea).filter(row=>row.status==='active');
+  const rows=active.map(row=>{
+    const member=members.find(person=>person.name===row.name);
+    const skills=Array.from(new Set((idea.roleRequirements||[]).filter(role=>(role.filledBy||[]).includes(row.name)).map(role=>needPrimaryCapability(role).name)));
+    const profileAction=member?`onclick="openMember(${member.id})"`:'';
+    const chat=member&&row.name!==MY_NAME?`<button type="button" class="idea-participant-chat" aria-label="Napisz do ${escAttr(row.name)}" title="Rozpocznij czat" onclick="event.stopPropagation();openDiscoverChat('person:${member.id}')">${chatPersonActionIcon('message')}</button>`:'';
+    return `<article class="idea-participant-row"><button type="button" class="idea-participant-avatar" ${profileAction} aria-label="Otwórz profil: ${escAttr(row.name)}">${memberAvatarContent(row.name,member?.ini||memberInitials(row.name))}</button><div class="idea-participant-main"><button type="button" class="idea-participant-name" ${profileAction}>${escHtml(row.name)}</button><div class="idea-participant-skills">${skills.map(skill=>`<span>${escHtml(skill)}</span>`).join('')||'<span>uczestnik pomysłu</span>'}</div></div>${chat}</article>`;
+  }).join('');
+  return `<aside class="idea-participants-card"><div class="idea-participants-head"><div><h3>Uczestnicy tego pomysłu</h3><p>Osoby, które wnoszą swój czas i kompetencje.</p></div><span>${active.length}</span></div><div class="idea-participants-list">${rows||'<div class="idea-competency-empty">Nikt jeszcze nie dołączył.</div>'}</div>${renderProjectInviteAction(ideaId)}</aside>`;
+}
+function renderIdeaContributionIntro(idea,ideaId){
+  const action=isActiveProjectMember(idea)?'':`<button type="button" onclick="openJoinProjectModal(${ideaId})">Zgłoś swój wkład</button>`;
+  return `<section class="idea-team-intro"><div><h2>Wnieś swoje kompetencje</h2><p>Zobacz, czego potrzeba przy tym pomyśle, i zgłoś, w czym możesz pomóc jako osoba.</p></div>${action}</section>`;
 }
 function renderProjectInviteAction(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);
@@ -7891,7 +7910,7 @@ function renderSectionNeeded(idea,id,tab){
   const openVotes=(idea.votes||[]).filter(v=>v.open).length;
   const unassigned=(idea.tasks||[]).filter(t=>!t.assignedTo&&t.status!=='zrobione').length;
   const docsUntitled=(idea.docs||[]).filter(d=>!d.title||/^dokument/i.test(d.title)).length;
-  const map={przeglad:`<b>W tej sekcji:</b> opis, cel, etap i skrót rejestru. Pełny rejestr jest osobną stroną z filtrem i wyszukiwarką.`,zespol:`<b>W tej sekcji:</b> potrzeby zespołu, kandydatury głosowane przez zespół, zaproszenia oraz zasoby projektu.`,zadania:`<b>W zadaniach:</b> ${unassigned} ${plural(unassigned,['zadanie bez osoby','zadania bez osoby','zadań bez osoby'])}. Zadanie można przyjąć, wstrzymać, oddać z powodem albo zakwestionować. Zrobione zadania pokazują wynik pracy i zbierają oceny zespołu.`,spotkania:`<b>W spotkaniach:</b> terminy od–do, linki, agendy, przypięcia na Przeglądzie oraz sprawozdania po spotkaniu.`,dokumenty:`<b>W bibliotece:</b> ${docsUntitled} ${plural(docsUntitled,['dokument wymaga','dokumenty wymagają','dokumentów wymaga'])} lepszego tytułu lub opisu. Możesz rozpocząć wspólny dokument w edytorze albo dołączyć gotowy plik; oba typy mają komentarze i reakcje.`,glosowania:`<b>W decyzjach:</b> ${openVotes} ${plural(openVotes,['otwarte głosowanie','otwarte głosowania','otwartych głosowań'])}, ${pending} ${plural(pending,['sprawa robocza','sprawy robocze','spraw roboczych'])} w trybie 48 h. Pamiętaj: komentarz to nie głos, a głos wymaga powodu.`,dyskusja:`<b>W dyskusji:</b> komentarze działają jak w Mattermoście: reakcje, odpowiedzi w wątkach i zwijane reply.`,ustawienia:`<b>W ustawieniach:</b> tryby pracy projektu, progi decyzji, kworum, nieaktywność i automatyczny powrót z trybu czasowego.`};
+  const map={przeglad:`<b>W tej sekcji:</b> opis, cel, etap i skrót rejestru. Pełny rejestr jest osobną stroną z filtrem i wyszukiwarką.`,zespol:`<b>W tej sekcji:</b> kompetencje potrzebne przy pomyśle, uczestnicy oraz zgłoszenia pojedynczych osób.`,zadania:`<b>W zadaniach:</b> ${unassigned} ${plural(unassigned,['zadanie bez osoby','zadania bez osoby','zadań bez osoby'])}. Zadanie można przyjąć, wstrzymać, oddać z powodem albo zakwestionować. Zrobione zadania pokazują wynik pracy i zbierają oceny zespołu.`,spotkania:`<b>W spotkaniach:</b> terminy od–do, linki, agendy, przypięcia na Przeglądzie oraz sprawozdania po spotkaniu.`,dokumenty:`<b>W bibliotece:</b> ${docsUntitled} ${plural(docsUntitled,['dokument wymaga','dokumenty wymagają','dokumentów wymaga'])} lepszego tytułu lub opisu. Możesz rozpocząć wspólny dokument w edytorze albo dołączyć gotowy plik; oba typy mają komentarze i reakcje.`,glosowania:`<b>W decyzjach:</b> ${openVotes} ${plural(openVotes,['otwarte głosowanie','otwarte głosowania','otwartych głosowań'])}, ${pending} ${plural(pending,['sprawa robocza','sprawy robocze','spraw roboczych'])} w trybie 48 h. Pamiętaj: komentarz to nie głos, a głos wymaga powodu.`,dyskusja:`<b>W dyskusji:</b> komentarze działają jak w Mattermoście: reakcje, odpowiedzi w wątkach i zwijane reply.`,ustawienia:`<b>W ustawieniach:</b> tryby pracy projektu, progi decyzji, kworum, nieaktywność i automatyczny powrót z trybu czasowego.`};
   return `<div class="section-needed">${map[tab]||''}</div>`;
 }
 
@@ -8177,26 +8196,18 @@ function openIdea(id,preserveScroll=false,opts={}){
   const tabRejestr=renderProjectRegisterTab(idea,id);
   const tabSpotkania=renderProjectMeetingsTab(idea,id);
 
-  const partsBlock=`
-    <div class="sc participants-overview-card" style="margin-bottom:14px" role="button" tabindex="0" aria-label="Otwórz zarządzanie uczestnikami" onclick="if(!event.target.closest('button,input,textarea,select,a'))openPartManager(${id})" onkeydown="if((event.key==='Enter'||event.key===' ')&&!event.target.closest('button,input,textarea,select,a')){event.preventDefault();openPartManager(${id})}">
-      <div class="participants-head"><div class="sc-title">Uczestnicy projektu (${parts.length})</div><div class="participants-tools">${renderProjectInviteAction(id)}</div></div>
-      ${ensureProjectMembers(idea).filter(m=>m.status==='active').map(m=>{
-        const removed=false;
-        const last=dmyDate(lastProjectActivityOf(idea,m.name));
-        return renderPartRow(id,m,removed,last);
-      }).join('')}
-      ${idea.leaveConfirm?`<div class="inline-decision-panel"><h4>Opuścić projekt?</h4><p>Twoje niezakończone zadania wrócą do puli, a role obsadzone przez Ciebie otworzą się ponownie. Odejście jest wolne, ale zostaje w rejestrze.</p><div class="role-actions"><button class="vbtn voted-no" onclick="confirmLeaveProject(${id})">Tak, opuść projekt</button><button class="vbtn" onclick="cancelLeaveProject(${id})">Anuluj</button></div></div>`:''}
-      ${renderRecallPanel(id)}
-    </div>`;
+  const partsBlock=renderIdeaParticipantsCard(idea,id);
   const tabZespol=`
-    <div class="sc team-needs-card" style="margin-bottom:14px">
-      <div class="team-needs-head"><div><div class="sc-title" style="margin-bottom:4px">Potrzeby zespołu</div><div class="hint">Kompetencje, doświadczenie i możliwości potrzebne do realizacji projektu.</div></div><div class="team-needs-tools">${(()=>{const c=teamNeedCounts(idea);return `<div class="team-needs-summary"><span class="need-summary-chip ok" title="Zapewnione">${c.ok}</span><span class="need-summary-chip candidate" title="Jest kandydatura">${c.candidate}</span><span class="need-summary-chip missing" title="Bez kandydatury">${c.missing}</span></div>`;})()}${renderTeamAddActions(id)}</div></div>
-      ${renderRoleRequirements(idea,id)}
+    ${renderIdeaContributionIntro(idea,id)}
+    <div class="idea-team-layout">
+      <main class="sc team-needs-card idea-competencies-card">
+        <div class="team-needs-head"><div><div class="sc-title">Nasze kompetencje</div><div class="hint">Kompetencje potrzebne do rozwijania tego pomysłu oraz osoby, które już je wnoszą.</div></div><div class="team-needs-tools">${renderTeamAddActions(id)}</div></div>
+        ${renderRoleRequirements(idea,id)}
+      </main>
+      ${partsBlock}
     </div>
-    ${partsBlock}
     ${renderPendingRejoinInvites(idea,id)}
-    ${renderProjectJoinApplications(idea,id)}
-    ${renderAcceptedProjectTeams(idea)}`;
+    ${renderProjectJoinApplications(idea,id)}`;
 
   const tabBudzet=`${renderResources(idea,id)}`;
 
@@ -13017,7 +13028,7 @@ function openTeam(teamId,opts={}){
   if(!opts.fromRoute)setAppHash(teamHash(teamId),location.hash===teamHash(teamId));
   if(String(teamProfileTabTeamId)!==String(teamId)){teamProfileTabTeamId=teamId;teamProfileTab='board';}
   const people=teamAcceptedMembers(t),mine=people.includes(MY_NAME),pending=(t.pendingMembers||[]).includes(MY_NAME);
-  const projects=teamProjects(t),skills=teamSkills(t),baseWanted=teamWantedSkills(t),g=teamGovernance(t);
+  const projects=teamProjects(t),skills=teamSkills(t),baseWanted=teamWantedSkills(t),g=teamGovernance(t),options='';
   const action=(fn,...args)=>teamAction(`${fn}(${args.map(a=>JSON.stringify(a)).join(',')})`);
   const editing=!!(mine&&String(teamProfileEditId)===String(t.id)),editModel=editing?(teamProfileEditDrafts[t.id]||teamProfileSnapshot(t)):teamProfileSnapshot(t),wanted=editing?editModel.wantedSkills:baseWanted;
   if(editing)teamProfileEditDrafts[t.id]=editModel;
@@ -13034,7 +13045,6 @@ function openTeam(teamId,opts={}){
   // Preserve existing workflows, but keep member actions out of the visitor view.
   if(!mine){announcements=announcements.replace(/<div class="role-actions"[\s\S]*$/,'');rules=rules.replace(/<div class="role-actions">[\s\S]*$/,'</div>');}
   const discussion=[...(t.discussion||[])].reverse().map(m=>`<article class="tp-post"><div class="tp-post-avatar">${IC.chat}</div><div><div class="tp-post-by"><strong>${escHtml(m.by)}</strong><time>${escHtml(m.date||'')}</time></div><p>${escHtml(m.text)}</p></div></article>`).join('');
-  const options=ideas.filter(i=>!(t.projectIds||[]).includes(i.id)&&!(i.votes||[]).some(v=>v.open&&v.kind==='project-team-join'&&v.teamId===t.id)).map(i=>`<option value="${escAttr(i.id)}">${escHtml(i.title)}</option>`).join('');
   const draftEditor='';
   const membershipAction=!mine?(pending?`<button class="tp-button" onclick="${action('confirmWithdrawGlobalTeamRequest',t.id)}">Wycofaj zgłoszenie</button>`:`<button class="tp-button primary" onclick="${action('openGlobalTeamJoinRequest',t.id)}">Dołącz do zespołu</button>`):'';
   const composer=mine?`<form class="tp-composer" onsubmit="event.preventDefault();${action('addGlobalTeamPost',t.id)}"><label for="team-profile-post-${escAttr(t.id)}">Napisz aktualizację zespołu</label><textarea id="team-profile-post-${escAttr(t.id)}" rows="3" maxlength="5000" placeholder="Podziel się postępem lub zadaj pytanie…" required></textarea><button class="tp-button primary" type="submit">Opublikuj aktualizację</button></form>`:`<p class="tp-empty">${pending?'Po zaakceptowaniu zgłoszenia dołączysz do dyskusji.':'Dołącz do zespołu, aby publikować aktualizacje.'}</p>`;
@@ -13157,9 +13167,9 @@ function submitTeamToProject(ideaId,teamId){
   notifyVote(idea);openIdea(ideaId,true);
 }
 function renderProjectJoinApplications(idea,ideaId){
-  const rows=(idea.votes||[]).filter(v=>v.open&&(v.kind==='project-join'||v.kind==='project-team-join'));
+  const rows=(idea.votes||[]).filter(v=>v.open&&v.kind==='project-join');
   if(!rows.length)return '';
-  return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Kandydatury do zespołu (${rows.length})</div>${rows.map(v=>v.kind==='project-team-join'?`<div class="invite-row"><div class="invite-info"><b>${escHtml(v.teamName)}</b><div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Team chce dołączyć do projektu.')}<br><span class="dt">Członkowie: ${escHtml((v.teamMembers||[]).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`:`<div class="invite-row"><div class="invite-info">${personChip(v.person,true)}<div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Chcę dołączyć do projektu.')}<br><span class="dt">Kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`).join('')}</div>`;
+  return `<div class="sc" style="margin-bottom:14px"><div class="sc-title" style="margin-bottom:10px">Zgłoszenia osób (${rows.length})</div>${rows.map(v=>`<div class="invite-row"><div class="invite-info">${personChip(v.person,true)}<div class="invite-meta">${escHtml(v.reasons?.[0]?.text||'Chcę dołączyć do projektu.')}<br><span class="dt">Kompetencje: ${escHtml((v.joinSkills||[]).map(s=>s.name+' P'+s.lvl).join(', '))}</span></div></div><button type="button" class="tiny-action go" onclick="openVote(${ideaId},'${v.id}')">→ decyzja</button></div>`).join('')}</div>`;
 }
 function acceptedProjectTeams(idea){return ensureIdeaTeams(idea).filter(team=>(team.projectIds||[]).includes(idea.id));}
 function renderAcceptedProjectTeams(idea){
@@ -13299,16 +13309,16 @@ function selectNeedLevel(ideaId,value,event){event?.stopPropagation();const pick
 function startRoleForm(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
   actionModal({
-    sideTitle:'Dodaj potrzebę zespołu',
+    sideTitle:'Dodaj kompetencję',
     sideText:'Wybierz jedną konkretną kompetencję ze wspólnego katalogu Platformy.',
     steps:['Kompetencja','Znaczenie dla projektu'],
-    title:'Nowa potrzeba zespołu',
-    intro:'Każda kompetencja jest osobną potrzebą zespołu.',
+    title:'Nowa kompetencja',
+    intro:'Wybierz konkretną kompetencję potrzebną przy tym pomyśle.',
     body:`<div class="modal-form-grid">
         <input type="hidden" id="role-name-${ideaId}"><input type="hidden" id="role-skill-${ideaId}">
         <div class="need-picker-block"><div class="need-picker-label">Wybierz kompetencję</div><input class="need-cap-search" id="need-cap-search-${ideaId}" placeholder="Szukaj kompetencji…" oninput="filterNeedCapabilityTiles(${ideaId})"><div id="need-cap-options-${ideaId}" class="need-flat-list">${needCapabilityTiles(ideaId)}</div><div class="need-level-wrap" id="need-level-wrap-${ideaId}"></div></div>
         <label>Po co tego potrzebujemy<textarea id="role-task-${ideaId}" placeholder="np. Do przygotowania i weryfikacji projektu ustawy"></textarea></label>
-        <div class="role-actions"><button class="vbtn voted-yes" onclick="submitProposeRole(${ideaId})">${isPrivateIdeaDraft(idea)?'Dodaj potrzebę':'Wyślij propozycję potrzeby'}</button><button class="vbtn" onclick="closeAppModal()">Anuluj</button></div>
+        <div class="role-actions"><button class="vbtn voted-yes" onclick="submitProposeRole(${ideaId})">${isPrivateIdeaDraft(idea)?'Dodaj kompetencję':'Wyślij propozycję'}</button><button class="vbtn" onclick="closeAppModal()">Anuluj</button></div>
       </div>`
   });
 }
@@ -13326,19 +13336,19 @@ function submitProposeRole(ideaId,confirmed=false){
   const skills=skill?[{name:skill,lvl}]:[];
   if(!skill){toast('Wybierz jedną kompetencję.','warn');return;}
   if(!requireNeedExplanation(task,'role-task-'+ideaId,'Napisz, po co ta kompetencja jest potrzebna projektowi.'))return;
-  if((idea.roleRequirements||[]).some(r=>(r.skills||[]).some(s=>s.name===skill))){toast('Ta kompetencja jest już dodana do potrzeb zespołu.','warn');return;}
+  if((idea.roleRequirements||[]).some(r=>(r.skills||[]).some(s=>s.name===skill))){toast('Ta kompetencja jest już dodana do pomysłu.','warn');return;}
   if(!isPrivateIdeaDraft(idea)&&!confirmed){showTeamNeedVoteConfirmation(ideaId,skill);return;}
   const roleData={role,task,min:min||1,max:maxRaw?Number(maxRaw):'',exclusive,skills,filledBy:[],status:'open'};
   if(isPrivateIdeaDraft(idea)){idea.roleRequirements=idea.roleRequirements||[];idea.roleRequirements.push(roleData);idea.skillsNeeded=idea.skillsNeeded||[];idea.skillsNeeded.push({skill,why:task,minLvl:lvl||1,filled:false,date:TODAY});touchPrivateIdeaDraft(idea);closeAppModal();toast('Potrzeba została dodana do szkicu.','ok');openIdea(ideaId,true);return;}
   const vId='v'+Date.now();
-  const roleKind='potrzebę zespołu';
+  const roleKind='kompetencję';
   idea.votes.push({id:vId,kind:'role',roleData,prop:`Dodać ${roleKind}: ${role}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:task,date:TODAY,supporters:[],debunks:[]}]});
   idea.log.push({text:`${MY_NAME} zaproponował/a nową ${roleKind}: ${role}`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:'<b>Uzasadnienie:</b> „'+escHtml(task)+'"'});
   idea.roleForm=false;notifyVote(idea);maybeNotify(idea,'Nowa potrzeba do decyzji: '+role);closeAppModal();openIdea(ideaId,true);
 }
 function showTeamNeedVoteConfirmation(ideaId,skill){
   const shell=document.querySelector('#app-modal .form-action-modal');if(!shell||shell.querySelector('.need-vote-confirm-layer'))return;
-  shell.insertAdjacentHTML('beforeend',`<div class="need-vote-confirm-layer" role="alertdialog" aria-modal="true" aria-labelledby="need-vote-confirm-title"><section class="need-vote-confirm-card"><h4 id="need-vote-confirm-title">Rozpocząć głosowanie?</h4><p>Dodanie kompetencji „${escHtml(skill)}” do potrzeb zespołu wymaga decyzji uczestników projektu. Po potwierdzeniu utworzymy nowe głosowanie.</p><div class="need-vote-confirm-actions"><button type="button" onclick="dismissTeamNeedVoteConfirmation()">Wróć do formularza</button><button type="button" class="primary" onclick="submitProposeRole(${ideaId},true)">Rozpocznij głosowanie</button></div></section></div>`);
+  shell.insertAdjacentHTML('beforeend',`<div class="need-vote-confirm-layer" role="alertdialog" aria-modal="true" aria-labelledby="need-vote-confirm-title"><section class="need-vote-confirm-card"><h4 id="need-vote-confirm-title">Rozpocząć głosowanie?</h4><p>Dodanie kompetencji „${escHtml(skill)}” wymaga decyzji uczestników projektu. Po potwierdzeniu utworzymy nowe głosowanie.</p><div class="need-vote-confirm-actions"><button type="button" onclick="dismissTeamNeedVoteConfirmation()">Wróć do formularza</button><button type="button" class="primary" onclick="submitProposeRole(${ideaId},true)">Rozpocznij głosowanie</button></div></section></div>`);
 }
 function dismissTeamNeedVoteConfirmation(){document.querySelector('.need-vote-confirm-layer')?.remove();}
 
@@ -16734,9 +16744,7 @@ function submitProjectModeEdit(ideaId,modeId){
   closeAppModal();notifyVote(idea);toast('Zmiana trybu trafiła pod głosowanie.','ok');openIdea(ideaId,true);
 }
 function projectJoinSplitButton(idea,ideaId){
-  const teams=ensureIdeaTeams(idea).filter(t=>teamAcceptedMembers(t).length);
-  const rows=teams.map(t=>`<button type="button" onclick="requestProjectTeamJoin(${ideaId},'${escAttr(t.id)}')"><b>${escHtml(t.name)}</b><small>${teamAcceptedMembers(t).length} osób · najpierw głosowanie teamu, potem akceptacja projektu</small></button>`).join('');
-  return `<span class="join-split" id="join-split-${ideaId}"><button type="button" class="hero-btn join-project" onclick="openJoinProjectModal(${ideaId})">Dołącz do projektu</button><button type="button" class="join-split-toggle" title="Dołącz jako team" onclick="toggleJoinMenu(${ideaId})">⌄</button><span class="join-menu">${rows||'<button type="button" disabled><b>Brak gotowego teamu</b><small>Najpierw utwórz lub dołącz do teamu w zakładce Zespół.</small></button>'}</span></span>`;
+  return `<button type="button" class="hero-btn join-project" onclick="openJoinProjectModal(${ideaId})">Dołącz do projektu</button>`;
 }
 function toggleJoinMenu(ideaId){document.querySelectorAll('.join-split.open').forEach(x=>{if(x.id!=='join-split-'+ideaId)x.classList.remove('open');});document.getElementById('join-split-'+ideaId)?.classList.toggle('open');}
 function requestProjectTeamJoin(ideaId,teamId){
@@ -18944,6 +18952,15 @@ body>nav.global-nav{height:var(--global-nav-height)!important;min-height:var(--g
   #s-ideas .ideas-filter-sidebar{top:0;height:100vh;max-height:none}
 }
 @media(max-width:520px){.global-nav .global-search-shortcut{display:none!important}.global-nav .bell-pill{display:none!important}}
+
+/* Idea team tab: people and competencies only. */
+.idea-team-intro{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-bottom:16px;padding:23px 26px;border:1px solid var(--bdr);border-radius:16px;background:linear-gradient(135deg,var(--surf),var(--p050));box-shadow:0 5px 18px rgba(38,25,70,.04)}
+.idea-team-intro h2{margin:0;color:var(--txt);font-size:20px;line-height:1.25}.idea-team-intro p{margin:6px 0 0;color:var(--txs);font-size:13px;line-height:1.55}.idea-team-intro>button{min-height:43px;flex:0 0 auto;padding:0 18px;border:1px solid var(--p700);border-radius:11px;background:var(--p700);color:#fff;font:750 13px 'DM Sans',sans-serif;cursor:pointer}.idea-team-intro>button:hover{background:var(--p800)}
+.idea-team-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;align-items:start;gap:16px;margin-bottom:16px}.idea-competencies-card{min-width:0;margin:0!important;padding:0!important;overflow:visible!important}.idea-competencies-card .team-needs-head{align-items:center;margin:0;padding:20px 22px;border-bottom:1px solid var(--bdr)}.idea-competencies-card .team-needs-head .sc-title{margin:0 0 5px;font-size:19px}.idea-competencies-card .team-needs-head .hint{font-size:12.5px;line-height:1.5}.idea-competency-list{display:grid}.idea-competency-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;min-width:0;padding:16px 18px;border-bottom:1px solid var(--bdr);background:var(--surf)}.idea-competency-row:last-child{border-bottom:0;border-radius:0 0 16px 16px}.idea-competency-row:hover{background:var(--p050)}.idea-competency-copy{min-width:0}.idea-competency-copy strong{display:block;color:var(--txt);font-size:14px;line-height:1.35}.idea-competency-copy p{margin:5px 0 0;color:var(--txs);font-size:12.5px;line-height:1.5}.idea-competency-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;min-width:max-content}.idea-competency-actions .need-status{min-width:47px;text-align:center}.idea-competency-actions .kwrap{z-index:30}.idea-competency-actions .kebab{margin:0}.idea-competency-people{display:flex;align-items:center;gap:5px;min-width:0}.idea-competency-person{position:relative;display:grid;place-items:center;width:38px;height:38px;padding:0;border:2px solid var(--surf);border-radius:50%;background:var(--p100);color:var(--p700);font:750 12px 'DM Sans',sans-serif;box-shadow:0 0 0 1px var(--bdr);cursor:default}.idea-competency-person:is(button){cursor:pointer}.idea-competency-person>span{display:grid;place-items:center;width:100%;height:100%;overflow:hidden;border-radius:50%}.idea-competency-person img{position:static!important;width:100%!important;height:100%!important;object-fit:cover}.idea-competency-person:after{content:attr(data-person);position:absolute;z-index:80;left:50%;bottom:calc(100% + 9px);width:max-content;max-width:190px;padding:7px 9px;border-radius:8px;background:#241936;color:#fff;font:650 11px/1.25 'DM Sans',sans-serif;box-shadow:0 8px 24px rgba(25,18,39,.2);opacity:0;pointer-events:none;transform:translate(-50%,4px);transition:opacity .14s,transform .14s}.idea-competency-person:hover:after,.idea-competency-person:focus-visible:after{opacity:1;transform:translate(-50%,0)}.idea-competency-invite{height:35px;padding:0 12px;border:1px solid var(--p300);border-radius:9px;background:var(--surf);color:var(--p700);font:700 11.5px 'DM Sans',sans-serif;cursor:pointer}.idea-competency-invite:hover{background:var(--p100)}.idea-competency-details{grid-column:1/-1}.idea-competency-details:empty{display:none}.idea-competency-details .role-cands,.idea-competency-details .role-join-panel,.idea-competency-details .invite-panel,.idea-competency-details .prop-object-panel,.idea-competency-details .role-ongoing{margin-top:12px}.idea-competency-empty{padding:28px;color:var(--txs);font-size:13px;text-align:center}
+.idea-participants-card{padding:20px;border:1px solid var(--bdr);border-radius:16px;background:var(--surf);box-shadow:0 5px 18px rgba(38,25,70,.04)}.idea-participants-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}.idea-participants-head h3{margin:0;color:var(--txt);font-size:16px}.idea-participants-head p{margin:5px 0 0;color:var(--txs);font-size:11.5px;line-height:1.45}.idea-participants-head>span{display:grid;place-items:center;min-width:25px;height:25px;padding:0 7px;border-radius:999px;background:var(--p100);color:var(--p700);font-size:12px;font-weight:800}.idea-participants-list{display:grid}.idea-participant-row{display:grid;grid-template-columns:42px minmax(0,1fr) 34px;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}.idea-participant-row:last-child{border-bottom:0}.idea-participant-avatar{display:grid;place-items:center;width:42px;height:42px;padding:0;overflow:hidden;border:0;border-radius:50%;background:var(--p100);color:var(--p700);font:750 12px 'DM Sans',sans-serif;cursor:pointer}.idea-participant-avatar img{position:static!important;width:100%!important;height:100%!important;object-fit:cover}.idea-participant-main{min-width:0}.idea-participant-name{display:block;width:100%;overflow:hidden;padding:0;border:0;background:transparent;color:var(--txt);font:750 12.5px 'DM Sans',sans-serif;text-align:left;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.idea-participant-name:hover{color:var(--p700)}.idea-participant-skills{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.idea-participant-skills span{max-width:100%;overflow:hidden;padding:3px 7px;border-radius:999px;background:var(--p100);color:var(--p700);font-size:10px;text-overflow:ellipsis;white-space:nowrap}.idea-participant-chat{display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid var(--bdr);border-radius:9px;background:var(--surf);color:var(--p700);cursor:pointer}.idea-participant-chat:hover{border-color:var(--p300);background:var(--p100)}.idea-participant-chat svg{width:17px;height:17px}.idea-participants-card>.team-add-actions,.idea-participants-card>.prop-btn{margin-top:15px}.idea-participants-card>.prop-btn{width:100%;min-height:38px;margin-bottom:0}
+html.theme-dark .idea-team-intro,html.theme-dark .idea-competency-row,html.theme-dark .idea-participants-card,html.theme-dark .idea-competency-invite,html.theme-dark .idea-participant-chat{background:var(--surf);border-color:var(--bdr)}
+@media(max-width:980px){.idea-team-layout{grid-template-columns:1fr}.idea-participants-card{order:2}.idea-participant-row{grid-template-columns:42px minmax(0,1fr) 34px}.idea-participants-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px}.idea-participant-row:nth-last-child(-n+2){border-bottom:0}}
+@media(max-width:680px){.idea-team-intro{align-items:flex-start;flex-direction:column;padding:20px}.idea-team-intro>button{width:100%}.idea-competencies-card .team-needs-head{align-items:flex-start;flex-direction:column}.idea-competencies-card .team-needs-tools,.idea-competencies-card .team-add-actions,.idea-competencies-card .prop-btn{width:100%}.idea-competency-row{grid-template-columns:1fr;gap:12px}.idea-competency-actions{justify-content:flex-start;min-width:0;flex-wrap:wrap}.idea-participants-list{grid-template-columns:1fr}.idea-participant-row:nth-last-child(2){border-bottom:1px solid var(--bdr)}}
 </style>
 </body>
 </html>
