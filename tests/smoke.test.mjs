@@ -46,7 +46,7 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /class="discover-composer-prompt"[^>]*onclick="openDiscoverComposerModal\(\)"/);
   assert.doesNotMatch(html, /id="discover-search-input"/);
   assert.doesNotMatch(html, /id="discover-results-summary"/);
-  assert.match(html, /function openDiscoverComposerModal\(\)[\s\S]*class="tbp-composer[^"]*"/);
+  assert.match(html, /function openDiscoverComposerModal\(options=\{\}\)[\s\S]*class="tbp-composer[^"]*"/);
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
@@ -95,12 +95,14 @@ test('discover board filters and sorts community posts', () => {
   assert.match(html, /\['appreciated','commented'\]\.includes\(discoverSort\)/);
   assert.match(html, /function discoverPostTime\(post,index=0,referenceNow=Date\.now\(\)\)/);
   assert.match(html, /function discoverPostClock\(post,index=0,referenceNow=Date\.now\(\)\)/);
-  assert.ok(html.indexOf('const raw=post.createdAt') < html.indexOf("const explicit=String(post.time||'')"));
+  assert.match(html, /function discoverPostTimestamp\(post\)/);
+  assert.ok(html.indexOf('const exact=discoverPostTimestamp(post)') < html.indexOf("if(value.includes('dzisiaj'))"));
   assert.match(html, /if\(value\.includes\('dzisiaj'\)\)return dayStart\+timeOfDay-index/);
-  assert.ok(html.indexOf("if(value.includes('dzisiaj'))") < html.indexOf('const rawCreatedAt=post.createdAt'));
   assert.match(html, /discoverPosts\.map\(\(post,index\)=>\(\{post,index,time:discoverPostTime\(post,index,referenceNow\)\}\)\)/);
   assert.match(html, /return rows\.map\(row=>row\.post\)/);
-  assert.match(html, /date:'Dzisiaj',time:NOW_TIME\(\),createdAt/);
+  assert.match(html, /function discoverPostDateLabel\(post,index=0,referenceNow=Date\.now\(\)\)/);
+  assert.match(html, /createdAt=new Date\(\)\.toISOString\(\)/);
+  assert.match(html, /discoverPostAuthorButton\(post,avatar\)[\s\S]*discoverPostDateLabel\(post\)/);
   assert.doesNotMatch(html, /post\.sourceType==='team'\?'Zespół':'Osoba'/);
   assert.match(html, /function openDiscoverAuthor\(id\)/);
   assert.match(html, /function toggleDiscoverFilterSection\(button\)/);
@@ -189,9 +191,27 @@ test('discover composer chooses between the member and their published teams', (
   assert.match(html, /<input type="hidden" id="discover-composer-source" value="profile">/);
   assert.doesNotMatch(html, /id="discover-composer-source-id"/);
   assert.doesNotMatch(html, /<h3>Nowy wpis<\/h3>/);
-  assert.match(html, /\.discover-composer-identity,\.discover-modal-public\{width:158px;min-height:36px\}/);
+  assert.match(html, /\.discover-composer-identity\{width:158px;min-height:36px\}/);
   assert.match(html, /\.discover-composer-head\{position:absolute;[^}]*top:16px;right:18px;padding:0\}/);
   assert.match(html, /\.discover-composer-shell\{position:relative;min-height:520px\}/);
+});
+
+test('idea sharing uses the post composer with destination choices and a prefilled mention', () => {
+  assert.match(html, /function shareIdeaOnMyBoard\(ideaId\)[\s\S]*openDiscoverComposerModal\(\{ideaId\}\)/);
+  assert.match(html, /ideaMention=idea\?`@\[\$\{[^`]+\}\]\(#idea\/\$\{idea\.id\}\)`:''/);
+  assert.match(html, /id="discover-composer-audience-picker"/);
+  assert.match(html, /data-audience="public"[\s\S]*Publiczne/);
+  assert.match(html, /data-audience="team"[\s\S]*Wewnątrz zespołu/);
+  assert.match(html, /data-audience="profile"[\s\S]*Tylko na swoim profilu/);
+  assert.match(html, /if\(audience==='team'\)/);
+  assert.match(html, /if\(audience==='profile'\)/);
+});
+
+test('project header metadata is uniform and aligned with the top of its photo', () => {
+  assert.match(html, /#s-idea \.idea-title-meta button\{[^}]*font:inherit/);
+  assert.match(html, /#s-idea \.idea-title-meta,#s-idea \.idea-title-meta button\{font-size:12px;line-height:1\.45\}/);
+  assert.match(html, /#s-idea \.idea-title-meta \.idea-meta-status\{[^}]*color:#6b52a4/);
+  assert.match(html, /#s-idea \.ph-idea\{display:flex;align-items:flex-start;gap:24px\}/);
 });
 
 test('discover team posts resolve the current team avatar with a fallback', () => {
