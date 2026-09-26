@@ -343,7 +343,15 @@ test('team voting tab is a searchable master-detail workflow with proposals and 
   assert.match(html, /function openTeamVoteProposal\(teamId\)/);
   assert.match(html, /function submitTeamVoteProposal\(teamId\)/);
   assert.match(html, /function openTeamVoteDiscussion\(teamId,decisionId\)/);
-  assert.match(html, /function addTeamVoteComment\(teamId,decisionId\)/);
+  assert.match(html, /class="team-vote-discussion-trigger"/);
+  assert.match(html, /function teamVoteDiscussionUnread\(t,d\)/);
+  assert.match(html, /collabohub-team-vote-chat-v1:/);
+  assert.match(html, /function renderTeamVoteDiscussionChat\(\)/);
+  assert.match(html, /setupDiscoverComposer\(host,c,teamVoteDiscussionUI\);enhanceChatControls\(host,c,teamVoteDiscussionUI\);finishChatConversation\(host,c,teamVoteDiscussionUI\)/);
+  assert.match(html, /function minimizeTeamVoteDiscussion\(\)/);
+  assert.match(html, /team-vote-author-yes/);
+  assert.match(html, /d\.ballots\[MY_NAME\]=choice/);
+  assert.match(html, /if\(c\.type!==['"]team-vote['"]&&themeGrid\)/);
   assert.match(html, /class="team-vote-simulator"/);
   assert.match(html, /function simulateTeamVoteResult\(teamId,decisionId,scenario\)/);
   assert.match(html, /\['consensus','objection','deadline'\]\.includes\(scenario\)/);
