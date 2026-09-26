@@ -344,6 +344,11 @@ test('team voting tab is a searchable master-detail workflow with proposals and 
   assert.match(html, /function submitTeamVoteProposal\(teamId\)/);
   assert.match(html, /function openTeamVoteDiscussion\(teamId,decisionId\)/);
   assert.match(html, /function addTeamVoteComment\(teamId,decisionId\)/);
+  assert.match(html, /class="team-vote-simulator"/);
+  assert.match(html, /function simulateTeamVoteResult\(teamId,decisionId,scenario\)/);
+  assert.match(html, /\['consensus','objection','deadline'\]\.includes\(scenario\)/);
+  assert.match(html, /function resetTeamVoteSimulation\(teamId,decisionId\)/);
+  assert.match(html, /Przywrócono stan głosowania sprzed symulacji/);
   assert.match(html, /\.team-voting-layout\{display:grid;grid-template-columns:minmax\(300px,38%\) minmax\(0,62%\)/);
   assert.match(html, /preserveScroll:!!opts\.preserveVoteScroll/);
 });
