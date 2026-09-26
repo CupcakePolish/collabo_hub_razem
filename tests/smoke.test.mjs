@@ -427,8 +427,26 @@ test('team ideas tab filters assigned projects and starts a team-owned private d
   assert.match(html, /idea\.teamOriginId=String\(t\.id\)/);
   assert.match(html, /t\.projectIds\.push\(idea\.id\)/);
   assert.match(html, /onclick="beginTeamIdeaDraft\('\$\{escAttr\(t\.id\)\}'\)"/);
+  assert.match(html, /class="team-ideas-sort-trigger"/);
+  assert.match(html, /class="team-ideas-sort-menu"/);
+  assert.match(html, /function toggleTeamIdeasSort\(event\)/);
+  assert.match(html, /class="team-idea-card\$\{archived\?' archived':''\}" href="#idea\/\$\{idea\.id\}"/);
+  assert.match(html, /Aktywność \$\{escHtml\(polishRelative\(activity\)\)\}/);
   const teamIdeas=html.match(/function renderTeamIdeasTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(teamIdeas, /Powiąż istniejący/);
+  assert.doesNotMatch(teamIdeas, /Brak zaznaczeń = bez ograniczeń/);
+  assert.doesNotMatch(teamIdeas, /<select/);
+  const teamIdeaCard=html.match(/function teamIdeaRowHTML\(idea\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.doesNotMatch(teamIdeaCard, /Zobacz szczegóły|team-idea-more|⋮/);
+});
+
+test('idea catalogs show visual cards without dead overflow actions', () => {
+  assert.match(html, /function ideaCatalogPhoto\(idea\)/);
+  assert.match(html, /class="idea-card-thumb"/);
+  assert.match(html, /class="idea-card-content"/);
+  assert.doesNotMatch(html, /idea-card-more/);
+  assert.match(html, /\.members-skill-options\{[^}]*scrollbar-gutter:stable/);
+  assert.match(html, /\.members-skill-option i\{[^}]*min-width:24px/);
 });
 
 test('team board uses a centered visual feed with editable welcome post', () => {
