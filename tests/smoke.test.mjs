@@ -327,7 +327,7 @@ test('published team uses metadata, real tabs and profile-change votes', () => {
   assert.match(html, /Opublikowano: \$\{escHtml\(t\.publishedDate/);
   assert.match(html, /Ostatnia aktywność: \$\{escHtml\(t\.lastActive/);
   assert.match(html, /setTeamProfileTab\('\$\{escAttr\(t\.id\)\}','board'\)\">Tablica/);
-  assert.match(html, />Członkowie<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
+  assert.match(html, />Członkowie<\/button><button[^>]+>Dyskusje<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
   assert.match(html, /teamAcceptedMembers\(t\)\.length>1/);
   assert.match(html, /kind:'team-profile-edit'/);
   assert.match(html, /function rejectTeamDecision\(teamId,decisionId\)/);
@@ -392,6 +392,26 @@ test('team voting tab is a searchable master-detail workflow with proposals and 
   assert.match(html, /Przywrócono stan głosowania sprzed symulacji/);
   assert.match(html, /\.team-voting-layout\{display:grid;grid-template-columns:minmax\(300px,38%\) minmax\(0,62%\)/);
   assert.match(html, /preserveScroll:!!opts\.preserveVoteScroll/);
+});
+
+test('team discussions share persistent draggable chat windows with the communicator sidebar', () => {
+  assert.match(html, /function renderTeamDiscussionsTab\(t,mine\)/);
+  assert.match(html, /class="team-discussions-heading"/);
+  assert.match(html, /Dyskusje zespołu/);
+  assert.match(html, /placeholder="Szukaj dyskusji, kanału lub osoby…"/);
+  assert.match(html, /Otwórz jako komunikator/);
+  assert.match(html, /function toggleTeamDiscussionPin\(teamId,channelId\)/);
+  assert.match(html, /collabohub-pinned-discussions:/);
+  assert.match(html, /Przypięte dyskusje/);
+  assert.match(html, /collabohub-team-channel-chat-v1:/);
+  assert.match(html, /function setupChatWindowPlacement\(win,c\)/);
+  assert.match(html, /collabohub-chat-window-layout:/);
+  assert.match(html, /className='dc-resize-handle'/);
+  assert.match(html, /classList\.add\('dc-drag-handle'\)/);
+  assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'/);
+  assert.doesNotMatch(html, /visible=document\.getElementById\('s-team-profile'\).*teamProfileTab==='votes'/);
+  const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.doesNotMatch(discussions, /Członkowie online|Ostatnia aktywność/);
 });
 
 test('team board uses a centered visual feed with editable welcome post', () => {
