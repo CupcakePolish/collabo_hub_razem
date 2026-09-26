@@ -231,8 +231,25 @@ test('project header metadata is uniform and aligned with the top of its photo',
   assert.match(html, /#s-idea \.idea-title-meta\{gap:10px;margin-top:16px\}/);
   assert.match(html, /class="project-head-action icon-only watch-project/);
   assert.match(html, /class="project-head-action share-board" data-tooltip="Na tablicę"/);
+  assert.match(html, /class="project-head-action icon-only project-context-action project-pins-action"/);
+  assert.match(html, /onclick="openProjectPinsCenter\(\$\{ideaId\}\)"/);
+  assert.match(html, /class="project-head-action icon-only project-context-action project-notifications-action"/);
+  assert.match(html, /onclick="openProjectNotificationCenter\(\$\{ideaId\},'list'\)"/);
+  assert.match(html, /class="project-header-counter"/);
   assert.match(html, /class="project-head-action joined" data-tooltip="W projekcie"/);
   assert.match(html, /class="project-head-action icon-only" data-tooltip="Wariant"/);
+});
+
+test('pins and notifications moved from overview cards into complete header modals', () => {
+  assert.match(html, /function openProjectPinsCenter\(ideaId\)/);
+  assert.match(html, /class="project-pins-center-card">\$\{projectBulletinCard\(idea,idea\.id\)\}/);
+  assert.match(html, /'project-pins-center-modal'/);
+  assert.match(html, /function projectUnseenPinCount\(idea\)/);
+  assert.match(html, /projectNotifications\(idea\)\.filter\(row=>row\.unread\)\.length/);
+  const overview = html.match(/function renderProjectOverviewBottom\(idea,id\)\{([^\n]+)\}/)?.[1] || '';
+  assert.match(overview, /class="idea-overview-content"/);
+  assert.doesNotMatch(overview, /idea-overview-sidebar|projectBulletinCard|projectNotificationsOverviewCard|idea-team-summary/);
+  assert.match(html, /\.idea-centered-overview\{display:grid;grid-template-columns:minmax\(0,1fr\);align-items:start\}/);
 });
 
 test('project overview uses the lifecycle strip and requires a reason for stage votes', () => {
