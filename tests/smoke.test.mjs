@@ -221,6 +221,17 @@ test('project header metadata is uniform and aligned with the top of its photo',
   assert.match(html, /class="project-head-action icon-only" data-tooltip="Wariant"/);
 });
 
+test('project overview uses the lifecycle strip and requires a reason for stage votes', () => {
+  assert.match(html, /function renderProjectOverviewTop\(idea,id\)\{return projectOverviewLifecycle\(idea,id\);\}/);
+  assert.match(html, /class="idea-lifecycle-strip" aria-label="Etapy projektu"/);
+  assert.match(html, /class="idea-lifecycle-arrow forward"[\s\S]*confirmProjectLifecycleVote/);
+  assert.match(html, /class="idea-lifecycle-arrow back"[\s\S]*confirmProjectLifecycleVote/);
+  assert.match(html, /id="project-lifecycle-reason"/);
+  assert.match(html, /function submitProjectLifecycleVote\(ideaId,targetStatus\)[\s\S]*if\(!reason\)return toast\('Dodaj uzasadnienie zmiany etapu\.'/);
+  assert.match(html, /text:reason\|\|`Projekt powinien przejść do stanu/);
+  assert.doesNotMatch(html, /<section class="idea-stage-summary"><h2>Etap projektu<\/h2>/);
+});
+
 test('discover team posts resolve the current team avatar with a fallback', () => {
   assert.match(html, /function discoverPostAvatar\(post,team=null\)/);
   assert.match(html, /safeUserUrl\(team\?\.avatar\|\|post\.avatarImage\|\|'','image'\)/);
