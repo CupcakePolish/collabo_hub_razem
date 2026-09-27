@@ -285,8 +285,10 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /class="idea-participant-chat"[^>]*openDiscoverChat\('person:/);
   assert.match(html, /class="idea-participant-quorum \$\{inQuorum\?'in':'out'\}"/);
   assert.match(html, /aria-label="\$\{quorumLabel\}"[^>]*>\$\{projectQuorumGavelIcon\(\)\}/);
-  assert.match(html, /function projectQuorumGavelIcon\(\)[\s\S]*class="idea-quorum-gavel-icon"[\s\S]*<path/);
+  assert.match(html, /function projectQuorumGavelIcon\(\)[\s\S]*class="idea-quorum-gavel-icon"/);
+  assert.match(html, /mask:url\('assets\/quorum-gavel\.png'\) center\/contain no-repeat/);
   assert.match(html, /\.idea-participant-quorum\{[^}]*border:0!important;[^}]*background:transparent!important/);
+  assert.match(html, /\.idea-participants-list\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\);gap:14px\}/);
   assert.doesNotMatch(html, /idea-participant-profile|chatPersonActionIcon\('profile'\)/);
   assert.match(html, /class="idea-competency-person" data-person=/);
   assert.match(html, /idea-competency-person:hover:after/);
