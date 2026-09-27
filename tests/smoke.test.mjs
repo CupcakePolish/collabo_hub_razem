@@ -281,7 +281,11 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /class="idea-team-intro"/);
   assert.match(html, /class="sc-title">Nasze kompetencje<\/div>/);
   assert.match(html, /class="idea-participants-card"/);
+  assert.match(html, /class="idea-participant-tile"/);
   assert.match(html, /class="idea-participant-chat"[^>]*openDiscoverChat\('person:/);
+  assert.match(html, /class="idea-participant-quorum \$\{inQuorum\?'in':'out'\}"/);
+  assert.match(html, /aria-label="\$\{quorumLabel\}"[^>]*>\$\{IC\.gavel\}/);
+  assert.doesNotMatch(html, /idea-participant-profile|chatPersonActionIcon\('profile'\)/);
   assert.match(html, /class="idea-competency-person" data-person=/);
   assert.match(html, /idea-competency-person:hover:after/);
   assert.match(html, /const primary=needPrimaryCapability\(r\)[\s\S]*idea-competency-copy"><strong>\$\{escHtml\(primary\.name\)\}/);
@@ -293,7 +297,9 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.doesNotMatch(applications, /project-team-join|teamName|teamMembers/);
   const teamTab = html.match(/const tabZespol=`([\s\S]*?)`;\n\n  const tabBudzet/)?.[1] || '';
   assert.match(teamTab, /renderIdeaParticipantsCard|partsBlock/);
+  assert.match(teamTab, /<\/div>\s*\$\{partsBlock\}/);
   assert.doesNotMatch(teamTab, /renderAcceptedProjectTeams|Teamy w projekcie/);
+  assert.match(html, /\.idea-team-layout\{display:grid;grid-template-columns:minmax\(0,1fr\)/);
 });
 
 test('joining an idea only starts in the team tab and uses two real steps', () => {
