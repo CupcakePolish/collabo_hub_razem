@@ -347,6 +347,8 @@ test('participant context keeps attendance, quorum and feedback project-specific
   const participantPage = html.match(/function openProjectParticipantProfilePage\(ideaId,personRef,opts=\{\}\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.match(participantPage, /project-person-breadcrumb/);
   assert.match(participantPage, /returnToIdea\(\$\{idea\.id\},'zespol'\)/);
+  assert.match(participantPage, /project-person-profile-name[\s\S]*openMember\(\$\{person\.id\}\)/);
+  assert.doesNotMatch(participantPage, /project-person-page-footer|>Otwórz pełny profil<|Wróć do zespołu/);
   assert.match(participantPage, /go\('idea-person'/);
   assert.doesNotMatch(participantPage, /appModal\(/);
   assert.match(html, /sharedToProfile:false/);
