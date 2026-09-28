@@ -71,7 +71,7 @@ test('discover board has navigation, composer and publish interactions', () => {
 });
 
 test('communicator stays available across collaboration screens but not inside documents', () => {
-  assert.match(html, /supported=\['s-discover','s-ideas','s-idea','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
+  assert.match(html, /supported=\['s-discover','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'&&!!screen\.querySelector\('\.doc-workspace'\)/);
   assert.match(html, /document\.body\.append\(host\)/);
   assert.match(html, /if\(typeof renderDiscoverChats==='function'\)renderDiscoverChats\(\);[\s\S]*if\(!opts\.preserveScroll\)/);
@@ -340,6 +340,15 @@ test('participant context keeps attendance, quorum and feedback project-specific
   assert.match(html, /function saveProjectMeetingAttendance\(ideaId,meetingId\)[\s\S]*attendance=\{confirmed:true,present/);
   assert.match(html, /Frekwencja nie wynika z zaproszeń ani deklaracji przed spotkaniem/);
   assert.match(html, /function openProjectParticipantProfile\(ideaId,name\)/);
+  assert.match(html, /id="s-idea-person" class="screen"/);
+  assert.match(html, /function projectParticipantHash\(ideaId,personId\)[\s\S]*zespol\/osoba/);
+  assert.match(html, /section==='zespol'&&parts\[3\]==='osoba'/);
+  assert.match(html, /function openProjectParticipantProfilePage\(ideaId,personRef,opts=\{\}\)/);
+  const participantPage = html.match(/function openProjectParticipantProfilePage\(ideaId,personRef,opts=\{\}\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(participantPage, /project-person-breadcrumb/);
+  assert.match(participantPage, /returnToIdea\(\$\{idea\.id\},'zespol'\)/);
+  assert.match(participantPage, /go\('idea-person'/);
+  assert.doesNotMatch(participantPage, /appModal\(/);
   assert.match(html, /sharedToProfile:false/);
   assert.match(html, /function toggleProjectFeedbackPublic\(ideaId,feedbackId\)/);
   assert.match(html, /function publicProjectReferences\(name\)/);
