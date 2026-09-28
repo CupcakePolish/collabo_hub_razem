@@ -29,6 +29,11 @@ test('member catalog only exposes the three demo perspectives', () => {
   assert.match(html, /const DEMO_PROFILE_NAMES=new Set\(\['Patrycja Kowalska','Anna Wiśniewska','Katarzyna Zielińska'\]\)/);
   assert.match(html, /if\(Array\.isArray\(data\.members\)\)members=demoPerspectiveProfiles\(data\.members\)/);
   assert.match(html, /Object\.keys\(demoAccounts\)\.forEach\(id=>\{if\(!DEMO_ACCOUNT_ORDER\.includes\(id\)\)delete demoAccounts\[id\];\}\)/);
+  assert.match(html, /function normalizeDemoIdeaParticipants\(idea\)/);
+  assert.match(html, /memberHistory=.*filter\(row=>DEMO_PROFILE_NAMES\.has\(row\?\.name\)\)/);
+  assert.match(html, /role\.filledBy=.*filter\(name=>DEMO_PROFILE_NAMES\.has\(name\)\)/);
+  assert.match(html, /if\(skill\.person&&!DEMO_PROFILE_NAMES\.has\(skill\.person\)\)\{skill\.person='';skill\.filled=false;\}/);
+  assert.match(html, /function ensureProjectMembers\(idea\)[\s\S]*normalizeDemoIdeaParticipants\(idea\)/);
 });
 
 test('closed votes use the canonical acceptance rule', () => {

@@ -15519,8 +15519,16 @@ function membershipEvent(row,type,source,date=TODAY){
 function syncLegacyRemovedMembers(idea){
   idea.removedMembers=(Array.isArray(idea.memberHistory)?idea.memberHistory:[]).filter(m=>m.status==='left'||m.status==='removed').map(m=>m.name);
 }
+function normalizeDemoIdeaParticipants(idea){
+  if(!idea)return;
+  idea.memberHistory=(Array.isArray(idea.memberHistory)?idea.memberHistory:[]).filter(row=>DEMO_PROFILE_NAMES.has(row?.name));
+  (idea.roleRequirements||[]).forEach(role=>{role.filledBy=(role.filledBy||[]).filter(name=>DEMO_PROFILE_NAMES.has(name));role.status=role.filledBy.length>=Math.max(1,Number(role.min||1))?'filled':role.filledBy.length?'partial':'open';});
+  (idea.skillsNeeded||[]).forEach(skill=>{if(skill.person&&!DEMO_PROFILE_NAMES.has(skill.person)){skill.person='';skill.filled=false;}});
+  idea.pendingInvites=(idea.pendingInvites||[]).filter(invite=>!invite.person||DEMO_PROFILE_NAMES.has(invite.person));
+}
 function ensureProjectMembers(idea){
   if(!idea)return [];
+  normalizeDemoIdeaParticipants(idea);
   idea.memberHistory=Array.isArray(idea.memberHistory)?idea.memberHistory:[];
   const byName=new Map();
   idea.memberHistory.forEach(raw=>{
@@ -15559,7 +15567,7 @@ function ensureProjectMembers(idea){
     });
     idea.membershipModelVersion=PROJECT_MEMBERSHIP_MODEL_VERSION;
   }
-  idea.memberHistory=[...byName.values()];
+  idea.memberHistory=[...byName.values()].filter(row=>DEMO_PROFILE_NAMES.has(row.name));
   syncLegacyRemovedMembers(idea);
   return idea.memberHistory;
 }
