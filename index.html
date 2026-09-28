@@ -7514,13 +7514,11 @@ function profileRecordRows(rows,empty){
 
 let myPoints=46; // Patrycja: 3× zespół (+30), 7 komentarzy (+7), zrobione zadanie... demo
 
+const DEMO_PROFILE_NAMES=new Set(['Patrycja Kowalska','Anna Wiśniewska','Katarzyna Zielińska']);
+function demoPerspectiveProfiles(rows){return (Array.isArray(rows)?rows:[]).filter(member=>DEMO_PROFILE_NAMES.has(member?.name));}
 let members=[
   {id:1,name:'Anna Wiśniewska',ini:'AW',av:0,roles:['Posłanka','Członek'],skills:['Analiza prawna','Pisanie ustaw','Komunikacja'],since:'Styczeń 2019',ideas:6,cosigns:14,done:3,team:5,points:312,looking:'Szukam inicjatyw legislacyjnych w obszarze praw pracowniczych.',portfolio:[{type:'Legislacja',title:'Ustawa o płacy minimalnej 2023',desc:'Projekt zgłoszony w Sejmie.',link:'sejm.gov.pl'}]},
-  {id:2,name:'Marek Nowak',ini:'MN',av:1,systemPronoun:'on',displayPronouns:'on/jego',roles:['Radny m.st. Warszawa','Członek'],skills:['Analiza danych','Komunikacja','Fundraising'],since:'Marzec 2020',ideas:3,cosigns:9,done:2,team:3,points:187,looking:'Inicjatywy miejskie, szczególnie transport i mieszkalnictwo.',portfolio:[{type:'Inicjatywa',title:'Plan mobilności Mokotów',desc:'Projekt przyjęty przez radę.',link:'mokotow.pl'}]},
   {id:3,name:'Katarzyna Zielińska',ini:'KZ',av:2,systemPronoun:'ono',displayPronouns:'ono/jenu',roles:['Koordynator regionalny','Członek'],skills:['Komunikacja','Fundraising','Analiza danych'],since:'Czerwiec 2021',ideas:5,cosigns:11,done:1,team:4,points:164,looking:'Projekty wymagające koordynacji między sekcjami.',portfolio:[]},
-  {id:4,name:'Piotr Kowalczyk',ini:'PK',av:3,roles:['Członek'],skills:['Programowanie backend','React','Bazy danych'],since:'Luty 2022',ideas:2,cosigns:4,done:0,team:2,points:96,looking:'Projekty technologiczne — chętnie pomogę przy narzędziach cyfrowych.',portfolio:[{type:'Strona www',title:'Razem Wola',desc:'Pełna strona sekcji.',link:'github.com/pk'},{type:'Aplikacja',title:'System wolontariuszy',desc:'Zarządzanie wolontariuszami.',link:'github.com/pk'}]},
-  {id:5,name:'Magdalena Lis',ini:'ML',av:4,roles:['Posłanka','Lider grupy roboczej','Członek'],skills:['Analiza danych','Komunikacja','Copywriting'],since:'Październik 2018',ideas:8,cosigns:22,done:5,team:7,points:428,looking:'Projekty klimatyczne i gospodarcze na poziomie krajowym.',portfolio:[]},
-  {id:6,name:'Tomasz Górski',ini:'TG',av:5,roles:['Radny Kraków','Członek'],skills:['Grafika','Copywriting','Social media'],since:'Maj 2023',ideas:1,cosigns:3,done:0,team:1,points:58,looking:'Kampanie wizualne, materiały graficzne.',portfolio:[{type:'Grafika',title:'Plakaty wyborcze Kraków',desc:'Seria plakatów 2023.',link:'behance.net/tg'}]},
   {id:7,name:'Patrycja Kowalska',ini:'PK',av:3,roles:['Członek','Aktywista lokalny'],skills:['Grafika','Social media','Copywriting','Komunikacja'],since:'Marzec 2022',ideas:0,cosigns:0,done:0,team:0,points:46,looking:'Szukam pomysłu związanego z komunikacją wizualną lub kampanią lokalną.',portfolio:[{type:'Grafika',title:'Identyfikacja kampanii lokalnej',desc:'Logo, plakaty i szablony social media dla sekcji.',link:'behance.net/patrycja'}]},
 ];
 
@@ -7639,6 +7637,7 @@ function applyPersonalVoteState(state={}){
 function ensureDemoAccounts(){
   const defaults=demoAccountDefaults();
   if(!demoAccounts||typeof demoAccounts!=='object'||Array.isArray(demoAccounts))demoAccounts={};
+  Object.keys(demoAccounts).forEach(id=>{if(!DEMO_ACCOUNT_ORDER.includes(id))delete demoAccounts[id];});
   DEMO_ACCOUNT_ORDER.forEach(id=>{
     const base=defaults[id],saved=demoAccounts[id];
     demoAccounts[id]=saved&&typeof saved==='object'?{
@@ -17350,7 +17349,7 @@ function applyPersistentData(data){
       ideas=[...savedIdeas,...demoPublished];
     }
   }
-  if(Array.isArray(data.members))members=data.members;
+  if(Array.isArray(data.members))members=demoPerspectiveProfiles(data.members);
   if(Array.isArray(data.projectTeams))projectTeams=data.projectTeams.filter(row=>String(row?.id)!=='tm-green');
   if(Array.isArray(data.discoverPosts))discoverPosts=data.discoverPosts.filter(row=>String(row?.id)!=='discover-demo-2').map(row=>String(row?.id)==='discover-demo-1'&&!String(row?.text||'').includes('@[')?{...row,text:`${String(row.text||'').trim()} @[Ustawa ograniczająca możliwości Marszałka Sejmu](#idea/1)`.trim()}:row);
   if(validObject(data.myProfile))myProfile=data.myProfile;

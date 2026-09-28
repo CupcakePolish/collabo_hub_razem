@@ -20,6 +20,17 @@ test('all inline scripts have valid syntax', () => {
   scripts.forEach(source => new Function(source));
 });
 
+test('member catalog only exposes the three demo perspectives', () => {
+  const seed = html.match(/let members=\[([\s\S]*?)\n\];/)?.[1] || '';
+  assert.match(seed, /Anna Wiśniewska/);
+  assert.match(seed, /Katarzyna Zielińska/);
+  assert.match(seed, /Patrycja Kowalska/);
+  assert.doesNotMatch(seed, /Marek Nowak|Piotr Kowalczyk|Magdalena Lis|Tomasz Górski/);
+  assert.match(html, /const DEMO_PROFILE_NAMES=new Set\(\['Patrycja Kowalska','Anna Wiśniewska','Katarzyna Zielińska'\]\)/);
+  assert.match(html, /if\(Array\.isArray\(data\.members\)\)members=demoPerspectiveProfiles\(data\.members\)/);
+  assert.match(html, /Object\.keys\(demoAccounts\)\.forEach\(id=>\{if\(!DEMO_ACCOUNT_ORDER\.includes\(id\)\)delete demoAccounts\[id\];\}\)/);
+});
+
 test('closed votes use the canonical acceptance rule', () => {
   assert.match(html, /function voteWasAccepted\(idea,v\)/);
   assert.match(html, /voteWasAccepted\(idea,v\)\?'✓ Przyjęto':'✗ Odrzucono'/);
