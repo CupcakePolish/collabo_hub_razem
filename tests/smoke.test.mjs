@@ -298,7 +298,7 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /class="sc-title">Nasze kompetencje<\/div>/);
   assert.match(html, /class="idea-participants-card"/);
   assert.match(html, /class="idea-participant-tile"/);
-  assert.match(html, /class="idea-participant-chat"[^>]*openDiscoverChat\('person:/);
+  assert.match(html, /class="idea-participant-chat"[^>]*toggleDiscoverChat\('person:/);
   assert.match(html, /class="idea-participant-quorum \$\{quorum\.counts\?'in':'out'\}"/);
   assert.match(html, /data-tooltip="\$\{escAttr\(quorum\.reason\)\}"[^>]*>\$\{projectQuorumGavelIcon\(\)\}/);
   assert.match(html, /function projectQuorumGavelIcon\(\)[\s\S]*class="idea-quorum-gavel-icon"/);
@@ -310,7 +310,9 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /<small>Dostępność<\/small>/);
   assert.match(html, /<small>Głosowania<\/small>/);
   assert.match(html, /<small>Spotkania<\/small>/);
-  assert.match(html, /<small>Ostatnia aktywność<\/small>/);
+  assert.match(html, /<small>Ostatnia aktywność w pomyśle<\/small>/);
+  assert.match(html, /function projectVoteGavelIcon\(\)[\s\S]*projectQuorumGavelIcon/);
+  assert.match(html, /\.project-vote-gavel \.idea-quorum-gavel-icon\{[^}]*quorum-gavel\.png/);
   const participantCard = html.match(/function renderIdeaParticipantsCard\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(participantCard, /idea-participant-metrics|stats\.tasks|stats\.docs|stats\.comments|Największy wkład/);
   assert.match(html, /class="idea-competency-person" data-person=/);
@@ -341,6 +343,15 @@ test('participant context keeps attendance, quorum and feedback project-specific
   assert.match(html, /sharedToProfile:false/);
   assert.match(html, /function toggleProjectFeedbackPublic\(ideaId,feedbackId\)/);
   assert.match(html, /function publicProjectReferences\(name\)/);
+  assert.match(html, /function toggleProjectFeedbackReaction\(ideaId,feedbackId,emoji\)/);
+  assert.match(html, /project-person-feedback-avatar/);
+  assert.match(html, /projectParticipantFeedbackComposerHTML/);
+  assert.match(html, /project-feedback-file-\$\{ideaId\}/);
+  assert.match(html, /Dodaj emotkę lub GIF/);
+  assert.match(html, /Opinie są widoczne przy tym pomyśle/);
+  assert.doesNotMatch(html.match(/function openProjectParticipantProfile\(ideaId,name\)\{([\s\S]*?)\n\}/)?.[1] || '', /opinie są prywatne|Dodaj prywatną opinię/i);
+  assert.match(html, /function toggleDiscoverChat\(key\)[\s\S]*ui\.active===key[\s\S]*ui\.active=null/);
+  assert.match(html, /!e\.target\.closest\('\.idea-participant-more'\).*idea-participant-menu/);
   assert.match(html, /Zaproponuj usunięcie z pomysłu/);
   assert.match(html, /function submitProjectRemovalProposal\(ideaId,name\)[\s\S]*kind:'recall'/);
   assert.match(html, /function openPartManager\(id,name\)\{return openProjectParticipantProfile/);
