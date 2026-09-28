@@ -361,6 +361,7 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function toggleProjectParticipantBoardReaction\(ideaId,name,postId,emoji\)/);
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
+  assert.match(html, /\.project-person-board-head,\.project-person-board \.tp-board-feed\{width:100%\}/);
   assert.match(html, /function toggleDiscoverChat\(key\)[\s\S]*ui\.active===key[\s\S]*ui\.active=null/);
   assert.match(html, /!e\.target\.closest\('\.idea-participant-more'\).*idea-participant-menu/);
   assert.match(html, /Zaproponuj usunięcie z pomysłu/);
