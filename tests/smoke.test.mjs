@@ -331,7 +331,7 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /\.idea-team-layout\{display:grid;grid-template-columns:minmax\(0,1fr\)/);
 });
 
-test('participant context keeps attendance, quorum and feedback project-specific', () => {
+test('participant context keeps attendance, quorum and a project-specific personal board', () => {
   assert.match(html, /function projectVoteIsLive\(vote\)[\s\S]*minutes<=15/);
   assert.match(html, /function projectVoteParticipation\(idea,row\)[\s\S]*meetingConfirmedAttendanceNames/);
   assert.match(html, /function projectMemberQuorumInfo\(idea,row\)[\s\S]*inactiveDays[\s\S]*inactiveVotes/);
@@ -349,18 +349,18 @@ test('participant context keeps attendance, quorum and feedback project-specific
   assert.match(participantPage, /returnToIdea\(\$\{idea\.id\},'zespol'\)/);
   assert.match(participantPage, /project-person-profile-name[\s\S]*openMember\(\$\{person\.id\}\)/);
   assert.doesNotMatch(participantPage, /project-person-page-footer|>Otwórz pełny profil<|Wróć do zespołu/);
+  assert.match(participantPage, /renderProjectParticipantBoard\(idea,name\)/);
+  assert.doesNotMatch(participantPage, /Opinie ze współpracy|projectParticipantFeedbackHTML|projectParticipantFeedbackComposerHTML/);
   assert.match(participantPage, /go\('idea-person'/);
   assert.doesNotMatch(participantPage, /appModal\(/);
-  assert.match(html, /sharedToProfile:false/);
-  assert.match(html, /function toggleProjectFeedbackPublic\(ideaId,feedbackId\)/);
-  assert.match(html, /function publicProjectReferences\(name\)/);
-  assert.match(html, /function toggleProjectFeedbackReaction\(ideaId,feedbackId,emoji\)/);
-  assert.match(html, /project-person-feedback-avatar/);
-  assert.match(html, /projectParticipantFeedbackComposerHTML/);
-  assert.match(html, /project-feedback-file-\$\{ideaId\}/);
-  assert.match(html, /Dodaj emotkę lub GIF/);
-  assert.match(html, /Opinie są widoczne przy tym pomyśle/);
-  assert.doesNotMatch(html.match(/function openProjectParticipantProfile\(ideaId,name\)\{([\s\S]*?)\n\}/)?.[1] || '', /opinie są prywatne|Dodaj prywatną opinię/i);
+  assert.match(html, /function projectParticipantBoardPosts\(idea,name\)[\s\S]*participantBoardPosts[\s\S]*participantFeedback/);
+  assert.match(html, /function renderProjectParticipantBoard\(idea,name\)[\s\S]*Czym chcesz się podzielić\?/);
+  assert.match(html, /function openProjectParticipantBoardComposer\(ideaId,name,postId=''\)/);
+  assert.match(html, /project-person-board-composer[\s\S]*teamBoardComposerMediaHTML\(\)[\s\S]*Wybierz emotkę lub GIF/);
+  assert.match(html, /function saveProjectParticipantBoardPost\(ideaId,name,postId=''\)[\s\S]*participantBoardPosts/);
+  assert.match(html, /function toggleProjectParticipantBoardReaction\(ideaId,name,postId,emoji\)/);
+  assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
+  assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
   assert.match(html, /function toggleDiscoverChat\(key\)[\s\S]*ui\.active===key[\s\S]*ui\.active=null/);
   assert.match(html, /!e\.target\.closest\('\.idea-participant-more'\).*idea-participant-menu/);
   assert.match(html, /Zaproponuj usunięcie z pomysłu/);
