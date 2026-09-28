@@ -283,13 +283,20 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /class="idea-participants-card"/);
   assert.match(html, /class="idea-participant-tile"/);
   assert.match(html, /class="idea-participant-chat"[^>]*openDiscoverChat\('person:/);
-  assert.match(html, /class="idea-participant-quorum \$\{inQuorum\?'in':'out'\}"/);
-  assert.match(html, /aria-label="\$\{quorumLabel\}"[^>]*>\$\{projectQuorumGavelIcon\(\)\}/);
+  assert.match(html, /class="idea-participant-quorum \$\{quorum\.counts\?'in':'out'\}"/);
+  assert.match(html, /data-tooltip="\$\{escAttr\(quorum\.reason\)\}"[^>]*>\$\{projectQuorumGavelIcon\(\)\}/);
   assert.match(html, /function projectQuorumGavelIcon\(\)[\s\S]*class="idea-quorum-gavel-icon"/);
   assert.match(html, /mask:url\('assets\/quorum-gavel\.png'\) center\/contain no-repeat/);
   assert.match(html, /\.idea-participant-quorum\{[^}]*border:0!important;[^}]*background:transparent!important/);
   assert.match(html, /\.idea-participants-list\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\);gap:14px\}/);
-  assert.doesNotMatch(html, /idea-participant-profile|chatPersonActionIcon\('profile'\)/);
+  assert.match(html, /onclick="openProjectParticipantProfile\(\$\{ideaId\}/);
+  assert.match(html, /class="idea-participant-role"/);
+  assert.match(html, /<small>Dostępność<\/small>/);
+  assert.match(html, /<small>Głosowania<\/small>/);
+  assert.match(html, /<small>Spotkania<\/small>/);
+  assert.match(html, /<small>Ostatnia aktywność<\/small>/);
+  const participantCard = html.match(/function renderIdeaParticipantsCard\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.doesNotMatch(participantCard, /idea-participant-metrics|stats\.tasks|stats\.docs|stats\.comments|Największy wkład/);
   assert.match(html, /class="idea-competency-person" data-person=/);
   assert.match(html, /idea-competency-person:hover:after/);
   assert.match(html, /const primary=needPrimaryCapability\(r\)[\s\S]*idea-competency-copy"><strong>\$\{escHtml\(primary\.name\)\}/);
@@ -304,6 +311,23 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(teamTab, /<\/div>\s*\$\{partsBlock\}/);
   assert.doesNotMatch(teamTab, /renderAcceptedProjectTeams|Teamy w projekcie/);
   assert.match(html, /\.idea-team-layout\{display:grid;grid-template-columns:minmax\(0,1fr\)/);
+});
+
+test('participant context keeps attendance, quorum and feedback project-specific', () => {
+  assert.match(html, /function projectVoteIsLive\(vote\)[\s\S]*minutes<=15/);
+  assert.match(html, /function projectVoteParticipation\(idea,row\)[\s\S]*meetingConfirmedAttendanceNames/);
+  assert.match(html, /function projectMemberQuorumInfo\(idea,row\)[\s\S]*inactiveDays[\s\S]*inactiveVotes/);
+  assert.match(html, /Brak wymaganej aktywności w ostatnich \$\{inactiveDays\} dniach/);
+  assert.match(html, /function meetingConfirmedAttendanceNames\(meeting\)[\s\S]*attendance\?\.confirmed===true/);
+  assert.match(html, /function saveProjectMeetingAttendance\(ideaId,meetingId\)[\s\S]*attendance=\{confirmed:true,present/);
+  assert.match(html, /Frekwencja nie wynika z zaproszeń ani deklaracji przed spotkaniem/);
+  assert.match(html, /function openProjectParticipantProfile\(ideaId,name\)/);
+  assert.match(html, /sharedToProfile:false/);
+  assert.match(html, /function toggleProjectFeedbackPublic\(ideaId,feedbackId\)/);
+  assert.match(html, /function publicProjectReferences\(name\)/);
+  assert.match(html, /Zaproponuj usunięcie z pomysłu/);
+  assert.match(html, /function submitProjectRemovalProposal\(ideaId,name\)[\s\S]*kind:'recall'/);
+  assert.match(html, /function openPartManager\(id,name\)\{return openProjectParticipantProfile/);
 });
 
 test('joining an idea only starts in the team tab and uses two real steps', () => {
