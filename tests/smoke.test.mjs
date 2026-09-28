@@ -370,6 +370,7 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
   assert.match(html, /\.project-person-tabs\{[^}]*width:min\(1100px,100%\)/);
   assert.match(html, /\.project-person-tabs button\{[^}]*flex:1 1 0/);
+  assert.match(html, /\.project-person-profile-page \.project-person-profile-head\{width:min\(1100px,100%\);margin-right:auto;margin-left:auto\}/);
   assert.match(html, /\.project-person-board\{width:min\(1100px,100%\)/);
   assert.match(html, /\.project-person-profile-facts\{grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(html, /function toggleDiscoverChat\(key\)[\s\S]*ui\.active===key[\s\S]*ui\.active=null/);
