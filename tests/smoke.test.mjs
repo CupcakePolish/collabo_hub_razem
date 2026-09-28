@@ -377,6 +377,12 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /project-person-board-composer[\s\S]*teamBoardComposerMediaHTML\(\)[\s\S]*Wybierz emotkę lub GIF/);
   assert.match(html, /function saveProjectParticipantBoardPost\(ideaId,name,postId=''\)[\s\S]*participantBoardPosts/);
   assert.match(html, /function toggleProjectParticipantBoardReaction\(ideaId,name,postId,emoji\)/);
+  assert.match(html, /project-person-board-actions[\s\S]*Doceniam[\s\S]*Dyskusja[\s\S]*Zapisz/);
+  assert.match(html, /function toggleProjectParticipantBoardDiscussion\(ideaId,name,postId\)/);
+  assert.match(html, /function addProjectParticipantBoardComment\(ideaId,name,postId\)/);
+  assert.match(html, /function toggleProjectParticipantBoardSaved\(ideaId,name,postId\)/);
+  assert.match(html, /\.project-person-board \.project-person-board-post h2\{[^}]*font-size:26px/);
+  assert.match(html, /\.project-person-board-actions\{[^}]*border-top:1px solid var\(--bdr\)/);
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
   assert.match(html, /\.project-person-tabs\{[^}]*width:min\(1100px,100%\)/);
