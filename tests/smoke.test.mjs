@@ -349,6 +349,11 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(participantPage, /returnToIdea\(\$\{idea\.id\},'zespol'\)/);
   assert.match(participantPage, /project-person-profile-name[\s\S]*openMember\(\$\{person\.id\}\)/);
   assert.match(participantPage, /name===MY_NAME[\s\S]*projectPersonProfileIcon\('settings'\)[\s\S]*Napisz do/);
+  assert.match(participantPage, /beginProjectParticipantProfileEdit/);
+  assert.match(participantPage, /project-person-edit-action cancel[\s\S]*project-person-edit-action save/);
+  assert.match(participantPage, /project-person-inline-description[\s\S]*project-person-inline-hours[\s\S]*project-person-inline-note/);
+  assert.match(participantPage, /project-person-competency-pill[\s\S]*project-person-competency-add/);
+  assert.doesNotMatch(participantPage, /person\.roles|person\.skills/);
   assert.match(participantPage, /project-person-tabs/);
   assert.match(participantPage, /aria-current="page"[\s\S]*aria-disabled="true"/);
   assert.match(participantPage, /project-person-description[\s\S]*<small>Opis<\/small>/);
@@ -359,6 +364,12 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(participantPage, /go\('idea-person'/);
   assert.doesNotMatch(participantPage, /appModal\(/);
   assert.match(html, /function projectParticipantBoardPosts\(idea,name\)[\s\S]*participantBoardPosts[\s\S]*participantFeedback/);
+  assert.match(html, /function projectParticipantCompetencies\(idea,name\)[\s\S]*projectCapabilityCatalog/);
+  assert.match(html, /function beginProjectParticipantProfileEdit\(ideaId\)/);
+  assert.match(html, /function saveProjectParticipantProfileEdit\(ideaId\)[\s\S]*participantContexts\[MY_NAME\][\s\S]*competencies/);
+  assert.match(html, /function cancelProjectParticipantProfileEdit\(ideaId\)/);
+  const contextEditor = html.match(/function openProjectParticipantContextEdit\(ideaId\)\{([^}]*)\}/)?.[1] || '';
+  assert.doesNotMatch(contextEditor, /appModal/);
   assert.match(html, /function renderProjectParticipantBoard\(idea,name\)[\s\S]*Czym chcesz się podzielić\?/);
   const participantBoard = html.match(/function renderProjectParticipantBoard\(idea,name\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(participantBoard, /Tablica w tym pomyśle|Wpisy .* związane wyłącznie z tym pomysłem/);
