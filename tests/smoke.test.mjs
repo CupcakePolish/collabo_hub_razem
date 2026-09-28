@@ -348,6 +348,11 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(participantPage, /project-person-breadcrumb/);
   assert.match(participantPage, /returnToIdea\(\$\{idea\.id\},'zespol'\)/);
   assert.match(participantPage, /project-person-profile-name[\s\S]*openMember\(\$\{person\.id\}\)/);
+  assert.match(participantPage, /name===MY_NAME[\s\S]*projectPersonProfileIcon\('settings'\)[\s\S]*Napisz do/);
+  assert.match(participantPage, /project-person-tabs/);
+  assert.match(participantPage, /aria-current="page"[\s\S]*aria-disabled="true"/);
+  assert.match(participantPage, /project-person-description[\s\S]*<small>Opis<\/small>/);
+  assert.doesNotMatch(participantPage, /Moja rola w tym pomyśle|Edytuj opis i dostępność<\/button>/);
   assert.doesNotMatch(participantPage, /project-person-page-footer|>Otwórz pełny profil<|Wróć do zespołu/);
   assert.match(participantPage, /renderProjectParticipantBoard\(idea,name\)/);
   assert.doesNotMatch(participantPage, /Opinie ze współpracy|projectParticipantFeedbackHTML|projectParticipantFeedbackComposerHTML/);
@@ -362,6 +367,7 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
   assert.match(html, /\.project-person-board-head,\.project-person-board \.tp-board-feed\{width:100%\}/);
+  assert.match(html, /\.project-person-profile-facts\{grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(html, /function toggleDiscoverChat\(key\)[\s\S]*ui\.active===key[\s\S]*ui\.active=null/);
   assert.match(html, /!e\.target\.closest\('\.idea-participant-more'\).*idea-participant-menu/);
   assert.match(html, /Zaproponuj usunięcie z pomysłu/);
