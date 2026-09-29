@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="app-booting">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,6 +9,13 @@
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#fbfbfd">
 <title>CollaboHub · Zespoły i profile</title>
+<style id="app-boot-guard">
+html.app-booting body{min-height:100vh;overflow:hidden;background:#f8f7fc}
+html.app-booting body>*{visibility:hidden!important}
+html.app-booting body::before{content:"CollaboHub";position:fixed;z-index:2147483647;inset:0;display:grid;place-items:center;visibility:visible;background:#f8f7fc;color:#5b35a5;font:800 22px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.02em}
+html:not(.app-booting) body{animation:app-ready-fade .14s ease-out}
+@keyframes app-ready-fade{from{opacity:0}to{opacity:1}}
+</style>
 <link rel="icon" type="image/png" sizes="256x256" href="assets/collabohub-mark.png?v=1">
 <link rel="apple-touch-icon" href="assets/collabohub-mark.png?v=1">
 <script>
@@ -5544,7 +5551,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       </nav>
       <section class="discover-filter-section discover-authors-section">
         <div class="discover-filter-title"><button type="button" class="discover-filter-toggle" onclick="toggleDiscoverFilterSection(this)" aria-expanded="true"><b>Autorzy</b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button></div>
-        <div class="discover-filter-content"><label class="discover-author-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="discover-author-search" type="search" placeholder="Szukaj autora…" oninput="renderDiscoverAuthorFilters(this.value)"></label><div class="discover-author-list" id="discover-author-list"></div></div>
+        <div class="discover-filter-content"><label class="discover-author-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="discover-author-search" type="search" autocomplete="off" placeholder="Szukaj autora…" oninput="renderDiscoverAuthorFilters(this.value)"></label><div class="discover-author-list" id="discover-author-list"></div></div>
       </section>
     </aside>
     <main class="discover-main">
@@ -17236,6 +17243,10 @@ function go(name,btn,nlId,opts={}){
 
 let discoverFeedMode='all',discoverSearch='',discoverSort='appreciated',discoverTime='month';
 const discoverAuthorFilters=new Set();
+function resetDiscoverTransientView(){
+  discoverFeedMode='all';discoverSearch='';discoverAuthorFilters.clear();
+  const authorSearch=document.getElementById('discover-author-search');if(authorSearch)authorSearch.value='';
+}
 let discoverCalendarYear=2026,discoverCalendarMonth=8,discoverCalendarSelected='2026-09-12';
 const discoverCalendarEvents=[
   {id:'calendar-team-leg',date:'2026-09-12',time:'18:00',title:'Spotkanie Zespołu Legislacyjnego',desc:'Omówienie postępów, podział zadań i przygotowanie kolejnych konsultacji.',scope:'Zespół · Online',icon:'team',teamId:'tm-leg'},
@@ -17412,6 +17423,11 @@ function submitDiscoverPostReport(id){
 }
 function renderDiscover(){
   if(typeof renderDiscoverChats==='function')renderDiscoverChats();
+  document.querySelectorAll('#s-discover .discover-sidebar-item[data-feed]').forEach(button=>{
+    const active=button.dataset.feed===discoverFeedMode;
+    button.classList.toggle('on',active);
+    button.setAttribute('aria-pressed',String(active));
+  });
   renderDiscoverAuthorFilters(document.getElementById('discover-author-search')?.value||'');updateDiscoverToolbar();closeDiscoverPostMenus();
   const host=document.getElementById('discover-feed');if(!host)return;
   const rows=sortedDiscoverPosts(),summary=document.getElementById('discover-results-summary');if(summary)summary.textContent=`${rows.length} ${plural(rows.length,['wpis','wpisy','wpisów'])}`;
@@ -17421,7 +17437,7 @@ function renderDiscover(){
   }).join('')||'<div class="discover-empty">Nie ma wpisów pasujących do wybranych filtrów.</div>';
   renderDiscoverCalendar();
 }
-function setDiscoverFeed(mode,button){discoverFeedMode=mode;document.querySelectorAll('.discover-sidebar-item').forEach(row=>row.classList.remove('on'));button?.classList.add('on');renderDiscover();}
+function setDiscoverFeed(mode,button){discoverFeedMode=mode;renderDiscover();}
 function toggleDiscoverFilterSection(button){const section=button?.closest('.discover-filter-section');if(!section)return;const collapsed=section.classList.toggle('collapsed');button.setAttribute('aria-expanded',String(!collapsed));}
 function toggleDiscoverAuthorFilter(key){discoverAuthorFilters.has(key)?discoverAuthorFilters.delete(key):discoverAuthorFilters.add(key);renderDiscover();}
 function setDiscoverSearch(value){discoverSearch=String(value||'').trim().toLocaleLowerCase('pl');renderDiscover();}
@@ -17945,6 +17961,7 @@ initDemoAccounts();
 initWizardDraftUI();
 applyTheme();
 initTeamUiLanguage();
+resetDiscoverTransientView();
 document.addEventListener('click',event=>{if(!event.target.closest('.need-level-picker'))document.querySelectorAll('.need-level-picker.open').forEach(picker=>picker.classList.remove('open'));if(!event.target.closest('.invite-person-picker'))document.querySelectorAll('.invite-person-picker.open').forEach(picker=>picker.classList.remove('open'));});
 refreshDictDatalists();
 normalizeIdeaMeta();
@@ -19379,5 +19396,21 @@ html.theme-dark #s-idea-person{background:#121019}html.theme-dark .project-perso
 .board-comment-attachment-tray-host:empty{display:none}.board-comment-attachment-tray{display:flex;gap:8px;overflow-x:auto;padding:9px 11px 2px}.board-comment-attachment-tray>span{position:relative;display:grid;grid-template-columns:46px minmax(0,1fr);align-items:center;gap:7px;min-width:115px;max-width:190px;padding:5px 26px 5px 5px;border:1px solid var(--bdr);border-radius:11px;background:var(--surf)}.board-comment-attachment-tray img{width:46px;height:46px;object-fit:cover;border-radius:8px}.board-comment-attachment-tray svg{width:32px;height:32px;color:var(--p700)}.board-comment-attachment-tray b{overflow:hidden;color:var(--txm);font-size:10px;text-overflow:ellipsis;white-space:nowrap}.board-comment-attachment-tray button{position:absolute;top:3px;right:3px;display:grid;place-items:center;width:20px;height:20px;padding:0;border:0;border-radius:50%;background:var(--surf2);color:var(--txs);cursor:pointer}.board-comment-attachments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}.board-comment-image{display:block;overflow:hidden;padding:0;border:0;border-radius:10px;background:var(--p050);cursor:pointer}.board-comment-image img{display:block;width:100%;max-height:220px;object-fit:cover}.board-comment-file{grid-column:1/-1;display:flex;align-items:center;gap:8px;max-width:320px;padding:9px 11px;border:1px solid var(--bdr);border-radius:9px;background:var(--surf);color:var(--txm);font:700 11px 'DM Sans',sans-serif;cursor:pointer}.board-comment-file svg{width:22px;height:22px;color:var(--p700)}.board-post-comment-text{margin-top:3px;color:var(--txm);font-size:13px;line-height:1.45}.board-post-comment-text p{margin:0!important;color:inherit!important;font:inherit!important}.board-comment-media-viewer{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:60px;background:rgba(14,11,21,.82);backdrop-filter:blur(3px)}.board-comment-media-viewer>img{max-width:min(960px,90vw);max-height:86vh;border-radius:14px;object-fit:contain}.board-comment-media-viewer>button{position:fixed;top:22px;right:24px;display:grid;place-items:center;width:44px;height:44px;border:1px solid #ffffff33;border-radius:50%;background:#ffffff18;color:#fff;font-size:30px;cursor:pointer}
 @media(max-width:700px){.app-modal.board-post-discussion-modal{width:100vw;height:100dvh}.board-post-modal-tool{width:31px;height:31px}.board-comment-media-viewer{padding:24px}.board-comment-attachments{grid-template-columns:1fr}}
 </style>
+<script id="app-ready-script">
+(()=>{
+  const refreshVisibleView=()=>{
+    if(document.getElementById('s-discover')?.classList.contains('on')&&typeof renderDiscover==='function')renderDiscover();
+  };
+  const reveal=()=>{
+    refreshVisibleView();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.remove('app-booting')));
+  };
+  reveal();
+  window.addEventListener('pageshow',()=>{
+    refreshVisibleView();
+    document.documentElement.classList.remove('app-booting');
+  });
+})();
+</script>
 </body>
 </html>

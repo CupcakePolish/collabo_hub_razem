@@ -12,6 +12,20 @@ test('page uses one stable zoom value from the first render', () => {
   assert.doesNotMatch(html, /html\.is-mac body\{zoom:\.94\}/);
 });
 
+test('cold start stays covered until final styles and the active view are ready', () => {
+  assert.match(html, /<html lang="pl" class="app-booting">/);
+  assert.match(html, /html\.app-booting body>\*\{visibility:hidden!important\}/);
+  assert.match(html, /id="app-ready-script"[\s\S]*refreshVisibleView[\s\S]*classList\.remove\('app-booting'\)/);
+  assert.ok(html.lastIndexOf('id="app-ready-script"') > html.lastIndexOf('<style'));
+});
+
+test('discover cold start resets transient filters and reconciles their controls', () => {
+  assert.match(html, /function resetDiscoverTransientView\(\)[\s\S]*discoverFeedMode='all';discoverSearch='';discoverAuthorFilters\.clear\(\)/);
+  assert.match(html, /initTeamUiLanguage\(\);\s*resetDiscoverTransientView\(\);/);
+  assert.match(html, /#s-discover \.discover-sidebar-item\[data-feed\][\s\S]*button\.classList\.toggle\('on',active\)/);
+  assert.match(html, /window\.addEventListener\('pageshow',[\s\S]*refreshVisibleView\(\)/);
+});
+
 test('all inline scripts have valid syntax', () => {
   const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
     .map(match => match[1])
