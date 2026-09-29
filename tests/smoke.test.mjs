@@ -182,6 +182,10 @@ test('discover board filters and sorts community posts', () => {
   assert.doesNotMatch(html, /id="discover-composer-kind"/);
   assert.doesNotMatch(html, /discover-kind-badge/);
   assert.match(html, /id="discover-author-search"/);
+  assert.match(html, /id="discover-post-search"[^>]*placeholder="Szukaj we wpisach…"[^>]*oninput="setDiscoverSearch\(this\.value\)"/);
+  assert.ok(html.indexOf('id="discover-post-search"') < html.indexOf('id="discover-author-search"'));
+  assert.match(html, /const hay=\[post\.title,post\.text\]\.join\(' '\)\.toLocaleLowerCase\('pl'\),words=discoverSearch\.split\(\/\\s\+\/\)\.filter\(Boolean\)/);
+  assert.match(html, /words\.every\(word=>hay\.includes\(word\)\)/);
   assert.match(html, /Najbardziej doceniane/);
   assert.match(html, /Najczęściej komentowane/);
   assert.match(html, /data-time="today"[\s\S]*data-time="week"[\s\S]*data-time="month"[\s\S]*data-time="year"[\s\S]*data-time="all"/);
