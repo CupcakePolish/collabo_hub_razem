@@ -398,7 +398,10 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /sameLevel=found\.depth>=2/);
   assert.match(html, /replyTo=sameLevel/);
   assert.match(html, /function boardReplyMentionHTML\(name\)/);
-  assert.match(html, /class="board-comment-profile-popover"/);
+  assert.match(html, /function boardPersonHoverCardHTML\(name\)/);
+  assert.match(html, /class="board-person-hover-card"/);
+  assert.match(html, /Wyślij wiadomość/);
+  assert.match(html, /function copyBoardPersonName\(name,event\)/);
   assert.match(html, /boardExpandedCommentThreads=new Set\(\)/);
   assert.match(html, /class="board-reaction-details-overlay"/);
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
