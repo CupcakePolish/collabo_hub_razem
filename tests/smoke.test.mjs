@@ -407,6 +407,14 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /aria-label="Wyślij wiadomość"/);
   assert.match(html, /function toggleBoardPersonFollow\(name,event\)/);
   assert.match(html, /function boardPostAuthorHeaderHTML\(author,avatar,date\)/);
+  assert.match(html, /id="mb-inp-board-post-comment"/);
+  assert.match(html, /event\.key==='Enter'&&!event\.shiftKey&&!event\.isComposing/);
+  assert.match(html, /function handleBoardPostCommentAttachments\(kind,input\)/);
+  assert.match(html, /id="epanel-board-post-comment"/);
+  assert.match(html, /class="board-post-modal-tool board-post-modal-gif"/);
+  assert.match(html, /\.board-post-person-trigger b,\.board-post-person-static b\{color:var\(--txt\)!important\}/);
+  assert.match(html, /\.app-modal\.board-post-discussion-modal\{width:min\(860px/);
+  assert.match(html, /\.board-post-modal-head>button\{border:1px solid var\(--bdr\);background:var\(--surf\);box-shadow:none!important/);
   assert.match(html, /class="board-person-hover-target discover-author"/);
   assert.match(html, /function copyBoardPersonName\(name,event\)/);
   assert.match(html, /boardExpandedCommentThreads=new Set\(\)/);
@@ -606,6 +614,10 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.match(html, /collabohub-chat-window-layout:/);
   assert.match(html, /className='dc-resize-handle'/);
   assert.match(html, /classList\.add\('dc-drag-handle'\)/);
+  assert.match(html, /function clearChatWindowLayout\(key\)/);
+  assert.match(html, /\._saveChatLayout\?\.\(\)/);
+  assert.match(html, /win\._saveChatLayout=save/);
+  assert.doesNotMatch(html, /pointercancel',up\);save\(\)/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'/);
   assert.doesNotMatch(html, /visible=document\.getElementById\('s-team-profile'\).*teamProfileTab==='votes'/);
   const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
