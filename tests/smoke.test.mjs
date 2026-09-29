@@ -397,7 +397,9 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function deleteBoardPostComment\(context,postId,locator,commentId\)/);
   assert.match(html, /function toggleBoardCommentReplies\(context,postId,locator,commentId\)/);
   assert.match(html, /sameLevel=found\.depth>=2/);
-  assert.match(html, /replyTo=sameLevel/);
+  assert.match(html, /replyTo=found\.comment\.author\|\|found\.comment\.by/);
+  assert.match(html, /input\.value=`\$\{boardPostCommentComposer\.replyAuthor\} `;input\.focus\(\{preventScroll:true\}\);input\.setSelectionRange\(0,boardPostCommentComposer\.replyAuthor\.length\)/);
+  assert.doesNotMatch(html, /Odpowiadasz: <b>/);
   assert.match(html, /function boardReplyMentionHTML\(name\)/);
   assert.match(html, /function boardPersonHoverCardHTML\(name\)/);
   assert.match(html, /class="board-person-hover-card"/);
