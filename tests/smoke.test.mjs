@@ -405,7 +405,7 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function boardPersonSharedContext\(name\)/);
   assert.match(html, /class="board-person-card-actions icon-only/);
   assert.match(html, /\.board-person-hover-card\{display:block!important;opacity:0;visibility:hidden;pointer-events:none/);
-  assert.match(html, /\.board-person-hover-target:hover>\.board-person-hover-card[^{]*\{[^}]*transition-delay:\.38s/);
+  assert.match(html, /\.board-person-hover-target:hover>\.board-person-hover-card[^{]*\{[^}]*transition-delay:\.1s/);
   assert.match(html, /aria-label="Wyślij wiadomość"/);
   assert.match(html, /function toggleBoardPersonFollow\(name,event\)/);
   assert.match(html, /function boardPostAuthorHeaderHTML\(author,avatar,date\)/);
