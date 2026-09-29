@@ -320,7 +320,8 @@ test('idea team tab focuses on individual competencies and people', () => {
   const participantCard = html.match(/function renderIdeaParticipantsCard\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(participantCard, /idea-participant-metrics|stats\.tasks|stats\.docs|stats\.comments|Największy wkład/);
   assert.match(html, /class="idea-competency-person" data-person=/);
-  assert.match(html, /idea-competency-person:hover:after/);
+  assert.match(html, /class="board-person-hover-target competency"/);
+  assert.match(html, /\.board-person-hover-target:hover>\.board-person-hover-card/);
   assert.match(html, /const primary=needPrimaryCapability\(r\)[\s\S]*idea-competency-copy"><strong>\$\{escHtml\(primary\.name\)\}/);
   const joinButton = html.match(/function projectJoinSplitButton\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.match(joinButton, /openJoinProjectModal\(\$\{ideaId\}\)/);
@@ -400,7 +401,13 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function boardReplyMentionHTML\(name\)/);
   assert.match(html, /function boardPersonHoverCardHTML\(name\)/);
   assert.match(html, /class="board-person-hover-card"/);
-  assert.match(html, /Wyślij wiadomość/);
+  assert.match(html, /class="board-person-card-follow/);
+  assert.match(html, /function boardPersonSharedContext\(name\)/);
+  assert.match(html, /class="board-person-card-actions icon-only/);
+  assert.match(html, /aria-label="Wyślij wiadomość"/);
+  assert.match(html, /function toggleBoardPersonFollow\(name,event\)/);
+  assert.match(html, /function boardPostAuthorHeaderHTML\(author,avatar,date\)/);
+  assert.match(html, /class="board-person-hover-target discover-author"/);
   assert.match(html, /function copyBoardPersonName\(name,event\)/);
   assert.match(html, /boardExpandedCommentThreads=new Set\(\)/);
   assert.match(html, /class="board-reaction-details-overlay"/);
@@ -638,6 +645,10 @@ test('idea catalogs show visual cards without dead overflow actions', () => {
   assert.match(html, /#s-ideas \.ic\{\s*display:grid!important;min-height:0!important;grid-template-columns:132px/);
   assert.match(html, /#s-ideas \.idea-card-thumb\{[^}]*width:132px;height:132px/);
   assert.match(html, /class="ic-title-wrap"><div class="ic-title">/);
+  assert.match(html, /Array\.from\(groups\.values\(\)\)\.filter\(g=>g\.filled<g\.min\)/);
+  const ideaCatalogCard=html.match(/list\.innerHTML=forMeInvites\+filtered\.map\(idea=>\{([\s\S]*?)\n  \}\)\.join/)?.[1] || '';
+  assert.doesNotMatch(ideaCatalogCard, /title="Autor pomysłu"/);
+  assert.doesNotMatch(ideaCatalogCard, /title="Komentarze:/);
   assert.match(html, /\.team-idea-card\{[^}]*grid-template-columns:132px/);
   assert.match(html, /\.team-idea-card \.team-idea-cover\{[^}]*width:132px;height:132px/);
   assert.doesNotMatch(html, /idea-card-more/);
