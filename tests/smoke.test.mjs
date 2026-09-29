@@ -88,6 +88,26 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /\.discover-composer-prompt\{[^}]*height:50px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
 });
 
+test('organization resource catalog has three starter items and routed detail pages', () => {
+  assert.match(html, /id="nl-resources"[^>]*onclick="go\('resources'/);
+  assert.match(html, /id="nl-resources"[\s\S]*?data-icon="resource-box"/);
+  assert.match(html, /id="s-resources" class="screen resource-catalog-screen"/);
+  assert.match(html, /id="s-resource" class="screen resource-detail-screen"/);
+  const seed = html.match(/const catalogResources=\[([\s\S]*?)\n\];\nlet resourceCatalogState/)?.[1] || '';
+  assert.equal((seed.match(/\{id:'/g) || []).length, 3);
+  assert.match(seed, /mower-001/);
+  assert.match(seed, /projector-014/);
+  assert.match(seed, /room-011/);
+  assert.match(html, /function renderResourceCatalog\(\)/);
+  assert.match(html, /function catalogFilteredResources\(\)/);
+  assert.match(html, /function openCatalogResource\(id,opts=\{\}\)/);
+  assert.match(html, /if\(head==='resources'&&parts\[1\]\)return \{kind:'resource'/);
+  assert.match(html, /function renderCatalogResourceDetail\(\)/);
+  assert.match(html, /\['overview','Przegląd'\],[\s\S]*\['availability','Dostępność'\],[\s\S]*\['discussion','Dyskusja'\],[\s\S]*\['history','Historia'\]/);
+  assert.match(html, /\.resource-catalog-screen,\.resource-detail-screen\{[^}]*font-family:'DM Sans',sans-serif/);
+  assert.ok(existsSync(new URL('../assets/resources/cordless-mower.jpg', import.meta.url)));
+});
+
 test('communicator stays available across collaboration screens but not inside documents', () => {
   assert.match(html, /supported=\['s-discover','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'&&!!screen\.querySelector\('\.doc-workspace'\)/);
