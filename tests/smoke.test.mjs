@@ -104,6 +104,14 @@ test('organization resource catalog has three starter items and routed detail pa
   assert.match(html, /if\(head==='resources'&&parts\[1\]\)return \{kind:'resource'/);
   assert.match(html, /function renderCatalogResourceDetail\(\)/);
   assert.match(html, /\['overview','Przegląd'\],[\s\S]*\['availability','Dostępność'\],[\s\S]*\['discussion','Dyskusja'\],[\s\S]*\['history','Historia'\]/);
+  assert.match(html, /\['availability','Dostępność'\],\['opinions','Opinie'\],\['discussion','Dyskusja'\]/);
+  assert.match(html, /const catalogResourceReviewsById=\{/);
+  assert.match(html, /function catalogResourceOpinionsView\(resource\)/);
+  assert.match(html, /catalogResourceDetailTab==='opinions'\?catalogResourceOpinionsView\(resource\)/);
+  assert.match(html, /function openCatalogReviewForm\(resourceId\)/);
+  assert.match(html, /function saveCatalogResourceReview\(resourceId\)/);
+  assert.match(html, /function toggleCatalogReviewLike\(resourceId,reviewId\)/);
+  assert.match(html, /id="collabohub-resource-opinions"/);
   assert.match(html, /\.resource-catalog-screen,\.resource-detail-screen\{[^}]*font-family:'DM Sans',sans-serif/);
   assert.ok(existsSync(new URL('../assets/resources/cordless-mower.jpg', import.meta.url)));
 });
