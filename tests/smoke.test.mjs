@@ -66,6 +66,10 @@ test('discover board has navigation, composer and publish interactions', () => {
   assert.match(html, /function publishDiscoverPost\(\)/);
   assert.match(html, /function toggleDiscoverLike\(id\)/);
   assert.match(html, /function addDiscoverComment\(id\)/);
+  assert.match(html, /function renderBoardReactionControl\(popId,onReactTpl,reactions=\{\}\)/);
+  assert.match(html, /function openDiscoverPostDiscussion\(id\)[\s\S]*openBoardPostDiscussionModal/);
+  assert.match(html, /class="discover-post-actions board-post-actions"/);
+  assert.doesNotMatch(html, /<span>Doceniam<\/span>/);
   assert.match(html, /#s-discover \.discover-sidebar\{[^}]*max-height:calc\(100dvh - 104px\)[^}]*overflow-y:auto/);
   assert.match(html, /\.discover-composer-prompt\{[^}]*height:50px[^}]*border:1px solid #dedfeb[^}]*background:#fff/);
 });
@@ -377,12 +381,15 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /project-person-board-composer[\s\S]*teamBoardComposerMediaHTML\(\)[\s\S]*Wybierz emotkę lub GIF/);
   assert.match(html, /function saveProjectParticipantBoardPost\(ideaId,name,postId=''\)[\s\S]*participantBoardPosts/);
   assert.match(html, /function toggleProjectParticipantBoardReaction\(ideaId,name,postId,emoji\)/);
-  assert.match(html, /project-person-board-actions[\s\S]*Doceniam[\s\S]*Dyskusja[\s\S]*Zapisz/);
+  assert.match(html, /project-person-board-actions board-post-actions[\s\S]*renderBoardReactionControl[\s\S]*board-comment-trigger[\s\S]*Zapisz/);
   assert.match(html, /function toggleProjectParticipantBoardDiscussion\(ideaId,name,postId\)/);
   assert.match(html, /function addProjectParticipantBoardComment\(ideaId,name,postId\)/);
   assert.match(html, /function toggleProjectParticipantBoardSaved\(ideaId,name,postId\)/);
   assert.match(html, /\.project-person-board \.project-person-board-post h2\{[^}]*font-size:26px/);
   assert.match(html, /\.project-person-board-actions\{[^}]*border-top:1px solid var\(--bdr\)/);
+  assert.match(html, /function openBoardPostDiscussionModal\(context,postId,locator=''\)/);
+  assert.match(html, /function renderBoardReactionTypes\(reactions,onReactTpl\)/);
+  assert.match(html, /function setBoardPostReaction\(reactions,emoji\)/);
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
   assert.match(html, /\.project-person-tabs\{[^}]*width:min\(1100px,100%\)/);
@@ -637,6 +644,9 @@ test('team board uses a centered visual feed with editable welcome post', () => 
   assert.match(html, /openTeamBoardPostModal/);
   assert.match(html, /async function saveTeamBoardPost/);
   assert.match(html, /toggleTeamWelcomePin/);
+  assert.match(html, /team-board-post-actions board-post-actions/);
+  assert.match(html, /function toggleTeamBoardPostReaction\(teamId,postId,emoji\)/);
+  assert.match(html, /function openTeamBoardPostDiscussion\(teamId,postId\)/);
   assert.match(html, /#s-team-profile\.on\{display:block;padding:84px 24px 70px!important/);
   assert.match(html, /#s-team-profile \.tp-hero\{[^}]*overflow:visible/);
   assert.match(html, /#s-team-profile \.tp-board-feed\{width:min\(900px,100%\);margin:18px auto 0\}/);
