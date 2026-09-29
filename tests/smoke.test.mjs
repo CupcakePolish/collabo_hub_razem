@@ -394,7 +394,12 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function toggleBoardPostCommentReaction\(context,postId,locator,commentId,emoji\)/);
   assert.match(html, /function startBoardPostCommentEdit\(context,postId,locator,commentId\)/);
   assert.match(html, /function deleteBoardPostComment\(context,postId,locator,commentId\)/);
-  assert.match(html, /Wątek może mieć maksymalnie 3 poziomy odpowiedzi/);
+  assert.match(html, /function toggleBoardCommentReplies\(context,postId,locator,commentId\)/);
+  assert.match(html, /sameLevel=found\.depth>=2/);
+  assert.match(html, /replyTo=sameLevel/);
+  assert.match(html, /function boardReplyMentionHTML\(name\)/);
+  assert.match(html, /class="board-comment-profile-popover"/);
+  assert.match(html, /boardExpandedCommentThreads=new Set\(\)/);
   assert.match(html, /class="board-reaction-details-overlay"/);
   assert.match(html, /function deleteProjectParticipantBoardPost\(ideaId,name,postId\)/);
   assert.match(html, /downloadBoardDocument\(context,postId,index,teamId=''\)[\s\S]*context==='project-person'/);
