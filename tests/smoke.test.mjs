@@ -721,8 +721,11 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.match(html, /function renderTeamDiscussionsTab\(t,mine\)/);
   assert.match(html, /class="team-discussions-heading"/);
   assert.match(html, /Dyskusje zespołu/);
-  assert.match(html, /placeholder="Szukaj dyskusji, kanału lub osoby…"/);
-  assert.match(html, /Otwórz jako komunikator/);
+  assert.match(html, /placeholder="Szukaj wątków lub osób…"/);
+  assert.match(html, /class="discussion-info-rail"/);
+  assert.match(html, /class="team-discussion-list-scroll"/);
+  assert.match(html, /function discussionChannelAvatar\(ch,size='small'\)/);
+  assert.match(html, /id="team-channel-image" type="file" accept="image\/\*"/);
   assert.match(html, /function toggleTeamDiscussionPin\(teamId,channelId\)/);
   assert.match(html, /collabohub-pinned-discussions:/);
   assert.match(html, /Przypięte dyskusje/);
@@ -737,8 +740,21 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.doesNotMatch(html, /pointercancel',up\);save\(\)/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'/);
   assert.doesNotMatch(html, /visible=document\.getElementById\('s-team-profile'\).*teamProfileTab==='votes'/);
+  assert.match(html, /#s-team-profile\.on\.discussion-workspace-active[^}]*height:100dvh[^}]*overflow:hidden/);
+  assert.match(html, /\.team-discussion-messages\{[^}]*overflow-y:auto/);
+  assert.match(html, /\.team-discussion-compose\{[^}]*flex:0 0 64px/);
   const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(discussions, /Członkowie online|Ostatnia aktywność/);
+});
+
+test('idea discussion tab uses the same fixed-height named-thread communicator', () => {
+  assert.match(html, /function renderIdeaDiscussionsTab\(idea,ideaId\)/);
+  assert.match(html, /const tabDyskusja=renderIdeaDiscussionsTab\(idea,id\)/);
+  assert.match(html, /function ensureIdeaDiscussionThreads\(idea\)/);
+  assert.match(html, /function sendIdeaDiscussionMessage\(ideaId,rowId\)/);
+  assert.match(html, /id="idea-thread-image" type="file" accept="image\/\*"/);
+  assert.match(html, /#s-idea\.on\.discussion-workspace-active[^}]*height:100dvh[^}]*overflow:hidden/);
+  assert.match(html, /#s-idea\.discussion-workspace-active \.idea-page[^}]*height:calc\(100dvh - var\(--global-nav-height\)\)[^}]*overflow:hidden/);
 });
 
 test('team ideas tab filters assigned projects and starts a team-owned private draft', () => {
