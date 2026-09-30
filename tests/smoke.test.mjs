@@ -744,7 +744,8 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.match(html, /#s-team-profile\.on\.discussion-workspace-active[^}]*height:100dvh[^}]*overflow:hidden/);
   assert.match(html, /#s-team-profile\.discussion-workspace-active>\.profile-header\{display:block/);
   assert.doesNotMatch(html, /#s-team-profile\.discussion-workspace-active>\.profile-header\{display:none/);
-  assert.doesNotMatch(html, /#s-team-profile\.discussion-workspace-active \.tp-hero-main[^}]*display:none/);
+  assert.match(html, /#s-team-profile\.discussion-workspace-active \.tp-hero-main\{display:flex/);
+  assert.match(html, /@media\(max-width:820px\)[^{]*\{[^}]*#s-team-profile\.on\.discussion-workspace-active/);
   assert.match(html, /\.team-discussion-messages\{[^}]*overflow-y:auto/);
   assert.match(html, /\.team-discussion-compose\{[^}]*flex:0 0 64px/);
   const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
