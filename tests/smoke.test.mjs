@@ -190,6 +190,7 @@ test('discover right rail renders an interactive meeting calendar', () => {
   assert.match(html, /avatar:'assets\/quorum-gavel\.png'/);
   assert.match(html, /function discoverCalendarEventVisual\(event\)/);
   assert.match(html, /safeUserUrl\(team\?\.avatar\|\|event\.avatar\|\|''/);
+  assert.match(html, /\.discover-calendar-feature-icon img,\.discover-calendar-event-icon img\{[^}]*object-fit:cover/);
   assert.match(html, /function shiftDiscoverCalendar\(delta\)/);
   assert.doesNotMatch(html, /function openDiscoverMeetingModal\(\)/);
   assert.doesNotMatch(html, /function saveDiscoverMeeting\(\)/);
