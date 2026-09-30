@@ -719,9 +719,10 @@ test('team voting tab is a searchable master-detail workflow with proposals and 
 
 test('team discussions share persistent draggable chat windows with the communicator sidebar', () => {
   assert.match(html, /function renderTeamDiscussionsTab\(t,mine\)/);
-  assert.match(html, /class="team-discussions-heading"/);
-  assert.match(html, /Dyskusje zespołu/);
-  assert.match(html, /placeholder="Szukaj wątków lub osób…"/);
+  assert.match(html, /class="team-discussions-page team-channel-workspace"/);
+  assert.match(html, /class="team-discussion-list-tools"/);
+  assert.match(html, /placeholder="Szukaj rozmów, osób lub wątków…"/);
+  assert.match(html, /Wycisz[\s\S]*Przypnij[\s\S]*Udostępnij[\s\S]*Ustawienia/);
   assert.match(html, /class="discussion-info-rail"/);
   assert.match(html, /class="team-discussion-list-scroll"/);
   assert.match(html, /function discussionChannelAvatar\(ch,size='small'\)/);
@@ -741,6 +742,9 @@ test('team discussions share persistent draggable chat windows with the communic
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'/);
   assert.doesNotMatch(html, /visible=document\.getElementById\('s-team-profile'\).*teamProfileTab==='votes'/);
   assert.match(html, /#s-team-profile\.on\.discussion-workspace-active[^}]*height:100dvh[^}]*overflow:hidden/);
+  assert.match(html, /#s-team-profile\.discussion-workspace-active>\.profile-header\{display:block/);
+  assert.doesNotMatch(html, /#s-team-profile\.discussion-workspace-active>\.profile-header\{display:none/);
+  assert.doesNotMatch(html, /#s-team-profile\.discussion-workspace-active \.tp-hero-main[^}]*display:none/);
   assert.match(html, /\.team-discussion-messages\{[^}]*overflow-y:auto/);
   assert.match(html, /\.team-discussion-compose\{[^}]*flex:0 0 64px/);
   const discussions=html.match(/function renderTeamDiscussionsTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
