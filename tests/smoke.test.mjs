@@ -100,6 +100,17 @@ test('organization resource catalog has three starter items and routed detail pa
   assert.match(seed, /room-011/);
   assert.match(html, /function renderResourceCatalog\(\)/);
   assert.match(html, /function catalogFilteredResources\(\)/);
+  assert.match(html, /class="resource-filter-sidebar" aria-label="Filtry katalogu"/);
+  assert.match(html, /id="resource-type-search"[^>]*placeholder="Szukaj typu…"/);
+  assert.match(html, /id="resource-location-search"[^>]*placeholder="Szukaj lokalizacji…"/);
+  assert.match(html, /id="resource-catalog-query"[^>]*placeholder="Szukaj zasobów po nazwie, opisie, lokalizacji lub cechach…"/);
+  assert.match(html, /function setResourceCatalogScope\(value\)/);
+  assert.match(html, /function setResourceCatalogView\(value\)/);
+  assert.match(html, /function toggleResourceCatalogFilterGroup\(key\)/);
+  assert.match(html, /focusIds=\{query:'resource-catalog-query',typeQuery:'resource-type-search',locationQuery:'resource-location-search'\}/);
+  assert.match(html, /\.resource-sidebar-scroll\{max-height:116px;overflow-y:auto/);
+  assert.match(html, /\.resource-filter-sidebar\{position:sticky;[^}]*overflow-y:auto/);
+  assert.match(html, /class="resource-catalog-list \$\{resourceCatalogState\.view==='grid'\?'grid':''\}"/);
   assert.match(html, /function openCatalogResource\(id,opts=\{\}\)/);
   assert.match(html, /if\(head==='resources'&&parts\[1\]\)return \{kind:'resource'/);
   assert.match(html, /function renderCatalogResourceDetail\(\)/);
