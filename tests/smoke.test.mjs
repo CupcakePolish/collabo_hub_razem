@@ -170,11 +170,26 @@ test('discover side rail only reveals its scrollbar while scrolling', () => {
 });
 
 test('discover right rail renders an interactive meeting calendar', () => {
+  const calendarSeed=html.match(/const discoverCalendarEvents=\[([\s\S]*?)\n\];/)?.[1]||'';
   assert.match(html, /aria-label="Kalendarz spotkań"/);
   assert.match(html, /id="discover-calendar"/);
   assert.match(html, /function renderDiscoverCalendar\(\)/);
   assert.match(html, /Kalendarz spotkań/);
   assert.match(html, /Najbliższe spotkanie/);
+  assert.equal((calendarSeed.match(/\{id:'/g)||[]).length, 1);
+  assert.match(calendarSeed, /date:'2026-10-20'/);
+  assert.match(calendarSeed, /teamId:'tm-leg'/);
+  assert.match(calendarSeed, /avatar:'assets\/quorum-gavel\.png'/);
+  assert.doesNotMatch(calendarSeed, /2026-09-12|calendar-consultation|calendar-workshop|calendar-vote/);
+  assert.match(html, /function discoverCalendarTodayISO\(date=new Date\(\)\)/);
+  assert.match(html, /function discoverCalendarFutureEvents\(\)/);
+  assert.match(html, /event\.date>today\|\|\(event\.date===today&&event\.time>=clock\)/);
+  assert.match(html, /id="discover-calendar-today-date"/);
+  assert.match(html, /id="discover-calendar-today-time"/);
+  assert.match(html, /function updateDiscoverCalendarClock\(\)/);
+  assert.match(html, /avatar:'assets\/quorum-gavel\.png'/);
+  assert.match(html, /function discoverCalendarEventVisual\(event\)/);
+  assert.match(html, /safeUserUrl\(team\?\.avatar\|\|event\.avatar\|\|''/);
   assert.match(html, /function shiftDiscoverCalendar\(delta\)/);
   assert.doesNotMatch(html, /function openDiscoverMeetingModal\(\)/);
   assert.doesNotMatch(html, /function saveDiscoverMeeting\(\)/);
