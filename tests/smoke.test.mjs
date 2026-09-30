@@ -199,6 +199,29 @@ test('discover right rail renders an interactive meeting calendar', () => {
   assert.doesNotMatch(html, /id="discover-opportunities"/);
 });
 
+test('every project has a governed evaluation and work-points tab', () => {
+  assert.match(html, /\{k:'ocena',label:'Ocena i punkty pracy'/);
+  assert.match(html, /ocena:tabOcena/);
+  assert.match(html, /ocena:'Ocena i punkty pracy'/);
+  assert.match(html, /function renderIdeaEvaluationTab\(idea,ideaId\)/);
+  assert.match(html, /function projectWorkEvaluationSteps\(stage\)/);
+  assert.match(html, /Przygotowanie/);
+  assert.match(html, /Ocena projektu/);
+  assert.match(html, /Punkty pracy/);
+  assert.match(html, /function openProjectWorkScore\(ideaId\)/);
+  assert.match(html, /function saveProjectWorkScore\(ideaId\)/);
+  assert.match(html, /Autor oceny pozostaje ukryty/);
+  assert.match(html, /function closeProjectWorkScoring\(ideaId\)/);
+  assert.match(html, /state\.pool=projectWorkScore\(state\)/);
+  assert.match(html, /function saveWorkPointProposal\(ideaId,submit=false\)/);
+  assert.match(html, /kind:'work-point-allocation'/);
+  assert.match(html, /Punkty pracy nie są aurą ani popularnością/);
+  assert.match(html, /v\.kind==='work-point-allocation'/);
+  assert.match(html, /workPoints\.allocationStatus='approved'/);
+  assert.match(html, /class="work-eval-steps"/);
+  assert.match(html, /id="project-work-evaluation-styles"/);
+});
+
 test('discover board filters and sorts community posts', () => {
   assert.match(html, /const APP_TIME_ZONE='Europe\/Warsaw'/);
   assert.match(html, /const NOW_TIME=\(\)=>new Intl\.DateTimeFormat\('pl-PL',\{timeZone:APP_TIME_ZONE/);
