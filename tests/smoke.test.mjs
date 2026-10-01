@@ -846,6 +846,10 @@ test('secondary boards share chronological and engagement sorting controls', () 
   assert.match(html, /sortedBoardFeedRows\(projectParticipantBoardPosts\(idea,name\),'projectPerson',key\)/);
   assert.match(html, /boardFeedControlsHTML\('projectPerson',key\)/);
   assert.match(html, /\.board-feed-controls\{[^}]*display:flex/);
+  assert.match(html, /class="board-feed-toolbar profile-board-toolbar"/);
+  assert.match(html, /\.board-feed-toolbar\{[^}]*grid-template-columns:minmax\(280px,460px\) auto/);
+  assert.match(html, /\.discover-dropdown-trigger b\{font-weight:550!important\}/);
+  assert.match(html, /class="mp-compose-types profile-compose-shortcuts"/);
 });
 
 test('team board post composer supports rich media and categorized platform mentions', () => {
