@@ -843,6 +843,15 @@ test('team board post composer supports rich media and categorized platform ment
   assert.match(html, /class="tp-board-mention"/);
   assert.match(html, /function previewTeamBoardPostImage\(input\)/);
   assert.match(html, /function previewTeamBoardPostDocuments\(input\)/);
+  assert.match(html, /const BOARD_POST_MAX_IMAGES=4/);
+  assert.match(html, /const BOARD_POST_IMAGE_DATA_LIMIT=360000/);
+  assert.match(html, /function compactBoardPostImageData\(source\)/);
+  assert.match(html, /Limit to 900 KB na plik i 1,2 MB łącznie/);
+  assert.match(html, /function commitBoardPublication\(snapshot\)/);
+  assert.match(html, /if\(!commitBoardPublication\(persistenceSnapshot\)\)return/);
+  assert.match(html, /function persistentMembersSnapshot\(\)/);
+  assert.match(html, /function compactOversizedBoardMedia\(\)/);
+  assert.match(html, /compactOversizedBoardMedia\(\);/);
   assert.match(html, /id="team-board-post-image"[^>]*multiple/);
   assert.match(html, /id="team-board-post-document"[^>]*multiple/);
   assert.match(html, /function teamBoardPostMediaHTML\(post,context='discover',teamId=''\)/);

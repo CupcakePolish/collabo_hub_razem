@@ -7312,7 +7312,7 @@ function openProjectParticipantBoardComposer(ideaId,name,postId=''){
 }
 function saveProjectParticipantBoardPost(ideaId,name,postId=''){
   const idea=ideas.find(row=>row.id===Number(ideaId));if(!idea||!isActiveProjectMember(idea))return;const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=String(document.getElementById('mb-inp-team-board-post-body')?.value||'').trim(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row}));if(!title&&!text&&!images.length&&!documents.length)return toast('Dodaj treść, tytuł, zdjęcie albo dokument.','warn');
-  idea.participantBoardPosts=idea.participantBoardPosts||[];const current=idea.participantBoardPosts.find(row=>row.target===name&&String(row.id)===String(postId));if(postId&&(!current||current.author!==MY_NAME))return;const values={target:name,projectId:idea.id,author:MY_NAME,title,text,image:images[0]||'',images,documents,date:current?.date||TODAY,time:current?.time||NOW_TIME(),createdAt:current?.createdAt||Date.now(),updatedAt:Date.now(),reactions:current?.reactions||{}};if(current)Object.assign(current,values);else idea.participantBoardPosts.push({id:'project-person-post-'+Date.now(),...values});closeAppModal();queuePersistence();openProjectParticipantProfile(idea.id,name);toast(current?'Wpis został zaktualizowany.':'Wpis został opublikowany na tej tablicy.','ok');
+  idea.participantBoardPosts=idea.participantBoardPosts||[];const current=idea.participantBoardPosts.find(row=>row.target===name&&String(row.id)===String(postId));if(postId&&(!current||current.author!==MY_NAME))return;const persistenceSnapshot=captureBoardPublicationState(),values={target:name,projectId:idea.id,author:MY_NAME,title,text,image:images[0]||'',images,documents,date:current?.date||TODAY,time:current?.time||NOW_TIME(),createdAt:current?.createdAt||Date.now(),updatedAt:Date.now(),reactions:current?.reactions||{}};if(current)Object.assign(current,values);else idea.participantBoardPosts.push({id:'project-person-post-'+Date.now(),...values});if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();openProjectParticipantProfile(idea.id,name);toast(current?'Wpis został zaktualizowany.':'Wpis został opublikowany na tej tablicy.','ok');
 }
 function toggleProjectParticipantBoardReaction(ideaId,name,postId,emoji){
   toggleBoardPostReaction('project-person',postId,projectParticipantBoardLocator(ideaId,name),emoji);
@@ -13248,8 +13248,23 @@ function openTeamBoardPostModal(teamId,postId=''){
   renderTeamBoardComposerPreview();
   setTimeout(()=>document.getElementById('team-board-post-title')?.focus(),30);
 }
-async function previewTeamBoardPostImage(input){const files=[...(input?.files||[])].filter(file=>String(file.type||'').startsWith('image/'));if(!files.length)return toast('Wybierz pliki graficzne.','warn');teamBoardComposerImages.push(...await Promise.all(files.map(fileAsData)));input.value='';renderTeamBoardComposerPreview();}
-async function previewTeamBoardPostDocuments(input){const files=[...(input?.files||[])];if(!files.length)return;const rows=await Promise.all(files.map(async file=>({name:file.name,type:file.type,size:file.size,data:await fileAsData(file)})));teamBoardComposerDocuments.push(...rows);input.value='';renderTeamBoardComposerPreview();}
+const BOARD_POST_MAX_IMAGES=4;
+const BOARD_POST_IMAGE_DATA_LIMIT=360000;
+const BOARD_POST_DOCUMENT_FILE_LIMIT=900000;
+const BOARD_POST_DOCUMENT_TOTAL_LIMIT=1200000;
+function boardPostDocumentBytes(rows=teamBoardComposerDocuments){return rows.reduce((sum,row)=>sum+Number(row?.size||0),0);}
+function boardPostImageData(file){
+  return new Promise(resolve=>{if(!file||!String(file.type||'').startsWith('image/'))return resolve('');const fallback=()=>{if(file.size>BOARD_POST_IMAGE_DATA_LIMIT*.72)return resolve('');fileAsData(file).then(resolve);},url=URL.createObjectURL(file),img=new Image();img.onload=()=>{try{const maxSide=1440,ratio=Math.min(1,maxSide/Math.max(img.naturalWidth||1,img.naturalHeight||1)),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');let width=Math.max(1,Math.round(img.naturalWidth*ratio)),height=Math.max(1,Math.round(img.naturalHeight*ratio)),quality=.82,data='';if(!ctx)throw new Error('canvas');for(let pass=0;pass<6;pass++){canvas.width=width;canvas.height=height;ctx.clearRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);quality=Math.max(.5,.82-pass*.07);data=canvas.toDataURL('image/webp',quality);if(data.length<=BOARD_POST_IMAGE_DATA_LIMIT)break;width=Math.max(480,Math.round(width*.82));height=Math.max(320,Math.round(height*.82));}URL.revokeObjectURL(url);resolve(data.length<=BOARD_POST_IMAGE_DATA_LIMIT?data:'');}catch{URL.revokeObjectURL(url);fallback();}};img.onerror=()=>{URL.revokeObjectURL(url);fallback();};img.src=url;});
+}
+function compactBoardPostImageData(source){
+  source=String(source||'');if(!source.startsWith('data:image/')||source.length<=BOARD_POST_IMAGE_DATA_LIMIT)return Promise.resolve(source);return new Promise(resolve=>{const img=new Image();img.onload=()=>{try{const maxSide=1440,ratio=Math.min(1,maxSide/Math.max(img.naturalWidth||1,img.naturalHeight||1)),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');let width=Math.max(1,Math.round(img.naturalWidth*ratio)),height=Math.max(1,Math.round(img.naturalHeight*ratio)),data='';if(!ctx)throw new Error('canvas');for(let pass=0;pass<6;pass++){canvas.width=width;canvas.height=height;ctx.clearRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);data=canvas.toDataURL('image/webp',Math.max(.5,.82-pass*.07));if(data.length<=BOARD_POST_IMAGE_DATA_LIMIT)break;width=Math.max(480,Math.round(width*.82));height=Math.max(320,Math.round(height*.82));}resolve(data.length<source.length?data:source);}catch{resolve(source);}};img.onerror=()=>resolve(source);img.src=source;});
+}
+async function previewTeamBoardPostImage(input){
+  const files=[...(input?.files||[])].filter(file=>String(file.type||'').startsWith('image/'));if(!files.length)return toast('Wybierz pliki graficzne.','warn');const room=Math.max(0,BOARD_POST_MAX_IMAGES-teamBoardComposerImages.length);if(!room){input.value='';return toast('Do jednego wpisu możesz dodać maksymalnie 4 zdjęcia.','warn');}let rejected=files.length-room;for(const file of files.slice(0,room)){const data=await boardPostImageData(file);if(data)teamBoardComposerImages.push(data);else rejected++;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast('Część zdjęć pominięto. Dodaj maksymalnie 4 zdjęcia w formacie JPG, PNG lub WebP.','warn');
+}
+async function previewTeamBoardPostDocuments(input){
+  const files=[...(input?.files||[])];if(!files.length)return;let total=boardPostDocumentBytes(),rejected=0;for(const file of files){if(file.size>BOARD_POST_DOCUMENT_FILE_LIMIT||total+file.size>BOARD_POST_DOCUMENT_TOTAL_LIMIT){rejected++;continue;}const data=await fileAsData(file);if(!data){rejected++;continue;}teamBoardComposerDocuments.push({name:file.name,type:file.type,size:file.size,data});total+=file.size;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast('Dokument pominięto, aby wpis dało się zapisać. Limit to 900 KB na plik i 1,2 MB łącznie.','warn');
+}
 function removeTeamBoardPostImage(index){teamBoardComposerImages.splice(Number(index),1);renderTeamBoardComposerPreview();}
 function removeTeamBoardPostDocument(index){teamBoardComposerDocuments.splice(Number(index),1);renderTeamBoardComposerPreview();}
 function renderTeamBoardComposerPreview(){
@@ -13287,13 +13302,13 @@ function openTeamBoardPostMenu(teamId,postId){const t=projectTeams.find(row=>Str
 async function saveTeamBoardPost(teamId,postId='',status='published'){
   const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;
   const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=String(document.getElementById('mb-inp-team-board-post-body')?.value||'').trim(),audience=document.getElementById('team-board-post-audience')?.value||'team';if(!text)return toast('Dodaj treść wpisu.','warn');
-  const images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'';let savedPostId=postId;
+  const persistenceSnapshot=captureBoardPublicationState(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'';let savedPostId=postId;
   if(postId==='welcome'){t.boardWelcomeTitle=title;t.boardWelcomeText=text;t.boardWelcomeImage=image;t.boardWelcomeImages=images;t.boardWelcomeDocuments=documents;t.boardWelcomeStatus=status;t.boardWelcomeAudience=audience;savedPostId='welcome';}
   else{t.boardPosts=t.boardPosts||[];const current=t.boardPosts.find(row=>String(row.id)===String(postId)),newId=current?.id||'tbp'+Date.now(),changes={title,text,image,images,documents,status,audience,date:current?.date||TODAY,by:current?.by||MY_NAME,reactions:current?.reactions||{},comments:current?.comments||[],savedBy:current?.savedBy||[]};if(current)Object.assign(current,changes);else t.boardPosts.push({id:newId,...changes});savedPostId=newId;}
   const discoverId=`discover-team-board-${t.id}-${savedPostId}`,discoverIndex=discoverPosts.findIndex(row=>row.id===discoverId),previous=discoverIndex>=0?discoverPosts[discoverIndex]:null;
   if(status==='published'&&audience==='public'){const publicPost={id:discoverId,teamBoardPostId:savedPostId,author:t.name,sourceType:'team',sourceId:t.id,sourceLabel:`Zespół · ${t.name}`,title,text,date:'Dzisiaj',time:previous?.time||NOW_TIME(),createdAt:previous?.createdAt||Date.now(),reactions:previous?.reactions||{},comments:previous?.comments||[],saved:!!previous?.saved,following:!!previous?.following,reports:previous?.reports||[],image,images,documents,avatarImage:t.avatar||'',topic:'all'};if(discoverIndex>=0)discoverPosts[discoverIndex]=publicPost;else discoverPosts.unshift(publicPost);}
   else if(discoverIndex>=0)discoverPosts.splice(discoverIndex,1);
-  t.lastActive='teraz';closeAppModal();teamProfileTab='board';queuePersistence();openTeam(teamId);toast(status==='draft'?'Szkic wpisu został zapisany.':audience==='public'?'Wpis został opublikowany także w Odkrywaj.':'Wpis został opublikowany na tablicy zespołu.','ok');
+  t.lastActive='teraz';if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();teamProfileTab='board';openTeam(teamId);toast(status==='draft'?'Szkic wpisu został zapisany.':audience==='public'?'Wpis został opublikowany także w Odkrywaj.':'Wpis został opublikowany na tablicy zespołu.','ok');
 }
 function toggleTeamWelcomePin(teamId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t)return;t.welcomePinned=t.welcomePinned===false?true:false;queuePersistence();openTeam(teamId);toast(t.welcomePinned===false?'Wpis został odpięty.':'Wpis został przypięty.','ok');}
 function deleteTeamBoardPost(teamId,postId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;t.boardPosts=(t.boardPosts||[]).filter(row=>String(row.id)!==String(postId));closeAppModal();queuePersistence();openTeam(teamId);toast('Wpis został usunięty.','ok');}
@@ -16278,6 +16293,7 @@ function myProfileComposerPanelHTML(){
 function publishMyProfileUpdate(){
   const member=members.find(row=>row.name===myProfile.name);
   if(!member){toast('Nie udało się połączyć profilu publicznego.','warn');return;}
+  const persistenceSnapshot=captureBoardPublicationState();
   let entry=null;
   if(myProfileComposerType==='update'){
     const title=(document.getElementById('mp-entry-title')?.value||'').trim(),text=(document.getElementById('mp-entry-text')?.value||'').trim();
@@ -16299,9 +16315,9 @@ function publishMyProfileUpdate(){
   member.profileFeed=Array.isArray(member.profileFeed)?member.profileFeed:[];
   member.profileFeed.unshift(entry);myProfile.profileFeed=cloneDemoValue(member.profileFeed);
   syncProfileToMember();
+  saveActiveDemoAccountState();if(!commitBoardPublication(persistenceSnapshot))return;
   myProfileFeedFilter='all';
   myProfileComposerType='';myProfileComposerSkills=new Set();
-  saveActiveDemoAccountState();__persistenceLastDataJson='';persistNow();
   renderMyProfile();
   toast('Dodano wpis do tablicy profilu.');
 }
@@ -17797,23 +17813,23 @@ function openDiscoverComposerModal(options={}){
 }
 function publishDiscoverPost(){
   const input=document.getElementById('mb-inp-team-board-post-body'),text=String(input?.value||'').trim();if(!text){toast('Napisz treść wpisu.','warn');input?.focus();return;}
-  const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'',editingPost=discoverComposerEditingId?discoverPosts.find(row=>String(row.id)===String(discoverComposerEditingId)):null;
+  const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'',editingPost=discoverComposerEditingId?discoverPosts.find(row=>String(row.id)===String(discoverComposerEditingId)):null,persistenceSnapshot=captureBoardPublicationState();
   if(editingPost){
     if(!discoverPostCanManage(editingPost))return;
     Object.assign(editingPost,{title,text,image,images,documents,editedAt:Date.now()});
     if(editingPost.sourceType==='team'&&editingPost.teamBoardPostId){const team=(projectTeams||[]).find(row=>String(row.id)===String(editingPost.sourceId));if(team){if(String(editingPost.teamBoardPostId)==='welcome'){team.boardWelcomeTitle=title;team.boardWelcomeText=text;team.boardWelcomeImage=image;team.boardWelcomeImages=images;team.boardWelcomeDocuments=documents;team.boardWelcomeEditedAt=editingPost.editedAt;}else{const boardPost=(team.boardPosts||[]).find(row=>String(row.id)===String(editingPost.teamBoardPostId));if(boardPost)Object.assign(boardPost,{title,text,image,images,documents,editedAt:editingPost.editedAt});}}}
-    queuePersistence();closeAppModal();renderDiscover();toast('Zmiany we wpisie zostały zapisane.','ok');return;
+    if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();renderDiscover();toast('Zmiany we wpisie zostały zapisane.','ok');return;
   }
   const identity=discoverComposerIdentity(),audience=document.getElementById('discover-composer-audience')?.value||discoverComposerAudience,createdAt=new Date().toISOString(),stamp=Date.parse(createdAt),dateLabel=new Intl.DateTimeFormat('pl-PL',{timeZone:APP_TIME_ZONE,day:'numeric',month:'short',year:'numeric'}).format(new Date(stamp)).replace(/\./g,''),timeLabel=new Intl.DateTimeFormat('pl-PL',{timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(stamp));
   if(audience==='team'){
     const team=identity.team;if(!team)return toast('Wybierz zespół, na którego tablicy ma pojawić się wpis.','warn');
-    team.boardPosts=Array.isArray(team.boardPosts)?team.boardPosts:[];team.boardPosts.push({id:'tbp'+stamp,title,text,image,images,documents,status:'published',audience:'team',date:dateLabel,time:timeLabel,createdAt,by:MY_NAME});team.lastActive='teraz';queuePersistence();closeAppModal();toast(`Wpis opublikowano wewnątrz zespołu „${team.name}”.`,'ok');return;
+    team.boardPosts=Array.isArray(team.boardPosts)?team.boardPosts:[];team.boardPosts.push({id:'tbp'+stamp,title,text,image,images,documents,status:'published',audience:'team',date:dateLabel,time:timeLabel,createdAt,by:MY_NAME});team.lastActive='teraz';if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();toast(`Wpis opublikowano wewnątrz zespołu „${team.name}”.`,'ok');return;
   }
   if(audience==='profile'){
     const member=members.find(row=>row.name===MY_NAME);if(!member)return toast('Nie udało się odnaleźć Twojego profilu.','warn');
-    const idea=discoverComposerIdeaId?ideas.find(row=>String(row.id)===discoverComposerIdeaId):null,tags=idea?(idea.skillsNeeded||[]).map(row=>row.skill).filter(Boolean).slice(0,3):[];member.profileFeed=Array.isArray(member.profileFeed)?member.profileFeed:[];member.profileFeed.unshift({id:'profile-post-'+stamp,type:idea?'idea':'update',sourceIdeaId:idea?.id||'',stamp,createdAt,date:dateLabel,time:timeLabel,title:title||(idea?`Pomysł: ${idea.title}`:'Nowy wpis'),text,by:MY_NAME,tags:tags.length?tags:(idea?[ideaPhaseLabel(idea)]:[]),likes:0,comments:0,image,images,documents});if(myProfile?.name===MY_NAME)myProfile.profileFeed=cloneDemoValue(member.profileFeed);saveActiveDemoAccountState();__persistenceLastDataJson='';persistNow();closeAppModal();toast('Wpis opublikowano tylko na Twoim profilu.','ok');return;
+    const idea=discoverComposerIdeaId?ideas.find(row=>String(row.id)===discoverComposerIdeaId):null,tags=idea?(idea.skillsNeeded||[]).map(row=>row.skill).filter(Boolean).slice(0,3):[];member.profileFeed=Array.isArray(member.profileFeed)?member.profileFeed:[];member.profileFeed.unshift({id:'profile-post-'+stamp,type:idea?'idea':'update',sourceIdeaId:idea?.id||'',stamp,createdAt,date:dateLabel,time:timeLabel,title:title||(idea?`Pomysł: ${idea.title}`:'Nowy wpis'),text,by:MY_NAME,tags:tags.length?tags:(idea?[ideaPhaseLabel(idea)]:[]),likes:0,comments:0,image,images,documents});if(myProfile?.name===MY_NAME)myProfile.profileFeed=cloneDemoValue(member.profileFeed);if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();toast('Wpis opublikowano tylko na Twoim profilu.','ok');return;
   }
-  let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+stamp,author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:dateLabel,time:timeLabel,createdAt,relatedIdeaId:discoverComposerIdeaId||'',likes:0,comments:[],liked:false,topic:'all',image,images,documents,avatarImage,visibility:'public'});queuePersistence();closeAppModal();renderDiscover();toast('Wpis został opublikowany publicznie.','ok');
+  let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+stamp,author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:dateLabel,time:timeLabel,createdAt,relatedIdeaId:discoverComposerIdeaId||'',likes:0,comments:[],liked:false,topic:'all',image,images,documents,avatarImage,visibility:'public'});if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();renderDiscover();toast('Wpis został opublikowany publicznie.','ok');
 }
 document.addEventListener('pointerdown',event=>{if(!event.target.closest('.discover-dropdown'))closeDiscoverDropdowns();if(!event.target.closest('.discover-composer-identity'))closeDiscoverComposerIdentity();if(!event.target.closest('.discover-composer-audience'))closeDiscoverComposerAudience();if(!event.target.closest('.discover-post-menu'))closeDiscoverPostMenus();});
 
@@ -17873,14 +17889,20 @@ let __persistenceWarningShown=false;
 function persistenceJsonReplacer(key,value){
   if(typeof value==='function')return undefined;
   if(key==='_imageRange'||key==='_editHistory'||key==='_editHistoryIndex'||key==='_initialHtml')return undefined;
+  if(key==='image'&&Array.isArray(this?.images)&&this.images[0]===value)return undefined;
+  if(this?.teamBoardPostId&&['image','images','documents'].includes(key))return undefined;
   if(typeof Node!=='undefined'&&value instanceof Node)return undefined;
   if(typeof Range!=='undefined'&&value instanceof Range)return undefined;
   return value;
 }
+function persistentMembersSnapshot(){
+  const accountNames=new Set(Object.values(demoAccounts||{}).map(account=>account?.profile?.name).filter(Boolean));
+  return members.map(member=>{if(!accountNames.has(member.name))return member;const copy={...member};delete copy.profileFeed;return copy;});
+}
 function buildPersistentData(){
   saveActiveDemoAccountState();
   return {
-    ideas,members,projectTeams,discoverPosts,myProfile,myPoints,demoAccounts,activeDemoAccountId,
+    ideas,members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,demoAccounts,activeDemoAccountId,
     platformSkills,platformRoles,platformDecisions,
     notifications,wizardDraft,ideaDrafts,activeWizardDraftId,
     recentEmojis:RECENT_EMOJIS,customEmojis:CUSTOM_EMOJIS,
@@ -17890,6 +17912,15 @@ function buildPersistentData(){
 }
 function persistentDataJson(){return JSON.stringify(buildPersistentData(),persistenceJsonReplacer);}
 function validObject(value){return !!value&&typeof value==='object'&&!Array.isArray(value);}
+function restorePersistentMediaAliases(value,seen=new WeakSet()){
+  if(!value||typeof value!=='object'||seen.has(value))return;seen.add(value);if(Array.isArray(value.images)&&value.images.length&&!value.image)value.image=value.images[0];Object.values(value).forEach(row=>restorePersistentMediaAliases(row,seen));
+}
+function restoreAccountProfileFeeds(){
+  Object.values(demoAccounts||{}).forEach(account=>{const profile=account?.profile,member=members.find(row=>row.name===profile?.name);if(member&&Array.isArray(profile.profileFeed))member.profileFeed=cloneDemoValue(profile.profileFeed);});
+}
+function restoreDiscoverTeamBoardMedia(){
+  (discoverPosts||[]).forEach(post=>{if(!post?.teamBoardPostId)return;const team=(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId)),source=String(post.teamBoardPostId)==='welcome'?{image:team?.boardWelcomeImage||'',images:team?.boardWelcomeImages||[],documents:team?.boardWelcomeDocuments||[]}:(team?.boardPosts||[]).find(row=>String(row.id)===String(post.teamBoardPostId));if(!source)return;if(!post.images?.length)post.images=teamBoardPostImages(source);if(!post.documents?.length)post.documents=teamBoardPostDocuments(source);if(!post.image)post.image=post.images[0]||source.image||'';});
+}
 function applyPersistentData(data){
   if(!validObject(data))throw new Error('Nieprawidłowy format danych.');
   if(Array.isArray(data.ideas)){
@@ -17925,6 +17956,7 @@ function applyPersistentData(data){
   if(Array.isArray(data.followedIdeas))followedIdeas=new Set(data.followedIdeas);
   if(Array.isArray(data.followedComments))followedComments=new Set(data.followedComments);
   if(data.theme==='dark'||data.theme==='light')__theme=data.theme;
+  restoreAccountProfileFeeds();restoreDiscoverTeamBoardMedia();restorePersistentMediaAliases({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts});
 }
 function persistenceDateLabel(value){
   if(!value)return 'jeszcze nie zapisano';
@@ -17968,6 +18000,15 @@ function queuePersistence(){
   if(!__persistenceEnabled)return;
   clearTimeout(__persistenceTimer);
   __persistenceTimer=setTimeout(()=>persistNow(),500);
+}
+function captureBoardPublicationState(){return cloneDemoValue({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts});}
+function restoreBoardPublicationState(snapshot){if(!snapshot)return;ideas=snapshot.ideas;members=snapshot.members;projectTeams=snapshot.projectTeams;discoverPosts=snapshot.discoverPosts;myProfile=snapshot.myProfile;demoAccounts=snapshot.demoAccounts;}
+function commitBoardPublication(snapshot){clearTimeout(__persistenceTimer);if(persistNow())return true;restoreBoardPublicationState(snapshot);return false;}
+async function compactOversizedBoardMedia(){
+  const rows=[...(discoverPosts||[]),...(projectTeams||[]).flatMap(team=>team.boardPosts||[]),...(ideas||[]).flatMap(idea=>idea.participantBoardPosts||[]),...(members||[]).flatMap(member=>member.profileFeed||[]),...(myProfile?.profileFeed||[]),...Object.values(demoAccounts||{}).flatMap(account=>account?.profile?.profileFeed||[])],seen=new Set();let changed=false;
+  for(const row of rows){if(!row||seen.has(row))continue;seen.add(row);const sources=Array.isArray(row.images)&&row.images.length?row.images:row.image?[row.image]:[];if(!sources.some(src=>String(src||'').startsWith('data:image/')&&String(src).length>BOARD_POST_IMAGE_DATA_LIMIT))continue;const next=[];for(const source of sources)next.push(await compactBoardPostImageData(source));if(next.some((source,index)=>source!==sources[index])){row.images=next;row.image=next[0]||'';changed=true;}}
+  for(const team of projectTeams||[]){const sources=Array.isArray(team.boardWelcomeImages)&&team.boardWelcomeImages.length?team.boardWelcomeImages:team.boardWelcomeImage?[team.boardWelcomeImage]:[];if(!sources.some(src=>String(src||'').startsWith('data:image/')&&String(src).length>BOARD_POST_IMAGE_DATA_LIMIT))continue;const next=[];for(const source of sources)next.push(await compactBoardPostImageData(source));if(next.some((source,index)=>source!==sources[index])){team.boardWelcomeImages=next;team.boardWelcomeImage=next[0]||'';changed=true;}}
+  if(changed){saveActiveDemoAccountState();__persistenceLastDataJson='';persistNow();}
 }
 function loadPersistentData(){
   let raw='';
@@ -18274,6 +18315,7 @@ function profileCollaborationLine(member){
 installProjectMemberGuards();
 initPersistence();
 initDemoAccounts();
+compactOversizedBoardMedia();
 initWizardDraftUI();
 applyTheme();
 initTeamUiLanguage();
