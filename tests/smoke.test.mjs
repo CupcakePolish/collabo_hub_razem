@@ -829,6 +829,25 @@ test('team board uses a centered visual feed with editable welcome post', () => 
   assert.match(html, /\.tp-board-post-image\{display:block;width:100%;height:260px;object-fit:cover/);
 });
 
+test('secondary boards share chronological and engagement sorting controls', () => {
+  assert.match(html, /var boardFeedPreferences=\{team:\{\},member:\{\},projectPerson:\{\}\}/);
+  assert.match(html, /function sortedBoardFeedRows\(source,scope,key\)/);
+  assert.match(html, /preference\.sort==='appreciated'\?boardFeedReactionCount/);
+  assert.match(html, /preference\.sort==='commented'\?boardFeedCommentCount/);
+  assert.match(html, /function boardFeedControlsHTML\(scope,key\)/);
+  assert.match(html, /newest:\['Najnowsze','clock'\][\s\S]*appreciated:\['Najbardziej doceniane','star'\][\s\S]*commented:\['Najczęściej komentowane','comment'\]/);
+  assert.match(html, /timeMeta=\{today:'Dzisiaj',week:'Ten tydzień',month:'Ten miesiąc',year:'Ten rok',all:'Cały okres'\}/);
+  assert.match(html, /sortedBoardFeedRows\(visible,'team',t\.id\)/);
+  assert.match(html, /boardFeedControlsHTML\('team',t\.id\)/);
+  assert.match(html, /sortedBoardFeedRows\(filteredRows,'member',member\.id\)/);
+  assert.match(html, /boardFeedControlsHTML\('member',member\.id\)/);
+  assert.match(html, /sortedBoardFeedRows\(rows,'member',profileMember\.id\)/);
+  assert.match(html, /boardFeedControlsHTML\('member',profileMember\.id\)/);
+  assert.match(html, /sortedBoardFeedRows\(projectParticipantBoardPosts\(idea,name\),'projectPerson',key\)/);
+  assert.match(html, /boardFeedControlsHTML\('projectPerson',key\)/);
+  assert.match(html, /\.board-feed-controls\{[^}]*display:flex/);
+});
+
 test('team board post composer supports rich media and categorized platform mentions', () => {
   assert.match(html, /class="tbp-composer"/);
   assert.match(html, /composerKey='team-board-post-body'/);
