@@ -145,7 +145,7 @@ test('organization resource catalog has three starter items and routed detail pa
 });
 
 test('communicator stays available across collaboration screens but not inside documents', () => {
-  assert.match(html, /supported=\['s-discover','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
+  assert.match(html, /supported=\['s-discover','s-search','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'&&!!screen\.querySelector\('\.doc-workspace'\)/);
   assert.match(html, /document\.body\.append\(host\)/);
   assert.match(html, /if\(typeof renderDiscoverChats==='function'\)renderDiscoverChats\(\);[\s\S]*if\(!opts\.preserveScroll\)/);
@@ -199,10 +199,10 @@ test('discover right rail renders an interactive meeting calendar', () => {
   assert.doesNotMatch(html, /id="discover-opportunities"/);
 });
 
-test('every project has a governed evaluation and work-points tab', () => {
-  assert.match(html, /\{k:'ocena',label:'Ocena i punkty pracy'/);
+test('every project has a governed evaluation tab', () => {
+  assert.match(html, /\{k:'ocena',label:'Ocena'/);
   assert.match(html, /ocena:tabOcena/);
-  assert.match(html, /ocena:'Ocena i punkty pracy'/);
+  assert.match(html, /ocena:'Ocena'/);
   assert.match(html, /function renderIdeaEvaluationTab\(idea,ideaId\)/);
   assert.match(html, /function projectWorkEvaluationSteps\(stage\)/);
   assert.match(html, /Przygotowanie/);
@@ -309,7 +309,7 @@ test('needed and present competency filters are searchable and filter project ca
 });
 
 test('personalized ideas use the Dla mnie label', () => {
-  assert.match(html, /id="tab-for-me"[^>]*>✦ Dla mnie/);
+  assert.match(html, /id="tab-for-me"[^>]*>Dla mnie/);
   assert.doesNotMatch(html, /Dopasowane/);
 });
 
@@ -370,7 +370,7 @@ test('project header metadata is uniform and aligned with the top of its photo',
   assert.match(html, /onclick="openProjectNotificationCenter\(\$\{ideaId\},'list'\)"/);
   assert.match(html, /class="project-header-counter"/);
   assert.match(html, /class="project-head-action joined" data-tooltip="W projekcie"/);
-  assert.match(html, /class="project-head-action icon-only" data-tooltip="Wariant"/);
+  assert.match(html, /class="project-head-action icon-only project-context-action project-variant-action" data-tooltip="Wariant"/);
 });
 
 test('pins and notifications moved from overview cards into complete header modals', () => {
@@ -389,7 +389,7 @@ test('project overview uses the lifecycle strip and requires a reason for stage 
   assert.match(html, /function renderProjectOverviewTop\(idea,id\)\{return projectOverviewLifecycle\(idea,id\);\}/);
   assert.match(html, /class="idea-lifecycle-strip" aria-label="Etapy projektu"/);
   assert.match(html, /class="idea-lifecycle-arrow forward icon-only"[\s\S]*confirmProjectLifecycleVote/);
-  assert.match(html, /class="idea-lifecycle-arrow back"[\s\S]*confirmProjectLifecycleVote/);
+  assert.match(html, /class="idea-lifecycle-arrow back icon-only"[\s\S]*confirmProjectLifecycleVote/);
   assert.doesNotMatch(html, /<small>Przejdź dalej<\/small>/);
   assert.match(html, /\.idea-lifecycle-arrow\.icon-only\{width:100%;min-width:0;grid-template-columns:1fr;grid-template-rows:1fr;place-items:center/);
   assert.match(html, /id="project-lifecycle-reason"/);

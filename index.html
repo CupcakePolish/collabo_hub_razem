@@ -5519,9 +5519,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   <div class="global-search-wrap">
     <form class="global-search-form" onsubmit="submitGlobalSearch(event)" role="search">
       <svg class="global-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input class="global-search-input" id="global-search-input" type="search" autocomplete="off" placeholder="Szukaj na CollaboHub" aria-label="Szukaj na CollaboHub">
+      <input class="global-search-input" id="global-search-input" type="search" autocomplete="off" placeholder="Szukaj na CollaboHub" aria-label="Szukaj na CollaboHub" onfocus="openGlobalSearchPopover()" oninput="renderGlobalSearchPopover(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();closeGlobalSearchPopover()}">
       <span class="global-search-shortcut">Ctrl K</span>
     </form>
+    <div class="global-search-popover" id="global-search-popover" role="listbox" aria-label="Sugestie wyszukiwania"></div>
   </div>
   <div class="account-wrap" id="demo-account-wrap">
     <button type="button" class="account-current" id="demo-account-current" onclick="toggleDemoAccountMenu(event)" aria-label="Zmień konto demonstracyjne" aria-expanded="false">
@@ -5568,6 +5569,33 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="discover-feed" id="discover-feed"></div>
     </main>
     <aside class="discover-right-rail" aria-label="Kalendarz spotkań" onscroll="showDiscoverSidebarScrollbar(this)"><section class="discover-calendar-card" id="discover-calendar"></section></aside>
+  </div>
+</div>
+
+<!-- GLOBAL SEARCH RESULTS -->
+<div id="s-search" class="screen search-results-screen">
+  <div class="search-results-layout">
+    <aside class="search-results-sidebar" aria-label="Filtry wyników wyszukiwania">
+      <div class="search-results-sidebar-head"><h1>Wyniki wyszukiwania</h1><button type="button" aria-label="Filtry"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6.5 7.3V18l-3 1.6v-7.3L4 5Z"/></svg></button></div>
+      <div class="search-results-filter-title">Filtry</div>
+      <div class="search-results-filter-list" id="global-search-page-filters"></div>
+    </aside>
+    <main class="search-results-main">
+      <form class="search-results-form" onsubmit="refreshGlobalSearchPage(event)" role="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="search-results-input" type="search" autocomplete="off" aria-label="Szukaj w całym CollaboHub" placeholder="Szukaj w CollaboHub…">
+        <button type="submit" hidden>Szukaj</button>
+      </form>
+      <p class="search-results-hint">np. „grafik”, „klimat”, „ustawa”, nazwisko autora</p>
+      <div class="search-results-tabs" role="tablist" aria-label="Typ wyników">
+        <button type="button" class="on" data-search-filter="all" onclick="setGlobalSearchPageFilter('all')">Wszystkie</button>
+        <button type="button" data-search-filter="member" onclick="setGlobalSearchPageFilter('member')">Osoby</button>
+        <button type="button" data-search-filter="team" onclick="setGlobalSearchPageFilter('team')">Zespoły</button>
+        <button type="button" data-search-filter="content" onclick="setGlobalSearchPageFilter('content')">Treści</button>
+      </div>
+      <div class="search-results-summary" id="search-results-summary"></div>
+      <div class="search-results-list" id="search-results-list"></div>
+    </main>
   </div>
 </div>
 
@@ -5637,7 +5665,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
         <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')">Wszystkie</button>
-        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')">✦ Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
+        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')">Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
         <button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')">Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
       </div>
       <div class="ideas-results-toolbar">
@@ -8153,7 +8181,7 @@ function renderSectionNeeded(idea,id,tab){
 
 function renderIdeaBreadcrumb(idea,d=null,previewMode=false){
   const id=idea.id;
-  const tabLabels={przeglad:'Przegląd',zespol:'Zespół',budzet:'Zasoby',zadania:'Zadania',spotkania:'Spotkania',dokumenty:'Dokumenty i pliki',glosowania:'Decyzje',dyskusja:'Dyskusja',ocena:'Ocena i punkty pracy',ustawienia:'Ustawienia',rejestr:'Rejestr'};
+  const tabLabels={przeglad:'Przegląd',zespol:'Zespół',budzet:'Zasoby',zadania:'Zadania',spotkania:'Spotkania',dokumenty:'Dokumenty i pliki',glosowania:'Decyzje',dyskusja:'Dyskusja',ocena:'Ocena',ustawienia:'Ustawienia',rejestr:'Rejestr'};
   const tab=idea.viewTab||'przeglad';
   if(d){
     const docCrumb=previewMode?`<button type="button" onclick="closeDocPreview(${id},'${d.did}')">${escHtml(d.title)}</button><span class="sep">›</span><span class="current">Podgląd</span>`:`<span class="current">${escHtml(d.title)}</span>`;
@@ -8458,7 +8486,7 @@ function openIdea(id,preserveScroll=false,opts={}){
     {k:'dokumenty',label:'Dokumenty i pliki',cnt:(idea.docs||[]).length+idea.files.length+taskLibrary.length},
     {k:'glosowania',label:'Decyzje',cnt:(idea.votes||[]).filter(v=>v.open).length},
     {k:'dyskusja',label:'Dyskusja',cnt:ensureIdeaDiscussionThreads(idea).length+(idea.tasks||[]).reduce((n,t)=>n+(t.watki||[]).length,0)+(idea.docs||[]).reduce((n,d)=>n+(ensureDocThreads(d)||[]).length,0)},
-    {k:'ocena',label:'Ocena i punkty pracy',cnt:ensureProjectWorkPointEvaluation(idea).scores.length},
+    {k:'ocena',label:'Ocena',cnt:ensureProjectWorkPointEvaluation(idea).scores.length},
     {k:'ustawienia',label:'Ustawienia',cnt:projectModes(idea).length},
     {k:'rejestr',label:'Rejestr',cnt:(idea.log||[]).length},
   ];
@@ -9161,7 +9189,7 @@ function renderProjectHeaderActions(idea,ideaId,isFollowed=followedIdeas.has(ide
   const custom=isFollowed&&projectUsesCustomNotifications(ideaId);
   const share=canShareIdeaOnMyBoard(idea)?`<button type="button" class="project-head-action share-board" data-tooltip="Na tablicę" aria-label="Udostępnij na tablicy" onclick="shareIdeaOnMyBoard(${ideaId})">${projectHeaderShareIcon()}</button>`:'';
   const pinCount=projectUnseenPinCount(idea),notificationCount=projectNotifications(idea).filter(row=>row.unread).length;
-  return `<div class="project-header-actions"><button type="button" class="project-head-action icon-only watch-project${isFollowed?' eye-active':''}" data-tooltip="${isFollowed?'Ustawienia obserwowania':'Obserwuj projekt'}" aria-label="${isFollowed?'Ustawienia obserwowania':'Obserwuj projekt'}" onclick="toggleProjectFollowMenu(event,${ideaId})">${projectHeaderEyeIcon(isFollowed)}${custom?'<span class="custom-notification-dot"></span>':''}</button>${share}<button type="button" class="project-head-action icon-only project-context-action project-pins-action" data-tooltip="Przypięte" aria-label="Otwórz przypięte informacje${pinCount?` — ${pinCount} nowych`:''}" onclick="openProjectPinsCenter(${ideaId})">${projectHeaderPinIcon()}${projectHeaderCounter(pinCount)}</button><button type="button" class="project-head-action icon-only project-context-action project-notifications-action" data-tooltip="Powiadomienia" aria-label="Otwórz powiadomienia${notificationCount?` — ${notificationCount} nieprzeczytanych`:''}" onclick="openProjectNotificationCenter(${ideaId},'list')">${projectHeaderNotificationIcon()}${projectHeaderCounter(notificationCount)}</button>${projectHeaderMembershipButton(idea,ideaId)}<button type="button" class="project-head-action icon-only" data-tooltip="Wariant" aria-label="Utwórz wariant" onclick="saveAsTemplate(${ideaId})">${projectHeaderCopyIcon()}</button>${projectHeaderFollowPopover(idea,isFollowed)}${projectHeaderMembershipPopover(idea)}</div>`;
+  return `<div class="project-header-actions"><button type="button" class="project-head-action icon-only watch-project${isFollowed?' eye-active':''}" data-tooltip="${isFollowed?'Ustawienia obserwowania':'Obserwuj projekt'}" aria-label="${isFollowed?'Ustawienia obserwowania':'Obserwuj projekt'}" onclick="toggleProjectFollowMenu(event,${ideaId})">${projectHeaderEyeIcon(isFollowed)}${custom?'<span class="custom-notification-dot"></span>':''}</button>${share}<button type="button" class="project-head-action icon-only project-context-action project-pins-action" data-tooltip="Przypięte" aria-label="Otwórz przypięte informacje${pinCount?` — ${pinCount} nowych`:''}" onclick="openProjectPinsCenter(${ideaId})">${projectHeaderPinIcon()}${projectHeaderCounter(pinCount)}</button><button type="button" class="project-head-action icon-only project-context-action project-notifications-action" data-tooltip="Powiadomienia" aria-label="Otwórz powiadomienia${notificationCount?` — ${notificationCount} nieprzeczytanych`:''}" onclick="openProjectNotificationCenter(${ideaId},'list')">${projectHeaderNotificationIcon()}${projectHeaderCounter(notificationCount)}</button>${projectHeaderMembershipButton(idea,ideaId)}<button type="button" class="project-head-action icon-only project-context-action project-variant-action" data-tooltip="Wariant" aria-label="Utwórz wariant" onclick="saveAsTemplate(${ideaId})">${projectHeaderCopyIcon()}</button>${projectHeaderFollowPopover(idea,isFollowed)}${projectHeaderMembershipPopover(idea)}</div>`;
 }
 function closeProjectHeaderPopover(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
@@ -9320,9 +9348,9 @@ function projectOverviewLifecycle(idea,id){
   const connector=index=>{
     const forward=index===current,target=order[index+1],back=index===current-1;
     const carriesVote=vote&&(voteTarget>current?index===current:voteTarget<current?index===current-1:false);
-    if(carriesVote)return `<button type="button" class="idea-lifecycle-arrow pending ${voteTarget>current?'forward':'back'}" aria-label="Otwórz trwające głosowanie o zmianę etapu" onclick="openVote(${id},'${escAttr(vote.id)}')"><span>${voteTarget>current?'→':'←'}</span><small>Głosowanie</small></button>`;
+    if(carriesVote)return `<button type="button" class="idea-lifecycle-arrow pending icon-only ${voteTarget>current?'forward':'back'}" aria-label="Otwórz trwające głosowanie o zmianę etapu" onclick="openVote(${id},'${escAttr(vote.id)}')"><span>${voteTarget>current?'→':'←'}</span></button>`;
     if(!vote&&canAct&&forward)return `<button type="button" class="idea-lifecycle-arrow forward icon-only" aria-label="Rozpocznij głosowanie o przejście do etapu ${escAttr(labels[index+1])}" title="Rozpocznij głosowanie o przejście do etapu ${escAttr(labels[index+1])}" onclick="confirmProjectLifecycleVote(${id},'${target}')"><span>→</span></button>`;
-    if(!vote&&canAct&&back)return `<button type="button" class="idea-lifecycle-arrow back" aria-label="Rozpocznij głosowanie o powrót do etapu ${escAttr(labels[index])}" onclick="confirmProjectLifecycleVote(${id},'${order[index]}')"><span>←</span><small>Wróć</small></button>`;
+    if(!vote&&canAct&&back)return `<button type="button" class="idea-lifecycle-arrow back icon-only" aria-label="Rozpocznij głosowanie o powrót do etapu ${escAttr(labels[index])}" onclick="confirmProjectLifecycleVote(${id},'${order[index]}')"><span>←</span></button>`;
     return '<span class="idea-lifecycle-line" aria-hidden="true"></span>';
   };
   return `<section class="idea-lifecycle-strip" aria-label="Etapy projektu"><div class="idea-lifecycle-track">${order.map((_,index)=>step(index)+(index<order.length-1?connector(index):'')).join('')}</div></section>`;
@@ -9763,7 +9791,7 @@ function renderWorkPointAllocation(idea,ideaId,state){
 }
 function updateWorkPointTotal(ideaId){const idea=ideas.find(row=>row.id===ideaId);if(!idea)return;const state=ensureProjectWorkPointEvaluation(idea),sum=readWorkPointAllocation(ideaId,state).reduce((total,row)=>total+row.points,0),host=document.getElementById(`work-point-total-${ideaId}`);if(host)host.textContent=String(sum);}
 function renderIdeaEvaluationTab(idea,ideaId){
-  if(isPrivateIdeaDraft(idea))return `<div class="draft-locked-section"><span>Ocena nieaktywna</span><h3>Ocena i punkty pracy ruszą po publikacji</h3><p>Po zakończeniu projektu zespół przekaże rezultat do oceny, a wynik utworzy pulę punktów dzielonych według udokumentowanego wkładu.</p></div>`;
+  if(isPrivateIdeaDraft(idea))return `<div class="draft-locked-section"><span>Ocena nieaktywna</span><h3>Ocena ruszy po publikacji</h3><p>Po zakończeniu projektu zespół przekaże rezultat do oceny, a wynik utworzy pulę punktów dzielonych według udokumentowanego wkładu.</p></div>`;
   const state=ensureProjectWorkPointEvaluation(idea),stage=projectWorkEvaluationStage(idea,state),body=stage===1?renderWorkPointPreparation(idea,ideaId,state):stage===2?renderWorkPointScoring(idea,ideaId,state):renderWorkPointAllocation(idea,ideaId,state);return `<div class="work-evaluation-tab">${projectWorkEvaluationSteps(stage)}${body}</div>`;
 }
 function renderProjectRegisterTab(idea,id){const rows=(idea.log||[]).map((entry,index)=>({entry,index})).reverse();return `<section class="project-register-tab"><header class="project-register-tab-head"><div><h2>Rejestr informacji</h2><p>Chronologiczna historia decyzji, zadań, dokumentów i zmian projektu.</p></div><input class="project-register-search" placeholder="Szukaj w rejestrze…" oninput="filterProjectRegister(${id},this.value)"></header><div id="project-register-list-${id}">${rows.length?rows.map(({entry,index})=>{const text=activityText(entry?.text||String(entry||'Wpis')),detail=entry?.detail?sanitizeRichHtml(entry.detail):'',search=registerMatchText(text+' '+(entry?.type||'')+' '+(entry?.date||'')+' '+stripTags(detail));return `<article class="project-register-entry" id="preg-${id}-${index}" data-register-search="${escAttr(search)}"><button type="button" class="project-register-entry-head" onclick="toggleProjectRegisterEntry(${id},${index})"><span class="project-register-entry-num">${index+1}</span><span class="project-register-entry-main"><b>${escHtml(text)}</b><small>${escHtml(entry?.type||'wpis')}</small></span><span class="project-register-entry-meta">${escHtml(entry?.date||'')}<br>${escHtml(entry?.time||'')}</span></button><div class="project-register-entry-detail">${detail||'Brak dodatkowych szczegółów.'}<div class="register-actions">${registerEntryActionHTML(idea,entry||{})}</div></div></article>`;}).join(''):'<div class="project-register-empty">Rejestr jest jeszcze pusty.</div>'}</div></section>`;}
@@ -13165,6 +13193,11 @@ function boardPersonSharedContext(name){
   return options[0].count?options[0]:{count:0,label:'Jeszcze nie pracowaliście razem'};
 }
 function boardPersonHoverCardHTML(name){const profile=personProfileByName(name);if(!profile)return'';const id=Number(profile.id)||0,roles=(profile.roles||[]).slice(0,2),skills=(profile.skills||[]).slice(0,2),mine=name===MY_NAME,blocked=!mine&&typeof chatPersonBlocked==='function'&&chatPersonBlocked(name),followed=!mine&&followedMemberProfiles.has(id),shared=boardPersonSharedContext(name),workPoints=mine?0:Math.max(2,shared.count),workHint=[...skills,'1 : 1'].join(' · ');return `<span class="board-person-hover-card">${mine?'':`<button type="button" class="board-person-card-follow${followed?' on':''}" data-person-follow-id="${id}" aria-label="${followed?'Przestań obserwować':'Obserwuj'} ${escAttr(name)}" aria-pressed="${followed}" title="${followed?'Obserwujesz':'Obserwuj'}" onclick="toggleBoardPersonFollow('${escAttr(name)}',event)">${profileStarIcon()}</button>`}<span class="board-person-card-head"><span class="board-person-card-avatar">${memberAvatarContent(name,profile.ini||memberInitials(name))}</span><span><strong>${escHtml(name)}</strong><small>${escHtml(roles.join(' · ')||'Członek CollaboHub')}</small></span></span><span class="board-person-card-info compact"><span class="board-person-work-points" title="${escAttr(workHint)}"><b>${workPoints}</b> pkt pracy</span><span class="board-person-shared-context">${escHtml(shared.label)}</span></span><span class="board-person-card-actions icon-only${mine?' mine':''}">${mine?'':`<button type="button" class="primary" aria-label="Wyślij wiadomość" title="Wyślij wiadomość" onclick="event.stopPropagation();closeAppModal();openDiscoverChat('person:${id}')">${chatPersonActionIcon('message')}</button>`}<button type="button" aria-label="Otwórz profil" title="Profil" onclick="event.stopPropagation();closeAppModal();openMember(${id})">${chatPersonActionIcon('profile')}</button><details><summary aria-label="Więcej opcji">•••</summary><span><button type="button" onclick="copyBoardPersonName('${escAttr(name)}',event)">Kopiuj imię i nazwisko</button>${mine?'':`<button type="button" onclick="toggleBoardPersonBlocked('${escAttr(name)}',event)">${blocked?'Odblokuj':'Zablokuj'} w komunikatorze</button>`}</span></details></span></span>`;}
+function boardTeamHoverCardHTML(team){
+  if(!team)return'';
+  const count=teamAcceptedMembers(team).length,description=team.desc||team.description||'Wspólna przestrzeń do pracy, decyzji i wymiany informacji.';
+  return `<span class="board-team-hover-card board-person-hover-card"><span class="board-person-card-head"><span class="board-person-card-avatar team">${teamBoardAvatar(team)}</span><span><strong>${escHtml(team.name||'Zespół')}</strong><small>Zespół · ${count} ${plural(count,['osoba','osoby','osób'])}</small></span></span><span class="board-team-card-description">${escHtml(globalSearchExcerpt(description,112))}</span><span class="board-person-card-actions team"><button type="button" class="primary" onclick="event.stopPropagation();closeAppModal();openTeam('${escAttr(team.id)}')">Otwórz zespół</button><button type="button" onclick="event.stopPropagation();toast('Obserwowanie zespołu jest dostępne z poziomu jego profilu.','ok')">Obserwuj</button></span></span>`;
+}
 function boardCommentPersonHTML(name,kind='author'){const profile=personProfileByName(name);if(!profile)return `<strong class="board-comment-${kind}-name">${escHtml(name)}</strong>`;return `<span class="board-person-hover-target board-comment-person-hover ${kind}"><button type="button" class="board-comment-${kind}-name" aria-label="Pokaż wizytówkę ${escAttr(name)}">${escHtml(name)}</button>${boardPersonHoverCardHTML(name)}</span>`;}
 function boardReplyMentionHTML(name){return boardCommentPersonHTML(name,'reply');}
 function boardPostAuthorHeaderHTML(author,avatar,date){const profile=personProfileByName(author),content=`<span class="board-post-modal-avatar">${avatar}</span><span><b>${escHtml(author)}</b><small>${escHtml(date||'')}</small></span>`;if(!profile)return `<span class="board-post-person-static">${content}</span>`;return `<span class="board-person-hover-target post-modal-author"><button type="button" class="board-post-person-trigger" aria-label="Otwórz profil: ${escAttr(author)}" onclick="event.stopPropagation();openMember(${Number(profile.id)||0})">${content}</button>${boardPersonHoverCardHTML(author)}</span>`;}
@@ -13347,10 +13380,10 @@ async function saveTeamBoardPost(teamId,postId='',status='published'){
   const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;
   const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=String(document.getElementById('mb-inp-team-board-post-body')?.value||'').trim(),audience=document.getElementById('team-board-post-audience')?.value||'team';if(!text)return toast('Dodaj treść wpisu.','warn');
   const persistenceSnapshot=captureBoardPublicationState(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'';let savedPostId=postId;
-  if(postId==='welcome'){t.boardWelcomeTitle=title;t.boardWelcomeText=text;t.boardWelcomeImage=image;t.boardWelcomeImages=images;t.boardWelcomeDocuments=documents;t.boardWelcomeStatus=status;t.boardWelcomeAudience=audience;savedPostId='welcome';}
+  if(postId==='welcome'){t.boardWelcomeTitle=title;t.boardWelcomeText=text;t.boardWelcomeImage=image;t.boardWelcomeImages=images;t.boardWelcomeDocuments=documents;t.boardWelcomeStatus=status;t.boardWelcomeAudience=audience;t.boardWelcomeBy=t.boardWelcomeBy||MY_NAME;savedPostId='welcome';}
   else{t.boardPosts=t.boardPosts||[];const current=t.boardPosts.find(row=>String(row.id)===String(postId)),newId=current?.id||'tbp'+Date.now(),changes={title,text,image,images,documents,status,audience,date:current?.date||TODAY,time:current?.time||NOW_TIME(),createdAt:current?.createdAt||Date.now(),by:current?.by||MY_NAME,reactions:current?.reactions||{},comments:current?.comments||[],savedBy:current?.savedBy||[]};if(current)Object.assign(current,changes);else t.boardPosts.push({id:newId,...changes});savedPostId=newId;}
   const discoverId=`discover-team-board-${t.id}-${savedPostId}`,discoverIndex=discoverPosts.findIndex(row=>row.id===discoverId),previous=discoverIndex>=0?discoverPosts[discoverIndex]:null;
-  if(status==='published'&&audience==='public'){const publicPost={id:discoverId,teamBoardPostId:savedPostId,author:t.name,sourceType:'team',sourceId:t.id,sourceLabel:`Zespół · ${t.name}`,title,text,date:'Dzisiaj',time:previous?.time||NOW_TIME(),createdAt:previous?.createdAt||Date.now(),reactions:previous?.reactions||{},comments:previous?.comments||[],saved:!!previous?.saved,following:!!previous?.following,reports:previous?.reports||[],image,images,documents,avatarImage:t.avatar||'',topic:'all'};if(discoverIndex>=0)discoverPosts[discoverIndex]=publicPost;else discoverPosts.unshift(publicPost);}
+  if(status==='published'&&audience==='public'){const source=savedPostId==='welcome'?null:(t.boardPosts||[]).find(row=>String(row.id)===String(savedPostId)),publicPost={id:discoverId,teamBoardPostId:savedPostId,author:t.name,publisher:previous?.publisher||source?.by||t.boardWelcomeBy||MY_NAME,sourceType:'team',sourceId:t.id,sourceLabel:`Zespół · ${t.name}`,title,text,date:'Dzisiaj',time:previous?.time||NOW_TIME(),createdAt:previous?.createdAt||Date.now(),reactions:previous?.reactions||{},comments:previous?.comments||[],saved:!!previous?.saved,following:!!previous?.following,reports:previous?.reports||[],image,images,documents,avatarImage:t.avatar||'',topic:'all'};if(discoverIndex>=0)discoverPosts[discoverIndex]=publicPost;else discoverPosts.unshift(publicPost);}
   else if(discoverIndex>=0)discoverPosts.splice(discoverIndex,1);
   t.lastActive='teraz';if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();teamProfileTab='board';openTeam(teamId);toast(status==='draft'?'Szkic wpisu został zapisany.':audience==='public'?'Wpis został opublikowany także w Odkrywaj.':'Wpis został opublikowany na tablicy zespołu.','ok');
 }
@@ -16780,6 +16813,8 @@ function toggleRegister(i){document.getElementById('reg-'+i)?.classList.toggle('
 
 // ——— GLOBAL SEARCH ———
 let globalSearchResults=[];
+let globalSearchPageFilter='all',globalSearchPageQuery='';
+let globalSearchRecentQueries=[];
 const GLOBAL_SEARCH_META={
   member:{label:'Osoby',singular:'Osoba',icon:'O'},
   project:{label:'Projekty',singular:'Projekt',icon:'P'},
@@ -16879,19 +16914,87 @@ function renderGlobalSearchResults(query){
     return `<div class="gs-group"><div class="gs-group-title">${escHtml(meta.label)} · ${items.length}</div>${items.map(item=>`<button type="button" class="gs-result" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="gs-result-icon">${meta.icon}</span><span class="gs-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.subtitle,query)}</span></span><span class="gs-result-type">${escHtml(meta.singular)} →</span></button>`).join('')}</div>`;
   }).join('');
 }
+function loadGlobalSearchRecent(){
+  if(globalSearchRecentQueries.length)return globalSearchRecentQueries;
+  try{const saved=JSON.parse(localStorage.getItem('collabohub-global-search-history')||'[]');if(Array.isArray(saved))globalSearchRecentQueries=saved.filter(Boolean).slice(0,6);}catch{}
+  return globalSearchRecentQueries;
+}
+function addGlobalSearchRecent(query){
+  const value=String(query||'').trim();if(!value)return;
+  globalSearchRecentQueries=[value,...loadGlobalSearchRecent().filter(row=>row.toLocaleLowerCase('pl-PL')!==value.toLocaleLowerCase('pl-PL'))].slice(0,6);
+  try{localStorage.setItem('collabohub-global-search-history',JSON.stringify(globalSearchRecentQueries));}catch{}
+}
+function removeGlobalSearchRecent(index,event){
+  event?.stopPropagation();loadGlobalSearchRecent();globalSearchRecentQueries.splice(Number(index),1);try{localStorage.setItem('collabohub-global-search-history',JSON.stringify(globalSearchRecentQueries));}catch{};renderGlobalSearchPopover(document.getElementById('global-search-input')?.value||'');
+}
+function closeGlobalSearchPopover(){document.getElementById('global-search-popover')?.classList.remove('on');}
+function globalSearchSuggestionAvatar(item){
+  if(item.kind==='member'){const person=members.find(row=>String(row.id)===String(item.memberId))||personProfileByName(item.title);return memberAvatarContent(item.title,person?.ini||memberInitials(item.title));}
+  const team=projectTeams.find(row=>String(row.id)===String(item.teamId));return team?teamBoardAvatar(team):`<span class="search-suggestion-fallback">${escHtml(memberInitials(item.title))}</span>`;
+}
+function renderGlobalSearchPopover(query=''){
+  const box=document.getElementById('global-search-popover');if(!box)return;
+  const value=String(query||'').trim(),needle=registerMatchText(value),recent=loadGlobalSearchRecent();
+  if(!needle){
+    const rows=recent.map((row,index)=>`<button type="button" class="global-search-row recent" role="option" onclick="openGlobalSearchSuggestion('query','${escAttr(row)}')"><span class="global-search-row-icon">↗</span><span><b>${escHtml(row)}</b><small>Ostatnie wyszukiwanie</small></span><i role="button" aria-label="Usuń z ostatnich wyszukiwań" onclick="removeGlobalSearchRecent(${index},event)">×</i></button>`).join('');
+    box.innerHTML=`<div class="global-search-popover-title">${recent.length?'Ostatnie':'Szukaj na CollaboHub'}</div>${rows||'<p class="global-search-empty">Wpisz osobę, zespół albo temat, aby rozpocząć.</p>'}`;
+  }else{
+    const index=buildGlobalSearchIndex(),people=index.filter(item=>item.kind==='member'&&item.search.includes(needle)),teams=index.filter(item=>item.kind==='team'&&item.search.includes(needle)),items=[...people,...teams].slice(0,4);
+    box.innerHTML=`<div class="global-search-popover-title">Sugestie</div>${items.map(item=>`<button type="button" class="global-search-row" role="option" onclick="openGlobalSearchSuggestion('${item.kind}','${escAttr(item.kind==='member'?item.memberId:item.teamId)}')"><span class="global-search-row-avatar">${globalSearchSuggestionAvatar(item)}</span><span><b>${globalSearchHighlight(item.title,value)}</b><small>${item.kind==='member'?'Osoba':'Zespół'}${item.subtitle?' · '+globalSearchHighlight(item.subtitle,value):''}</small></span><em>›</em></button>`).join('')||'<p class="global-search-empty">Naciśnij Enter, aby zobaczyć wszystkie wyniki.</p>'}`;
+  }
+  box.classList.add('on');
+}
+function openGlobalSearchSuggestion(kind,value){
+  if(kind==='query'){const query=String(value||'');const input=document.getElementById('global-search-input');if(input)input.value=query;return openGlobalSearch(query);}
+  const item=buildGlobalSearchIndex().find(row=>row.kind===kind&&String(kind==='member'?row.memberId:row.teamId)===String(value));
+  if(!item)return;
+  addGlobalSearchRecent(item.title);closeGlobalSearchPopover();
+  if(kind==='member')return openMember(item.memberId);
+  return openTeam(item.teamId);
+}
+function globalSearchPageResultCard(item,query){
+  const meta=GLOBAL_SEARCH_META[item.kind]||{singular:'Wynik',icon:'•'};
+  if(item.kind==='member'){
+    const profile=members.find(row=>String(row.id)===String(item.memberId))||personProfileByName(item.title),roles=(profile?.roles||[]).slice(0,2).join(' · '),avatar=globalSearchSuggestionAvatar(item);
+    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>${escHtml(roles||'Członek CollaboHub')}</small></span></button>${boardPersonHoverCardHTML(item.title)}</span><span class="search-result-copy"><b>Osoba</b><span>${globalSearchHighlight(item.subtitle||'Profil członka CollaboHub',query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz profil →</button></article>`;
+  }
+  if(item.kind==='team'){
+    const team=projectTeams.find(row=>String(row.id)===String(item.teamId)),avatar=team?teamBoardAvatar(team):globalSearchSuggestionAvatar(item);
+    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar team">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>Zespół</small></span></button>${boardTeamHoverCardHTML(team)}</span><span class="search-result-copy"><b>Zespół</b><span>${globalSearchHighlight(item.subtitle||'Zespół CollaboHub',query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz zespół →</button></article>`;
+  }
+  return `<article class="search-result-card compact"><span class="search-result-kind-icon">${escHtml(meta.icon)}</span><span class="search-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.subtitle||meta.singular,query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz →</button></article>`;
+}
+function setGlobalSearchPageFilter(filter){
+  globalSearchPageFilter=['all','member','team','content'].includes(filter)?filter:'all';
+  document.querySelectorAll('[data-search-filter]').forEach(button=>button.classList.toggle('on',button.dataset.searchFilter===globalSearchPageFilter));
+  renderGlobalSearchPage(globalSearchPageQuery);
+}
+function renderGlobalSearchPage(query=''){
+  const input=document.getElementById('search-results-input'),list=document.getElementById('search-results-list'),summary=document.getElementById('search-results-summary'),filters=document.getElementById('global-search-page-filters');
+  if(!list)return;
+  globalSearchPageQuery=String(query||'').trim();if(input&&input.value!==globalSearchPageQuery)input.value=globalSearchPageQuery;
+  const all=runGlobalSearch(globalSearchPageQuery),filtered=all.filter(item=>globalSearchPageFilter==='all'||globalSearchPageFilter===item.kind||(globalSearchPageFilter==='content'&&!['member','team'].includes(item.kind)));
+  globalSearchResults=filtered;globalSearchResults.forEach((item,index)=>item.resultIndex=index);
+  const filterRows=[['all','Wszystkie',all.length],['member','Osoby',all.filter(item=>item.kind==='member').length],['team','Zespoły',all.filter(item=>item.kind==='team').length],['content','Treści',all.filter(item=>!['member','team'].includes(item.kind)).length]];
+  if(filters)filters.innerHTML=filterRows.map(([key,label,count])=>`<button type="button" class="search-result-filter${globalSearchPageFilter===key?' on':''}" onclick="setGlobalSearchPageFilter('${key}')"><span class="search-result-filter-icon">${key==='all'?'▣':key==='member'?'●':key==='team'?'♧':'◈'}</span><span>${label}</span><b>${count}</b></button>`).join('');
+  document.querySelectorAll('[data-search-filter]').forEach(button=>button.classList.toggle('on',button.dataset.searchFilter===globalSearchPageFilter));
+  if(summary)summary.innerHTML=globalSearchPageQuery?(filtered.length?`<b>${filtered.length}</b> ${plural(filtered.length,['wynik','wyniki','wyników'])} dla „${escHtml(globalSearchPageQuery)}”`:`Brak wyników dla „${escHtml(globalSearchPageQuery)}”`):'Wpisz hasło, aby zobaczyć wyniki';
+  list.innerHTML=filtered.length?filtered.map(item=>globalSearchPageResultCard(item,globalSearchPageQuery)).join(''):`<div class="search-results-empty"><b>Nie znaleziono wyników</b><span>Spróbuj innego nazwiska, zespołu albo fragmentu treści.</span></div>`;
+}
+function refreshGlobalSearchPage(event){
+  event.preventDefault();const query=event.currentTarget.querySelector('input')?.value||'';const top=document.getElementById('global-search-input');if(top)top.value=query;addGlobalSearchRecent(query);closeGlobalSearchPopover();globalSearchPageQuery=query;go('search');
+}
 function openGlobalSearch(query){
   const value=String(query??document.getElementById('global-search-input')?.value??'').trim();
-  if(!value){document.getElementById('global-search-input')?.focus();return;}
-  appModal(`<div class="gs-head"><div class="gs-head-row"><form class="gs-modal-form" onsubmit="refreshGlobalSearch(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="gs-modal-input" class="gs-modal-input" type="search" autocomplete="off" aria-label="Szukaj w całym CollaboHub" value="${escAttr(value)}"><button type="submit" hidden>szukaj</button></form><button type="button" class="gs-close" onclick="closeAppModal()" aria-label="Zamknij">×</button></div><div class="gs-summary"><span id="gs-summary"></span><span>Enter — szukaj · Esc — zamknij</span></div></div><div class="gs-results" id="gs-results"></div>`,'global-search-modal');
-  renderGlobalSearchResults(value);
-  setTimeout(()=>{const input=document.getElementById('gs-modal-input');input?.focus();input?.setSelectionRange(input.value.length,input.value.length);},0);
+  if(!value){openGlobalSearchPopover();document.getElementById('global-search-input')?.focus();return;}
+  addGlobalSearchRecent(value);closeGlobalSearchPopover();globalSearchPageQuery=value;go('search');
 }
 function submitGlobalSearch(event){event.preventDefault();openGlobalSearch(event.currentTarget.querySelector('input')?.value);}
 function refreshGlobalSearch(event){
   event.preventDefault();
   const query=event.currentTarget.querySelector('input')?.value||'';
   const top=document.getElementById('global-search-input');if(top)top.value=query;
-  renderGlobalSearchResults(query);
+  openGlobalSearch(query);
 }
 function focusGlobalSearchNeedle(needle,selectors){
   if(!needle)return;
@@ -16903,7 +17006,7 @@ function focusGlobalSearchNeedle(needle,selectors){
 }
 function openGlobalSearchResult(index){
   const item=globalSearchResults[index];if(!item)return;
-  closeAppModal();
+  closeAppModal();closeGlobalSearchPopover();
   const input=document.getElementById('global-search-input');if(input)input.value='';
   if(item.kind==='member')return openMember(item.memberId);
   if(item.kind==='team')return openTeam(item.teamId);
@@ -16981,6 +17084,7 @@ document.addEventListener('keydown',event=>{
     event.preventDefault();closeAppModal();setTimeout(()=>document.getElementById('global-search-input')?.focus(),0);
   }
 });
+document.addEventListener('pointerdown',event=>{if(!event.target.closest('.global-search-wrap'))closeGlobalSearchPopover();});
 
 // ——— NAV ———
 // ===== PLATFORM-WIDE REGISTRY (skills & roles) + platform decisions =====
@@ -17495,7 +17599,7 @@ function saveCatalogResourceEdit(id){const resource=catalogResources.find(row=>r
 async function shareCatalogResource(id){const url=location.href.split('#')[0]+resourceHash(id);try{await navigator.clipboard.writeText(url);toast('Link do zasobu skopiowany.','ok');}catch{toast('Skopiuj adres z paska przeglądarki.','warn');}}
 
 const SCREEN_ROUTES=Object.freeze({
-  discover:'discover',ideas:'ideas',members:'members',resources:'resources',teams:'teams',platform:'platform',
+  discover:'discover',search:'search',ideas:'ideas',members:'members',resources:'resources',teams:'teams',platform:'platform',
   'profile-me':'profile',about:'about',watch:'watch',submit:'submit'
 });
 const IDEA_TAB_ROUTES=Object.freeze({
@@ -17598,6 +17702,7 @@ function go(name,btn,nlId,opts={}){
   else if(name==='profile-me') document.getElementById('nl-profile')?.classList.add('on');
   else if(name==='about') document.getElementById('nl-about')?.classList.add('on');
   if(name==='discover') renderDiscover();
+  if(name==='search') renderGlobalSearchPage(globalSearchPageQuery||document.getElementById('global-search-input')?.value||'');
   if(name==='ideas'){renderIdeas();renderMyMatches();}
   if(name==='members') renderMembers();
   if(name==='resources') renderResourceCatalog();
@@ -17743,7 +17848,23 @@ function updateDiscoverToolbar(){
   document.querySelectorAll('#discover-sort-dropdown [data-sort]').forEach(button=>{button.classList.toggle('on',button.dataset.sort===discoverSort);button.querySelector('.discover-option-icon').innerHTML=discoverIcon(button.querySelector('.discover-option-icon').dataset.icon);});
   document.querySelectorAll('#discover-time-dropdown [data-time]').forEach(button=>button.classList.toggle('on',button.dataset.time===discoverTime));
 }
-function discoverPostAuthorButton(post,avatar){const button=`<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(discoverPostDateLabel(post))}${post.editedAt?' · Edytowane':''}${post.sourceType==='team'?' · Zespół':''}</span></span></button>`;return post.sourceType==='team'||!personProfileByName(post.author)?button:`<span class="board-person-hover-target discover-author">${button}${boardPersonHoverCardHTML(post.author)}</span>`;}
+function discoverTeamPublisher(post,team){
+  if(!post||post.sourceType!=='team')return'';
+  if(post.publisher||post.publisherName)return post.publisher||post.publisherName;
+  if(String(post.teamBoardPostId)==='welcome')return team?.boardWelcomeBy||team?.owner||team?.createdBy||MY_NAME;
+  const source=(team?.boardPosts||[]).find(row=>String(row.id)===String(post.teamBoardPostId));
+  return source?.by||post.by||team?.owner||team?.createdBy||MY_NAME;
+}
+function discoverPostAuthorButton(post,avatar){
+  const team=post.sourceType==='team'?(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId)):null;
+  if(post.sourceType==='team'){
+    const publisher=discoverTeamPublisher(post,team),publisherAvatar=publisher?memberAvatarContent(publisher,members.find(row=>row.name===publisher)?.ini||memberInitials(publisher)):'';
+    const button=`<button type="button" class="discover-author-button discover-team-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar-stack"><span class="discover-post-avatar">${avatar}</span>${publisher?`<span class="discover-post-avatar publisher">${publisherAvatar}</span>`:''}</span><span class="discover-post-author"><b>${escHtml(team?.name||post.author)}</b><span>${publisher?`${escHtml(publisher)} · `:''}${escHtml(discoverPostDateLabel(post))}${post.editedAt?' · Edytowane':''} · Zespół</span></span></button>`;
+    return `<span class="board-person-hover-target discover-team-author">${button}${boardTeamHoverCardHTML(team)}</span>`;
+  }
+  const button=`<button type="button" class="discover-author-button" onclick="openDiscoverAuthor('${escAttr(post.id)}')"><span class="discover-post-avatar">${avatar}</span><span class="discover-post-author"><b>${escHtml(post.author)}</b><span>${escHtml(discoverPostDateLabel(post))}${post.editedAt?' · Edytowane':''}</span></span></button>`;
+  return !personProfileByName(post.author)?button:`<span class="board-person-hover-target discover-author">${button}${boardPersonHoverCardHTML(post.author)}</span>`;
+}
 function discoverPostAvatar(post,team=null){
   if(post.sourceType!=='team'){
     const member=members.find(row=>row.name===post.author)||personProfileByName(post.author);
@@ -17873,7 +17994,7 @@ function publishDiscoverPost(){
     const member=members.find(row=>row.name===MY_NAME);if(!member)return toast('Nie udało się odnaleźć Twojego profilu.','warn');
     const idea=discoverComposerIdeaId?ideas.find(row=>String(row.id)===discoverComposerIdeaId):null,tags=idea?(idea.skillsNeeded||[]).map(row=>row.skill).filter(Boolean).slice(0,3):[];member.profileFeed=Array.isArray(member.profileFeed)?member.profileFeed:[];member.profileFeed.unshift({id:'profile-post-'+stamp,type:idea?'idea':'update',sourceIdeaId:idea?.id||'',stamp,createdAt,date:dateLabel,time:timeLabel,title:title||(idea?`Pomysł: ${idea.title}`:'Nowy wpis'),text,by:MY_NAME,tags:tags.length?tags:(idea?[ideaPhaseLabel(idea)]:[]),likes:0,comments:0,image,images,documents});if(myProfile?.name===MY_NAME)myProfile.profileFeed=cloneDemoValue(member.profileFeed);if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();toast('Wpis opublikowano tylko na Twoim profilu.','ok');return;
   }
-  let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='';if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+stamp,author,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:dateLabel,time:timeLabel,createdAt,relatedIdeaId:discoverComposerIdeaId||'',likes:0,comments:[],liked:false,topic:'all',image,images,documents,avatarImage,visibility:'public'});if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();renderDiscover();toast('Wpis został opublikowany publicznie.','ok');
+  let author=MY_NAME,sourceLabel=`Profil · ${MY_NAME}`,avatarImage='',publisher=MY_NAME;if(identity.type==='team'){author=identity.team.name;sourceLabel=`Zespół · ${identity.team.name}`;avatarImage=identity.team.avatar||'';}discoverPosts.unshift({id:'discover-'+stamp,author,publisher,sourceType:identity.type,sourceId:identity.sourceId,sourceLabel,title,text,date:dateLabel,time:timeLabel,createdAt,relatedIdeaId:discoverComposerIdeaId||'',likes:0,comments:[],liked:false,topic:'all',image,images,documents,avatarImage,visibility:'public'});if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();renderDiscover();toast('Wpis został opublikowany publicznie.','ok');
 }
 document.addEventListener('pointerdown',event=>{if(!event.target.closest('.discover-dropdown'))closeDiscoverDropdowns();if(!event.target.closest('.discover-composer-identity'))closeDiscoverComposerIdentity();if(!event.target.closest('.discover-composer-audience'))closeDiscoverComposerAudience();if(!event.target.closest('.discover-post-menu'))closeDiscoverPostMenus();});
 
@@ -19424,7 +19545,7 @@ function openDiscoverChat(key){const ui=discoverChatUI;if(ui.active&&ui.active!=
 function toggleDiscoverChat(key){const ui=discoverChatUI;if(ui.active===key){clearChatWindowLayout(key);ui.active=null;ui.minimized=ui.minimized.filter(item=>item!==key);renderDiscoverChats();return;}openDiscoverChat(key);}
 function renderDiscoverChats(){
  if(typeof discoverChatUI==='undefined')return;
- const screen=document.querySelector('.screen.on'),supported=['s-discover','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'];
+ const screen=document.querySelector('.screen.on'),supported=['s-discover','s-search','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'];
  const collaborativeDocument=screen?.id==='s-idea'&&!!screen.querySelector('.doc-workspace');
  if(!screen||!supported.includes(screen.id)||collaborativeDocument){document.getElementById('discover-chats')?.remove();return;}
  if(discoverChatUI.owner!==MY_NAME){saveDiscoverChatView();discoverChatUI=restoreDiscoverChatView(MY_NAME);}
@@ -19922,6 +20043,61 @@ html.theme-dark .resource-catalog-screen,html.theme-dark .resource-detail-screen
 html.theme-dark .profile-board-toolbar>.mp-composer input{background:var(--surf2)!important;color:var(--txt)!important}
 @media(max-width:980px){.board-feed-toolbar{grid-template-columns:minmax(240px,1fr) auto}}
 @media(max-width:760px){.board-feed-toolbar{grid-template-columns:1fr;align-items:stretch}.board-feed-toolbar>.board-feed-controls,.profile-board-sort{grid-column:1}.board-feed-toolbar>.board-feed-controls{justify-content:stretch}.profile-board-sort{align-items:stretch;flex-direction:column}.profile-board-sort>.board-feed-controls{width:100%}.profile-compose-shortcuts{margin-top:0!important}}
+</style>
+<style id="collabohub-search-and-layout-polish">
+/* Center the three main Discover panels in the space left by the chat rail. */
+#s-discover .discover-shell{justify-content:center}
+
+/* The variant action uses the same square treatment as the neighbouring project actions. */
+.project-head-action.project-variant-action{width:44px;height:44px;padding:0;border:1px solid var(--p200);border-radius:12px;background:var(--surf);color:#3b4150}
+.project-head-action.project-variant-action:hover{border-color:var(--p300);background:var(--p50);color:var(--p700)}
+html.theme-dark .project-head-action.project-variant-action{border-color:#403847;background:#1d1925;color:#d0c9d9}
+
+/* Lifecycle connectors stay as compact, text-free arrows between adjacent tiles. */
+.idea-lifecycle-track{grid-template-columns:minmax(120px,1fr) 44px minmax(120px,1fr) 44px minmax(120px,1fr) 44px minmax(120px,1fr);column-gap:10px}
+.idea-lifecycle-arrow.icon-only{width:44px;min-width:44px;height:44px;justify-self:center;padding:0}
+.idea-lifecycle-arrow.icon-only>span{font-size:27px}
+
+/* Search suggestions */
+.global-search-wrap{z-index:200}
+.global-search-popover{position:absolute;top:calc(100% + 10px);left:0;right:0;display:none;overflow:hidden;border:1px solid var(--bdr);border-radius:16px;background:var(--surf);box-shadow:0 18px 46px rgba(35,25,58,.16);color:var(--txt)}
+.global-search-popover.on{display:block}
+.global-search-popover-title{padding:14px 16px 8px;color:var(--txs);font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.global-search-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 14px;border:0;background:transparent;color:var(--txt);text-align:left;cursor:pointer}
+.global-search-row:hover,.global-search-row:focus-visible{background:var(--p050);outline:0}
+.global-search-row>span:not(.global-search-row-icon):not(.global-search-row-avatar){display:grid;gap:3px;min-width:0}
+.global-search-row b{overflow:hidden;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.global-search-row small{overflow:hidden;color:var(--txs);font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.global-search-row-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--p050);color:var(--p700);font-size:15px;font-style:normal}
+.global-search-row-avatar{display:grid;place-items:center;width:34px;height:34px;overflow:hidden;border-radius:50%;background:var(--p100);color:var(--p700);font-size:11px;font-weight:800}
+.global-search-row-avatar img,.global-search-row-avatar .tp-avatar,.global-search-row-avatar>span{width:100%;height:100%;object-fit:cover}
+.global-search-row em{color:var(--txf);font-size:19px;font-style:normal}
+.global-search-row>i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--txf);font-size:18px;font-style:normal}
+.global-search-row>i:hover{background:var(--p100);color:var(--p700)}
+.global-search-empty{margin:0;padding:12px 16px 16px;color:var(--txs);font-size:11px;line-height:1.45}
+.search-suggestion-fallback{display:grid;place-items:center;width:100%;height:100%}
+
+/* Search results page */
+.search-results-screen{min-height:calc(100vh - var(--global-nav-height));background:linear-gradient(135deg,#fafbff 0%,#f5f4fc 58%,#f8f6ff 100%);color:var(--txt)}
+.search-results-layout{display:grid;grid-template-columns:270px minmax(0,980px);gap:42px;width:min(1320px,calc(100% - 64px));margin:0 auto;padding:46px 0 78px}
+.search-results-sidebar{align-self:start;position:sticky;top:calc(var(--global-nav-height) + 28px);padding:0 22px 22px 0;border-right:1px solid var(--bdr)}
+.search-results-sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--bdr)}
+.search-results-sidebar-head h1{margin:0;font-size:23px;line-height:1.15;letter-spacing:-.03em}
+.search-results-sidebar-head button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:10px;background:var(--p050);color:var(--p700);cursor:pointer}.search-results-sidebar-head button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.search-results-filter-title{margin:24px 0 10px;color:var(--txt);font-size:13px;font-weight:850}
+.search-results-filter-list{display:grid;gap:4px}
+.search-result-filter{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 10px;border:0;border-radius:12px;background:transparent;color:var(--txm);font:650 12px 'DM Sans',sans-serif;text-align:left;cursor:pointer}.search-result-filter:hover{background:var(--p050);color:var(--p700)}.search-result-filter.on{background:var(--p100);color:var(--p800)}
+.search-result-filter-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--p700);font-size:13px}.search-result-filter.on .search-result-filter-icon{background:var(--p700);color:#fff}.search-result-filter b{min-width:22px;color:var(--txf);font-size:11px;text-align:right}.search-result-filter.on b{color:var(--p700)}
+.search-results-main{min-width:0}
+.search-results-form{display:flex;align-items:center;gap:13px;min-height:62px;padding:0 20px;border:1px solid var(--bdr);border-radius:16px;background:var(--surf);box-shadow:0 8px 26px rgba(43,32,68,.04)}.search-results-form:focus-within{border-color:var(--p400);box-shadow:0 0 0 4px var(--p100)}.search-results-form svg{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:var(--txf);stroke-width:1.8;stroke-linecap:round}.search-results-form input{min-width:0;flex:1;border:0!important;background:transparent!important;color:var(--txt);font:500 18px 'DM Sans',sans-serif;outline:0!important;box-shadow:none!important}.search-results-form input::placeholder{color:var(--txf)}
+.search-results-hint{margin:12px 0 26px;color:var(--txf);font-size:12px}
+.search-results-tabs{display:flex;align-items:center;gap:28px;border-bottom:1px solid var(--bdr)}.search-results-tabs button{position:relative;padding:0 4px 14px;border:0;background:transparent;color:var(--txs);font:750 15px 'DM Sans',sans-serif;cursor:pointer}.search-results-tabs button.on{color:var(--p700)}.search-results-tabs button.on:after{content:"";position:absolute;right:0;bottom:-1px;left:0;height:3px;border-radius:3px 3px 0 0;background:var(--p700)}
+.search-results-summary{min-height:56px;display:flex;align-items:center;color:var(--txm);font-size:14px}.search-results-summary b{margin-right:4px;color:var(--txt)}
+.search-results-list{display:grid;gap:12px}.search-result-card{position:relative;display:grid;grid-template-columns:minmax(230px,1.2fr) minmax(140px,1fr) auto;align-items:center;gap:18px;min-height:86px;padding:15px 18px;border:1px solid var(--bdr);border-radius:15px;background:var(--surf);box-shadow:0 5px 18px rgba(43,32,68,.035)}.search-result-card:hover{border-color:var(--p300);box-shadow:0 9px 26px rgba(43,32,68,.08)}.search-result-card.compact{grid-template-columns:30px minmax(0,1fr) auto}.search-result-hover-target{position:relative;display:inline-flex;min-width:0}.search-result-hover-target>.board-person-hover-card{top:calc(100% + 10px);bottom:auto;left:0;z-index:80}.search-result-hover-target:after{content:"";position:absolute;top:100%;left:0;width:100%;height:12px}.search-result-identity{display:flex;align-items:center;gap:12px;min-width:0;padding:0;border:0;background:transparent;color:var(--txt);text-align:left;cursor:pointer}.search-result-identity:hover b{text-decoration:underline;color:var(--p700)}.search-result-avatar{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;overflow:hidden;border-radius:50%;background:var(--p100);color:var(--p700);font-size:13px;font-weight:850}.search-result-avatar.team{border-radius:13px}.search-result-avatar img{width:100%;height:100%;object-fit:cover}.search-result-identity>span:last-child{display:grid;gap:4px;min-width:0}.search-result-identity b{overflow:hidden;font-size:14px;text-overflow:ellipsis;white-space:nowrap}.search-result-identity small{color:var(--txs);font-size:11px}.search-result-copy{display:grid;gap:4px;min-width:0}.search-result-copy b{color:var(--p700);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.search-result-copy span{overflow:hidden;color:var(--txs);font-size:11px;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}.search-result-open{padding:9px 11px;border:1px solid var(--p200);border-radius:9px;background:var(--surf);color:var(--p700);font:750 11px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer}.search-result-open:hover{border-color:var(--p400);background:var(--p050)}.search-result-kind-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--p050);color:var(--p700);font-weight:850}.search-results-empty{display:grid;gap:7px;place-items:center;padding:58px 20px;border:1px dashed var(--bdr);border-radius:15px;background:var(--surf);color:var(--txs);text-align:center}.search-results-empty b{color:var(--txt);font-size:15px}.search-results-empty span{font-size:12px}.board-team-hover-card{width:min(360px,calc(100vw - 74px))}.board-person-card-avatar.team{border-radius:15px}.board-team-card-description{display:block;margin-top:14px;color:var(--txm);font-size:11px;line-height:1.5}.board-person-card-actions.team{display:flex;gap:8px;grid-template-columns:none}.board-person-card-actions.team>button{flex:1;min-width:0}
+html.theme-dark .search-results-screen{background:var(--bg)}html.theme-dark .search-results-form,html.theme-dark .search-result-card,html.theme-dark .search-results-empty{background:var(--surf);border-color:var(--bdr)}html.theme-dark .global-search-popover{background:var(--surf);border-color:var(--bdr)}html.theme-dark .global-search-row:hover,html.theme-dark .global-search-row:focus-visible{background:var(--p100)}
+.discover-post-avatar-stack{position:relative;display:block;width:50px;height:42px;flex:0 0 50px}.discover-post-avatar-stack>.discover-post-avatar{position:absolute;top:0;left:0;width:40px;height:40px}.discover-post-avatar-stack>.discover-post-avatar.publisher{top:15px;left:18px;width:27px;height:27px;border:2px solid var(--surf);z-index:2;background:var(--p100)}.discover-team-author{display:flex}.discover-team-author>.board-team-hover-card{top:calc(100% + 9px);bottom:auto;left:0}.discover-team-author:after{content:"";position:absolute;top:100%;left:0;width:100%;height:10px}.discover-team-author-button .discover-post-author{padding-top:2px}
+@media(max-width:1100px){.search-results-layout{grid-template-columns:220px minmax(0,1fr);gap:26px;width:min(100% - 36px,900px)}.search-result-card{grid-template-columns:minmax(190px,1.2fr) minmax(110px,1fr) auto}.search-result-open{font-size:10px}}
+@media(max-width:760px){.global-search-popover{right:-16px;left:-16px}.search-results-layout{display:block;width:calc(100% - 28px);padding:24px 0 60px}.search-results-sidebar{position:static;margin-bottom:22px;padding:0 0 14px;border:0;border-bottom:1px solid var(--bdr)}.search-results-sidebar-head{padding-bottom:14px}.search-results-filter-title{margin:14px 0 7px}.search-results-filter-list{display:flex;gap:6px;overflow:auto}.search-result-filter{grid-template-columns:24px auto;min-width:max-content;min-height:38px;padding:0 9px;border:1px solid var(--bdr)}.search-result-filter b{display:none}.search-result-filter-icon{width:22px;height:22px}.search-results-tabs{gap:17px;overflow:auto}.search-results-tabs button{font-size:13px;white-space:nowrap}.search-result-card,.search-result-card.compact{grid-template-columns:minmax(0,1fr);gap:12px}.search-result-open{justify-self:start}.search-result-copy span{white-space:normal}.search-result-hover-target>.board-person-hover-card,.search-result-hover-target>.board-team-hover-card{position:fixed;top:auto;right:12px;bottom:82px;left:12px;width:auto}}
 </style>
 <script id="app-ready-script">
 (()=>{
