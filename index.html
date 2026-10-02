@@ -11397,6 +11397,7 @@ function notifyProjectMentions(idea,text,targetTab='dyskusja'){
 }
 function notifyMentionsFromComposer(key){const idea=mentionProject(),text=document.getElementById('mb-inp-'+key)?.value||'',tab=String(key).startsWith('vote-')?'glosowania':String(key).startsWith('task-')?'zadania':String(key).startsWith('doc-')||String(key).startsWith('file-')?'dokumenty':String(key).startsWith('resource-')?'budzet':'dyskusja';notifyProjectMentions(idea,text,tab);}
 function toggleEmojiPanel(key){
+  if(typeof event!=='undefined'&&event?.stopPropagation)event.stopPropagation();
   const pan=document.getElementById('epanel-'+key);
   if(!pan) return;
   if(pan.classList.contains('on')){closeEmojiPanel(pan);return;}
@@ -18059,6 +18060,8 @@ document.addEventListener('pointerdown',e=>{
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&String(e.key).toLowerCase()==='q'){const q=buildDocQuoteFromSelection();if(q){e.preventDefault();pendingDocQuote=q;insertPendingDocQuote();}}});
 
 document.addEventListener('click',e=>{
+  if(!e.target.closest('.board-post-comment-menu'))
+    document.querySelectorAll('.board-post-comment-menu.on').forEach(menu=>menu.classList.remove('on'));
   if(!e.target.closest('.emoji-pop')&&!e.target.closest('.react'))
     document.querySelectorAll('.emoji-pop.on:not(.emoji-panel)').forEach(closeReactionPicker);
   if(!e.target.closest('.emoji-panel')&&!e.target.closest('.mb-emoji'))
@@ -20179,6 +20182,11 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
 .app-modal.board-post-discussion-modal .board-post-modal-head>button,.app-modal.board-post-discussion-modal .board-post-modal-head>button:hover,.app-modal.board-post-discussion-modal .board-post-modal-head>button:focus,.app-modal.board-post-discussion-modal .board-post-modal-head>button:focus-visible,.board-post-image-viewer-close,.board-post-image-viewer-close:hover,.board-post-image-viewer-close:focus,.board-post-image-viewer-close:focus-visible{border:0!important;outline:0!important;outline-offset:0!important;box-shadow:none!important;filter:none!important}
 .board-post-modal-comment-bubble-row{display:flex;align-items:flex-start;gap:6px;min-width:0;max-width:100%}.board-post-modal-comment-bubble{padding-right:13px!important}.board-post-modal-comment-bubble-row .board-post-comment-menu{position:relative!important;top:auto!important;right:auto!important;flex:0 0 auto;margin-top:2px}.board-post-modal-comment-bubble-row .board-post-comment-menu>button{width:34px;height:34px;border-radius:50%;background:var(--surf2);font-size:14px}.board-post-modal-comment-bubble-row .board-post-comment-menu>button:hover{background:var(--p100)}
 .app-modal .board-post-modal-composer .board-post-comment-compose-box textarea,.board-post-image-viewer .board-post-comment-compose-box textarea{box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;margin:0!important;resize:none!important}.board-post-modal-composer .board-post-composer-context,.board-post-modal-composer .board-comment-attachment-tray-host:empty,.board-post-modal-composer .board-comment-attachment-tray-host:not(:has(*)){display:none!important;position:absolute!important;inset:auto!important;width:0!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;overflow:hidden!important;visibility:hidden!important}
+.discover-composer-prompt-copy{height:auto!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#777c99!important;overflow:visible!important;text-overflow:clip!important}
+.board-feed-toolbar .tp-board-quick-placeholder,.project-person-board .tp-board-quick-placeholder{display:block!important;min-width:0!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--txs)!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-board-toolbar>.mp-composer input,#s-profile .profile-board-toolbar>.mp-composer input,#s-profile-me .profile-board-toolbar>.mp-composer input{min-width:0!important;width:auto!important;height:auto!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--txs)!important;outline:0!important;box-shadow:none!important}
+.board-post-modal-composer .board-comment-attachment-tray-host{display:none!important;position:absolute!important;inset:auto!important;width:0!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;overflow:hidden!important;visibility:hidden!important}
+.board-post-modal-composer .board-post-comment-compose-box textarea{background:transparent!important;background-image:none!important;color:var(--txt)!important;-webkit-text-fill-color:var(--txt)!important;caret-color:var(--p700)!important}
 </style>
 <script id="app-ready-script">
 (()=>{
