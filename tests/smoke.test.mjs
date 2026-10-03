@@ -520,6 +520,7 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function boardPersonSharedContext\(name\)/);
   assert.match(html, /function positionBoardPersonHoverCard\(anchor\)[\s\S]*window\.innerWidth-rect\.width-pad/);
   assert.match(html, /board-person-hover-card\{position:fixed!important;top:var\(--board-person-card-top,-10000px\)!important/);
+  assert.match(html, /board-post-image-viewer-comments\{overflow-x:hidden!important\}/);
   assert.match(html, /function clearBoardPostEmojiPortals\(\)[\s\S]*emoji-panel\.emoji-portal/);
   assert.match(html, /function boardPostComposerBanner\(\)\{return'';\}/);
   assert.match(html, /class="board-person-card-actions icon-only/);
