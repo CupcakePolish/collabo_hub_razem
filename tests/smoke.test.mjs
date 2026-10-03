@@ -521,7 +521,14 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /function positionBoardPersonHoverCard\(anchor\)[\s\S]*window\.innerWidth-rect\.width-pad/);
   assert.match(html, /board-person-hover-card\{position:fixed!important;top:var\(--board-person-card-top,-10000px\)!important/);
   assert.match(html, /board-post-image-viewer-comments\{overflow-x:hidden!important\}/);
-  assert.match(html, /board-post-comment-meta>\.board-post-comment-reaction\{order:4;margin-left:auto\}/);
+  assert.match(html, /board-post-comment-meta>\.board-post-comment-reaction\{order:3;margin-left:0\}/);
+  assert.match(html, /board-post-comment-meta>\.board-reaction-types\{order:5;margin-left:auto/);
+  assert.match(html, /board-person-hover-target\.discover-author>\.board-person-hover-card,[\s\S]*top:var\(--board-person-card-top,-10000px\)!important/);
+  assert.match(html, /board-relative-time\[data-date-tooltip\]::after\{[^}]*left:50%[^}]*transform:translate\(-50%,-3px\)/);
+  assert.match(html, /board-post-modal-composer:not\(\.is-inline-reply\)>\.board-post-comment-compose-box\.emoji-open\{[^}]*display:grid!important/);
+  assert.match(html, /home\?\.classList\.add\('emoji-open'\)/);
+  assert.match(html, /_emojiHome\?\.classList\.remove\('emoji-open'\)/);
+  assert.match(html, /closest\('\.board-reaction-trigger'\)/);
   assert.match(html, /board-comment-image-input-reply/);
   assert.match(html, /board-post-modal-composer \.board-comment-attachment-tray-host:not\(:empty\)\{display:block!important/);
   assert.match(html, /function clearBoardPostEmojiPortals\(\)[\s\S]*emoji-panel\.emoji-portal/);

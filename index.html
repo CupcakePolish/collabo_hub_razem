@@ -11411,6 +11411,7 @@ function toggleEmojiPanel(key,sourceEvent){
   if(!trigger)return;
   renderEmojiPanel(key);
   pan._emojiHome=home;
+  home?.classList.add('emoji-open');
   document.body.appendChild(pan);
   pan.classList.add('emoji-portal');
   pan.classList.add('on');
@@ -11429,6 +11430,7 @@ function toggleEmojiPanel(key,sourceEvent){
 }
 function closeEmojiPanel(pan){
   if(!pan)return;
+  pan._emojiHome?.classList.remove('emoji-open');
   pan.classList.remove('on','emoji-portal');
   pan.removeAttribute('style');
   if(pan._emojiHome?.isConnected)pan._emojiHome.appendChild(pan);
@@ -18098,7 +18100,7 @@ document.addEventListener('pointerdown',e=>{
     document.querySelectorAll('.project-action-popover').forEach(popover=>popover.remove());
     ideas.forEach(idea=>{if(idea._headerActionMenu)idea._headerActionMenu='';});
   }
-  if(!e.target.closest('.emoji-pop')&&!e.target.closest('.react')&&!e.target.closest('.mb-emoji'))
+  if(!e.target.closest('.emoji-pop')&&!e.target.closest('.react')&&!e.target.closest('.board-reaction-trigger')&&!e.target.closest('.mb-emoji'))
     document.querySelectorAll('.emoji-pop.on:not(.emoji-panel)').forEach(closeReactionPicker);
   if(!e.target.closest('.emoji-panel')&&!e.target.closest('.mb-emoji'))
     document.querySelectorAll('.emoji-panel.on').forEach(closeEmojiPanel);
@@ -18110,7 +18112,7 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&String(e.key)
 document.addEventListener('click',e=>{
   if(!e.target.closest('.board-post-comment-menu'))
     document.querySelectorAll('.board-post-comment-menu.on').forEach(menu=>menu.classList.remove('on'));
-  if(!e.target.closest('.emoji-pop')&&!e.target.closest('.react'))
+  if(!e.target.closest('.emoji-pop')&&!e.target.closest('.react')&&!e.target.closest('.board-reaction-trigger'))
     document.querySelectorAll('.emoji-pop.on:not(.emoji-panel)').forEach(closeReactionPicker);
   if(!e.target.closest('.emoji-panel')&&!e.target.closest('.mb-emoji'))
     document.querySelectorAll('.emoji-panel.on').forEach(closeEmojiPanel);
@@ -20046,7 +20048,7 @@ html.theme-dark #s-idea-person{background:#121019}html.theme-dark .project-perso
 .board-post-modal-shell{position:relative}
 .board-save-trigger{display:grid!important;place-items:center!important;width:42px!important;height:40px!important;min-width:42px!important;margin-left:0!important;padding:0!important;border:0!important;border-radius:10px;background:transparent!important;color:var(--txs)!important;cursor:pointer}.board-save-trigger:hover,.board-save-trigger.on{background:var(--p100)!important;color:var(--p700)!important}.board-save-trigger svg{width:23px!important;height:23px!important;fill:none;stroke:currentColor}.board-save-trigger.on svg{fill:currentColor}.project-person-board-actions>.board-save-trigger,.discover-post-actions>.board-save-trigger,.team-board-post-actions>.board-save-trigger{margin-left:0!important}
 .board-post-modal-comment-main{min-width:0}.board-post-modal-comment-bubble{position:relative;padding-right:35px}.board-post-comment-meta{display:flex;align-items:center;gap:11px;min-height:29px;margin:2px 5px 0;color:var(--txs);font-size:10px}.board-post-comment-meta>button{padding:0;border:0;background:transparent;color:var(--txs);font:750 10px 'DM Sans',sans-serif;cursor:pointer}.board-post-comment-meta>button:hover{color:var(--p700);text-decoration:underline}.board-post-comment-reaction{display:flex;align-items:center}.board-post-comment-reaction .board-reaction-trigger{min-width:0!important;min-height:25px!important;height:25px;padding:0 3px!important;border-radius:7px!important;font-size:10px!important}.board-post-comment-reaction .board-reaction-trigger>span{min-width:18px;font-size:17px}.board-post-comment-reaction .board-reaction-trigger b{font-size:10px}.board-post-comment-reaction .emoji-pop{bottom:calc(100% + 5px)}.board-post-comment-meta>.board-reaction-types{margin-left:auto;padding-left:6px}.board-post-comment-meta>.board-reaction-types button{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;font-size:14px!important}
-.board-post-comment-meta>.board-post-comment-reaction{order:4;margin-left:auto}.board-post-comment-meta>button{order:2}.board-post-comment-meta>span:not(.board-relative-time){order:3}.board-post-comment-meta>.board-reaction-types{order:5;margin-left:0;padding-left:0}
+.board-post-comment-meta>.board-post-comment-reaction{order:3;margin-left:0}.board-post-comment-meta>button{order:2}.board-post-comment-meta>span:not(.board-relative-time){order:4}.board-post-comment-meta>.board-reaction-types{order:5;margin-left:auto;padding-left:0}
 .board-post-comment-menu{position:absolute;top:7px;right:7px}.board-post-comment-menu>button{display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--txs);font-size:14px;letter-spacing:1px;cursor:pointer}.board-post-comment-menu>button:hover{background:var(--p200);color:var(--p700)}.board-post-comment-menu>div{position:absolute;z-index:20;top:29px;right:0;display:none;min-width:120px;padding:5px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);box-shadow:0 10px 28px rgba(32,24,52,.18)}.board-post-comment-menu.on>div{display:grid}.board-post-comment-menu>div button{padding:8px 10px;border:0;border-radius:7px;background:transparent;color:var(--txt);font:700 11px 'DM Sans',sans-serif;text-align:left;cursor:pointer}.board-post-comment-menu>div button:hover{background:var(--p100)}.board-post-comment-menu>div button.danger{color:#bd3656}
 .board-post-comment-replies{position:relative;display:grid;gap:11px;margin:10px 0 0 18px;padding-left:17px}.board-post-comment-replies:before{content:"";position:absolute;top:-5px;bottom:15px;left:0;width:2px;border-radius:2px;background:var(--bdr)}.board-post-comment-replies .board-post-modal-comment{grid-template-columns:32px minmax(0,1fr);gap:8px}.board-post-comment-replies .board-post-modal-avatar{width:32px;height:32px;flex-basis:32px}.board-post-comment-replies .board-post-comment-replies{margin-left:10px;padding-left:13px}
 .board-comment-replies-toggle{display:flex;align-items:center;gap:8px;min-height:34px;margin:5px 0 0 7px;padding:3px 8px;border:0;border-radius:9px;background:transparent;color:var(--txs);font:750 11px 'DM Sans',sans-serif;cursor:pointer}.board-comment-replies-toggle:hover{background:var(--surf2);color:var(--txt)}.board-comment-replies-toggle>i{display:block;width:30px;height:14px;border-bottom:2px solid var(--bdr);border-left:2px solid var(--bdr);border-radius:0 0 0 12px}.board-comment-replies-toggle.on>i{height:2px;border-bottom:2px solid var(--bdr);border-left:0;border-radius:0}.board-comment-toggle-avatar{display:grid;place-items:center;width:27px;height:27px;overflow:hidden;border-radius:50%;background:var(--p100);font-size:8px}.board-comment-toggle-avatar img{position:static!important;width:100%!important;height:100%!important;object-fit:cover}.board-comment-reply-profile{position:relative;display:inline-block}.board-comment-reply-name{display:inline;padding:0;border:0;background:transparent;color:var(--p700);font:inherit;font-weight:750;line-height:inherit;text-decoration:none;cursor:pointer}.board-comment-reply-name:hover{text-decoration:underline;text-underline-offset:2px}.board-comment-profile-popover{position:absolute;z-index:45;left:0;bottom:calc(100% + 9px);display:none;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:11px;width:270px;padding:13px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf);box-shadow:0 15px 38px rgba(28,20,48,.2);text-align:left}.board-comment-reply-profile:hover .board-comment-profile-popover,.board-comment-reply-profile:focus-within .board-comment-profile-popover{display:grid}.board-comment-profile-popover .board-post-modal-avatar{width:48px;height:48px;flex-basis:48px}.board-comment-profile-popover>span:last-child{display:grid;gap:3px;min-width:0}.board-comment-profile-popover b{overflow:hidden;font-size:13px;text-overflow:ellipsis;white-space:nowrap}.board-comment-profile-popover small{overflow:hidden;color:var(--txs);font-size:10px;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}.board-comment-profile-popover em{color:var(--p700);font-size:10px;font-style:normal;font-weight:750}
@@ -20264,14 +20266,14 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
 .board-person-hover-target.discover-team-author-team:has(.discover-team-author-button .discover-post-author b:hover):after,
 .board-person-hover-target.discover-team-author-team:has(>.board-team-hover-card:hover):after{display:block!important}
 .board-person-hover-target.discover-author>.board-person-hover-card,
-.board-person-hover-target.discover-team-author-team>.board-team-hover-card{top:100%!important;bottom:auto!important}
+.board-person-hover-target.discover-team-author-team>.board-team-hover-card{top:var(--board-person-card-top,-10000px)!important;bottom:auto!important;left:var(--board-person-card-left,-10000px)!important}
 .board-person-hover-target.discover-author .discover-post-author b,
 .board-person-hover-target.discover-team-author-team .discover-post-author b{position:relative;z-index:2}
 .board-person-hover-target.discover-author .board-post-relative-time,
 .board-person-hover-target.discover-team-author-team .board-post-relative-time{display:inline-block;position:relative;z-index:3;pointer-events:auto}
 .board-relative-time[data-date-tooltip]{position:relative;display:inline-block;cursor:pointer;transition:color .14s}
-.board-relative-time[data-date-tooltip]::after{position:absolute;z-index:2147483000;top:calc(100% + 7px);left:0;padding:8px 12px;border:1px solid var(--bdr);border-radius:999px;background:var(--surf);box-shadow:0 8px 24px rgba(28,20,48,.18);color:var(--txt);content:attr(data-date-tooltip);font:600 12px/1.2 'DM Sans',sans-serif;letter-spacing:0;white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(-3px);transition:opacity .14s ease 0s,transform .14s ease 0s}
-.board-relative-time[data-date-tooltip]:hover{color:var(--p700);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.board-relative-time[data-date-tooltip]:hover::after{opacity:1;transform:translateY(0);transition-delay:.3s,.3s}
+.board-relative-time[data-date-tooltip]::after{position:absolute;z-index:2147483000;top:calc(100% + 7px);left:50%;padding:8px 12px;border:1px solid var(--bdr);border-radius:999px;background:var(--surf);box-shadow:0 8px 24px rgba(28,20,48,.18);color:var(--txt);content:attr(data-date-tooltip);font:600 12px/1.2 'DM Sans',sans-serif;letter-spacing:0;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-3px);transition:opacity .14s ease 0s,transform .14s ease 0s}
+.board-relative-time[data-date-tooltip]:hover{color:var(--p700);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.board-relative-time[data-date-tooltip]:hover::after{opacity:1;transform:translate(-50%,0);transition-delay:.3s,.3s}
 .board-image-viewer-author{display:inline-flex;width:fit-content;justify-self:start;margin:0;padding:0;border:0;background:transparent;color:var(--txt);font:700 14px/1.2 'DM Sans',sans-serif;text-align:left;cursor:pointer}
 .board-image-viewer-author:hover,.board-image-viewer-author:focus-visible{color:var(--p700);text-decoration:underline;text-underline-offset:2px;outline:0}
 .board-person-hover-target.image-viewer-author{display:inline-flex;width:fit-content}.board-person-hover-target.image-viewer-author>.board-person-hover-card{top:calc(100% + 7px);bottom:auto;left:0;z-index:2147483000}
@@ -20289,6 +20291,10 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
 .board-person-hover-target.discover-team-publisher.board-person-hover-open>.board-person-hover-card,
 .board-person-hover-target.discover-team-publisher-text.board-person-hover-open>.board-team-hover-card{display:block!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important;transition-delay:0s!important}
 .board-person-hover-target.board-person-hover-open:after{display:block!important}
+/* Moving the emoji panel into a fixed portal must not collapse its composer. */
+.board-post-modal-composer:not(.is-inline-reply)>.board-post-comment-compose-box.emoji-open{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important;min-height:0!important}
+.board-post-modal-composer:not(.is-inline-reply)>.board-post-comment-compose-box.emoji-open textarea{grid-column:1!important;grid-row:1!important;width:100%!important;height:auto!important;min-height:58px!important;max-height:88px!important;padding:10px 14px 5px!important;overflow:auto!important;line-height:1.35!important;white-space:pre-wrap!important}
+.board-post-modal-composer:not(.is-inline-reply)>.board-post-comment-compose-box.emoji-open .board-post-comment-tools{grid-column:1!important;grid-row:2!important;min-width:0!important;padding:2px 7px 7px!important}
 </style>
 <script id="app-ready-script">
 (()=>{
