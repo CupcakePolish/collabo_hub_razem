@@ -522,7 +522,9 @@ test('participant context keeps attendance, quorum and a project-specific person
   assert.match(html, /board-person-hover-card\{position:fixed!important;top:var\(--board-person-card-top,-10000px\)!important/);
   assert.match(html, /board-post-image-viewer-comments\{overflow-x:hidden!important\}/);
   assert.match(html, /board-post-comment-meta>\.board-post-comment-reaction\{order:3;margin-left:0\}/);
-  assert.match(html, /board-post-comment-meta>\.board-reaction-types\{order:5;margin-left:auto/);
+  assert.match(html, /board-post-comment-meta>\.board-reaction-types\{order:4;flex-direction:row;margin-left:0/);
+  assert.match(html, /board-post-comment-meta>\.board-reaction-types:before\{content:attr\(data-total\)/);
+  assert.match(html, /class="board-reaction-types" data-total="\$\{total\}"/);
   assert.match(html, /board-person-hover-target\.discover-author>\.board-person-hover-card,[\s\S]*top:var\(--board-person-card-top,-10000px\)!important/);
   assert.match(html, /board-relative-time\[data-date-tooltip\]::after\{[^}]*left:50%[^}]*transform:translate\(-50%,-3px\)/);
   assert.match(html, /board-post-modal-composer:not\(\.is-inline-reply\)>\.board-post-comment-compose-box\.emoji-open\{[^}]*display:grid!important/);
