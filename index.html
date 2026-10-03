@@ -20230,6 +20230,26 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
 #board-post-image-viewer .board-post-modal-composer.board-post-image-viewer-composer:not(.is-inline-reply)>.board-post-comment-compose-box .board-post-comment-tools{grid-column:1!important;grid-row:2!important;min-width:0!important;padding:2px 7px 7px!important}
 .board-post-image-viewer-details,.board-post-image-viewer-details>header{border-bottom:0!important}.board-post-image-viewer-details>header{padding-bottom:8px}.board-post-image-viewer-details .board-post-image-viewer-copy{font-size:14px;line-height:1.55}.board-post-image-viewer-comments h3{font-size:15px}.board-post-image-viewer-comments .board-post-modal-comment-bubble b{font-size:13px}.board-post-image-viewer-comments .board-post-modal-comment-bubble .board-post-comment-text{font-size:13px;line-height:1.5}.board-post-image-viewer-comments .board-post-comment-meta{font-size:10px}.board-post-modal-copy{font-size:16px;line-height:1.62}.app-modal .board-post-modal-comments>h3{font-size:15px}.board-post-modal-comment-bubble b{font-size:13px}.board-post-comment-text{font-size:14px;line-height:1.5}.board-post-comment-meta,.board-post-comment-meta>button{font-size:11px}.post-auto-image,.post-auto-gallery.is-scrollable .post-auto-image,.post-auto-gallery:not(.is-scrollable) .post-auto-image,.board-comment-image{cursor:pointer!important}
 .board-relative-time{white-space:nowrap}.board-post-modal-copy{font-size:17px!important;line-height:1.65!important}.board-post-modal-comments>h3{font-size:16px!important}.board-post-comment-text{font-size:15px!important;line-height:1.55!important}.board-post-modal-comment-bubble b{font-size:14px!important}.board-post-comment-meta,.board-post-comment-meta>button{font-size:12px!important}.board-post-image-viewer-details .board-post-image-viewer-copy{font-size:16px!important;line-height:1.6!important}.board-post-image-viewer-comments h3{font-size:16px!important}.board-post-image-viewer-comments .board-post-modal-comment-bubble b{font-size:14px!important}.board-post-image-viewer-comments .board-post-modal-comment-bubble .board-post-comment-text{font-size:14px!important;line-height:1.55!important}.board-post-image-viewer-comments .board-post-comment-meta{font-size:11px!important}.discover-post-text{font-size:16px!important;line-height:1.62!important}.tp-board-post-text{font-size:15px!important;line-height:1.62!important}
+/* On Discover, the author card belongs to the exact name text only. Keep the
+   date's own title tooltip independent so both hover targets can coexist. */
+.board-person-hover-target.discover-author>.board-person-hover-card,
+.board-person-hover-target.discover-author:after,
+.board-person-hover-target.discover-team-author-team>.board-team-hover-card,
+.board-person-hover-target.discover-team-author-team:after{display:none!important}
+.board-person-hover-target.discover-author:has(.discover-post-author b:hover)>.board-person-hover-card,
+.board-person-hover-target.discover-author:has(>.board-person-hover-card:hover)>.board-person-hover-card,
+.board-person-hover-target.discover-team-author-team:has(.discover-team-author-button .discover-post-author b:hover)>.board-team-hover-card,
+.board-person-hover-target.discover-team-author-team:has(>.board-team-hover-card:hover)>.board-team-hover-card{display:block!important}
+.board-person-hover-target.discover-author:has(.discover-post-author b:hover):after,
+.board-person-hover-target.discover-author:has(>.board-person-hover-card:hover):after,
+.board-person-hover-target.discover-team-author-team:has(.discover-team-author-button .discover-post-author b:hover):after,
+.board-person-hover-target.discover-team-author-team:has(>.board-team-hover-card:hover):after{display:block!important}
+.board-person-hover-target.discover-author>.board-person-hover-card,
+.board-person-hover-target.discover-team-author-team>.board-team-hover-card{top:100%!important;bottom:auto!important}
+.board-person-hover-target.discover-author .discover-post-author b,
+.board-person-hover-target.discover-team-author-team .discover-post-author b{position:relative;z-index:2}
+.board-person-hover-target.discover-author .board-post-relative-time,
+.board-person-hover-target.discover-team-author-team .board-post-relative-time{display:inline-block;position:relative;z-index:3;pointer-events:auto}
 </style>
 <script id="app-ready-script">
 (()=>{
