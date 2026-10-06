@@ -91,6 +91,7 @@ test('discover board has navigation, composer and publish interactions', () => {
 test('organization resource catalog has three starter items and routed detail pages', () => {
   assert.match(html, /id="nl-resources"[^>]*onclick="go\('resources'/);
   assert.match(html, /id="nl-resources"[\s\S]*?data-icon="resource-box"/);
+  assert.match(html, /data-icon="resource-box"[\s\S]*?M3\.5 11\.2 12 14\.7l8\.5-3\.5/);
   assert.match(html, /id="s-resources" class="screen resource-catalog-screen"/);
   assert.match(html, /id="s-resource" class="screen resource-detail-screen"/);
   const seed = html.match(/const catalogResources=\[([\s\S]*?)\n\];\nlet resourceCatalogState/)?.[1] || '';
@@ -986,5 +987,9 @@ test('search results use one sidebar filter set with ranked results and helper r
   assert.match(html, /function setGlobalSearchWithinQuery\(value\)/);
   assert.match(html, /function setGlobalSearchPageSort\(value\)/);
   assert.match(html, /function setGlobalSearchPageView\(value\)/);
-  assert.match(html, /grid-template-columns:244px minmax\(560px,1fr\) 278px/);
+  assert.match(html, /function globalSearchFilterIcon\(key\)/);
+  assert.match(html, /post:'nl-discover',project:'nl-ideas',resource:'nl-resources',member:'nl-members',team:'nl-teams',dictionary:'nl-platform'/);
+  assert.match(html, /grid-template-columns:244px minmax\(0,1fr\) 278px/);
+  assert.match(html, /max-width:calc\(100vw - 132px\)/);
+  assert.match(html, /grid-template-columns:repeat\(8,64px\)!important/);
 });
