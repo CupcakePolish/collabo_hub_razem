@@ -17003,12 +17003,12 @@ function renderGlobalSearchResults(query){
 }
 function loadGlobalSearchRecent(){
   if(globalSearchRecentQueries.length)return globalSearchRecentQueries;
-  try{const saved=JSON.parse(localStorage.getItem('collabohub-global-search-history')||'[]');if(Array.isArray(saved))globalSearchRecentQueries=saved.filter(Boolean).slice(0,6);}catch{}
+  try{const saved=JSON.parse(localStorage.getItem('collabohub-global-search-history')||'[]');if(Array.isArray(saved))globalSearchRecentQueries=saved.map(row=>typeof row==='string'?{type:'query',query:row.trim()}:row&&row.type==='member'&&row.memberId?{type:'member',memberId:row.memberId,title:String(row.title||'')}:row&&row.type==='query'&&row.query?{type:'query',query:String(row.query).trim()}:null).filter(row=>row&&(row.type==='member'||row.query)).slice(0,6);}catch{}
   return globalSearchRecentQueries;
 }
-function addGlobalSearchRecent(query){
-  const value=String(query||'').trim();if(!value)return;
-  globalSearchRecentQueries=[value,...loadGlobalSearchRecent().filter(row=>row.toLocaleLowerCase('pl-PL')!==value.toLocaleLowerCase('pl-PL'))].slice(0,6);
+function addGlobalSearchRecent(value){
+  const entry=typeof value==='string'?{type:'query',query:value.trim()}:value?.type==='member'?{type:'member',memberId:value.memberId,title:String(value.title||'')}:value?.type==='query'?{type:'query',query:String(value.query||'').trim()}:null;if(!entry||entry.type==='query'&&!entry.query||entry.type==='member'&&!entry.memberId)return;
+  const key=row=>row.type==='member'?`member:${row.memberId}`:`query:${registerMatchText(row.query)}`;globalSearchRecentQueries=[entry,...loadGlobalSearchRecent().filter(row=>key(row)!==key(entry))].slice(0,6);
   try{localStorage.setItem('collabohub-global-search-history',JSON.stringify(globalSearchRecentQueries));}catch{}
 }
 function removeGlobalSearchRecent(index,event){
@@ -17026,7 +17026,7 @@ function renderGlobalSearchPopover(query=''){
   const value=String(query||'').trim(),needle=registerMatchText(value),recent=loadGlobalSearchRecent();
   if(!needle){
     globalSearchPopoverResults=[];
-    const rows=recent.map((row,index)=>`<button type="button" class="global-search-row recent" role="option" onclick="openGlobalSearchSuggestion('query','${escAttr(row)}')"><span class="global-search-row-icon">↗</span><span><b>${escHtml(row)}</b><small>Ostatnie wyszukiwanie</small></span><i role="button" aria-label="Usuń z ostatnich wyszukiwań" onclick="removeGlobalSearchRecent(${index},event)">×</i></button>`).join('');
+    const rows=recent.map((row,index)=>{if(row.type==='member'){const person=members.find(item=>String(item.id)===String(row.memberId));if(!person)return '';const visual=`<span class="global-search-row-avatar">${globalSearchSuggestionAvatar({kind:'member',memberId:person.id,title:person.name})}</span>`;return `<button type="button" class="global-search-row recent" role="option" onclick="openGlobalSearchSuggestion('member','${escAttr(person.id)}')">${visual}<span><b>${escHtml(person.name||row.title)}</b></span><i role="button" aria-label="Usuń z ostatnich wyszukiwań" onclick="removeGlobalSearchRecent(${index},event)">×</i></button>`;}const text=row.query||'',clock=`<span class="global-search-row-icon">${discoverIcon('clock')}</span>`;return `<button type="button" class="global-search-row recent" role="option" onclick="openGlobalSearchSuggestion('query','${escAttr(text)}')">${clock}<span><b>${escHtml(text)}</b></span><i role="button" aria-label="Usuń z ostatnich wyszukiwań" onclick="removeGlobalSearchRecent(${index},event)">×</i></button>`;}).join('');
     box.innerHTML=`<div class="global-search-popover-title">${recent.length?'Ostatnie':'Szukaj na CollaboHub'}</div>${rows||'<p class="global-search-empty">Wpisz fragment wpisu, pomysł, osobę, zespół, zasób albo pojęcie.</p>'}`;
   }else{
     const items=runGlobalSearch(value).slice(0,6);globalSearchPopoverResults=items;
@@ -17036,10 +17036,11 @@ function renderGlobalSearchPopover(query=''){
 }
 function openGlobalSearchPopoverResult(index){
   const item=globalSearchPopoverResults[Number(index)];if(!item)return;
-  addGlobalSearchRecent(document.getElementById('global-search-input')?.value||item.title);globalSearchResults=globalSearchPopoverResults.map((row,resultIndex)=>({...row,resultIndex}));openGlobalSearchResult(Number(index));
+  if(item.kind==='member')addGlobalSearchRecent({type:'member',memberId:item.memberId,title:item.title});else addGlobalSearchRecent(document.getElementById('global-search-input')?.value||item.title);globalSearchResults=globalSearchPopoverResults.map((row,resultIndex)=>({...row,resultIndex}));openGlobalSearchResult(Number(index));
 }
 function openGlobalSearchSuggestion(kind,value){
   if(kind==='query'){const query=String(value||'');const input=document.getElementById('global-search-input');if(input)input.value=query;return openGlobalSearch(query);}
+  if(kind==='member'){const person=members.find(row=>String(row.id)===String(value));if(!person)return;addGlobalSearchRecent({type:'member',memberId:person.id,title:person.name});closeGlobalSearchPopover();return openMember(person.id);}
   const item=buildGlobalSearchIndex().find(row=>row.kind===kind&&String(kind==='member'?row.memberId:row.teamId)===String(value));
   if(!item)return;
   addGlobalSearchRecent(item.title);closeGlobalSearchPopover();
@@ -17104,7 +17105,7 @@ function searchGlobalRelated(query){
 function renderGlobalSearchSidePanels(query,items){
   const related=document.getElementById('global-search-related'),recent=document.getElementById('global-search-recent-panel');
   if(related){const rows=globalSearchRelatedQueries(query,items);related.innerHTML=rows.map(row=>`<button type="button" onclick="searchGlobalRelated('${escAttr(row)}')"><span>⌕</span><b>${globalSearchHighlight(row,query)}</b></button>`).join('')||'<p>Brak dodatkowych sugestii.</p>';}
-  if(recent){const rows=loadGlobalSearchRecent().filter(row=>registerMatchText(row)!==registerMatchText(query)).slice(0,5);recent.innerHTML=rows.map(row=>`<button type="button" onclick="searchGlobalRelated('${escAttr(row)}')"><span>⌕</span><b>${escHtml(row)}</b></button>`).join('')||'<p>Historia wyszukiwania jest pusta.</p>';}
+  if(recent){const rows=loadGlobalSearchRecent().filter(row=>row.type==='query'&&registerMatchText(row.query)!==registerMatchText(query)).slice(0,5);recent.innerHTML=rows.map(row=>`<button type="button" onclick="searchGlobalRelated('${escAttr(row.query)}')"><span>⌕</span><b>${escHtml(row.query)}</b></button>`).join('')||'<p>Historia wyszukiwania jest pusta.</p>';}
 }
 function renderGlobalSearchPage(query=''){
   const input=document.getElementById('search-results-input'),within=document.getElementById('search-within-results-input'),sort=document.getElementById('global-search-sort'),list=document.getElementById('search-results-list'),summary=document.getElementById('search-results-summary'),filters=document.getElementById('global-search-page-filters');
@@ -17149,7 +17150,7 @@ function openGlobalSearchResult(index){
   const item=globalSearchResults[index];if(!item)return;
   closeAppModal();closeGlobalSearchPopover();
   const input=document.getElementById('global-search-input');if(input)input.value='';
-  if(item.kind==='member')return openMember(item.memberId);
+  if(item.kind==='member'){addGlobalSearchRecent({type:'member',memberId:item.memberId,title:item.title});return openMember(item.memberId);}
   if(item.kind==='team')return openTeam(item.teamId);
   if(item.kind==='post'){
     if(item.scope==='team-post'){openTeam(item.teamId);setTimeout(()=>openTeamBoardPostDiscussion(item.teamId,item.postId),80);return;}
@@ -20318,6 +20319,13 @@ html.theme-dark .project-head-action.project-variant-action{border-color:#403847
 .global-search-row>i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--txf);font-size:18px;font-style:normal}
 .global-search-row>i:hover{background:var(--p100);color:var(--p700)}
 .global-search-empty{margin:0;padding:12px 16px 16px;color:var(--txs);font-size:11px;line-height:1.45}
+.global-search-row.recent{grid-template-columns:40px minmax(0,1fr) 28px;min-height:60px;padding:8px 14px}
+.global-search-row.recent .global-search-row-icon{width:40px;height:40px;border-radius:50%;background:var(--surf2);color:var(--txs)}
+.global-search-row.recent .global-search-row-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.global-search-row.recent .global-search-row-avatar{width:40px;height:40px}
+.global-search-row.recent>span:not(.global-search-row-icon):not(.global-search-row-avatar){display:block}
+.global-search-row.recent b{font-size:14px;font-weight:600}
+.global-search-row.recent>i{font-size:20px}
 .search-suggestion-fallback{display:grid;place-items:center;width:100%;height:100%}
 
 /* Search results page */
