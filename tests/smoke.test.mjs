@@ -937,3 +937,24 @@ test('team board post composer supports rich media and categorized platform ment
   assert.match(html, /teamBoardMentionResults=\[\];/);
   assert.match(html, /#s-team-profile>\.profile-header\{[^}]*border:0!important/);
 });
+
+test('global search covers posts, ideas, resources, people, teams and dictionary with visible highlights', () => {
+  assert.match(html, /post:\{label:'Wpisy',singular:'Wpis'/);
+  assert.match(html, /project:\{label:'Pomysły i projekty',singular:'Pomysł'/);
+  assert.match(html, /dictionary:\{label:'Słownik',singular:'Pojęcie'/);
+  assert.match(html, /\(discoverPosts\|\|\[\]\)\.forEach/);
+  assert.match(html, /\(t\.boardPosts\|\|\[\]\)\.forEach/);
+  assert.match(html, /\(catalogResources\|\|\[\]\)\.forEach/);
+  assert.match(html, /dictionaryEntries\(\)\.forEach/);
+  assert.match(html, /function globalSearchMatchExcerpt\(value,query,max=180\)/);
+  assert.match(html, /matchExcerpt:globalSearchMatchExcerpt\(item\.source,query\)/);
+  assert.match(html, /function globalSearchHighlight\(text,query\)[\s\S]*<mark class="gs-hit">/);
+  assert.match(html, /const items=runGlobalSearch\(value\)\.slice\(0,6\)/);
+  assert.match(html, /function openGlobalSearchPopoverResult\(index\)/);
+  assert.match(html, /data-search-filter="post"[^>]*>Wpisy</);
+  assert.match(html, /data-search-filter="project"[^>]*>Pomysły</);
+  assert.match(html, /data-search-filter="resource"[^>]*>Zasoby</);
+  assert.match(html, /data-search-filter="dictionary"[^>]*>Słownik</);
+  assert.match(html, /if\(item\.kind==='resource'&&item\.scope==='catalog'\)return openCatalogResource/);
+  assert.match(html, /if\(item\.kind==='dictionary'\)/);
+});

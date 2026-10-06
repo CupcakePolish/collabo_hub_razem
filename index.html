@@ -5586,12 +5586,16 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
         <input id="search-results-input" type="search" autocomplete="off" aria-label="Szukaj w całym CollaboHub" placeholder="Szukaj w CollaboHub…">
         <button type="submit" hidden>Szukaj</button>
       </form>
-      <p class="search-results-hint">np. „grafik”, „klimat”, „ustawa”, nazwisko autora</p>
+      <p class="search-results-hint">np. fragment wpisu, kompetencja, pomysł, zasób albo pojęcie ze słownika</p>
       <div class="search-results-tabs" role="tablist" aria-label="Typ wyników">
         <button type="button" class="on" data-search-filter="all" onclick="setGlobalSearchPageFilter('all')">Wszystkie</button>
+        <button type="button" data-search-filter="post" onclick="setGlobalSearchPageFilter('post')">Wpisy</button>
+        <button type="button" data-search-filter="project" onclick="setGlobalSearchPageFilter('project')">Pomysły</button>
+        <button type="button" data-search-filter="resource" onclick="setGlobalSearchPageFilter('resource')">Zasoby</button>
         <button type="button" data-search-filter="member" onclick="setGlobalSearchPageFilter('member')">Osoby</button>
         <button type="button" data-search-filter="team" onclick="setGlobalSearchPageFilter('team')">Zespoły</button>
-        <button type="button" data-search-filter="content" onclick="setGlobalSearchPageFilter('content')">Treści</button>
+        <button type="button" data-search-filter="dictionary" onclick="setGlobalSearchPageFilter('dictionary')">Słownik</button>
+        <button type="button" data-search-filter="content" onclick="setGlobalSearchPageFilter('content')">Pozostałe</button>
       </div>
       <div class="search-results-summary" id="search-results-summary"></div>
       <div class="search-results-list" id="search-results-list"></div>
@@ -16868,7 +16872,8 @@ let globalSearchPageFilter='all',globalSearchPageQuery='';
 let globalSearchRecentQueries=[];
 const GLOBAL_SEARCH_META={
   member:{label:'Osoby',singular:'Osoba',icon:'O'},
-  project:{label:'Projekty',singular:'Projekt',icon:'P'},
+  post:{label:'Wpisy',singular:'Wpis',icon:'✎'},
+  project:{label:'Pomysły i projekty',singular:'Pomysł',icon:'P'},
   team:{label:'Zespoły',singular:'Zespół',icon:'Z'},
   task:{label:'Zadania',singular:'Zadanie',icon:'✓'},
   vote:{label:'Decyzje i głosowania',singular:'Decyzja',icon:'◇'},
@@ -16876,6 +16881,7 @@ const GLOBAL_SEARCH_META={
   discussion:{label:'Dyskusje',singular:'Dyskusja',icon:'…'},
   register:{label:'Rejestr informacji',singular:'Rejestr',icon:'#'},
   resource:{label:'Zasoby i pliki',singular:'Zasób',icon:'R'},
+  dictionary:{label:'Słownik',singular:'Pojęcie',icon:'S'},
   role:{label:'Role i zespół projektu',singular:'Rola',icon:'@'}
 };
 function globalSearchObjectText(value,depth=0,seen=new Set()){
@@ -16890,16 +16896,30 @@ function globalSearchExcerpt(value,max=170){
   const clean=String(value||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   return clean.length>max?clean.slice(0,max-1).trim()+'…':clean;
 }
+function globalSearchMatchExcerpt(value,query,max=180){
+  const clean=String(value||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  if(!clean)return '';
+  const folded=clean.toLocaleLowerCase('pl-PL').normalize('NFD').replace(/[\u0300-\u036f]/g,''),tokens=registerMatchText(query).split(' ').filter(Boolean),hits=tokens.map(token=>folded.indexOf(token)).filter(index=>index>=0);
+  if(!hits.length)return globalSearchExcerpt(clean,max);
+  const first=Math.min(...hits),start=Math.max(0,first-Math.floor(max*.3)),end=Math.min(clean.length,start+max),prefix=start?'…':'',suffix=end<clean.length?'…':'';
+  return prefix+clean.slice(start,end).trim()+suffix;
+}
 function buildGlobalSearchIndex(){
-  const rows=[];
+  const rows=[],publishedTeamPostKeys=new Set();
   const add=(kind,title,subtitle,search,target={})=>{
     if(!title)return;
     const source=[title,subtitle,search].filter(Boolean).join(' ');
     rows.push({kind,title:String(title),subtitle:globalSearchExcerpt(subtitle),source,search:registerMatchText(source),...target});
   };
   (members||[]).forEach(m=>add('member',m.name,[...(m.roles||[]),...(m.skills||[])].join(' · '),globalSearchObjectText(m),{memberId:m.id}));
+  (discoverPosts||[]).forEach((post,index)=>{
+    const body=post.title||post.text||`Wpis ${index+1}`,author=post.publisher||post.author||'CollaboHub';
+    if(post.sourceType==='team'&&post.teamBoardPostId)publishedTeamPostKeys.add(`${post.sourceId}:${post.teamBoardPostId}`);
+    add('post',globalSearchExcerpt(body,100),`${author} · ${discoverSourceLabel(post)}`,globalSearchObjectText(post),{postId:post.id,scope:'discover',needle:globalSearchExcerpt(post.text||post.title,70)});
+  });
   (projectTeams||[]).forEach(t=>{
     add('team',t.name,t.desc||`Członkowie: ${(t.members||[]).join(', ')}`,globalSearchObjectText(t),{teamId:t.id});
+    (t.boardPosts||[]).forEach((post,index)=>{if(!publishedTeamPostKeys.has(`${t.id}:${post.id}`))add('post',globalSearchExcerpt(post.title||post.text||`Wpis ${index+1}`,100),`${t.name} · wpis zespołu`,globalSearchObjectText(post),{postId:post.id,teamId:t.id,scope:'team-post',needle:globalSearchExcerpt(post.text||post.title,70)});});
     (t.decisions||[]).forEach(vote=>add('vote',vote.title||vote.prop||'Decyzja zespołu',t.name,globalSearchObjectText(vote),{teamId:t.id,targetId:vote.id||vote.pid,scope:'team',needle:vote.title||vote.prop||''}));
   });
   (platformDecisions||[]).forEach(vote=>add('vote',vote.title||vote.prop||'Decyzja platformowa','Platforma CollaboHub',globalSearchObjectText(vote),{targetId:vote.id||vote.pid,scope:'platform',needle:vote.title||vote.prop||''}));
@@ -16925,6 +16945,8 @@ function buildGlobalSearchIndex(){
     (idea.budgetItems||[]).forEach((item,index)=>add('resource',item.name||item.nazwa||`Zasób ${index+1}`,projectContext,globalSearchObjectText(item),{ideaId:idea.id,targetId:item.bid||index,needle:item.name||item.nazwa||''}));
     (idea.roleRequirements||[]).forEach((role,index)=>add('role',role.role||`Rola ${index+1}`,`${projectContext} · ${(role.filledBy||[]).join(', ')||'do obsadzenia'}`,globalSearchObjectText(role),{ideaId:idea.id,targetId:index,needle:role.role||''}));
   });
+  (catalogResources||[]).forEach(resource=>add('resource',resource.name,[resource.type,resource.location,resource.owner].filter(Boolean).join(' · '),globalSearchObjectText(resource),{resourceId:resource.id,scope:'catalog',needle:resource.name}));
+  dictionaryEntries().forEach(item=>add('dictionary',item.name,`${dictionaryLabel(item.category)} · ${item.definition||''}`,globalSearchObjectText(item),{dictionaryId:item.id,needle:item.name}));
   return rows;
 }
 function runGlobalSearch(query){
@@ -16939,15 +16961,17 @@ function runGlobalSearch(query){
     else if(title.includes(normalized))score+=80;
     tokens.forEach(token=>{if(title.includes(token))score+=24;});
     if(item.kind==='member')score+=10;
-    return {...item,score,order};
+    return {...item,matchExcerpt:globalSearchMatchExcerpt(item.source,query),score,order};
   }).filter(Boolean).sort((a,b)=>b.score-a.score||a.order-b.order).slice(0,80);
 }
 function globalSearchHighlight(text,query){
-  const raw=String(text||''),q=String(query||'').trim();
-  if(!q)return escHtml(raw);
-  const safe=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  try{return raw.split(new RegExp(`(${safe})`,'ig')).map((part,index)=>index%2?`<mark class="gs-hit">${escHtml(part)}</mark>`:escHtml(part)).join('');}
-  catch(e){return escHtml(raw);}
+  const raw=String(text||''),tokens=[...new Set(registerMatchText(query).split(' ').filter(Boolean))].sort((a,b)=>b.length-a.length);
+  if(!tokens.length)return escHtml(raw);
+  const folded=raw.toLocaleLowerCase('pl-PL').normalize('NFD').replace(/[\u0300-\u036f]/g,''),ranges=[];
+  tokens.forEach(token=>{let from=0,index;while((index=folded.indexOf(token,from))>=0){ranges.push([index,index+token.length]);from=index+Math.max(1,token.length);}});
+  if(!ranges.length)return escHtml(raw);
+  ranges.sort((a,b)=>a[0]-b[0]||b[1]-a[1]);const merged=[];ranges.forEach(range=>{const last=merged[merged.length-1];if(last&&range[0]<=last[1])last[1]=Math.max(last[1],range[1]);else merged.push([...range]);});
+  let cursor=0,html='';merged.forEach(([start,end])=>{html+=escHtml(raw.slice(cursor,start))+`<mark class="gs-hit">${escHtml(raw.slice(start,end))}</mark>`;cursor=end;});return html+escHtml(raw.slice(cursor));
 }
 function renderGlobalSearchResults(query){
   const box=document.getElementById('gs-results'),summary=document.getElementById('gs-summary');
@@ -16962,7 +16986,7 @@ function renderGlobalSearchResults(query){
   globalSearchResults.forEach((item,index)=>{item.resultIndex=index;const list=groups.get(item.kind)||[];list.push(item);groups.set(item.kind,list);});
   box.innerHTML=[...groups.entries()].map(([kind,items])=>{
     const meta=GLOBAL_SEARCH_META[kind]||{label:'Inne',singular:'Wynik',icon:'•'};
-    return `<div class="gs-group"><div class="gs-group-title">${escHtml(meta.label)} · ${items.length}</div>${items.map(item=>`<button type="button" class="gs-result" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="gs-result-icon">${meta.icon}</span><span class="gs-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.subtitle,query)}</span></span><span class="gs-result-type">${escHtml(meta.singular)} →</span></button>`).join('')}</div>`;
+    return `<div class="gs-group"><div class="gs-group-title">${escHtml(meta.label)} · ${items.length}</div>${items.map(item=>`<button type="button" class="gs-result" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="gs-result-icon">${meta.icon}</span><span class="gs-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.matchExcerpt||item.subtitle,query)}</span></span><span class="gs-result-type">${escHtml(meta.singular)} →</span></button>`).join('')}</div>`;
   }).join('');
 }
 function loadGlobalSearchRecent(){
@@ -16983,17 +17007,23 @@ function globalSearchSuggestionAvatar(item){
   if(item.kind==='member'){const person=members.find(row=>String(row.id)===String(item.memberId))||personProfileByName(item.title);return memberAvatarContent(item.title,person?.ini||memberInitials(item.title));}
   const team=projectTeams.find(row=>String(row.id)===String(item.teamId));return team?teamBoardAvatar(team):`<span class="search-suggestion-fallback">${escHtml(memberInitials(item.title))}</span>`;
 }
+let globalSearchPopoverResults=[];
 function renderGlobalSearchPopover(query=''){
   const box=document.getElementById('global-search-popover');if(!box)return;
   const value=String(query||'').trim(),needle=registerMatchText(value),recent=loadGlobalSearchRecent();
   if(!needle){
+    globalSearchPopoverResults=[];
     const rows=recent.map((row,index)=>`<button type="button" class="global-search-row recent" role="option" onclick="openGlobalSearchSuggestion('query','${escAttr(row)}')"><span class="global-search-row-icon">↗</span><span><b>${escHtml(row)}</b><small>Ostatnie wyszukiwanie</small></span><i role="button" aria-label="Usuń z ostatnich wyszukiwań" onclick="removeGlobalSearchRecent(${index},event)">×</i></button>`).join('');
-    box.innerHTML=`<div class="global-search-popover-title">${recent.length?'Ostatnie':'Szukaj na CollaboHub'}</div>${rows||'<p class="global-search-empty">Wpisz osobę, zespół albo temat, aby rozpocząć.</p>'}`;
+    box.innerHTML=`<div class="global-search-popover-title">${recent.length?'Ostatnie':'Szukaj na CollaboHub'}</div>${rows||'<p class="global-search-empty">Wpisz fragment wpisu, pomysł, osobę, zespół, zasób albo pojęcie.</p>'}`;
   }else{
-    const index=buildGlobalSearchIndex(),people=index.filter(item=>item.kind==='member'&&item.search.includes(needle)),teams=index.filter(item=>item.kind==='team'&&item.search.includes(needle)),items=[...people,...teams].slice(0,4);
-    box.innerHTML=`<div class="global-search-popover-title">Sugestie</div>${items.map(item=>`<button type="button" class="global-search-row" role="option" onclick="openGlobalSearchSuggestion('${item.kind}','${escAttr(item.kind==='member'?item.memberId:item.teamId)}')"><span class="global-search-row-avatar">${globalSearchSuggestionAvatar(item)}</span><span><b>${globalSearchHighlight(item.title,value)}</b><small>${item.kind==='member'?'Osoba':'Zespół'}${item.subtitle?' · '+globalSearchHighlight(item.subtitle,value):''}</small></span><em>›</em></button>`).join('')||'<p class="global-search-empty">Naciśnij Enter, aby zobaczyć wszystkie wyniki.</p>'}`;
+    const items=runGlobalSearch(value).slice(0,6);globalSearchPopoverResults=items;
+    box.innerHTML=`<div class="global-search-popover-title">Sugestie z całego CollaboHuba</div>${items.map((item,index)=>{const meta=GLOBAL_SEARCH_META[item.kind]||{singular:'Wynik',icon:'•'},visual=['member','team'].includes(item.kind)?`<span class="global-search-row-avatar">${globalSearchSuggestionAvatar(item)}</span>`:`<span class="global-search-row-icon">${escHtml(meta.icon)}</span>`;return `<button type="button" class="global-search-row" role="option" onclick="openGlobalSearchPopoverResult(${index})">${visual}<span><b>${globalSearchHighlight(item.title,value)}</b><small>${escHtml(meta.singular)} · ${globalSearchHighlight(item.matchExcerpt||item.subtitle,value)}</small></span><em>›</em></button>`;}).join('')||'<p class="global-search-empty">Naciśnij Enter, aby zobaczyć wszystkie wyniki.</p>'}`;
   }
   box.classList.add('on');
+}
+function openGlobalSearchPopoverResult(index){
+  const item=globalSearchPopoverResults[Number(index)];if(!item)return;
+  addGlobalSearchRecent(document.getElementById('global-search-input')?.value||item.title);globalSearchResults=globalSearchPopoverResults.map((row,resultIndex)=>({...row,resultIndex}));openGlobalSearchResult(Number(index));
 }
 function openGlobalSearchSuggestion(kind,value){
   if(kind==='query'){const query=String(value||'');const input=document.getElementById('global-search-input');if(input)input.value=query;return openGlobalSearch(query);}
@@ -17004,19 +17034,22 @@ function openGlobalSearchSuggestion(kind,value){
   return openTeam(item.teamId);
 }
 function globalSearchPageResultCard(item,query){
-  const meta=GLOBAL_SEARCH_META[item.kind]||{singular:'Wynik',icon:'•'};
+  const meta=GLOBAL_SEARCH_META[item.kind]||{singular:'Wynik',icon:'•'},excerpt=item.matchExcerpt||item.subtitle||meta.singular;
   if(item.kind==='member'){
     const profile=members.find(row=>String(row.id)===String(item.memberId))||personProfileByName(item.title),roles=(profile?.roles||[]).slice(0,2).join(' · '),avatar=globalSearchSuggestionAvatar(item);
-    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>${escHtml(roles||'Członek CollaboHub')}</small></span></button>${boardPersonHoverCardHTML(item.title)}</span><span class="search-result-copy"><b>Osoba</b><span>${globalSearchHighlight(item.subtitle||'Profil członka CollaboHub',query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz profil →</button></article>`;
+    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>${globalSearchHighlight(roles||'Członek CollaboHub',query)}</small></span></button>${boardPersonHoverCardHTML(item.title)}</span><span class="search-result-copy"><b>Osoba</b><span>${globalSearchHighlight(excerpt,query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz profil →</button></article>`;
   }
   if(item.kind==='team'){
     const team=projectTeams.find(row=>String(row.id)===String(item.teamId)),avatar=team?teamBoardAvatar(team):globalSearchSuggestionAvatar(item);
-    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar team">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>Zespół</small></span></button>${boardTeamHoverCardHTML(team)}</span><span class="search-result-copy"><b>Zespół</b><span>${globalSearchHighlight(item.subtitle||'Zespół CollaboHub',query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz zespół →</button></article>`;
+    return `<article class="search-result-card"><span class="board-person-hover-target search-result-hover-target"><button type="button" class="search-result-identity" onclick="openGlobalSearchResult(${item.resultIndex})"><span class="search-result-avatar team">${avatar}</span><span><b>${globalSearchHighlight(item.title,query)}</b><small>Zespół</small></span></button>${boardTeamHoverCardHTML(team)}</span><span class="search-result-copy"><b>Zespół</b><span>${globalSearchHighlight(excerpt,query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz zespół →</button></article>`;
   }
-  return `<article class="search-result-card compact"><span class="search-result-kind-icon">${escHtml(meta.icon)}</span><span class="search-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(item.subtitle||meta.singular,query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz →</button></article>`;
+  return `<article class="search-result-card compact"><span class="search-result-kind-icon">${escHtml(meta.icon)}</span><span class="search-result-copy"><b>${globalSearchHighlight(item.title,query)}</b><span>${globalSearchHighlight(excerpt,query)}</span></span><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${item.resultIndex})">Otwórz →</button></article>`;
+}
+function globalSearchFilterMatch(item,filter){
+  if(filter==='all')return true;if(filter==='content')return !['member','team','post','project','resource','dictionary'].includes(item.kind);return item.kind===filter;
 }
 function setGlobalSearchPageFilter(filter){
-  globalSearchPageFilter=['all','member','team','content'].includes(filter)?filter:'all';
+  globalSearchPageFilter=['all','post','project','resource','member','team','dictionary','content'].includes(filter)?filter:'all';
   document.querySelectorAll('[data-search-filter]').forEach(button=>button.classList.toggle('on',button.dataset.searchFilter===globalSearchPageFilter));
   renderGlobalSearchPage(globalSearchPageQuery);
 }
@@ -17024,13 +17057,13 @@ function renderGlobalSearchPage(query=''){
   const input=document.getElementById('search-results-input'),list=document.getElementById('search-results-list'),summary=document.getElementById('search-results-summary'),filters=document.getElementById('global-search-page-filters');
   if(!list)return;
   globalSearchPageQuery=String(query||'').trim();if(input&&input.value!==globalSearchPageQuery)input.value=globalSearchPageQuery;
-  const all=runGlobalSearch(globalSearchPageQuery),filtered=all.filter(item=>globalSearchPageFilter==='all'||globalSearchPageFilter===item.kind||(globalSearchPageFilter==='content'&&!['member','team'].includes(item.kind)));
+  const all=runGlobalSearch(globalSearchPageQuery),filtered=all.filter(item=>globalSearchFilterMatch(item,globalSearchPageFilter));
   globalSearchResults=filtered;globalSearchResults.forEach((item,index)=>item.resultIndex=index);
-  const filterRows=[['all','Wszystkie',all.length],['member','Osoby',all.filter(item=>item.kind==='member').length],['team','Zespoły',all.filter(item=>item.kind==='team').length],['content','Treści',all.filter(item=>!['member','team'].includes(item.kind)).length]];
+  const filterRows=[['all','Wszystkie',all.length],['post','Wpisy',all.filter(item=>item.kind==='post').length],['project','Pomysły',all.filter(item=>item.kind==='project').length],['resource','Zasoby',all.filter(item=>item.kind==='resource').length],['member','Osoby',all.filter(item=>item.kind==='member').length],['team','Zespoły',all.filter(item=>item.kind==='team').length],['dictionary','Słownik',all.filter(item=>item.kind==='dictionary').length],['content','Pozostałe treści',all.filter(item=>globalSearchFilterMatch(item,'content')).length]];
   if(filters)filters.innerHTML=filterRows.map(([key,label,count])=>`<button type="button" class="search-result-filter${globalSearchPageFilter===key?' on':''}" onclick="setGlobalSearchPageFilter('${key}')"><span class="search-result-filter-icon">${key==='all'?'▣':key==='member'?'●':key==='team'?'♧':'◈'}</span><span>${label}</span><b>${count}</b></button>`).join('');
   document.querySelectorAll('[data-search-filter]').forEach(button=>button.classList.toggle('on',button.dataset.searchFilter===globalSearchPageFilter));
   if(summary)summary.innerHTML=globalSearchPageQuery?(filtered.length?`<b>${filtered.length}</b> ${plural(filtered.length,['wynik','wyniki','wyników'])} dla „${escHtml(globalSearchPageQuery)}”`:`Brak wyników dla „${escHtml(globalSearchPageQuery)}”`):'Wpisz hasło, aby zobaczyć wyniki';
-  list.innerHTML=filtered.length?filtered.map(item=>globalSearchPageResultCard(item,globalSearchPageQuery)).join(''):`<div class="search-results-empty"><b>Nie znaleziono wyników</b><span>Spróbuj innego nazwiska, zespołu albo fragmentu treści.</span></div>`;
+  list.innerHTML=filtered.length?filtered.map(item=>globalSearchPageResultCard(item,globalSearchPageQuery)).join(''):`<div class="search-results-empty"><b>Nie znaleziono wyników</b><span>Spróbuj fragmentu wpisu, kompetencji, pomysłu, zasobu, osoby, zespołu albo pojęcia.</span></div>`;
 }
 function refreshGlobalSearchPage(event){
   event.preventDefault();const query=event.currentTarget.querySelector('input')?.value||'';const top=document.getElementById('global-search-input');if(top)top.value=query;addGlobalSearchRecent(query);closeGlobalSearchPopover();globalSearchPageQuery=query;go('search');
@@ -17061,6 +17094,14 @@ function openGlobalSearchResult(index){
   const input=document.getElementById('global-search-input');if(input)input.value='';
   if(item.kind==='member')return openMember(item.memberId);
   if(item.kind==='team')return openTeam(item.teamId);
+  if(item.kind==='post'){
+    if(item.scope==='team-post'){openTeam(item.teamId);setTimeout(()=>openTeamBoardPostDiscussion(item.teamId,item.postId),80);return;}
+    go('discover');setTimeout(()=>openDiscoverPostDiscussion(item.postId),80);return;
+  }
+  if(item.kind==='resource'&&item.scope==='catalog')return openCatalogResource(item.resourceId);
+  if(item.kind==='dictionary'){
+    platformTab='dictionary';go('platform');setTimeout(()=>openDictionaryEntry(item.dictionaryId),80);return;
+  }
   if(item.kind==='project')return openIdea(item.ideaId);
   if(item.kind==='vote'){
     if(item.scope==='platform'){go('platform');focusGlobalSearchNeedle(item.needle||item.title,'.platform-decision,.record-item,.cap-item');return;}
