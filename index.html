@@ -20504,8 +20504,15 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
 :is(.social-profile,#s-profile-me) .profile-wall-post.has-expandable-text:not(.is-expanded) .tp-board-post-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:6;overflow:hidden}
 :is(.social-profile,#s-profile-me) .profile-wall-expand{margin-top:8px;padding:0;border:0;background:transparent;color:var(--p700);font:700 13px/1.4 'DM Sans',sans-serif;cursor:pointer}
 :is(.social-profile,#s-profile-me) .profile-wall-expand:hover{text-decoration:underline}
-@media(min-width:1180px){.social-profile-columns{grid-template-columns:minmax(240px,300px) minmax(0,2.15fr) minmax(210px,1fr);gap:24px}}
 #s-discover .discover-post-text{font-size:18px!important;line-height:1.62!important}
+/* Profile canvases and feed grid follow the community-feed surfaces and spacing. */
+#s-profile,#s-profile-me{min-height:calc(100vh - 64px);background:#f1f1f8}
+html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
+#s-profile>#profile-body.social-profile,#s-profile-me .profile-team-layout{width:min(1440px,calc(100% - 48px))!important;max-width:1440px!important;margin:24px auto!important}
+@media(min-width:1180px){.social-profile-columns{grid-template-columns:minmax(250px,320px) minmax(0,2.15fr) minmax(220px,1fr);gap:24px}}
+.social-profile-main{gap:16px}
+:is(.social-profile,#s-profile-me) .profile-board-featured{min-width:0;margin-bottom:0}
+:is(.social-profile,#s-profile-me) .profile-featured-work{border:1px solid var(--bdr);border-radius:14px;background:var(--surf);box-shadow:0 4px 15px rgba(57,45,111,.04)}
 </style>
 <script id="app-ready-script">
 (()=>{
