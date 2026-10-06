@@ -951,10 +951,10 @@ test('global search covers posts, ideas, resources, people, teams and dictionary
   assert.match(html, /function globalSearchHighlight\(text,query\)[\s\S]*<mark class="gs-hit">/);
   assert.match(html, /const items=runGlobalSearch\(value\)\.slice\(0,6\)/);
   assert.match(html, /function openGlobalSearchPopoverResult\(index\)/);
-  assert.match(html, /data-search-filter="post"[^>]*>Wpisy</);
-  assert.match(html, /data-search-filter="project"[^>]*>Pomysły</);
-  assert.match(html, /data-search-filter="resource"[^>]*>Zasoby</);
-  assert.match(html, /data-search-filter="dictionary"[^>]*>Słownik</);
+  assert.match(html, /\['post','Wpisy'/);
+  assert.match(html, /\['project','Pomysły'/);
+  assert.match(html, /\['resource','Zasoby'/);
+  assert.match(html, /\['dictionary','Słownik'/);
   assert.match(html, /if\(item\.kind==='resource'&&item\.scope==='catalog'\)return openCatalogResource/);
   assert.match(html, /if\(item\.kind==='dictionary'\)/);
 });
@@ -971,4 +971,20 @@ test('global search opens recent queries on focus and permanently excludes delet
   assert.match(html, /function deleteDiscoverPost[\s\S]*rememberDeletedBoardPosts\(post\.id,post\.teamBoardPostId,post\.profileFeedPostId\)/);
   assert.match(html, /deletedBoardPostIds:\[\.\.\.deletedBoardPostIds\]/);
   assert.match(html, /deletedBoardPostIds=new Set\(\[\.\.\.LEGACY_REMOVED_BOARD_POST_IDS/);
+});
+
+test('search results use one sidebar filter set with ranked results and helper rail', () => {
+  assert.doesNotMatch(html, /class="search-results-tabs"/);
+  assert.match(html, /class="search-results-sidebar" aria-label="Filtry wyników wyszukiwania"/);
+  assert.match(html, /id="search-within-results-input"/);
+  assert.match(html, /class="search-results-right"/);
+  assert.match(html, /Sugestie powiązane/);
+  assert.match(html, /Ostatnie wyszukiwania/);
+  assert.match(html, /class="search-best-results"/);
+  assert.match(html, /Najlepsze dopasowania/);
+  assert.match(html, /class="search-other-results"/);
+  assert.match(html, /function setGlobalSearchWithinQuery\(value\)/);
+  assert.match(html, /function setGlobalSearchPageSort\(value\)/);
+  assert.match(html, /function setGlobalSearchPageView\(value\)/);
+  assert.match(html, /grid-template-columns:244px minmax\(560px,1fr\) 278px/);
 });
