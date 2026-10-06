@@ -7355,7 +7355,7 @@ function toggleProjectParticipantBoardSaved(ideaId,name,postId){const idea=ideas
 function openProjectParticipantBoardPostMenu(ideaId,name,postId){
   const idea=ideas.find(row=>row.id===Number(ideaId)),post=(idea?.participantBoardPosts||[]).find(row=>row.target===name&&String(row.id)===String(postId));if(!post||post.author!==MY_NAME)return;appModal(`<h3>Opcje wpisu</h3><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal();openProjectParticipantBoardComposer(${idea.id},'${escAttr(name)}','${escAttr(postId)}')">Edytuj wpis</button><button class="vbtn" onclick="deleteProjectParticipantBoardPost(${idea.id},'${escAttr(name)}','${escAttr(postId)}')">Usuń wpis</button></div>`,'team-board-post-menu-modal');
 }
-function deleteProjectParticipantBoardPost(ideaId,name,postId){const idea=ideas.find(row=>row.id===Number(ideaId)),post=(idea?.participantBoardPosts||[]).find(row=>row.target===name&&String(row.id)===String(postId));if(!post||post.author!==MY_NAME)return;idea.participantBoardPosts=idea.participantBoardPosts.filter(row=>row!==post);closeAppModal();queuePersistence();openProjectParticipantProfile(idea.id,name);toast('Wpis został usunięty.','ok');}
+function deleteProjectParticipantBoardPost(ideaId,name,postId){const idea=ideas.find(row=>row.id===Number(ideaId)),post=(idea?.participantBoardPosts||[]).find(row=>row.target===name&&String(row.id)===String(postId));if(!post||post.author!==MY_NAME)return;const snapshot=captureBoardPublicationState();rememberDeletedBoardPosts(post.id);idea.participantBoardPosts=idea.participantBoardPosts.filter(row=>row!==post);if(!commitBoardPublication(snapshot))return;closeAppModal();openProjectParticipantProfile(idea.id,name);toast('Wpis został trwale usunięty.','ok');}
 function openProjectParticipantProfile(ideaId,name){return openProjectParticipantProfilePage(ideaId,name);}
 let projectParticipantProfileEdit=null;
 function openProjectParticipantProfilePage(ideaId,personRef,opts={}){
@@ -13443,7 +13443,7 @@ async function saveTeamBoardPost(teamId,postId='',status='published'){
   t.lastActive='teraz';if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();teamProfileTab='board';openTeam(teamId);toast(status==='draft'?'Szkic wpisu został zapisany.':audience==='public'?'Wpis został opublikowany także w Odkrywaj.':'Wpis został opublikowany na tablicy zespołu.','ok');
 }
 function toggleTeamWelcomePin(teamId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t)return;t.welcomePinned=t.welcomePinned===false?true:false;queuePersistence();openTeam(teamId);toast(t.welcomePinned===false?'Wpis został odpięty.':'Wpis został przypięty.','ok');}
-function deleteTeamBoardPost(teamId,postId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;t.boardPosts=(t.boardPosts||[]).filter(row=>String(row.id)!==String(postId));closeAppModal();queuePersistence();openTeam(teamId);toast('Wpis został usunięty.','ok');}
+function deleteTeamBoardPost(teamId,postId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;const snapshot=captureBoardPublicationState(),linked=(discoverPosts||[]).filter(row=>row.sourceType==='team'&&String(row.sourceId)===String(teamId)&&String(row.teamBoardPostId)===String(postId));rememberDeletedBoardPosts(postId,linked.map(row=>row.id));t.boardPosts=(t.boardPosts||[]).filter(row=>String(row.id)!==String(postId));discoverPosts=(discoverPosts||[]).filter(row=>!linked.includes(row));if(!commitBoardPublication(snapshot))return;closeAppModal();openTeam(teamId);toast('Wpis został trwale usunięty.','ok');}
 function renderTeamAnnouncements(t){
   const posts=t.recruitmentPosts||[];
   const list=posts.map(p=>`<article class="team-ann-card"><div class="team-ann-title">${escHtml(p.title||'Kogo szukamy')}</div><div class="team-ann-meta">${escHtml(p.category||'Obszar otwarty')}${p.subcategory?' · '+escHtml(p.subcategory):''}${p.level?' · poziom '+escHtml(p.level):''}</div>${p.desc?`<div class="team-ann-desc">${escHtml(p.desc)}</div>`:''}<div class="team-ann-caps">${(p.capabilities||[]).map(c=>`<span>${escHtml(c)}</span>`).join('')}</div></article>`).join('');
@@ -16870,6 +16870,27 @@ function toggleRegister(i){document.getElementById('reg-'+i)?.classList.toggle('
 let globalSearchResults=[];
 let globalSearchPageFilter='all',globalSearchPageQuery='';
 let globalSearchRecentQueries=[];
+const LEGACY_REMOVED_BOARD_POST_IDS=new Set(['discover-1790319888345','tbp1788719960829','tbp1788764991556']);
+let deletedBoardPostIds=new Set(LEGACY_REMOVED_BOARD_POST_IDS);
+function rememberDeletedBoardPosts(...ids){ids.flat().filter(Boolean).forEach(id=>deletedBoardPostIds.add(String(id)));}
+function pruneDeletedBoardPosts(){
+  let changed=false;
+  const keep=row=>{const id=String(row?.id||''),sourceId=String(row?.teamBoardPostId||row?.profileFeedPostId||'');if(deletedBoardPostIds.has(id)||sourceId&&deletedBoardPostIds.has(sourceId)){changed=true;return false;}return true;};
+  (projectTeams||[]).forEach(team=>{const before=(team.boardPosts||[]).length;team.boardPosts=(team.boardPosts||[]).filter(keep);if(team.boardPosts.length!==before)changed=true;});
+  (ideas||[]).forEach(idea=>{const before=(idea.participantBoardPosts||[]).length;idea.participantBoardPosts=(idea.participantBoardPosts||[]).filter(keep);if(idea.participantBoardPosts.length!==before)changed=true;});
+  (members||[]).forEach(member=>{if(!Array.isArray(member.profileFeed))return;const before=member.profileFeed.length;member.profileFeed=member.profileFeed.filter(keep);if(member.profileFeed.length!==before)changed=true;});
+  if(Array.isArray(myProfile?.profileFeed)){const before=myProfile.profileFeed.length;myProfile.profileFeed=myProfile.profileFeed.filter(keep);if(myProfile.profileFeed.length!==before)changed=true;}
+  Object.values(demoAccounts||{}).forEach(account=>{const feed=account?.profile?.profileFeed;if(!Array.isArray(feed))return;const before=feed.length;account.profile.profileFeed=feed.filter(keep);if(account.profile.profileFeed.length!==before)changed=true;});
+  const before=discoverPosts.length;
+  discoverPosts=discoverPosts.filter(post=>{
+    if(!keep(post))return false;
+    if(post.sourceType!=='team'||!post.teamBoardPostId||String(post.teamBoardPostId)==='welcome')return true;
+    const team=(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId)),source=team?.boardPosts?.some(row=>String(row.id)===String(post.teamBoardPostId));
+    if(source)return true;rememberDeletedBoardPosts(post.id,post.teamBoardPostId);changed=true;return false;
+  });
+  if(discoverPosts.length!==before)changed=true;
+  return changed;
+}
 const GLOBAL_SEARCH_META={
   member:{label:'Osoby',singular:'Osoba',icon:'O'},
   post:{label:'Wpisy',singular:'Wpis',icon:'✎'},
@@ -16905,6 +16926,7 @@ function globalSearchMatchExcerpt(value,query,max=180){
   return prefix+clean.slice(start,end).trim()+suffix;
 }
 function buildGlobalSearchIndex(){
+  pruneDeletedBoardPosts();
   const rows=[],publishedTeamPostKeys=new Set();
   const add=(kind,title,subtitle,search,target={})=>{
     if(!title)return;
@@ -17003,6 +17025,7 @@ function removeGlobalSearchRecent(index,event){
   event?.stopPropagation();loadGlobalSearchRecent();globalSearchRecentQueries.splice(Number(index),1);try{localStorage.setItem('collabohub-global-search-history',JSON.stringify(globalSearchRecentQueries));}catch{};renderGlobalSearchPopover(document.getElementById('global-search-input')?.value||'');
 }
 function closeGlobalSearchPopover(){document.getElementById('global-search-popover')?.classList.remove('on');}
+function openGlobalSearchPopover(){const input=document.getElementById('global-search-input');renderGlobalSearchPopover(input?.value||'');}
 function globalSearchSuggestionAvatar(item){
   if(item.kind==='member'){const person=members.find(row=>String(row.id)===String(item.memberId))||personProfileByName(item.title);return memberAvatarContent(item.title,person?.ini||memberInitials(item.title));}
   const team=projectTeams.find(row=>String(row.id)===String(item.teamId));return team?teamBoardAvatar(team):`<span class="search-suggestion-fallback">${escHtml(memberInitials(item.title))}</span>`;
@@ -18039,8 +18062,10 @@ function confirmDeleteDiscoverPost(id){
 }
 function deleteDiscoverPost(id){
   const index=discoverPosts.findIndex(row=>String(row.id)===String(id)),post=discoverPosts[index];if(index<0||!discoverPostCanManage(post))return;
+  const snapshot=captureBoardPublicationState();rememberDeletedBoardPosts(post.id,post.teamBoardPostId,post.profileFeedPostId);
   if(post.sourceType==='team'&&post.teamBoardPostId&&String(post.teamBoardPostId)!=='welcome'){const team=(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId));if(team)team.boardPosts=(team.boardPosts||[]).filter(row=>String(row.id)!==String(post.teamBoardPostId));}
-  discoverPosts.splice(index,1);queuePersistence();closeAppModal();renderDiscover();toast('Wpis został usunięty.','ok');
+  if(post.profileFeedPostId){const member=members.find(row=>row.name===post.author);if(member)member.profileFeed=(member.profileFeed||[]).filter(row=>String(row.id)!==String(post.profileFeedPostId));}
+  discoverPosts.splice(index,1);if(!commitBoardPublication(snapshot))return;closeAppModal();renderDiscover();toast('Wpis został trwale usunięty.','ok');
 }
 function openDiscoverReportModal(id){
   const post=discoverPosts.find(row=>String(row.id)===String(id));if(!post||discoverPostCanManage(post))return;closeDiscoverPostMenus();
@@ -18051,6 +18076,7 @@ function submitDiscoverPostReport(id){
   const post=discoverPosts.find(row=>String(row.id)===String(id));if(!post||discoverPostCanManage(post))return;const reason=document.querySelector('input[name="discover-report-reason"]:checked')?.value,detail=String(document.getElementById('discover-report-detail')?.value||'').trim();if(!reason)return toast('Wybierz powód zgłoszenia.','warn');post.reports=Array.isArray(post.reports)?post.reports:[];if(post.reports.some(row=>String(row.by)===String(MY_NAME)))return toast('Ten wpis został już przez Ciebie zgłoszony.','warn');post.reports.push({id:'report-'+Date.now(),by:MY_NAME,reason,detail,date:TODAY,status:'new'});queuePersistence();closeAppModal();renderDiscover();toast('Dziękujemy. Zgłoszenie zostało wysłane do weryfikacji.','ok');
 }
 function renderDiscover(){
+  if(pruneDeletedBoardPosts()){__persistenceLastDataJson='';queuePersistence();}
   if(typeof renderDiscoverChats==='function')renderDiscoverChats();
   document.querySelectorAll('#s-discover .discover-sidebar-item[data-feed]').forEach(button=>{
     const active=button.dataset.feed===discoverFeedMode;
@@ -18202,6 +18228,7 @@ function buildPersistentData(){
   saveActiveDemoAccountState();
   return {
     ideas,members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,demoAccounts,activeDemoAccountId,
+    deletedBoardPostIds:[...deletedBoardPostIds],
     platformSkills,platformRoles,platformDecisions,
     notifications,wizardDraft,ideaDrafts,activeWizardDraftId,
     recentEmojis:RECENT_EMOJIS,customEmojis:CUSTOM_EMOJIS,
@@ -18239,6 +18266,7 @@ function applyPersistentData(data){
   if(Array.isArray(data.members))members=demoPerspectiveProfiles(data.members);
   if(Array.isArray(data.projectTeams))projectTeams=data.projectTeams.filter(row=>String(row?.id)!=='tm-green');
   if(Array.isArray(data.discoverPosts))discoverPosts=data.discoverPosts.filter(row=>String(row?.id)!=='discover-demo-2').map(row=>String(row?.id)==='discover-demo-1'&&!String(row?.text||'').includes('@[')?{...row,text:`${String(row.text||'').trim()} @[Ustawa ograniczająca możliwości Marszałka Sejmu](#idea/1)`.trim()}:row);
+  deletedBoardPostIds=new Set([...LEGACY_REMOVED_BOARD_POST_IDS,...(Array.isArray(data.deletedBoardPostIds)?data.deletedBoardPostIds.map(String):[])]);
   if(validObject(data.myProfile))myProfile=data.myProfile;
   if(Number.isFinite(Number(data.myPoints)))myPoints=Number(data.myPoints);
   if(validObject(data.demoAccounts))demoAccounts=data.demoAccounts;
@@ -18255,7 +18283,7 @@ function applyPersistentData(data){
   if(Array.isArray(data.followedIdeas))followedIdeas=new Set(data.followedIdeas);
   if(Array.isArray(data.followedComments))followedComments=new Set(data.followedComments);
   if(data.theme==='dark'||data.theme==='light')__theme=data.theme;
-  restoreAccountProfileFeeds();restoreDiscoverTeamBoardMedia();restorePersistentMediaAliases({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts});
+  restoreAccountProfileFeeds();pruneDeletedBoardPosts();restoreDiscoverTeamBoardMedia();restorePersistentMediaAliases({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts});
 }
 function persistenceDateLabel(value){
   if(!value)return 'jeszcze nie zapisano';
@@ -18300,8 +18328,8 @@ function queuePersistence(){
   clearTimeout(__persistenceTimer);
   __persistenceTimer=setTimeout(()=>persistNow(),500);
 }
-function captureBoardPublicationState(){return cloneDemoValue({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts});}
-function restoreBoardPublicationState(snapshot){if(!snapshot)return;ideas=snapshot.ideas;members=snapshot.members;projectTeams=snapshot.projectTeams;discoverPosts=snapshot.discoverPosts;myProfile=snapshot.myProfile;demoAccounts=snapshot.demoAccounts;}
+function captureBoardPublicationState(){return cloneDemoValue({ideas,members,projectTeams,discoverPosts,myProfile,demoAccounts,deletedBoardPostIds:[...deletedBoardPostIds]});}
+function restoreBoardPublicationState(snapshot){if(!snapshot)return;ideas=snapshot.ideas;members=snapshot.members;projectTeams=snapshot.projectTeams;discoverPosts=snapshot.discoverPosts;myProfile=snapshot.myProfile;demoAccounts=snapshot.demoAccounts;deletedBoardPostIds=new Set([...(snapshot.deletedBoardPostIds||[]),...LEGACY_REMOVED_BOARD_POST_IDS]);}
 function commitBoardPublication(snapshot){clearTimeout(__persistenceTimer);if(persistNow())return true;restoreBoardPublicationState(snapshot);return false;}
 async function compactOversizedBoardMedia(){
   const rows=[...(discoverPosts||[]),...(projectTeams||[]).flatMap(team=>team.boardPosts||[]),...(ideas||[]).flatMap(idea=>idea.participantBoardPosts||[]),...(members||[]).flatMap(member=>member.profileFeed||[]),...(myProfile?.profileFeed||[]),...Object.values(demoAccounts||{}).flatMap(account=>account?.profile?.profileFeed||[])],seen=new Set();let changed=false;

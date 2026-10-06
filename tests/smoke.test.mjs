@@ -958,3 +958,17 @@ test('global search covers posts, ideas, resources, people, teams and dictionary
   assert.match(html, /if\(item\.kind==='resource'&&item\.scope==='catalog'\)return openCatalogResource/);
   assert.match(html, /if\(item\.kind==='dictionary'\)/);
 });
+
+test('global search opens recent queries on focus and permanently excludes deleted board posts', () => {
+  assert.match(html, /onfocus="openGlobalSearchPopover\(\)"/);
+  assert.match(html, /function openGlobalSearchPopover\(\)\{const input=document\.getElementById\('global-search-input'\);renderGlobalSearchPopover\(input\?\.value\|\|''\);\}/);
+  assert.match(html, /const LEGACY_REMOVED_BOARD_POST_IDS=new Set/);
+  assert.match(html, /function rememberDeletedBoardPosts\(\.\.\.ids\)/);
+  assert.match(html, /function pruneDeletedBoardPosts\(\)/);
+  assert.match(html, /function buildGlobalSearchIndex\(\)\{\s*pruneDeletedBoardPosts\(\)/);
+  assert.match(html, /function renderDiscover\(\)\{\s*if\(pruneDeletedBoardPosts\(\)\)/);
+  assert.match(html, /function deleteTeamBoardPost[\s\S]*linked=\(discoverPosts\|\|\[\]\)\.filter[\s\S]*rememberDeletedBoardPosts\(postId,linked\.map/);
+  assert.match(html, /function deleteDiscoverPost[\s\S]*rememberDeletedBoardPosts\(post\.id,post\.teamBoardPostId,post\.profileFeedPostId\)/);
+  assert.match(html, /deletedBoardPostIds:\[\.\.\.deletedBoardPostIds\]/);
+  assert.match(html, /deletedBoardPostIds=new Set\(\[\.\.\.LEGACY_REMOVED_BOARD_POST_IDS/);
+});
