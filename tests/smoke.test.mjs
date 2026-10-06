@@ -49,10 +49,11 @@ test('member catalog only exposes the three demo perspectives', () => {
   assert.match(html, /if\(skill\.person&&!DEMO_PROFILE_NAMES\.has\(skill\.person\)\)\{skill\.person='';skill\.filled=false;\}/);
   assert.match(html, /function ensureProjectMembers\(idea\)[\s\S]*normalizeDemoIdeaParticipants\(idea\)/);
   const catalogRender = html.match(/function renderMembers\(\)\{([\s\S]*?)\n\}\n\nlet currentMemberProfileId/)?.[1] || '';
-  assert.match(catalogRender, /class="members-card-looking"/);
+  assert.match(html, /function memberCatalogBio\(member\)/);
+  assert.match(catalogRender, /class="members-card-description">\$\{escHtml\(memberCatalogBio\(m\)\)\}<\/p>/);
   assert.match(catalogRender, /class="members-card-points"><b>\$\{m\.points\|\|0\}<\/b><span>Punkty<\/span>/);
   assert.match(catalogRender, /class="members-card-activity"/);
-  assert.doesNotMatch(catalogRender, /members-card-skills|members-card-since|members-card-stats|<span>Pomysły<\/span>|<span>Realizacje<\/span>|<span>W zespołach<\/span>/);
+  assert.doesNotMatch(catalogRender, /m\.looking|members-card-skills|members-card-since|members-card-stats|<span>Pomysły<\/span>|<span>Realizacje<\/span>|<span>W zespołach<\/span>|„|”/);
 });
 
 test('closed votes use the canonical acceptance rule', () => {

@@ -4583,12 +4583,12 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .members-card-person{display:flex;align-items:center;gap:13px}
 .members-card-avatar.av{width:58px;height:58px;font-size:17px;box-shadow:0 0 0 3px var(--surf),0 0 0 4px var(--bdr)}
 .members-card-name{color:var(--txt);font:700 17px/1.25 'DM Sans',sans-serif}
-.members-card-looking{display:-webkit-box;min-height:72px;margin:22px 0 18px;overflow:hidden;color:var(--txs);font-size:12.5px;line-height:1.55;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.members-card-description{display:-webkit-box;min-height:72px;margin:22px 0 18px;overflow:hidden;color:var(--txs);font-size:12.5px;line-height:1.55;-webkit-box-orient:vertical;-webkit-line-clamp:3}
 .members-card-points{display:flex;align-items:baseline;gap:9px;margin-top:auto;padding-top:14px;border-top:1px solid var(--bdr)}.members-card-points b{color:var(--txt);font:400 24px/1 'DM Serif Display',serif}.members-card-points span{color:var(--txf);font-size:12px;font-weight:700;letter-spacing:.045em;text-transform:uppercase}
 .members-card-activity{display:flex;align-items:center;gap:7px;margin-top:15px;color:var(--txs);font-size:12px}.members-card-activity svg{width:16px;height:16px;fill:none;stroke:var(--p600);stroke-width:1.8}
 .members-catalog-grid.is-list{grid-template-columns:1fr!important}
 .members-catalog-grid.is-list .members-catalog-card.mc{display:grid;min-height:116px;grid-template-columns:260px minmax(240px,1fr) 110px 160px;gap:20px;align-items:center}
-.members-catalog-grid.is-list .members-card-looking,.members-catalog-grid.is-list .members-card-points,.members-catalog-grid.is-list .members-card-activity{min-height:0;margin:0;padding:0;border:0}
+.members-catalog-grid.is-list .members-card-description,.members-catalog-grid.is-list .members-card-points,.members-catalog-grid.is-list .members-card-activity{min-height:0;margin:0;padding:0;border:0}
 @media(max-width:1500px){.members-catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:240px minmax(220px,1fr) 100px 145px}}
 @media(max-width:1120px){.members-catalog-layout{grid-template-columns:248px minmax(0,1fr)}.members-filter-sidebar{padding:26px 20px}.members-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:220px 1fr 90px}.members-catalog-grid.is-list .members-card-activity{display:none}.members-catalog-tools{grid-template-columns:1fr auto}.members-view-toggle{display:none}}
 @media(max-width:820px){.members-catalog-layout{display:block}.members-filter-sidebar{position:fixed;z-index:500;top:0;left:0;width:min(310px,88vw);height:100vh;transform:translateX(-105%);box-shadow:15px 0 45px rgba(24,18,38,.2);transition:transform .2s}.members-filter-sidebar.on{transform:translateX(0)}.members-filter-head button{display:block}.members-filter-mobile{display:flex;align-items:center;gap:8px;margin:16px 18px 0;padding:10px 13px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);color:var(--p700);font:700 13px 'DM Sans',sans-serif}.members-filter-mobile svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}.members-catalog-main{padding:26px 18px 60px}.members-catalog-tools{grid-template-columns:1fr}.members-sort{justify-self:stretch}.members-sort-trigger{width:100%}.members-sort-menu{left:0;right:auto;width:min(100%,310px)}.members-catalog-heading h1{font-size:42px}}
@@ -7677,9 +7677,9 @@ let myPoints=46; // Patrycja: 3× zespół (+30), 7 komentarzy (+7), zrobione za
 const DEMO_PROFILE_NAMES=new Set(['Patrycja Kowalska','Anna Wiśniewska','Katarzyna Zielińska']);
 function demoPerspectiveProfiles(rows){return (Array.isArray(rows)?rows:[]).filter(member=>DEMO_PROFILE_NAMES.has(member?.name));}
 let members=[
-  {id:1,name:'Anna Wiśniewska',ini:'AW',av:0,roles:['Posłanka','Członek'],skills:['Analiza prawna','Pisanie ustaw','Komunikacja'],since:'Styczeń 2019',ideas:6,cosigns:14,done:3,team:5,points:312,looking:'Szukam inicjatyw legislacyjnych w obszarze praw pracowniczych.',portfolio:[{type:'Legislacja',title:'Ustawa o płacy minimalnej 2023',desc:'Projekt zgłoszony w Sejmie.',link:'sejm.gov.pl'}]},
-  {id:3,name:'Katarzyna Zielińska',ini:'KZ',av:2,systemPronoun:'ono',displayPronouns:'ono/jenu',roles:['Koordynator regionalny','Członek'],skills:['Komunikacja','Fundraising','Analiza danych'],since:'Czerwiec 2021',ideas:5,cosigns:11,done:1,team:4,points:164,looking:'Projekty wymagające koordynacji między sekcjami.',portfolio:[]},
-  {id:7,name:'Patrycja Kowalska',ini:'PK',av:3,roles:['Członek','Aktywista lokalny'],skills:['Grafika','Social media','Copywriting','Komunikacja'],since:'Marzec 2022',ideas:0,cosigns:0,done:0,team:0,points:46,looking:'Szukam pomysłu związanego z komunikacją wizualną lub kampanią lokalną.',portfolio:[{type:'Grafika',title:'Identyfikacja kampanii lokalnej',desc:'Logo, plakaty i szablony social media dla sekcji.',link:'behance.net/patrycja'}]},
+  {id:1,name:'Anna Wiśniewska',ini:'AW',av:0,roles:['Posłanka','Członek'],skills:['Analiza prawna','Pisanie ustaw','Komunikacja'],since:'Styczeń 2019',ideas:6,cosigns:14,done:3,team:5,points:312,bio:'Posłanka i współtwórczyni projektów legislacyjnych. Łączy analizę prawną z pracą nad wdrożeniem i komunikacją polityczną.',looking:'Szukam inicjatyw legislacyjnych w obszarze praw pracowniczych.',portfolio:[{type:'Legislacja',title:'Ustawa o płacy minimalnej 2023',desc:'Projekt zgłoszony w Sejmie.',link:'sejm.gov.pl'}]},
+  {id:3,name:'Katarzyna Zielińska',ini:'KZ',av:2,systemPronoun:'ono',displayPronouns:'ono/jenu',roles:['Koordynator regionalny','Członek'],skills:['Komunikacja','Fundraising','Analiza danych'],since:'Czerwiec 2021',ideas:5,cosigns:11,done:1,team:4,points:164,bio:'Koordynatorka regionalna. Prowadzi współpracę między zespołami, konsultacje i organizację działań projektowych.',looking:'Projekty wymagające koordynacji między sekcjami.',portfolio:[]},
+  {id:7,name:'Patrycja Kowalska',ini:'PK',av:3,roles:['Członek','Aktywista lokalny'],skills:['Grafika','Social media','Copywriting','Komunikacja'],since:'Marzec 2022',ideas:0,cosigns:0,done:0,team:0,points:46,bio:'Aktywistka lokalna. Najchętniej pomagam przy komunikacji wizualnej, tekstach i kampaniach, gdzie widać konkretny efekt pracy.',looking:'Szukam pomysłu związanego z komunikacją wizualną lub kampanią lokalną.',portfolio:[{type:'Grafika',title:'Identyfikacja kampanii lokalnej',desc:'Logo, plakaty i szablony social media dla sekcji.',link:'behance.net/patrycja'}]},
 ];
 
 const SYSTEM_PRONOUNS=new Set(['ona','on','ono']);
@@ -15440,10 +15440,14 @@ function syncMemberSort(){
 }
 document.addEventListener('click',closeMemberSort);
 document.addEventListener('click',closeTeamSort);
+function memberCatalogBio(member){
+  const accountProfile=Object.values(demoAccounts||{}).find(account=>account?.profile?.name===member?.name)?.profile,currentProfile=myProfile?.name===member?.name?myProfile:accountProfile;
+  return String(currentProfile?.bio||member?.bio||'Ta osoba nie dodała jeszcze opisu o sobie.').trim();
+}
 function renderMembers(){
   const host=document.getElementById('members-list');if(!host)return;
   const q=String(memberSearchQ||document.getElementById('members-search')?.value||'').toLowerCase().trim();
-  let list=members.filter(m=>(!q||[m.name,m.since,...(m.roles||[]),...(m.skills||[])].join(' ').toLowerCase().includes(q))&&(!selectedMemberSkills.size||[...selectedMemberSkills].every(skill=>(m.skills||[]).includes(skill))));
+  let list=members.filter(m=>(!q||[m.name,m.since,memberCatalogBio(m),...(m.roles||[]),...(m.skills||[])].join(' ').toLowerCase().includes(q))&&(!selectedMemberSkills.size||[...selectedMemberSkills].every(skill=>(m.skills||[]).includes(skill))));
   if(memberSort==='activity-new')list.sort((a,b)=>(MEMBER_ACTIVITY_AGE[a.id]??99)-(MEMBER_ACTIVITY_AGE[b.id]??99));
   else if(memberSort==='activity-old')list.sort((a,b)=>(MEMBER_ACTIVITY_AGE[b.id]??-1)-(MEMBER_ACTIVITY_AGE[a.id]??-1));
   else if(memberSort==='created-new')list.sort((a,b)=>(MEMBER_CREATED_ORDER[b.id]||0)-(MEMBER_CREATED_ORDER[a.id]||0));
@@ -15460,7 +15464,7 @@ function renderMembers(){
         <div class="av members-card-avatar" style="background:${av.bg};color:${av.tx}">${memberAvatarContent(m.name,m.ini)}</div>
         <div class="members-card-name">${escHtml(m.name)}</div>
       </div>
-      <p class="members-card-looking">„${escHtml(m.looking||'Chętnie dołączę do projektów zgodnych z moimi kompetencjami.')}”</p>
+      <p class="members-card-description">${escHtml(memberCatalogBio(m))}</p>
       <div class="members-card-points"><b>${m.points||0}</b><span>Punkty</span></div>
       <div class="members-card-activity"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>${MEMBER_ACTIVITY_LABELS[m.id]||'Aktywna niedawno'}</div>
     </article>`;
