@@ -4578,26 +4578,21 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .members-view-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}.members-view-toggle button:first-child svg{fill:currentColor;stroke:none}
 .members-result-count{margin:0 0 15px;color:var(--txs);font-size:14px}
 .members-catalog-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important}
-.members-catalog-card.mc{position:relative;display:flex;min-width:0;min-height:282px;flex-direction:column;padding:21px!important;border:1px solid var(--bdr)!important;border-radius:18px!important;background:var(--surf);box-shadow:0 5px 18px rgba(37,31,65,.035)}
+.members-catalog-card.mc{position:relative;display:flex;min-width:0;min-height:260px;flex-direction:column;padding:21px!important;border:1px solid var(--bdr)!important;border-radius:18px!important;background:var(--surf);box-shadow:0 5px 18px rgba(37,31,65,.035)}
 .members-catalog-card.mc:hover{border-color:var(--p300)!important;box-shadow:0 12px 30px rgba(74,50,125,.09)}
-.members-card-online{position:absolute;top:18px;right:18px;width:8px;height:8px;border-radius:50%;background:#35ba6c;box-shadow:0 0 0 3px var(--surf)}
-.members-card-person{display:flex;align-items:center;gap:13px;padding-right:16px}
+.members-card-person{display:flex;align-items:center;gap:13px}
 .members-card-avatar.av{width:58px;height:58px;font-size:17px;box-shadow:0 0 0 3px var(--surf),0 0 0 4px var(--bdr)}
 .members-card-name{color:var(--txt);font:700 17px/1.25 'DM Sans',sans-serif}
-.members-card-since{margin-top:4px;color:var(--txf);font-size:12px}
-.members-card-skills{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0 12px}
-.members-card-skills .schip{border:0;background:var(--p100);color:var(--p700);font-size:12px;font-weight:650}
-.members-card-looking{display:-webkit-box;min-height:52px;margin:0 0 16px;overflow:hidden;color:var(--txs);font-size:12.5px;line-height:1.55;-webkit-box-orient:vertical;-webkit-line-clamp:3}
-.members-card-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:auto;padding-top:14px;border-top:1px solid var(--bdr)}
-.members-card-stat{text-align:left}.members-card-stat b{display:block;color:var(--txt);font:400 22px/1 'DM Serif Display',serif}.members-card-stat span{display:block;margin-top:5px;color:var(--txf);font-size:12px;font-weight:700;letter-spacing:.045em;text-transform:uppercase}
+.members-card-looking{display:-webkit-box;min-height:72px;margin:22px 0 18px;overflow:hidden;color:var(--txs);font-size:12.5px;line-height:1.55;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.members-card-points{display:flex;align-items:baseline;gap:9px;margin-top:auto;padding-top:14px;border-top:1px solid var(--bdr)}.members-card-points b{color:var(--txt);font:400 24px/1 'DM Serif Display',serif}.members-card-points span{color:var(--txf);font-size:12px;font-weight:700;letter-spacing:.045em;text-transform:uppercase}
 .members-card-activity{display:flex;align-items:center;gap:7px;margin-top:15px;color:var(--txs);font-size:12px}.members-card-activity svg{width:16px;height:16px;fill:none;stroke:var(--p600);stroke-width:1.8}
 .members-catalog-grid.is-list{grid-template-columns:1fr!important}
-.members-catalog-grid.is-list .members-catalog-card.mc{display:grid;min-height:128px;grid-template-columns:260px minmax(240px,1fr) 330px 150px;gap:20px;align-items:center}
-.members-catalog-grid.is-list .members-card-skills,.members-catalog-grid.is-list .members-card-looking,.members-catalog-grid.is-list .members-card-stats,.members-catalog-grid.is-list .members-card-activity{margin:0;padding:0;border:0}.members-catalog-grid.is-list .members-card-online{top:50%;transform:translateY(-50%)}
-@media(max-width:1500px){.members-catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:240px minmax(220px,1fr) 290px 140px}}
-@media(max-width:1120px){.members-catalog-layout{grid-template-columns:248px minmax(0,1fr)}.members-filter-sidebar{padding:26px 20px}.members-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:220px 1fr}.members-catalog-grid.is-list .members-card-stats,.members-catalog-grid.is-list .members-card-activity{display:none}.members-catalog-tools{grid-template-columns:1fr auto}.members-view-toggle{display:none}}
+.members-catalog-grid.is-list .members-catalog-card.mc{display:grid;min-height:116px;grid-template-columns:260px minmax(240px,1fr) 110px 160px;gap:20px;align-items:center}
+.members-catalog-grid.is-list .members-card-looking,.members-catalog-grid.is-list .members-card-points,.members-catalog-grid.is-list .members-card-activity{min-height:0;margin:0;padding:0;border:0}
+@media(max-width:1500px){.members-catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:240px minmax(220px,1fr) 100px 145px}}
+@media(max-width:1120px){.members-catalog-layout{grid-template-columns:248px minmax(0,1fr)}.members-filter-sidebar{padding:26px 20px}.members-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.members-catalog-grid.is-list .members-catalog-card.mc{grid-template-columns:220px 1fr 90px}.members-catalog-grid.is-list .members-card-activity{display:none}.members-catalog-tools{grid-template-columns:1fr auto}.members-view-toggle{display:none}}
 @media(max-width:820px){.members-catalog-layout{display:block}.members-filter-sidebar{position:fixed;z-index:500;top:0;left:0;width:min(310px,88vw);height:100vh;transform:translateX(-105%);box-shadow:15px 0 45px rgba(24,18,38,.2);transition:transform .2s}.members-filter-sidebar.on{transform:translateX(0)}.members-filter-head button{display:block}.members-filter-mobile{display:flex;align-items:center;gap:8px;margin:16px 18px 0;padding:10px 13px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);color:var(--p700);font:700 13px 'DM Sans',sans-serif}.members-filter-mobile svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}.members-catalog-main{padding:26px 18px 60px}.members-catalog-tools{grid-template-columns:1fr}.members-sort{justify-self:stretch}.members-sort-trigger{width:100%}.members-sort-menu{left:0;right:auto;width:min(100%,310px)}.members-catalog-heading h1{font-size:42px}}
-@media(max-width:600px){.members-catalog-grid{grid-template-columns:1fr!important}.members-catalog-grid.is-list .members-catalog-card.mc{display:flex;min-height:282px}.members-catalog-tools{margin-bottom:13px}}
+@media(max-width:600px){.members-catalog-grid{grid-template-columns:1fr!important}.members-catalog-grid.is-list .members-catalog-card.mc{display:flex;min-height:260px}.members-catalog-tools{margin-bottom:13px}}
 
 /* TEAMS CATALOG */
 #s-teams{background:var(--surf2)}
@@ -15461,19 +15456,12 @@ function renderMembers(){
   host.innerHTML=list.map(m=>{
     const av=AV[m.av]||AV[0];
     return `<article class="mc members-catalog-card" tabindex="0" role="button" onclick="openMember(${m.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMember(${m.id})}">
-      <span class="members-card-online" aria-label="Osoba aktywna"></span>
       <div class="members-card-person">
         <div class="av members-card-avatar" style="background:${av.bg};color:${av.tx}">${memberAvatarContent(m.name,m.ini)}</div>
-        <div><div class="members-card-name">${escHtml(m.name)}</div><div class="members-card-since">Członek od ${escHtml(memberSinceLabel(m.since))}</div></div>
+        <div class="members-card-name">${escHtml(m.name)}</div>
       </div>
-      <div class="members-card-skills">${(m.skills||[]).slice(0,3).map(s=>`<span class="schip">${escHtml(s)}</span>`).join('')}</div>
       <p class="members-card-looking">„${escHtml(m.looking||'Chętnie dołączę do projektów zgodnych z moimi kompetencjami.')}”</p>
-      <div class="members-card-stats">
-        <div class="members-card-stat"><b>${m.points||0}</b><span>Punkty</span></div>
-        <div class="members-card-stat"><b>${m.ideas||0}</b><span>Pomysły</span></div>
-        <div class="members-card-stat"><b>${m.done||0}</b><span>Realizacje</span></div>
-        <div class="members-card-stat"><b>${teamsForPerson(m.name).length}</b><span>W zespołach</span></div>
-      </div>
+      <div class="members-card-points"><b>${m.points||0}</b><span>Punkty</span></div>
       <div class="members-card-activity"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>${MEMBER_ACTIVITY_LABELS[m.id]||'Aktywna niedawno'}</div>
     </article>`;
   }).join('')||'<div class="empty-inline">Brak członków pasujących do wyszukiwania i wybranych kompetencji.</div>';
