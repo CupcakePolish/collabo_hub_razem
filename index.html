@@ -4546,7 +4546,7 @@ html.theme-dark .outcome-status.ready,html.theme-dark .outcome-status.accepted{b
 .members-skill-option input:checked{border-color:var(--p700);background:var(--p700) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3.5 8 3 3 6-6' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
 .members-skill-option i{min-width:24px;padding-right:3px;color:var(--txf);font-size:12px;font-style:normal;text-align:right}
 .members-clear-filters{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:43px;margin-top:20px;border:1px solid var(--p200);border-radius:11px;background:var(--surf);color:var(--p700);font:700 13px 'DM Sans',sans-serif;cursor:pointer;transition:.16s}
-.members-clear-filters:hover{border-color:var(--p400);background:var(--p050)}
+.members-clear-filters:hover{border-color:var(--p400);background:var(--p100);color:var(--p800);box-shadow:0 4px 14px rgba(86,50,155,.09)}
 .members-clear-filters:disabled{opacity:.42;cursor:default}
 .members-clear-filters svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
 .members-filter-mobile{display:none}
@@ -5724,7 +5724,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 <!-- MEMBERS -->
 <div id="s-members" class="screen">
   <button class="members-filter-mobile" onclick="toggleMemberFilters(true)">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Filtry kompetencji
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Filtry członków
   </button>
   <div class="members-catalog-layout">
     <aside class="members-filter-sidebar" id="members-filter-sidebar">
@@ -5740,6 +5740,12 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
           </label>
           <div class="members-skill-options" id="members-skill-options"></div>
         </div>
+      </section>
+      <section class="members-filter-section">
+        <button class="members-filter-section-title" onclick="toggleMemberSkillSection(this)" aria-expanded="true">
+          <span>Miasto</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
+        <div class="members-filter-section-body" id="members-city-options"></div>
       </section>
       <button class="members-clear-filters" id="members-clear-filters" onclick="clearMemberFilters()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6"/></svg> Wyczyść filtry
@@ -6879,7 +6885,7 @@ function removeIdeaFilter(key){
   ideaListFilters[key]=defaults[key];syncIdeaQueryControls();renderIdeas();
 }
 function clearIdeaListFilters(){
-  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'all',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';syncIdeaQueryControls();renderIdeas();
+  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'all',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';searchQ='';const search=document.getElementById('idea-search');if(search)search.value='';document.querySelectorAll('#s-ideas .idea-skill-search input').forEach(input=>input.value='');syncIdeaQueryControls();renderIdeas();
 }
 function syncIdeaQueryControls(){
   const sortLabel=document.getElementById('idea-sort-label');if(sortLabel)sortLabel.textContent=IDEA_FILTER_LABELS.sort[ideaListFilters.sort]||'';
@@ -13526,7 +13532,7 @@ function toggleTeamFilterSection(key){teamFilterSections[key]=!teamFilterSection
 function toggleTeamSkillFilter(skill){teamSkillFilters=teamSkillFilters.includes(skill)?teamSkillFilters.filter(s=>s!==skill):[...teamSkillFilters,skill];renderTeams();}
 function setTeamModeFilter(value){teamModeFilters=teamModeFilters.includes(value)?teamModeFilters.filter(row=>row!==value):[...teamModeFilters,value];renderTeams();}
 function setTeamLocationFilter(value){teamLocationFilters=teamLocationFilters.includes(value)?teamLocationFilters.filter(row=>row!==value):[...teamLocationFilters,value];renderTeams();}
-function clearTeamFilters(){teamSkillFilters=[];teamModeFilters=[];teamLocationFilters=[];teamSkillSearchQ='';renderTeams();}
+function clearTeamFilters(){teamSkillFilters=[];teamModeFilters=[];teamLocationFilters=[];teamSkillSearchQ='';teamSearchQ='';const search=document.getElementById('teams-search');if(search)search.value='';renderTeams();}
 function toggleTeamSort(event){event?.stopPropagation();document.getElementById('teams-sort')?.classList.toggle('on');}
 function closeTeamSort(event){
   const sort=document.getElementById('teams-sort');
@@ -13545,7 +13551,7 @@ function renderTeamFilterSidebar(teams){
   const locations=Array.from(new Set(teams.map(t=>t.location).filter(l=>l&&l!=='Online'))).sort((a,b)=>a.localeCompare(b,'pl'));
   const locationBox=document.getElementById('team-location-filter-list');if(locationBox)locationBox.innerHTML=teamRadioOption('location','Online','Online',teamLocationFilters,'setTeamLocationFilter')+locations.map(l=>teamRadioOption('location',l,l,teamLocationFilters,'setTeamLocationFilter')).join('');
   Object.entries(teamFilterSections).forEach(([key,open])=>document.getElementById(`team-filter-title-${key}`)?.setAttribute('aria-expanded',String(open)));
-  const clear=document.getElementById('teams-clear-filters');if(clear)clear.disabled=!teamSkillFilters.length&&!teamModeFilters.length&&!teamLocationFilters.length&&!teamSkillSearchQ;
+  const clear=document.getElementById('teams-clear-filters');if(clear)clear.disabled=!teamSkillFilters.length&&!teamModeFilters.length&&!teamLocationFilters.length&&!teamSkillSearchQ&&!teamSearchQ;
 }
 function renderTeams(){
   const teams=ensureIdeaTeams({});renderTeamFilterSidebar(teams);
@@ -15392,6 +15398,7 @@ function closeModal(e){if(e.target.classList.contains('modal-bg'))e.target.class
 // ——— MEMBERS ———
 let memberSearchQ='',memberSkillQ='',memberSort='activity-new',memberView='grid';
 const selectedMemberSkills=new Set();
+const selectedMemberCities=new Set();
 const MEMBER_ACTIVITY_LABELS={1:'Aktywna 2 dni temu',2:'Aktywny 1 dzień temu',3:'Aktywna 3 dni temu',4:'Aktywny 4 dni temu',5:'Aktywna 1 dzień temu',6:'Aktywny 5 dni temu',7:'Aktywna dzisiaj'};
 const MEMBER_ACTIVITY_AGE={1:2,2:1,3:3,4:4,5:1,6:5,7:0};
 const MEMBER_CREATED_ORDER={1:201901,2:202104,3:202203,4:202211,5:202306,6:202401,7:202505};
@@ -15415,17 +15422,20 @@ function renderMemberSkillFilters(){
   const q=String(memberSkillQ||'').trim().toLowerCase();
   const rows=memberSkillsWithCounts().filter(([skill,count])=>count>0&&(!q||skill.toLowerCase().includes(q)));
   host.innerHTML=rows.map(([skill,count])=>`<label class="members-skill-option"><input type="checkbox" ${selectedMemberSkills.has(skill)?'checked':''} onchange="setMemberSkill(decodeURIComponent('${encodeURIComponent(skill)}'),this.checked)"><span>${escHtml(skill)}</span><i>${count}</i></label>`).join('')||'<div class="empty-inline">Brak kompetencji.</div>';
-  const clear=document.getElementById('members-clear-filters');if(clear)clear.disabled=!selectedMemberSkills.size&&!memberSkillQ;
+  const cityHost=document.getElementById('members-city-options');
+  if(cityHost){const cityCounts=new Map();members.forEach(member=>{const city=String(member.city||'').trim();if(city)cityCounts.set(city,(cityCounts.get(city)||0)+1);});cityHost.innerHTML=[...cityCounts].sort(([a],[b])=>a.localeCompare(b,'pl')).map(([city,count])=>`<label class="members-skill-option"><input type="checkbox" ${selectedMemberCities.has(city)?'checked':''} onchange="setMemberCity(decodeURIComponent('${encodeURIComponent(city)}'),this.checked)"><span>${escHtml(city)}</span><i>${count}</i></label>`).join('')||'<div class="empty-inline">Brak miast.</div>';}
+  const clear=document.getElementById('members-clear-filters');if(clear)clear.disabled=!selectedMemberSkills.size&&!selectedMemberCities.size&&!memberSkillQ&&!memberSearchQ;
 }
 function setMemberSkill(skill,checked){
   if(checked)selectedMemberSkills.add(skill);else selectedMemberSkills.delete(skill);
   renderMembers();
 }
 function clearMemberFilters(){
-  selectedMemberSkills.clear();memberSkillQ='';
-  const inp=document.getElementById('members-skill-search');if(inp)inp.value='';
+  selectedMemberSkills.clear();selectedMemberCities.clear();memberSkillQ='';memberSearchQ='';
+  const inp=document.getElementById('members-skill-search');if(inp)inp.value='';const search=document.getElementById('members-search');if(search)search.value='';
   renderMembers();
 }
+function setMemberCity(city,checked){if(checked)selectedMemberCities.add(city);else selectedMemberCities.delete(city);renderMembers();}
 function toggleMemberSkillSection(button){
   const expanded=button.getAttribute('aria-expanded')!=='false';
   button.setAttribute('aria-expanded',String(!expanded));
@@ -15454,7 +15464,7 @@ function memberCatalogBio(member){
 function renderMembers(){
   const host=document.getElementById('members-list');if(!host)return;
   const q=String(memberSearchQ||document.getElementById('members-search')?.value||'').toLowerCase().trim();
-  let list=members.filter(m=>(!q||[m.name,m.since,memberCatalogBio(m),...(m.roles||[]),...(m.skills||[])].join(' ').toLowerCase().includes(q))&&(!selectedMemberSkills.size||[...selectedMemberSkills].every(skill=>(m.skills||[]).includes(skill))));
+  let list=members.filter(m=>(!q||[m.name,m.since,m.city,memberCatalogBio(m),...(m.roles||[]),...(m.skills||[])].join(' ').toLowerCase().includes(q))&&(!selectedMemberSkills.size||[...selectedMemberSkills].every(skill=>(m.skills||[]).includes(skill)))&&(!selectedMemberCities.size||selectedMemberCities.has(String(m.city||'').trim())));
   if(memberSort==='activity-new')list.sort((a,b)=>(MEMBER_ACTIVITY_AGE[a.id]??99)-(MEMBER_ACTIVITY_AGE[b.id]??99));
   else if(memberSort==='activity-old')list.sort((a,b)=>(MEMBER_ACTIVITY_AGE[b.id]??-1)-(MEMBER_ACTIVITY_AGE[a.id]??-1));
   else if(memberSort==='created-new')list.sort((a,b)=>(MEMBER_CREATED_ORDER[b.id]||0)-(MEMBER_CREATED_ORDER[a.id]||0));
@@ -17681,7 +17691,7 @@ function renderResourceCatalog(){
   const categoryOptions=Object.entries(CATALOG_RESOURCE_CATEGORIES).map(([key,meta])=>catalogSidebarOption('category',key,meta.label,catalogResources.filter(resource=>resource.categoryKey===key).length)).join(''),conditions=[...new Set(catalogResources.map(resource=>resource.condition))],conditionOptions=conditions.map(value=>catalogSidebarOption('condition',value,value,catalogResources.filter(resource=>resource.condition===value).length)).join('');
   const cards=rows.map(resource=>{const status=catalogStatusMeta(resource),photo=resource.photo?`<img src="${escAttr(resource.photo)}" alt="">`:`<span class="resource-card-placeholder ${resource.typeKey}">${catalogResourceIcon(resource.typeKey)}</span>`;return `<button type="button" class="resource-catalog-card" onclick="openCatalogResource('${escAttr(resource.id)}')"><span class="resource-card-main"><span class="resource-card-photo">${photo}</span><span class="resource-card-copy"><b>${escHtml(resource.name)} ${escHtml(resource.brand)}</b><small>#${escHtml(resource.code)}</small><span class="resource-card-chips"><i class="type ${resource.typeKey}">${catalogResourceIcon(resource.typeKey)} ${escHtml(resource.type)}</i>${resource.features.map(feature=>`<i>${escHtml(feature)}</i>`).join('')}</span></span></span><span class="resource-card-location">${catalogResourceIcon('pin')}<b>${escHtml(resource.location)}</b></span><span class="resource-card-status"><i class="resource-status ${status.tone}">${escHtml(status.label)}</i></span><span class="resource-card-owner"><i>${escHtml(memberInitials(resource.owner))}</i><span><b>${escHtml(resource.owner)}</b><small>Opiekun</small></span></span><span class="resource-card-arrow">›</span></button>`;}).join('');
   const searchIcon=`<label class="resource-sidebar-search">${catalogResourceIcon('search')}<input type="search" autocomplete="off"`;
-  const sidebar=`<aside class="resource-filter-sidebar" aria-label="Filtry katalogu"><header><b>FILTRY</b><span>▽</span></header>${catalogSidebarGroup('status','Status',catalogSidebarOption('status','all','Wszystkie',allCount)+catalogSidebarOption('status','available','Dostępne',available)+catalogSidebarOption('status','reserved','Zarezerwowane',reserved)+catalogSidebarOption('status','service','W serwisie',catalogResources.filter(resource=>resource.status==='service').length))}${catalogSidebarGroup('type','Typ zasobu',catalogSidebarOption('type','all','Wszystkie',allCount)+`<div class="resource-sidebar-scroll">${typeOptions||'<p class="resource-sidebar-empty">Brak pasujących typów</p>'}</div>`,{search:`${searchIcon} id="resource-type-search" value="${escAttr(resourceCatalogState.typeQuery)}" placeholder="Szukaj typu…" aria-label="Szukaj typu zasobu" oninput="setResourceCatalogFilter('typeQuery',this.value)"></label>`})}${catalogSidebarGroup('location','Lokalizacja',catalogSidebarOption('location','all','Wszystkie',allCount)+`<div class="resource-sidebar-scroll">${locationOptions||'<p class="resource-sidebar-empty">Brak pasujących lokalizacji</p>'}</div>`,{search:`${searchIcon} id="resource-location-search" value="${escAttr(resourceCatalogState.locationQuery)}" placeholder="Szukaj lokalizacji…" aria-label="Szukaj lokalizacji" oninput="setResourceCatalogFilter('locationQuery',this.value)"></label>`})}${catalogSidebarGroup('category','Kategoria',catalogSidebarOption('category','all','Wszystkie',allCount)+categoryOptions)}${catalogSidebarGroup('condition','Dostępność / stan',catalogSidebarOption('condition','all','Wszystkie',allCount)+conditionOptions)}<button type="button" class="resource-sidebar-clear" onclick="resetResourceCatalogFilters()">↺ Wyczyść filtry</button></aside>`;
+  const sidebar=`<aside class="resource-filter-sidebar" aria-label="Filtry katalogu"><header><b>FILTRY</b><span>▽</span></header>${catalogSidebarGroup('status','Status',catalogSidebarOption('status','all','Wszystkie',allCount)+catalogSidebarOption('status','available','Dostępne',available)+catalogSidebarOption('status','reserved','Zarezerwowane',reserved)+catalogSidebarOption('status','service','W serwisie',catalogResources.filter(resource=>resource.status==='service').length))}${catalogSidebarGroup('type','Typ zasobu',catalogSidebarOption('type','all','Wszystkie',allCount)+`<div class="resource-sidebar-scroll">${typeOptions||'<p class="resource-sidebar-empty">Brak pasujących typów</p>'}</div>`,{search:`${searchIcon} id="resource-type-search" value="${escAttr(resourceCatalogState.typeQuery)}" placeholder="Szukaj typu…" aria-label="Szukaj typu zasobu" oninput="setResourceCatalogFilter('typeQuery',this.value)"></label>`})}${catalogSidebarGroup('location','Lokalizacja',catalogSidebarOption('location','all','Wszystkie',allCount)+`<div class="resource-sidebar-scroll">${locationOptions||'<p class="resource-sidebar-empty">Brak pasujących lokalizacji</p>'}</div>`,{search:`${searchIcon} id="resource-location-search" value="${escAttr(resourceCatalogState.locationQuery)}" placeholder="Szukaj lokalizacji…" aria-label="Szukaj lokalizacji" oninput="setResourceCatalogFilter('locationQuery',this.value)"></label>`})}${catalogSidebarGroup('category','Kategoria',catalogSidebarOption('category','all','Wszystkie',allCount)+categoryOptions)}${catalogSidebarGroup('condition','Dostępność / stan',catalogSidebarOption('condition','all','Wszystkie',allCount)+conditionOptions)}<button type="button" class="resource-sidebar-clear" onclick="resetResourceCatalogFilters()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6"/></svg>Wyczyść filtry</button></aside>`;
   host.innerHTML=`<div class="resource-catalog-shell">${sidebar}<div class="resource-catalog-main"><header class="resource-catalog-header"><div><h1>Katalog zasobów</h1><span>Znajdź i udostępniaj zasoby w naszej organizacji. Korzystaj, współdziel i działaj razem.</span></div><div class="resource-header-actions"><button type="button" class="primary" onclick="openCatalogResourceForm()">＋ Dodaj zasób</button><button type="button" onclick="openCatalogTypesInfo()">${catalogResourceIcon('box')} Typy zasobów</button><button type="button" onclick="go('platform')">${catalogResourceIcon('media')} Słownik pojęć</button><button type="button" onclick="openCatalogHelp()">? Jak działa katalog?</button></div></header><label class="resource-catalog-search">${catalogResourceIcon('search')}<input id="resource-catalog-query" type="search" value="${escAttr(resourceCatalogState.query)}" placeholder="Szukaj zasobów po nazwie, opisie, lokalizacji lub cechach…" aria-label="Szukaj zasobów" oninput="setResourceCatalogFilter('query',this.value)"></label><p class="resource-search-hint">np. projektor, sala, „Wrocław”, Bosch, 12 osób</p><nav class="resource-scope-tabs" aria-label="Zakres katalogu">${[['all','Wszystkie',allCount,'box'],['available','Dostępne',available,'garden'],['mine','Moje',mine,'media'],['reserved','Zarezerwowane',reserved,'space']].map(([key,label,count,icon])=>`<button type="button" class="${resourceCatalogState.scope===key?'on':''}" onclick="setResourceCatalogScope('${key}')">${catalogResourceIcon(icon)}<b>${label}</b><small>${count}</small></button>`).join('')}</nav><div class="resource-results-toolbar"><p><b>${rows.length} ${rows.length===1?'zasób':'zasoby'}</b><span>• ${available} dostępne</span><span>• ${reserved} ${reserved===1?'zarezerwowany':'zarezerwowane'}</span></p><div><label>Sortuj:<select onchange="setResourceCatalogSort(this.value)"><option value="activity" ${resourceCatalogState.sort==='activity'?'selected':''}>Ostatnia aktywność</option><option value="name" ${resourceCatalogState.sort==='name'?'selected':''}>Nazwa A–Z</option><option value="location" ${resourceCatalogState.sort==='location'?'selected':''}>Lokalizacja</option></select></label><button type="button" class="${resourceCatalogState.view==='list'?'on':''}" onclick="setResourceCatalogView('list')" aria-label="Widok listy">☷</button><button type="button" class="${resourceCatalogState.view==='grid'?'on':''}" onclick="setResourceCatalogView('grid')" aria-label="Widok kafelków">▦</button></div></div><section class="resource-catalog-list ${resourceCatalogState.view==='grid'?'grid':''}">${cards||'<div class="resource-empty"><b>Nie znaleziono zasobów</b><span>Zmień wyszukiwanie albo wyczyść filtry.</span><button type="button" onclick="resetResourceCatalogFilters()">Wyczyść filtry</button></div>'}</section></div></div>`;
 }
 function openCatalogTypesInfo(){appModal(`<h3>Typy zasobów</h3><p>Na start katalog korzysta z trzech prostych typów: sprzętu ogrodowego, multimediów i przestrzeni. Nazwy pochodzą ze wspólnego słownika CollaboHuba.</p><div class="app-modal-actions"><button class="vbtn voted-yes" onclick="closeAppModal()">Rozumiem</button></div>`);}
@@ -20705,6 +20715,27 @@ html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
 .profile-work-modal .profile-work-attachments p{margin:8px 0 0;color:var(--txs);font-size:13px;line-height:1.5}
 @media(max-width:1050px){.social-profile-main>.profile-portfolio-content{padding:18px}.profile-portfolio-media-grid{grid-template-columns:1fr}.profile-portfolio-preview-card{padding:13px}}
 @media(max-width:760px){.profile-portfolio-list-head{align-items:flex-start;flex-direction:column}.profile-portfolio-list-open{grid-template-columns:96px minmax(0,1fr);gap:11px;padding:10px}.profile-portfolio-list-open>img{width:96px;height:84px}.profile-portfolio-list-copy>b{font-size:14px}.profile-portfolio-list-summary{font-size:12px}.profile-portfolio-list-actions{padding:8px}.profile-portfolio-list-item:not(:has(.profile-portfolio-list-open>img)) .profile-portfolio-list-open{grid-template-columns:minmax(0,1fr)}.profile-portfolio-detail-heading{align-items:flex-start;gap:12px}.profile-portfolio-detail-heading>img{width:88px;height:88px;flex-basis:88px}.profile-portfolio-detail>h1,.profile-portfolio-detail-heading>h1{font-size:22px}.profile-portfolio-actions{flex-wrap:wrap}.profile-portfolio-actions .profile-portfolio-cancel{margin-right:auto}}
+/* Unified filter sidebar typography and clear-filter affordance */
+#s-ideas .ideas-clear-sidebar{display:flex;align-items:center;justify-content:center;padding:0 12px;color:var(--p700);font:700 13px 'DM Sans',sans-serif;transition:background .16s,border-color .16s,color .16s,box-shadow .16s}
+#s-ideas .ideas-clear-sidebar:hover{border-color:var(--p400);background:var(--p100);color:var(--p800);box-shadow:0 4px 14px rgba(86,50,155,.09)}
+.members-filter-section-title{font-size:13px!important}
+.members-skill-option{font-size:13px}
+.members-clear-filters{height:44px;font-size:13px}
+.resource-filter-sidebar{padding:30px 27px 34px}
+.resource-filter-sidebar>header{padding:0 3px 20px;font-size:12px;letter-spacing:.08em}
+.resource-sidebar-group{padding:19px 0}
+.resource-sidebar-group-toggle{padding:0 4px 10px;color:var(--txt);font:750 13px 'DM Sans',sans-serif}
+.resource-sidebar-option{min-height:37px;padding:6px 5px;border-radius:9px;color:var(--txm);font:550 13px 'DM Sans',sans-serif;transition:background .16s,color .16s}
+.resource-sidebar-option:hover{background:var(--p050);color:var(--p700)}
+.resource-sidebar-option.on{background:transparent;color:var(--p700);font-weight:750}
+.resource-sidebar-option small{font-size:11px}
+.resource-sidebar-search{height:40px;margin:4px 4px 10px;padding:0 10px;border-radius:10px}
+.resource-sidebar-search input{font-size:13px}
+.resource-sidebar-empty{font-size:12px}
+.resource-sidebar-clear{display:flex;align-items:center;justify-content:center;gap:9px;min-height:44px;margin-top:18px;padding:0 12px;border:1px solid var(--p200);border-radius:11px;background:var(--surf);color:var(--p700);font:700 13px 'DM Sans',sans-serif;text-align:center;transition:background .16s,border-color .16s,color .16s,box-shadow .16s}
+.resource-sidebar-clear:hover{border-color:var(--p400);background:var(--p100);color:var(--p800);box-shadow:0 4px 14px rgba(86,50,155,.09)}
+.resource-sidebar-clear svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}
+@media(max-width:1000px){.resource-filter-sidebar{padding:20px}}
 </style>
 <script id="app-ready-script">
 (()=>{
