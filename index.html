@@ -15541,7 +15541,7 @@ var memberFeedLimits={};
 function loadOlderMemberEntries(id){memberFeedLimits[id]=(memberFeedLimits[id]||8)+8;openMember(id,{fromRoute:true});}
 function profileBoardRows(member,thanksAuthor){
   const saved=Array.isArray(member.profileFeed)?member.profileFeed:[];
-  return saved.filter(row=>row.type!=='thanks'&&!String(row.id||'').startsWith('custom-')).map((row,index)=>({...row,stamp:Number(row.stamp||Date.now()-index),title:row.title||'Wpis',reactions:row.reactions||{},comments:Array.isArray(row.comments)?row.comments:[]}));
+  return saved.filter(row=>(!row.by||row.by===member.name)&&row.type!=='thanks'&&!String(row.id||'').startsWith('custom-')).map((row,index)=>({...row,stamp:Number(row.stamp||Date.now()-index),title:row.title||'Wpis',reactions:row.reactions||{},comments:Array.isArray(row.comments)?row.comments:[]}));
 }
 const PROFILE_REACTION_CHOICES=['👍','❤️','😂','😮','😢','🎉','🔥','👏'];
 function profileEntryReactionsHTML(memberId,row){
@@ -15560,7 +15560,7 @@ function profileFormattedText(value){return escHtml(value||'').replace(/\*\*([^*
 function profileWrapText(id,before,after){const field=document.getElementById(id);if(!field)return;const start=field.selectionStart,end=field.selectionEnd,selected=field.value.slice(start,end);field.value=field.value.slice(0,start)+before+selected+after+field.value.slice(end);field.focus();field.setSelectionRange(start+before.length,start+before.length+selected.length);}
 function profileInsertEmoji(id,emoji){const field=document.getElementById(id);if(!field)return;const start=field.selectionStart,end=field.selectionEnd;field.value=field.value.slice(0,start)+emoji+field.value.slice(end);field.focus();field.setSelectionRange(start+emoji.length,start+emoji.length);}
 function memberPublicFeedHTML(member,thanksAuthor){
-  const rows=sortedBoardFeedRows(profileBoardRows(member),'member',member.id),mine=member.name===MY_NAME;
+  const filteredRows=profileBoardRows(member),rows=sortedBoardFeedRows(filteredRows,'member',member.id),mine=member.name===MY_NAME;
   const composer=mine?`<button type="button" class="tp-board-quick-compose profile-wall-composer" onclick="openDiscoverComposerModal({fromProfile:true})"><span class="tp-board-quick-avatar">${memberAvatarContent(MY_NAME,member.ini)}</span><span class="tp-board-quick-placeholder">Czym chcesz się podzielić?</span></button>`:'';
   return `<section class="member-board tp-board-feed"><div class="board-feed-toolbar">${composer}${boardFeedControlsHTML('member',member.id)}</div>${rows.map(row=>profileWallPostHTML(member,row)).join('')||'<div class="empty-inline profile-wall-empty">Tablica jest jeszcze pusta.</div>'}</section>`;
 }
@@ -16471,7 +16471,7 @@ function renderMyProfile(){
   const created=ideas.filter(i=>authorOf(i).name===MY_NAME);
   const portfolio=myProfile.portfolio||[];
   const allRows=myProfileFeedData(created);
-  const rows=sortedBoardFeedRows(profileBoardRows(profileMember),'member',profileMember.id);
+  const rows=profileBoardRows(profileMember),sortedRows=sortedBoardFeedRows(rows,'member',profileMember.id);
   const firstName=(myProfile.name||'Patrycja').split(' ')[0];
   const memberNoun=personForm(myProfile.name,{ona:'Członkini',on:'Członek',ono:'Osoba członkowska'});
   const roleLine=(myProfile.roles||[]).filter(role=>role!=='Członek').concat((myProfile.skills||[]).slice(0,2)).join(' · ');
@@ -16481,7 +16481,7 @@ function renderMyProfile(){
     {label:'Dodaj kompetencje',done:(myProfile.skills||[]).length>0,action:"openProfileEdit('skills')"}
   ];
   const completion=Math.round(completionItems.filter(item=>item.done).length/completionItems.length*100);
-  const feedHtml=rows.map(row=>profileWallPostHTML(profileMember,row)).join('');
+  const feedHtml=sortedRows.map(row=>profileWallPostHTML(profileMember,row)).join('');
   screen.innerHTML=`
     <div class="mp-shell profile-team-layout">
       <main class="mp-main">
@@ -16574,7 +16574,7 @@ function profileWorkCard(person,skill='',featuredOnly=false){
  if(featuredOnly)return featured;
  return `${featured}${skill?`<h2 class="profile-skill-section-title" id="${profileSkillAnchor(skill)}">${escHtml(skill)} <small>${profileSkillPoints(person,skill,0)} pkt</small></h2>`:''}<div class="profile-work-list">${visible.map(({item,index})=>`<button type="button" class="profile-work-row" onclick="openProfileWork(${Number(person.id||0)},${index})"><span><b>${escHtml(item.title||'Praca w portfolio')}</b><small>${escHtml(item.desc||item.text||item.type||'')}</small></span><i>Otwórz →</i></button>`).join('')||`<p class="empty-inline">${skill?'Brak przykładów tej kompetencji w portfolio.':'Portfolio jest jeszcze puste.'}</p>`}</div>`;
 }
-function profileActivityHTML(person){const rows=(person.profileFeed||[]).slice(0,5);return `<section class="profile-activity-list"><h2>Ostatnia aktywność</h2>${rows.map(row=>`<article><b>${escHtml(row.title||'Aktywność')}</b><p>${escHtml(row.text||'')}</p><small>${escHtml(row.date||'Niedawno')}</small></article>`).join('')||'<p class="empty-inline">Brak ostatniej aktywności.</p>'}</section>`;}
+function profileActivityHTML(person){const rows=profileBoardRows(person).slice(0,5);return `<section class="profile-activity-list"><h2>Ostatnia aktywność</h2>${rows.map(row=>`<article><b>${escHtml(row.title||'Aktywność')}</b><p>${escHtml(row.text||'')}</p><small>${escHtml(row.date||'Niedawno')}</small></article>`).join('')||'<p class="empty-inline">Brak ostatniej aktywności.</p>'}</section>`;}
 function profileWallPostHTML(member,row){const comments=Array.isArray(row.comments)?row.comments:[],reactions=row.reactions||{},saved=(row.savedBy||[]).includes(MY_NAME),text=String(row.text||''),expandable=text.trim().length>320,popId=`profile-board-${safeId(member.id+'-'+row.id)}`,reactionCall=boardPostReactionCall('profile',row.id,member.id),detailsCall=`openBoardReactionDetails('profile','${escAttr(row.id)}','${member.id}',__REACTION__)`;return `<article class="tp-board-post profile-wall-post${expandable?' has-expandable-text':''}"><header><span class="tp-board-post-avatar">${memberAvatarContent(row.by||member.name,member.ini||memberInitials(member.name))}</span><div class="tp-board-post-author"><b>${escHtml(row.by||member.name)}</b><span>${boardPostDateMarkup(row)}</span></div></header><div class="tp-board-post-content"><div class="tp-board-post-copy">${row.title?`<h2>${escHtml(row.title)}</h2>`:''}<div class="tp-board-post-text">${renderTeamBoardText(text)}</div>${expandable?'<button type="button" class="profile-wall-expand" aria-expanded="false" onclick="toggleProfileWallPostText(this)">Pokaż całość</button>':''}</div></div>${teamBoardPostMediaHTML(row,'profile',member.id)}<div class="team-board-post-actions board-post-actions">${renderBoardReactionControl(popId,reactionCall,reactions)}<button type="button" class="board-comment-trigger" aria-label="Otwórz komentarze (${boardCommentCount(comments)})" onclick="openBoardPostDiscussionModal('profile','${escAttr(row.id)}','${member.id}')">${discoverIcon('comment')}<span>${boardCommentCount(comments)}</span></button><button type="button" class="board-save-trigger ${saved?'on':''}" aria-label="${saved?'Usuń z zapisanych':'Zapisz wpis'}" title="${saved?'Usuń z zapisanych':'Zapisz'}" onclick="toggleProfileBoardPostSaved(${member.id},'${escAttr(row.id)}')">${discoverIcon('bookmark')}</button>${renderBoardReactionTypes(reactions,detailsCall)}</div></article>`;}
 function toggleProfileWallPostText(button){const post=button.closest('.profile-wall-post');if(!post)return;const expanded=post.classList.toggle('is-expanded');button.setAttribute('aria-expanded',String(expanded));button.textContent=expanded?'Zwiń':'Pokaż całość';}
 function layoutPersonProfile(host,person,own){
@@ -20541,6 +20541,8 @@ html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
 .app-modal.team-board-post-modal:has(.discover-composer-shell) .tbp-writing{min-height:280px}
 .app-modal.team-board-post-modal:has(.discover-composer-shell) .tbp-title{font-size:27px;margin-bottom:18px;padding-bottom:12px}
 .app-modal.team-board-post-modal:has(.discover-composer-shell) .tbp-text-wrap textarea{min-height:232px}
+.social-profile-main>.social-profile-tabs{grid-column:1;grid-row:auto}
+#s-profile .social-profile-main>.social-profile-tabs,#s-profile-me .social-profile-main>.social-profile-tabs{grid-column:1;grid-row:auto}
 @media(max-width:760px){.app-modal.team-board-post-modal:has(.discover-composer-shell){width:min(100%,calc(100vw - 40px));max-height:calc(100dvh - 40px)}}
 </style>
 <script id="app-ready-script">
