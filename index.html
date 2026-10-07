@@ -20548,8 +20548,8 @@ html.theme-dark .tbp-context-select,html.theme-dark .discover-identity-trigger,h
   #s-discover .discover-right-rail{padding-right:0}
 }
 /* Profile canvases and feed grid follow the community-feed surfaces and spacing. */
-#s-profile,#s-profile-me{min-height:calc(100vh - 64px);background:linear-gradient(135deg,#fafbff 0%,#f5f6fd 52%,#f8f6ff 100%)}
-#s-profile.on,#s-profile-me{background:linear-gradient(135deg,#fafbff 0%,#f5f6fd 52%,#f8f6ff 100%)}
+#s-profile,#s-profile-me{min-height:calc(100vh - 64px);background:#f2f0f8!important}
+#s-profile.on,#s-profile-me{background:#f2f0f8!important}
 html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
 #s-profile>#profile-body.social-profile,#s-profile-me .profile-team-layout{width:min(1440px,calc(100% - 48px))!important;max-width:1440px!important;margin:24px auto!important}
 @media(min-width:1180px){.social-profile-columns{grid-template-columns:minmax(250px,320px) minmax(0,2.15fr) minmax(220px,1fr);gap:24px}}
@@ -20656,10 +20656,10 @@ html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
 .profile-portfolio-list-actions button{padding:7px 9px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--p700);font:650 11px/1.2 'DM Sans',sans-serif;cursor:pointer}
 .profile-featured-thumbnail{display:block;width:100%;max-height:150px;object-fit:cover;border-radius:9px;margin-bottom:10px}
 .profile-portfolio-list{gap:0}
-.profile-portfolio-list-item{grid-template-columns:minmax(0,1fr) auto;gap:0;padding:5px 0;overflow:hidden;border:0;border-bottom:1px solid var(--bdr);border-radius:0;background:transparent;box-shadow:none;transition:background .16s ease}
-.profile-portfolio-list-item:hover{background:rgba(255,255,255,.34);box-shadow:none;transform:none}
+.profile-portfolio-list-item{grid-template-columns:minmax(0,1fr) auto;gap:0;padding:0;overflow:hidden;border:1px solid #e7e3ee;border-radius:20px;background:var(--surf);box-shadow:0 4px 14px rgba(43,31,72,.035);transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease,background .16s ease}
+.profile-portfolio-list-item:hover{border-color:#d4c8e7;background:#fff;transform:translateY(-2px);box-shadow:0 12px 34px rgba(30,25,50,.08)}
 .profile-portfolio-list-item:has(.profile-portfolio-list-open>img){grid-template-columns:minmax(0,1fr) auto}
-.profile-portfolio-list-open{display:grid;grid-template-columns:148px minmax(0,1fr);align-items:center;gap:16px;width:100%;min-width:0;padding:12px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.profile-portfolio-list-open{display:grid;grid-template-columns:148px minmax(0,1fr);align-items:center;gap:16px;width:100%;min-width:0;padding:14px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
 .profile-portfolio-list-item:not(:has(.profile-portfolio-list-open>img)) .profile-portfolio-list-open{grid-template-columns:minmax(0,1fr)}
 .profile-portfolio-list-open>img{width:148px;height:108px;object-fit:cover;border-radius:9px;background:var(--bg)}
 .profile-portfolio-list-copy{display:grid;align-content:center;justify-items:start;gap:6px;min-width:0}
