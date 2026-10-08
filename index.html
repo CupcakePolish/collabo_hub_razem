@@ -5851,7 +5851,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   <div class="dictionary-layout">
     <aside id="dictionary-sidebar" class="dictionary-sidebar"></aside>
     <main class="dictionary-main">
-      <header class="dictionary-heading">
+      <header class="dictionary-heading"><div class="dictionary-book" aria-hidden="true"><svg viewBox="0 0 280 155"><defs><linearGradient id="dict-page" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e3d3ff"/></linearGradient></defs><path d="m32 67 83-22 27 16 75-18 31 65-93 25-105-8Z" fill="#9262de"/><path d="m32 60 80-24 31 21 69-23 30 66-85 25-109-9Z" fill="#b68ced"/><path d="M144 119C120 96 78 99 50 113L29 53c33-17 78-23 102-3ZM144 119c27-24 68-27 97-17l-31-64c-30-9-62-4-79 12Z" fill="url(#dict-page)"/><path d="M131 50l13 69M50 113c30-10 65-13 94 6 26-19 64-23 97-17" stroke="#a77ade" stroke-width="3" fill="none"/></svg><span>Kompetencje</span><span>Miasta</span><span>Zasoby</span><span>Regiony</span></div>
         <div class="dictionary-eyebrow">SŁOWNIK PLATFORMY</div>
         <h1>Słownik platformy</h1>
         <p>Wspólne nazwy używane w całym CollaboHubie. Kompetencje, miejsca, regiony i zasoby są utrzymywane tutaj, aby zapewnić spójność i łatwe wyszukiwanie.</p>
@@ -10594,6 +10594,7 @@ function downloadCombinedDoc(ideaId,did){
   saveDocHtml(ideaId);const {d}=docSectionOf(ideaId,did,'');if(!d)return;
   const body=selectedDocSections(d).map(s=>`<section>${docSectionHtmlWithTitle(s)}</section>`).join('');
   const file=`<!doctype html><html><head><meta charset="utf-8"><title>${escHtml(d.title)}</title><style>body{font-family:Arial,sans-serif;max-width:820px;margin:50px auto;color:#222;line-height:1.7}h1{font-size:28px;margin-bottom:38px}h2{font-size:20px;margin:28px 0 10px}h3{font-size:16px;margin:22px 0 8px}section+section{border-top:1px solid #ddd;margin-top:28px;padding-top:22px}ul,ol{padding-left:32px}li{margin:4px 0}</style></head><body><h1>${escHtml(d.title)}</h1>${body}
+
 </body></html>`;
   const blob=new Blob([file],{type:'application/msword;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download=(d.title||'dokument').replace(/[\\/:*?"<>|]+/g,'-')+'.doc';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Pobrano złożony dokument.','ok');
@@ -18467,7 +18468,7 @@ function resetCollaboHubData(){
 }
 
 // === PLATFORM DICTIONARY ===
-let dictionaryCategory='all',dictionaryStatus='all',dictionarySearch='',dictionarySort='az',dictionaryPage=1;
+let dictionaryCategory='all',dictionaryStatus='all',dictionarySearch='',dictionarySort='points',dictionaryPage=1;
 const dictionaryPageSize=10;
 let dictionaryProposalTypes=new Set();
 let dictionaryBaseEntries=[
@@ -18517,7 +18518,8 @@ function dictionaryFilteredEntries(){
     if(dictionaryProposalTypes.size&&!dictionaryProposalTypes.has(item.proposalType||''))return false;
     return !query||[item.name,item.definition,dictionaryLabel(item.category),item.by].join(' ').toLocaleLowerCase('pl-PL').includes(query);
   });
-  items.sort((a,b)=>dictionarySort==='za'?b.name.localeCompare(a.name,'pl'):a.name.localeCompare(b.name,'pl'));
+  const totals=dictionarySort==='points'?new Map(items.filter(item=>item.category==='competency').map(item=>[item.id,dictionaryCompetencyData(item).total])):null;
+  items.sort((a,b)=>dictionarySort==='points'?(totals.get(b.id)||0)-(totals.get(a.id)||0)||a.name.localeCompare(b.name,'pl'):dictionarySort==='za'?b.name.localeCompare(a.name,'pl'):a.name.localeCompare(b.name,'pl'));
   return items;
 }
 function dictionaryChoice(label,value,current,kind,count){
@@ -18543,15 +18545,23 @@ function dictionaryStatusMarkup(item){
   return `<div class="dictionary-status ${item.status}"><span></span>${text}</div><small>Dodano ${escHtml(item.added)}<br>przez ${escHtml(item.by)}</small>`;
 }
 function dictionaryRow(item){
-  return `<article class="dictionary-row" onclick="openDictionaryEntry('${item.id}')">
-    <div class="dictionary-name">${dictionaryIcon(item.category)}<strong>${escHtml(item.name)}</strong></div>
-    <div><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span></div>
-    <div class="dictionary-definition">${escHtml(item.definition)}</div>
-    <div class="dictionary-usage"><span>♙&nbsp; ${item.people} ${plural(item.people,['osoba','osoby','osób'])}</span><span>♧&nbsp; ${escHtml(item.teams||'')}</span>${item.projects?`<span>▣&nbsp; ${escHtml(item.projects)}</span>`:''}</div>
-    <div class="dictionary-row-status">${dictionaryStatusMarkup(item)}</div>
-    <button class="dictionary-more" type="button" aria-label="Akcje" onclick="openDictionaryRowMenu(event,'${item.id}')">⋮</button>
-  </article>`;
+ const data=item.category==='competency'?dictionaryCompetencyData(item):null,top=data?.ranking[0],people=data?.ranking.length||0;
+ const summary={'Analiza danych':'Statystyka opisowa, wykresy, interpretacja danych i wnioskowanie na ich podstawie.','Bazy danych':'Schematy, relacje, indeksy oraz projektowanie i optymalizacja baz danych.'};
+ const icon=item.category==='competency'?dictionarySkillIcon(item.name):dictionaryIcon(item.category);
+ return `<article class="dictionary-row">
+ <div class="dictionary-name">${icon}<div><strong>${escHtml(item.name)}</strong><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span></div></div>
+ <div class="dictionary-definition">${escHtml(summary[item.name]||item.definition)}</div>
+ <div class="dictionary-card-metrics"><div class="dictionary-card-points"><span>★</span><b>${data?data.total+' pkt':'—'}</b></div><small>${data?'Łącznie w platformie':'Statystyki niedostępne'}</small></div>
+ <div class="dictionary-card-usage">${data?`<span>${competencyGlyph('people')}${people} ${plural(people,['osoba','osoby','osób'])}</span><span>${competencyGlyph('folder')}${data.projects.length} ${plural(data.projects.length,['projekt','projekty','projektów'])}</span><span>${competencyGlyph('chart')}${data.portfolio.length} w portfolio</span><div class="dictionary-card-avatars">${data.ranking.slice(0,3).map(({person})=>`<span title="${escAttr(person.name)}">${memberAvatarContent(person.name,person.ini)}</span>`).join('')}${people>3?`<b>+${people-3}</b>`:''}</div>`:'<small>Użycie nie jest jeszcze rejestrowane.</small>'}</div>
+ <div class="dictionary-card-status"><div class="dictionary-status ${item.status}"><span></span>${item.status==='voting'?'W głosowaniu':item.status==='archived'?'Archiwalne':'Aktywne'}</div>${top?`<div class="dictionary-card-top"><span class="dictionary-card-top-avatar">${memberAvatarContent(top.person.name,top.person.ini)}</span><div><small>Top osoba:</small><span>${escHtml(top.person.name)} · <b>${top.points} pkt</b></span></div></div>`:'<small>Brak punktowanej aktywności</small>'}</div>
+ <button class="dictionary-details-button" type="button" onclick="openDictionaryEntry('${item.id}')">Zobacz szczegóły <span>›</span></button>
+ </article>`;
 }
+function dictionarySkillIcon(name){
+ const paths=name.includes('prawn')?'<path d="M12 3v18M7 21h10M4 6h16M6 6l-4 9h8L6 6ZM18 6l-4 9h8l-4-9Z"/>':name.includes('danych')&&name.includes('Bazy')?'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>':name==='Copywriting'?'<path d="m4 16 12-12 4 4L8 20H4v-4ZM13 7l4 4"/>':name==='Analiza danych'?'<path d="M4 20v-6h3v6M10 20V9h3v11M16 20V4h3v16"/>':'<path d="M4 8l8-5 8 5-8 5-8-5ZM7 10v6l5 3 5-3v-6"/>';
+ return `<span class="dictionary-row-icon competency"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg></span>`;
+}
+
 function renderPlatform(){
   const body=document.getElementById('platform-body');if(!body)return;
   document.getElementById('s-platform').classList.remove('competency-open');
@@ -18560,8 +18570,8 @@ function renderPlatform(){
   const pages=Math.max(1,Math.ceil(filtered.length/dictionaryPageSize));dictionaryPage=Math.min(dictionaryPage,pages);
   const rows=filtered.slice((dictionaryPage-1)*dictionaryPageSize,dictionaryPage*dictionaryPageSize);
   const pageButtons=Array.from({length:pages},(_,i)=>i+1).slice(0,9).map(p=>`<button class="dictionary-page${p===dictionaryPage?' active':''}" onclick="setDictionaryPage(${p})">${p}</button>`).join('');
-  body.innerHTML=`<div class="dictionary-list-toolbar"><strong>Znaleziono ${filtered.length} ${filtered.length===1?'pojęcie':'pojęć'}</strong><div class="dictionary-sort-wrap"><span>Sortuj według:</span><button class="dictionary-sort-button" onclick="toggleDictionarySort(event)">${dictionarySort==='az'?'A–Z':'Z–A'}⌄</button><div id="dictionary-sort-menu" class="dictionary-sort-menu"><button onclick="setDictionarySort('az')">${dictionarySort==='az'?'✓ ':''}A–Z</button><button onclick="setDictionarySort('za')">${dictionarySort==='za'?'✓ ':''}Z–A</button></div></div></div>
-    <div class="dictionary-table"><div class="dictionary-table-head"><span>Nazwa</span><span>Kategoria</span><span>Definicja (skrót)</span><span>Użycie</span><span>Status</span><span>Akcje</span></div>
+  body.innerHTML=`<div class="dictionary-list-toolbar"><strong>Łącznie ${filtered.length} ${filtered.length===1?'pojęcie':'pojęć'}</strong><div class="dictionary-sort-wrap"><span>Sortuj według:</span><button class="dictionary-sort-button" onclick="toggleDictionarySort(event)">${dictionarySort==='points'?'Najwięcej punktów':dictionarySort==='az'?'A–Z':'Z–A'} ⌄</button><div id="dictionary-sort-menu" class="dictionary-sort-menu"><button onclick="setDictionarySort('points')">${dictionarySort==='points'?'✓ ':''}Najwięcej punktów</button><button onclick="setDictionarySort('az')">${dictionarySort==='az'?'✓ ':''}A–Z</button><button onclick="setDictionarySort('za')">${dictionarySort==='za'?'✓ ':''}Z–A</button></div></div></div>
+    <div class="dictionary-table">
     <div class="dictionary-rows">${rows.length?rows.map(dictionaryRow).join(''):'<div class="dictionary-empty"><strong>Brak pojęć pasujących do filtrów</strong><span>Zmień filtry albo wyszukiwaną frazę.</span></div>'}</div></div>
     ${pages>1?`<div class="dictionary-pagination"><button onclick="setDictionaryPage(${Math.max(1,dictionaryPage-1)})">‹</button>${pageButtons}<button onclick="setDictionaryPage(${Math.min(pages,dictionaryPage+1)})">›</button><span>${dictionaryPageSize} na stronę</span></div>`:''}`;
   const input=document.getElementById('dictionary-search');if(input&&input.value!==dictionarySearch)input.value=dictionarySearch;
@@ -20780,6 +20790,13 @@ html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
 .resource-sidebar-clear svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}
 @media(max-width:1000px){.resource-filter-sidebar{padding:20px}}
 </style>
+<style id="dictionary-home-cards">
+#s-platform .dictionary-layout{display:grid;grid-template-columns:286px minmax(0,1fr);min-height:calc(100vh - 64px)}#s-platform .dictionary-main{padding:30px 28px 60px;min-width:0;width:100%;margin:0;container-type:inline-size}#s-platform{position:relative;background:radial-gradient(ellipse at 85% 0,#f0e9ff80,transparent 40%),#f8f7fd}#s-platform .dictionary-heading{position:relative;max-width:none;padding-right:285px;min-height:135px;margin-bottom:22px}#s-platform .dictionary-heading h1{font-size:50px;color:#111024;margin:8px 0 12px}#s-platform .dictionary-heading p{font-size:14px;line-height:1.55;max-width:740px}#s-platform .dictionary-eyebrow{color:#7338e8;font-size:11px;letter-spacing:.09em;font-weight:750}#s-platform .dictionary-toolbar{gap:12px;margin-bottom:14px}#s-platform .dictionary-search-wrap{height:43px;background:white;border:1px solid #eae5f4;border-radius:11px;box-shadow:0 2px 5px #30175803}#s-platform .dictionary-search-wrap input{font-size:12px}#s-platform .dictionary-propose{height:43px;border:0;border-radius:10px;background:linear-gradient(#782ff4,#452397);color:white;padding:0 23px;font-size:12px;box-shadow:0 3px 8px #6633bb16}#s-platform .dictionary-list-toolbar{margin-bottom:10px}#s-platform .dictionary-list-toolbar>strong{font-size:13px;color:#66647c}#s-platform .dictionary-sort-wrap>span{font-size:11px;color:#77728b}#s-platform .dictionary-sort-button{height:36px;font-size:11px;font-weight:650;border-color:#ebe6f4}#s-platform .dictionary-table{min-width:0}#s-platform .dictionary-row{display:grid;grid-template-columns:minmax(180px,1.1fr) minmax(180px,1.05fr) 104px 105px minmax(170px,.95fr) 140px;gap:16px;padding:16px 14px;margin-bottom:8px;min-height:86px;border-color:#eeeaf6;border-radius:12px;cursor:default;box-shadow:none}#s-platform .dictionary-name{gap:18px}#s-platform .dictionary-name>div{display:flex;flex-direction:column;align-items:flex-start;gap:7px}#s-platform .dictionary-name strong{font-size:13px;color:#17152c}#s-platform .dictionary-category{font-size:9px;padding:4px 9px;line-height:1.2}#s-platform .dictionary-row-icon{width:46px;height:46px;background:#f3edff;color:#7536e6}#s-platform .dictionary-definition{font-size:11px;line-height:1.5;color:#68627f;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}#s-platform .dictionary-card-metrics{border-left:1px solid #eeeaf5;padding-left:14px;align-self:stretch;padding-top:2px}#s-platform .dictionary-card-points{display:flex;align-items:center;gap:6px;font-size:12px;color:#25213c}.dictionary-card-points>span{color:#f79224;font-size:17px}.dictionary-card-metrics>small{display:block;font-size:9px;color:#827b97;line-height:1.5;margin-top:3px}.dictionary-card-usage{display:grid;gap:3px;font-size:9px;color:#78708e}.dictionary-card-usage>span{display:flex;align-items:center;gap:5px}.dictionary-card-usage svg{width:11px;height:11px}.dictionary-card-avatars{display:flex;align-items:center;margin-top:2px;gap:2px}.dictionary-card-avatars>span,.dictionary-card-avatars>b{width:20px;height:20px;border-radius:50%;overflow:hidden;background:#f2eaff;display:grid;place-items:center;font-size:8px;color:#7435df}.dictionary-card-avatars img,.dictionary-card-top-avatar img{width:100%;height:100%;object-fit:cover}.dictionary-card-status{border-left:1px solid #eeeaf5;padding-left:14px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:9px}#s-platform .dictionary-status{font-size:11px;font-weight:650}.dictionary-card-top{display:flex;align-items:center;gap:8px;min-width:0}.dictionary-card-top-avatar{display:grid;place-items:center;width:27px;height:27px;flex-shrink:0;border-radius:50%;overflow:hidden;background:#eee5ff;font-size:9px}.dictionary-card-top>div{display:grid;gap:3px;font-size:10px;color:#68617f}.dictionary-card-top small,.dictionary-card-status>small{font-size:9px;color:#8b839c}.dictionary-details-button{border:1px solid #ece2ff;border-radius:9px;background:#faf7ff;color:#7439df;font-size:10px;font-weight:650;padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}.dictionary-details-button span{font-size:20px;line-height:10px}.dictionary-details-button:hover{background:#f0e6ff;border-color:#d3bcff}.dictionary-book{position:absolute;right:5px;top:10px;width:260px;height:130px}.dictionary-book svg{width:240px;height:140px;filter:drop-shadow(0 10px 10px #9565d82a)}.dictionary-book>span{position:absolute;padding:5px 10px;border-radius:20px;background:#ede1ff;color:#7036cf;font-size:9px;font-weight:650}.dictionary-book>span:nth-of-type(1){right:110px;top:3px;transform:rotate(-18deg)}.dictionary-book>span:nth-of-type(2){right:25px;top:11px;transform:rotate(5deg)}.dictionary-book>span:nth-of-type(3){right:0;top:50px;transform:rotate(-4deg)}.dictionary-book>span:nth-of-type(4){right:26px;bottom:9px;transform:rotate(-6deg)}@container(max-width:1050px){#s-platform .dictionary-row{grid-template-columns:1.15fr 1.1fr 95px 95px 1fr;gap:12px}.dictionary-details-button{grid-column:5}.dictionary-card-status{grid-column:5;grid-row:1}.dictionary-details-button{margin-top:55px;grid-row:1;align-self:end}.dictionary-card-status{padding-bottom:35px}}@container(max-width:730px){#s-platform .dictionary-heading{padding-right:0}.dictionary-book{display:none}#s-platform .dictionary-row{grid-template-columns:1fr 1fr}.dictionary-card-status,.dictionary-details-button{grid-column:auto;grid-row:auto;margin-top:0}.dictionary-card-status{padding-bottom:0}.dictionary-card-metrics{border:0!important;padding-left:0!important}.dictionary-card-status{border:0;padding-left:0}#s-platform .dictionary-heading h1{font-size:38px}#s-platform .dictionary-main{padding:30px 18px}#s-platform .dictionary-toolbar{grid-template-columns:1fr}#s-platform .dictionary-search-wrap{min-width:0}#s-platform .dictionary-propose{justify-self:start}.dictionary-definition{align-self:start}.dictionary-card-usage{font-size:11px}.dictionary-card-top>div{font-size:11px}}
+@media(max-width:1000px){#s-platform .dictionary-layout{grid-template-columns:1fr}}
+#s-platform.competency-open .dictionary-layout{display:block}
+@container(max-width:900px){#s-platform .dictionary-heading{padding-right:190px}.dictionary-book{width:185px;right:0}.dictionary-book svg{width:180px}.dictionary-book>span{font-size:8px}.dictionary-book>span:nth-of-type(1){right:70px}#s-platform .dictionary-heading h1{font-size:40px}}
+@container(max-width:730px){#s-platform .dictionary-heading{padding-right:0}.dictionary-book{display:none}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
@@ -20796,5 +20813,6 @@ html.theme-dark #s-profile,html.theme-dark #s-profile-me{background:var(--bg)}
   });
 })();
 </script>
+
 </body>
 </html>
