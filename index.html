@@ -8124,7 +8124,7 @@ function renderIdeas(){
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
         <div class="ic-badges">
           ${isMatch?'<span class="match-flag">dopasowane</span>':''}
-          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span><button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Obserwuj'} pomysł" title="${followedIdeas.has(idea.id)?'Przestań obserwować':'Obserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
+          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span><button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
         </div>
       </div>
       <div class="ic-desc">${escHtml(idea.desc)}</div>
@@ -8145,7 +8145,7 @@ function renderIdeas(){
   }).join('');
 }
 
-function toggleIdeaQuickFollow(event,id){event?.preventDefault();event?.stopPropagation();const idea=ideas.find(row=>row.id===id);if(!idea)return;const following=!followedIdeas.has(id);if(following){followedIdeas.add(id);const scopes=projectNotificationScopeMap();if(!scopes[String(id)])scopes[String(id)]='global';}else followedIdeas.delete(id);queuePersistence();const button=event?.currentTarget;if(button){button.classList.toggle('on',following);button.setAttribute('aria-pressed',String(following));button.setAttribute('aria-label',(following?'Przestań obserwować':'Obserwuj')+' pomysł');button.title=following?'Przestań obserwować':'Obserwuj';}if(currentTab==='followed'||ideaListFilters.followed)renderIdeas();}
+function toggleIdeaQuickFollow(event,id){event?.preventDefault();event?.stopPropagation();const idea=ideas.find(row=>row.id===id);if(!idea)return;const following=!followedIdeas.has(id);if(following){followedIdeas.add(id);const scopes=projectNotificationScopeMap();if(!scopes[String(id)])scopes[String(id)]='global';}else followedIdeas.delete(id);queuePersistence();const button=event?.currentTarget;if(button){button.classList.toggle('on',following);button.setAttribute('aria-pressed',String(following));button.setAttribute('aria-label',(following?'Przestań obserwować':'Zaobserwuj')+' pomysł');button.dataset.tooltip=following?'Przestań obserwować':'Zaobserwuj';}if(currentTab==='followed'||ideaListFilters.followed)renderIdeas();}
 
 function requestReactivateArchivedProject(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea||!projectIsArchived(idea))return toast('Ten projekt nie jest już w archiwum.','warn');
@@ -20950,6 +20950,18 @@ input:is([type="search"],[placeholder*="Szukaj"],[placeholder*="szukaj"],[placeh
 <script>
 (()=>{let pending=false;const check=()=>{pending=false;document.querySelectorAll('.board-text-preview').forEach(text=>{if(!text.clientHeight||text.classList.contains('expanded'))return;const button=text.nextElementSibling;if(button?.classList.contains('board-text-expand'))button.hidden=text.scrollHeight<=text.clientHeight+1;});document.querySelectorAll('.discover-composer-shell textarea').forEach(resizePostComposerText);};const schedule=()=>{if(!pending){pending=true;requestAnimationFrame(check);}};new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',schedule);schedule();})();
 </script>
+<style id="idea-follow-hover-polish">
+#s-ideas .ic{overflow:visible}
+#s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){background:#fff!important;border-color:#eeeaf6!important;box-shadow:none!important;transform:none!important}
+html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){background:var(--surf)!important;border-color:var(--bdr)!important}
+#s-ideas .idea-quick-follow{position:relative}
+#s-ideas .idea-quick-follow::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:30;visibility:hidden;opacity:0;pointer-events:none;padding:7px 10px;border-radius:7px;background:var(--p800);color:#fff;font:600 11px/1.4 'DM Sans',sans-serif;white-space:nowrap;text-align:center;box-shadow:0 3px 10px #24123f20;transition:opacity .15s}
+#s-ideas .idea-quick-follow:is(:hover,:focus-visible)::after{visibility:visible;opacity:1}
+#s-ideas .ideas-add-button{font:650 12px 'DM Sans',sans-serif;transition:background .18s ease;transform:none!important}
+#s-ideas .ideas-add-button:hover{background:linear-gradient(#6a27da,#3c1d86);border:0;transform:none!important;box-shadow:0 3px 8px #6633bb16}
+#s-ideas .ideas-add-button:focus-visible{outline:2px solid var(--p400);outline-offset:3px;box-shadow:0 3px 8px #6633bb16}
+#s-ideas .ideas-add-button:active{box-shadow:0 3px 8px #6633bb16}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
