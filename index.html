@@ -8223,6 +8223,7 @@ function openIdea(id,preserveScroll=false,opts={}){
   const si=stageIndexFor(idea,path);
 
   const ideaEyebrow=document.getElementById('idea-eyebrow');if(ideaEyebrow)ideaEyebrow.textContent='';
+  document.getElementById('s-idea')?.classList.toggle('draft-preview-mode',isPrivateIdeaDraft(idea)&&!draftIsEditing(idea));
   renderIdeaProjectPhoto(idea);
   const ideaMeta=document.getElementById('idea-title-meta');
   if(ideaMeta){
@@ -8230,14 +8231,14 @@ function openIdea(id,preserveScroll=false,opts={}){
     const people=participantsOf(idea).length,lastLog=idea.log?.length?idea.log[idea.log.length-1]:null;
     const activityDate=lastLog?.date||idea.date||'',activityLabel=[lastLog?.time,dmyDate(activityDate)].filter(Boolean).join(' · ');
     const baseMeta=isPrivateIdeaDraft(idea)
-      ?`<span class="idea-meta-status">Prywatny szkic</span>`
+      ?''
       :`<span class="idea-meta-status">Status: ${escHtml(statusLabel)}</span>`;
     ideaMeta.innerHTML=`${baseMeta}<span class="idea-meta-item">${IC.users}<span>Zespół: <b>${people} ${plural(people,['osoba','osoby','osób'])}</b></span></span>${lastLog?`<button type="button" class="idea-meta-item idea-meta-activity" onclick="openLatestProjectActivity(${id})" title="Otwórz ostatni wpis w rejestrze">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></button>`:`<span class="idea-meta-item">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></span>`}<span class="idea-meta-item">${IC.cal}<span>Zgłoszono ${escHtml(idea.date||'bez daty')}</span></span><span class="idea-meta-item"><button type="button" onclick="openMember(${Number(auth.id)||99})">Autor: ${escHtml(auth.name)}</button></span>`;
   }
   {const isF=followedIdeas.has(id);
    const ha=document.getElementById('idea-hero-actions');
-   if(ha) ha.innerHTML=isPrivateIdeaDraft(idea)?`<span class="draft-private-pill">Tylko Ty</span><button class="hero-btn draft-save-button" onclick="saveDraftEdits()">Zapisz zmiany</button><button class="hero-btn" onclick="discardDraftEdits()">Odrzuć zmiany</button><button class="hero-btn draft-publish-btn" onclick="publishPrivateIdeaDraft(${id})">Opublikuj pomysł ✦</button>`:renderProjectHeaderActions(idea,id,isF);}
-  const titleNode=document.getElementById('idea-ph-title');if(isPrivateIdeaDraft(idea)){titleNode.innerHTML=`<textarea id="draft-idea-title-${id}" class="draft-idea-title" maxlength="120" rows="1" placeholder="Tytuł pomysłu" oninput="autoGrowDraftTitle(this);savePrivateIdeaTitle(${id},this.value)">${escHtml(idea.title||'')}</textarea>`;requestAnimationFrame(()=>autoGrowDraftTitle(document.getElementById('draft-idea-title-'+id)));}else titleNode.textContent=idea.title;
+   if(ha) ha.innerHTML=isPrivateIdeaDraft(idea)?`<button type="button" class="hero-btn draft-edit-gear ${draftIsEditing(idea)?'on':''}" aria-label="${draftIsEditing(idea)?'Wyłącz edycję':'Edytuj szkic'}" title="${draftIsEditing(idea)?'Wyłącz edycję':'Edytuj szkic'}" aria-pressed="${draftIsEditing(idea)}" onclick="toggleDraftEditMode(${id})">${profileGearIcon()}</button>${draftIsEditing(idea)?'<button class="hero-btn draft-save-button" onclick="saveDraftEdits()">Zapisz zmiany</button><button class="hero-btn" onclick="discardDraftEdits()">Odrzuć zmiany</button>':''}<button class="hero-btn draft-publish-btn" onclick="publishPrivateIdeaDraft(${id})">Opublikuj pomysł</button>`:renderProjectHeaderActions(idea,id,isF);}
+  const titleNode=document.getElementById('idea-ph-title');if(draftIsEditing(idea)){titleNode.innerHTML=`<textarea id="draft-idea-title-${id}" class="draft-idea-title" maxlength="120" rows="1" placeholder="Tytuł pomysłu" oninput="autoGrowDraftTitle(this);savePrivateIdeaTitle(${id},this.value)">${escHtml(idea.title||'')}</textarea>`;requestAnimationFrame(()=>autoGrowDraftTitle(document.getElementById('draft-idea-title-'+id)));}else titleNode.textContent=idea.title||'Pomysł bez tytułu';
 
   const phaseCards=path.map((step,i)=>{
     const state=i<si?'past':(i===si?'now':'future');
@@ -8410,6 +8411,7 @@ function openIdea(id,preserveScroll=false,opts={}){
     const pending=idea.votes.some(v=>v.open&&v.kind==='element'&&v.field===field);
     const apdId=`apd-${id}-${field}`;
     const editing=idea.elemEditField===field;
+    if(isPrivateIdeaDraft(idea)&&!draftIsEditing(idea))return `<div class="elem-card"><div class="elem-head"><span class="elem-label">${FIELD_LABELS[field]}</span></div><div class="elem-text">${txt?mdRender(txt):'<span class="hint">Nie uzupełniono jeszcze.</span>'}</div></div>`;
     if(isPrivateIdeaDraft(idea))return `<div class="elem-card draft-elem-card"><div class="elem-head"><span class="elem-label">${FIELD_LABELS[field]}</span><span class="draft-autosave-label">zmiany robocze</span></div><div class="wizard-rich-editor"><textarea maxlength="${field==='opis'?30000:2000}" placeholder="${field==='opis'?'Opisz pomysł, jego kontekst i proponowane rozwiązanie…':'Uzupełnij tę część pomysłu…'}" onfocus="activeComposerKey='draft-field-${id}-${field}'" oninput="savePrivateIdeaField(${id},'${field}',this.value)">${escHtml(txt)}</textarea><div class="mb-bar"><div class="mb-tools"><button type="button" title="Pogrubienie" onclick="mdWrap('draft-field-${id}-${field}','**','**')"><b>B</b></button><button type="button" title="Kursywa" onclick="mdWrap('draft-field-${id}-${field}','*','*')"><i>/</i></button></div><div class="mb-right"><button type="button" class="mb-emoji" title="Wybierz emotkę lub GIF" onclick="toggleEmojiPanel('draft-field-${id}-${field}')">☺</button></div></div><div class="emoji-panel emoji-pop" id="epanel-draft-field-${id}-${field}" data-reaction-tab="emoji"></div></div></div>`;
     const elemActions=[
       {label:'Zaproponuj zmianę',run:`openElemVote(${id},'${field}')`,kind:txt?'':'go'},
@@ -8579,7 +8581,6 @@ function openIdea(id,preserveScroll=false,opts={}){
   const isFollowed=followedIdeas.has(id);
   document.getElementById('idea-body').innerHTML=`
     <div class="idea-main">
-      ${isPrivateIdeaDraft(idea)?'<div class="draft-project-banner"><b>Prywatny szkic</b><span>Widzisz go tylko Ty. Zapisz zmiany przed wyjściem albo je odrzuć. Głosowania i wysyłka zaproszeń ruszą po publikacji.</span></div>':''}
       <div class="itabs">${tabBar}</div>
       ${idea.viewTab==='przeglad'?renderProjectOverviewTop(idea,id):''}
       ${renderMyProjectInviteNotice(idea,id)}
@@ -9831,6 +9832,11 @@ function draftMatchesCatalogFilters(idea){
  return true;
 }
 function renderIdeaDrafts(list=document.getElementById('ideas-list')){if(!list)return;const q=searchQ.toLocaleLowerCase('pl-PL').trim(),rows=privateIdeaDrafts().filter(draftMatchesCatalogFilters),legacyRows=ideaDrafts.filter(row=>{const f=row.draft?.fields||{};return draftMatchesCatalogFilters({id:row.id,title:f.title,desc:f.desc,cat:f.cat,skillsNeeded:f.skillsNeeded||[],roleRequirements:f.roleRequirements||[],isDraft:true});});const count=document.getElementById('idea-results-count');if(count)count.textContent=`${rows.length+legacyRows.length} ${plural(rows.length+legacyRows.length,['szkic','szkice','szkiców'])}`;if(!rows.length&&!legacyRows.length){list.innerHTML='<div class="empty"><div style="font-size:32px">✎</div><div class="empty-t">Brak szkiców pasujących do filtrów</div><div class="hint">Nowy pomysł otworzy pełną prywatną stronę projektu.</div></div>';return;}const modern=rows.map(idea=>`<article class="draft-card"><div class="draft-card-head"><img class="draft-preview-photo" src="${escAttr(ideaCatalogPhoto(idea))}" alt="Zdjęcie szkicu"><div><h3>${escHtml(idea.title||'Pomysł bez tytułu')}</h3><p>${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</p><div class="draft-meta"><span class="draft-private-label">Prywatny szkic</span><span>${(idea.pendingInvites||[]).length} przygotowanych zaproszeń</span><span>Utworzono: ${escHtml(idea.draftCreatedAt?draftDateLabel(idea.draftCreatedAt):idea.date||'Brak daty')}</span><span>Ostatnia edycja: ${escHtml(idea.draftUpdatedAt?draftDateLabel(idea.draftUpdatedAt):'Brak daty')}</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdea(${idea.id})">Kontynuuj</button><button class="danger" onclick="requestDeletePrivateIdeaDraft(${idea.id})">Usuń</button></div></article>`).join('');const legacy=legacyRows.map(row=>{const f=row.draft?.fields||{};return `<article class="draft-card"><div class="draft-card-head"><img class="draft-preview-photo" src="${escAttr(ideaCatalogPhoto({projectPhoto:f.projectPhoto||row.draft?.projectPhoto}))}" alt="Zdjęcie szkicu"><div><h3>${escHtml(f.title||'Starszy szkic')}</h3><p>${escHtml(f.desc||'')}</p><div class="draft-meta"><span class="draft-private-label">Prywatny szkic</span><span>Utworzono: ${escHtml(row.createdAt?draftDateLabel(row.createdAt):'Brak daty')}</span><span>Ostatnia edycja: ${escHtml(row.updatedAt?draftDateLabel(row.updatedAt):'Brak daty')}</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdeaDraft('${escAttr(row.id)}')">Przenieś i otwórz</button><button class="danger" onclick="requestDeleteIdeaDraft('${escAttr(row.id)}')">Usuń</button></div></article>`}).join('');list.innerHTML=`<div class="draft-list">${modern}${legacy}</div>`;}
+const draftPreviewIds=new Set();
+function draftIsEditing(idea){return isPrivateIdeaDraft(idea)&&!draftPreviewIds.has(idea.id);}
+function setDraftPreview(id){draftPreviewIds.add(id);closeAppModal();openIdea(id,true);}
+function finishDraftPreview(id,save){if(save){if(saveDraftEdits(false)===false)return;}else discardDraftEdits(false);setDraftPreview(id);}
+function toggleDraftEditMode(id){const idea=ideas.find(row=>row.id===id);if(!isPrivateIdeaDraft(idea))return;if(draftPreviewIds.has(id)){draftPreviewIds.delete(id);openIdea(id,true);return;}if(!draftEditsDirty()){setDraftPreview(id);return;}appModal(`<h3>Przejść do podglądu?</h3><p>Zapisz lub odrzuć zmiany przed wyłączeniem edycji.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Zostań w edycji</button><button class="vbtn" onclick="finishDraftPreview(${id},false)">Odrzuć zmiany</button><button class="vbtn" onclick="finishDraftPreview(${id},true)">Zapisz zmiany</button></div>`);}
 let draftEditSession=null,draftExitAction=null;
 function draftEditFingerprint(idea){const copy=cloneDemoValue(idea);['viewTab','openDoc','draftUpdatedAt'].forEach(key=>delete copy[key]);return JSON.stringify(copy);}
 function draftEditsDirty(){const idea=draftEditSession&&ideas.find(i=>i.id===draftEditSession.id);return !!(idea&&draftEditFingerprint(idea)!==draftEditFingerprint(draftEditSession.saved));}
@@ -20998,6 +21004,13 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 @container(max-width:950px){#s-ideas .ideas-list>.draft-list{grid-template-columns:1fr}}
 @container(max-width:600px){#s-ideas .draft-card-head{grid-template-columns:120px minmax(0,1fr);gap:14px}#s-ideas .draft-preview-photo{width:120px;height:140px}}
 @container(max-width:380px){#s-ideas .draft-card-head{grid-template-columns:1fr}#s-ideas .draft-preview-photo{width:100%;height:180px}}
+</style>
+<style id="draft-gear-preview">
+#idea-hero-actions:has(.draft-edit-gear) .hero-btn{background:var(--p700)!important;color:#fff!important;border-color:var(--p700)!important}
+#idea-hero-actions:has(.draft-edit-gear) .hero-btn:hover{background:var(--p800)!important;border-color:var(--p800)!important}
+#idea-hero-actions .draft-edit-gear{display:grid;place-items:center;width:40px;padding:9px}
+.draft-edit-gear svg{width:21px;height:21px}.draft-edit-gear.on{box-shadow:0 0 0 3px var(--p200)}
+.draft-preview-mode .idea-photo-change,.draft-preview-mode .st-kebab-wrap,.draft-preview-mode .draft-phase-add-tile{display:none!important}
 </style>
 <script id="app-ready-script">
 (()=>{
