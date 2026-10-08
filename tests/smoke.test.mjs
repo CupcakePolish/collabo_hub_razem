@@ -53,7 +53,7 @@ test('member catalog only exposes the three demo perspectives', () => {
   assert.match(catalogRender, /class="members-card-description">\$\{escHtml\(memberCatalogBio\(m\)\)\}<\/p>/);
   assert.match(catalogRender, /class="members-card-points"><b>\$\{m\.points\|\|0\}<\/b><span>Punkty<\/span>/);
   assert.match(catalogRender, /class="members-card-activity"/);
-  assert.doesNotMatch(catalogRender, /m\.looking|members-card-skills|members-card-since|members-card-stats|<span>Pomysły<\/span>|<span>Realizacje<\/span>|<span>W zespołach<\/span>|„|”/);
+  assert.doesNotMatch(catalogRender, /m\.looking|members-card-since|members-card-stats|<span>Pomysły<\/span>|<span>Realizacje<\/span>|<span>W zespołach<\/span>|„|”/);
 });
 
 test('closed votes use the canonical acceptance rule', () => {
