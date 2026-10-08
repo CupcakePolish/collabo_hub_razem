@@ -4695,9 +4695,9 @@ html.theme-dark .discover-post-menu-pop,html.theme-dark .discover-post-menu-pop:
 #s-ideas #idea-results-count{font-size:14px;color:var(--tx2)}
 #s-ideas .idea-sort-dropdown{position:relative;z-index:15}
 #s-ideas .ideas-mobile-filter-button,#s-ideas .ideas-sidebar-backdrop{display:none}
-#s-ideas .ideas-catalog-layout.draft-mode{grid-template-columns:1fr}
-#s-ideas .ideas-catalog-layout.draft-mode .ideas-filter-sidebar,#s-ideas .ideas-catalog-layout.draft-mode .ideas-mobile-filter-button{display:none}
-#s-ideas .ideas-catalog-layout.draft-mode .ideas-catalog-main{grid-column:1/-1}
+#s-ideas .ideas-catalog-layout.draft-mode{grid-template-columns:286px minmax(0,1fr)}
+
+
 body.ideas-filter-drawer-open{overflow:hidden}
 @media(max-width:900px){
  #s-ideas .ideas-catalog-layout{display:block;padding-top:20px}
@@ -5608,13 +5608,6 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 
 <!-- IDEAS -->
 <div id="s-ideas" class="screen on">
-  <div class="ph">
-    <div class="ph-inner">
-      <div class="eyebrow">Przestrzeń idei</div>
-      <h1>Wszystkie <em>propozycje</em></h1>
-      <p>Każdy pomysł widoczny. Każda decyzja jawna. Każda umiejętność potrzebna — dopasowana.</p>
-    </div>
-  </div>
   <div class="cw ideas-catalog-layout" id="ideas-catalog-layout">
     <button type="button" class="ideas-mobile-filter-button" id="ideas-mobile-filter-button" onclick="toggleIdeaMobileFilters()">☷ Filtry <span id="ideas-mobile-filter-count"></span></button>
     <button type="button" class="ideas-sidebar-backdrop" aria-label="Zamknij filtry" onclick="toggleIdeaMobileFilters(false)"></button>
@@ -5664,16 +5657,16 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       </section>
       <button type="button" class="ideas-clear-sidebar" id="ideas-clear-sidebar" onclick="clearIdeaListFilters()">Wyczyść filtry</button>
     </aside>
-    <main class="ideas-catalog-main">
+    <main class="ideas-catalog-main"><header class="ideas-catalog-heading"><div class="ideas-hero-art" aria-hidden="true"><svg viewBox="0 0 260 150"><defs><linearGradient id="idea-bulb" x2="0" y2="1"><stop stop-color="#fbf8ff"/><stop offset="1" stop-color="#c6a4ff"/></linearGradient></defs><path d="M108 110c0-19-27-24-27-57a49 49 0 0 1 98 0c0 33-27 38-27 57Z" fill="url(#idea-bulb)" stroke="#d4baff" stroke-width="2"/><path d="M108 113h44v11h-44ZM112 128h36v8h-36Z" fill="#ab77ef"/><path d="M120 139h20" stroke="#9560dd" stroke-width="6" stroke-linecap="round"/><path d="M124 110V75c-22-12-20-27-11-23 8 4 5 20 17 21 12-1 9-17 17-21 9-4 11 11-11 23v35" fill="none" stroke="#bd91f4" stroke-width="3"/><g fill="#efe4ff" stroke="#d9c2fb"><rect x="8" y="65" width="60" height="48" rx="8" transform="rotate(-16 38 89)"/><rect x="195" y="61" width="57" height="48" rx="8" transform="rotate(14 223 85)"/></g><path d="m19 82 30-8m-27 20 30-8m151-9 31 8m-33 4 31 8M72 15l-7-13M68 28l-13-5" stroke="#c29bef" stroke-width="3" stroke-linecap="round"/></svg></div><div class="eyebrow">Pomysły</div><h1>Pomysły</h1><p>Propozycje działań, projektów i inicjatyw, które możemy rozwijać razem.<br>Dodawaj, komentuj, wspieraj i pomagaj je realizować.</p></header>
       <div class="ideas-search-row">
-        <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj propozycji…" oninput="searchQ=this.value;renderIdeas()" /></div>
+        <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj pomysłów po nazwie, opisie, tagach lub autorze…" oninput="searchQ=this.value;renderIdeas()" /></div>
         <button type="button" class="ideas-add-button" onclick="beginNewIdea()">+ Dodaj pomysł</button>
       </div>
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
-        <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')">Wszystkie</button>
-        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')">Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
-        <button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')">Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
+        <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Wszystkie</button>
+        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V10M12 12C5 12 3 8 3 4c6 0 9 3 9 8ZM12 10c0-6 4-8 9-8 0 5-3 8-9 8Z"/></svg>Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
+        <button class="tab" id="tab-followed" onclick="switchTab('followed',this,'tab-followed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>Obserwowane</button><button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5ZM14 3v5h5M8 12h8M8 16h6"/></svg>Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
       </div>
       <div class="ideas-results-toolbar">
         <b id="idea-results-count">0 propozycji</b>
@@ -8083,6 +8076,7 @@ function renderIdeas(){
       return q.split(' ').every(w=>hay.includes(w));
     });
   }
+  if(currentTab==='followed')filtered=filtered.filter(i=>followedIdeas.has(i.id));
   if(currentTab==='for-me') filtered=filtered.filter(i=>projectLifecycleStatus(i)==='in_progress'&&ideaMatchesUser(i));
   if(ideaListFilters.status!=='all')filtered=filtered.filter(i=>projectLifecycleStatus(i)===ideaListFilters.status);
 
@@ -9819,7 +9813,20 @@ function privateIdeaDrafts(){return ideas.filter(i=>isPrivateIdeaDraft(i)&&canOp
 function renderDraftCount(){const count=privateIdeaDrafts().length+ideaDrafts.length,el=document.getElementById('drafts-tab-count');if(el){el.textContent=count?String(count):'';el.classList.toggle('on',count>0);}}
 function draftDateLabel(value){const date=new Date(value);return Number.isNaN(date.getTime())?'zapisano lokalnie':new Intl.DateTimeFormat('pl-PL',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(date);}
 function createBlankPrivateIdeaDraft(){const id=nextIdeaId(),now=new Date().toISOString(),idea={id,title:'',desc:'',isDraft:true,draftOwnerSubject:currentUserSubject(),draftUpdatedAt:now,stage:'waiting',cat:'',authorId:currentAuthorId(),authorName:MY_NAME,authorSubject:currentUserSubject(),date:TODAY,followers:0,viewTab:'przeglad',fields:{cel:{text:''},skutki:{text:''}},approvals:{},pendingInvites:[],coalition:[],skillsNeeded:[],roleRequirements:[],tasks:[],docs:[],files:[],budgetItems:[],materialResources:[],log:[],votes:[],discussion:[],proposals:[],coalitionNeeded:0,coalitionHave:0};markProjectMember(idea,MY_NAME,'utworzenie prywatnego szkicu');return idea;}
-function renderIdeaDrafts(list=document.getElementById('ideas-list')){if(!list)return;const q=searchQ.toLocaleLowerCase('pl-PL').trim(),rows=privateIdeaDrafts().filter(idea=>!q||`${idea.title||''} ${idea.desc||''}`.toLocaleLowerCase('pl-PL').includes(q));if(!rows.length&&!ideaDrafts.length){list.innerHTML='<div class="empty"><div style="font-size:32px">✎</div><div class="empty-t">Nie masz jeszcze zapisanych szkiców</div><div class="hint">Nowy pomysł otworzy pełną prywatną stronę projektu.</div></div>';return;}const modern=rows.map(idea=>`<article class="draft-card"><div class="draft-card-head"><div><h3>${escHtml(idea.title||'Pomysł bez tytułu')}</h3><p>${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</p><div class="draft-meta"><span>Prywatny szkic · zapis automatyczny</span><span>· ${(idea.pendingInvites||[]).length} przygotowanych zaproszeń</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdea(${idea.id})">Kontynuuj</button><button class="danger" onclick="requestDeletePrivateIdeaDraft(${idea.id})">Usuń</button></div></article>`).join('');const legacy=ideaDrafts.map(row=>{const f=row.draft?.fields||{};return `<article class="draft-card"><div class="draft-card-head"><div><h3>${escHtml(f.title||'Starszy szkic')}</h3><p>${escHtml(f.desc||'')}</p><div class="draft-meta"><span>Starszy format — zostanie przeniesiony po otwarciu</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdeaDraft('${escAttr(row.id)}')">Przenieś i otwórz</button><button class="danger" onclick="requestDeleteIdeaDraft('${escAttr(row.id)}')">Usuń</button></div></article>`}).join('');list.innerHTML=`<div class="draft-list">${modern}${legacy}</div>`;}
+function draftMatchesCatalogFilters(idea){
+ const q=searchQ.toLocaleLowerCase('pl-PL').trim();
+ if(q&&!`${idea.title||''} ${idea.desc||''} ${idea.cat||''}`.toLocaleLowerCase('pl-PL').includes(q))return false;
+ if(ideaListFilters.status!=='all'&&projectLifecycleStatus(idea)!==ideaListFilters.status)return false;
+ if(ideaListFilters.archive==='archived'&&!projectIsArchived(idea))return false;
+ if(ideaListFilters.archive==='active'&&projectIsArchived(idea))return false;
+ if(ideaListFilters.type==='variants'&&!ideaIsVariant(idea))return false;
+ if(ideaListFilters.type==='ideas'&&ideaIsVariant(idea))return false;
+ if((ideaListFilters.followed&&!followedIdeas.has(idea.id))||(ideaListFilters.openNeeds&&missingRoleCount(idea)===0))return false;
+ if(selectedIdeaNeededSkills.size&&![...selectedIdeaNeededSkills].some(skill=>ideaHasCompetency(idea,skill,'needed')))return false;
+ if(selectedIdeaPresentSkills.size&&![...selectedIdeaPresentSkills].some(skill=>ideaHasCompetency(idea,skill,'present')))return false;
+ return true;
+}
+function renderIdeaDrafts(list=document.getElementById('ideas-list')){if(!list)return;const q=searchQ.toLocaleLowerCase('pl-PL').trim(),rows=privateIdeaDrafts().filter(draftMatchesCatalogFilters),legacyRows=ideaDrafts.filter(row=>{const f=row.draft?.fields||{};return draftMatchesCatalogFilters({id:row.id,title:f.title,desc:f.desc,cat:f.cat,skillsNeeded:f.skillsNeeded||[],roleRequirements:f.roleRequirements||[],isDraft:true});});const count=document.getElementById('idea-results-count');if(count)count.textContent=`${rows.length+legacyRows.length} ${plural(rows.length+legacyRows.length,['szkic','szkice','szkiców'])}`;if(!rows.length&&!legacyRows.length){list.innerHTML='<div class="empty"><div style="font-size:32px">✎</div><div class="empty-t">Brak szkiców pasujących do filtrów</div><div class="hint">Nowy pomysł otworzy pełną prywatną stronę projektu.</div></div>';return;}const modern=rows.map(idea=>`<article class="draft-card"><div class="draft-card-head"><div><h3>${escHtml(idea.title||'Pomysł bez tytułu')}</h3><p>${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</p><div class="draft-meta"><span>Prywatny szkic · zapis automatyczny</span><span>· ${(idea.pendingInvites||[]).length} przygotowanych zaproszeń</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdea(${idea.id})">Kontynuuj</button><button class="danger" onclick="requestDeletePrivateIdeaDraft(${idea.id})">Usuń</button></div></article>`).join('');const legacy=legacyRows.map(row=>{const f=row.draft?.fields||{};return `<article class="draft-card"><div class="draft-card-head"><div><h3>${escHtml(f.title||'Starszy szkic')}</h3><p>${escHtml(f.desc||'')}</p><div class="draft-meta"><span>Starszy format — zostanie przeniesiony po otwarciu</span></div></div></div><div class="draft-actions"><button class="primary" onclick="openIdeaDraft('${escAttr(row.id)}')">Przenieś i otwórz</button><button class="danger" onclick="requestDeleteIdeaDraft('${escAttr(row.id)}')">Usuń</button></div></article>`}).join('');list.innerHTML=`<div class="draft-list">${modern}${legacy}</div>`;}
 function beginNewIdea(){const idea=createBlankPrivateIdeaDraft();ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);}
 function openIdeaDraft(id){const row=ideaDrafts.find(item=>item.id===id);if(!row)return;const d=normalizeWizardDraft(row.draft),f=d.fields||{},idea=createBlankPrivateIdeaDraft();idea.title=String(f.title||'');idea.desc=String(f.desc||'');idea.fields.cel.text=String(f.cel||'');idea.fields.skutki.text=String(f.skutki||'');idea.skillsNeeded=(d.skills||[]).map(r=>({skill:canonicalProjectCapabilityName(r.skill),why:String(r.why||''),minLvl:1,filled:false,date:TODAY})).filter(r=>r.skill);idea.roleRequirements=idea.skillsNeeded.map(r=>({role:r.skill,task:r.why,min:1,max:'',exclusive:false,skills:[{name:r.skill,lvl:1}],filledBy:[],status:'open'}));idea._preparedInviteNames=d.invited||[];idea._inviteCommonMessage=d.inviteCommonMessage||DEFAULT_INVITE_MESSAGE;idea._invitePersonalizations=d.invitePersonalizations||{};ideaDrafts=ideaDrafts.filter(item=>item.id!==id);ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);}
 function requestDeletePrivateIdeaDraft(id){const idea=ideas.find(i=>i.id===id&&isPrivateIdeaDraft(i));if(!idea)return;appModal(`<h3>Usunąć szkic?</h3><p>Szkic „${escHtml(idea.title||'Pomysł bez tytułu')}” zostanie usunięty bez możliwości cofnięcia.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn" style="color:var(--red)" onclick="deletePrivateIdeaDraft(${id})">Usuń bezpowrotnie</button></div>`);}
@@ -20860,6 +20867,15 @@ input:is([type="search"],[placeholder*="Szukaj"],[placeholder*="szukaj"],[placeh
 @container(max-width:1050px){#s-platform .dictionary-row{grid-template-columns:minmax(160px,1fr) minmax(170px,1.15fr) 100px 105px minmax(165px,1fr);gap:15px;padding:20px 16px}#s-platform .dictionary-card-metrics,.dictionary-card-status{padding-left:14px}.dictionary-card-status{grid-column:auto;grid-row:auto;padding-bottom:0}}
 @container(max-width:870px){#s-platform .dictionary-row{grid-template-columns:1fr 1.2fr;gap:18px}.dictionary-card-status{grid-column:2;grid-row:2/4}#s-platform .dictionary-card-metrics{border:0;padding-left:0}.dictionary-card-status{border:0;padding-left:0}.dictionary-card-usage{grid-column:1}}
 @container(max-width:440px){#s-platform .dictionary-row{grid-template-columns:1fr}.dictionary-card-status,.dictionary-card-usage{grid-column:auto;grid-row:auto}#s-platform .dictionary-definition{-webkit-line-clamp:4}}
+</style>
+<style id="ideas-dictionary-style">
+#s-ideas .ic{grid-template-columns:100px minmax(0,1fr)!important}
+#s-ideas .idea-card-thumb img{width:100%!important;height:100%!important;object-fit:cover}
+
+#s-ideas{background:radial-gradient(ellipse at 85% 0,#f0e9ff80,transparent 40%),#f8f7fd}#s-ideas .ideas-catalog-main{padding:30px 28px 60px;container-type:inline-size}.ideas-catalog-heading{position:relative;padding-right:280px;min-height:135px;margin-bottom:22px}.ideas-catalog-heading .eyebrow{color:#7338e8;font:750 11px/1.4 'DM Sans',sans-serif;letter-spacing:.09em;text-transform:uppercase}.ideas-catalog-heading h1{font:700 50px/1.04 Georgia,'Times New Roman',serif;letter-spacing:-.035em;color:#111024;margin:8px 0 12px}.ideas-catalog-heading p{font-size:14px;line-height:1.55;color:#6b6f82;margin:0}.ideas-hero-art{position:absolute;right:0;top:0;width:250px;height:140px}.ideas-hero-art svg{width:100%;height:100%}#s-ideas .ideas-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-bottom:18px}#s-ideas .search-wrap{min-width:0;flex:1;border:1px solid #eae5f4;border-radius:11px;background:#fff}#s-ideas .search-wrap input{height:43px;font-size:12px;border:0!important;background:transparent!important;box-shadow:none!important;padding-left:38px}#s-ideas .ideas-add-button{height:43px;min-height:43px;border:0;border-radius:10px;background:linear-gradient(#782ff4,#452397);color:#fff;padding:0 23px;font-size:12px;box-shadow:0 3px 8px #6633bb16}#s-ideas .search-hint{display:none}#s-ideas .ideas-scope-tabs{display:flex;align-items:center;gap:14px;margin-bottom:12px}#s-ideas .ideas-scope-tabs .tab{display:flex;align-items:center;gap:8px;background:transparent;border:0;border-radius:0;padding:10px 8px;color:var(--txm);font-size:13px;font-weight:650}#s-ideas .ideas-scope-tabs .tab.on{color:var(--p700);border-bottom:2px solid var(--p600)}#s-ideas .ideas-scope-tabs svg{width:19px;height:19px;flex-shrink:0}#s-ideas .ideas-scope-tabs .tab:hover{background:var(--p100);border-radius:8px}#s-ideas .ideas-results-toolbar{margin:0 0 15px}#s-ideas #idea-results-count{font-size:13px;color:#66647c}#s-ideas .idea-filter-select{height:36px;min-height:36px;border-radius:11px;border-color:#ebe6f4;background:#fff;font-size:11px}#s-ideas .ideas-list{gap:10px}#s-ideas .ic{padding:20px!important;border:1px solid #eeeaf6;border-radius:15px!important;background:#fff;box-shadow:none}#s-ideas .idea-card-thumb{width:100px;height:100px;border-radius:12px}#s-ideas .ic-title{font-size:16px!important;line-height:1.4!important}#s-ideas .ic-desc{font-size:13px!important;line-height:1.6!important;margin:7px 0 12px;min-height:0}#s-ideas .ic-stats{font-size:11px;color:#78708e}#s-ideas .ic-stat{font-size:11px}#s-ideas .ic:hover{background:#fcfaff;border-color:var(--p300);box-shadow:0 5px 18px #4a327d0f}#s-ideas .badge{font-size:10px}#s-ideas .draft-card{background:#fff;border:1px solid #eeeaf6;border-radius:15px;padding:20px}#s-ideas .draft-card h3{font-size:16px}#s-ideas .draft-card p{font-size:13px;line-height:1.6}
+@container(max-width:850px){.ideas-catalog-heading{padding-right:200px}.ideas-hero-art{width:185px}.ideas-catalog-heading h1{font-size:42px}#s-ideas .ideas-scope-tabs{gap:6px;flex-wrap:wrap}#s-ideas .ideas-scope-tabs .tab{font-size:12px}}
+@container(max-width:580px){.ideas-catalog-heading{padding-right:0}.ideas-hero-art{display:none}#s-ideas .idea-card-thumb{width:75px;height:75px}}
+@media(max-width:1000px){#s-ideas .ideas-catalog-layout.draft-mode{grid-template-columns:1fr}}
 </style>
 <script id="app-ready-script">
 (()=>{

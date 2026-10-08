@@ -317,7 +317,7 @@ test('needed and present competency filters are searchable and filter project ca
 });
 
 test('personalized ideas use the Dla mnie label', () => {
-  assert.match(html, /id="tab-for-me"[^>]*>Dla mnie/);
+  assert.match(html, /id="tab-for-me"[^>]*><svg[\s\S]*?<\/svg>Dla mnie/);
   assert.doesNotMatch(html, /Dopasowane/);
 });
 
