@@ -9356,14 +9356,14 @@ function projectOverviewLifecycle(idea,id){
   const status=projectLifecycleStatus(idea),order=['in_progress','completed','evaluation','evaluation_completed'],current=Math.max(0,order.indexOf(status)),labels=['W toku','Projekt zakończony','W ocenie','Ocena zakończona'];
   const vote=(idea.votes||[]).find(v=>v.open&&v.kind==='project-lifecycle'),canAct=isActiveProjectMember(idea)&&!isPrivateIdeaDraft(idea)&&!projectIsArchived(idea);
   const voteTarget=vote?order.indexOf(vote.targetStatus):-1;
-  const step=index=>`<div class="idea-lifecycle-step ${index<current?'done':index===current?'current':''} ${index===voteTarget?'vote-target':''}"><span>${index<current?'✓':index+1}</span><b>${labels[index]}</b><small>${index<current?'Zakończony':index===current?'Obecny etap':index===voteTarget?'Trwa głosowanie':'Następny etap'}</small></div>`;
+  const step=index=>`<div class="idea-lifecycle-step ${index<current?'done':index===current?'current':''} ${index===voteTarget?'vote-target':''}"><span>${index+1}</span><b>${labels[index]}</b><small>${index<current?'Zakończony':index===current?'Obecny etap':index===voteTarget?'Trwa głosowanie':'Następny etap'}</small></div>`;
   const connector=index=>{
-    const forward=index===current,target=order[index+1],back=index===current-1;
-    const carriesVote=vote&&(voteTarget>current?index===current:voteTarget<current?index===current-1:false);
-    if(carriesVote)return `<button type="button" class="idea-lifecycle-arrow pending icon-only ${voteTarget>current?'forward':'back'}" aria-label="Otwórz trwające głosowanie o zmianę etapu" onclick="openVote(${id},'${escAttr(vote.id)}')"><span>${voteTarget>current?'→':'←'}</span></button>`;
-    if(!vote&&canAct&&forward)return `<button type="button" class="idea-lifecycle-arrow forward icon-only" aria-label="Rozpocznij głosowanie o przejście do etapu ${escAttr(labels[index+1])}" title="Rozpocznij głosowanie o przejście do etapu ${escAttr(labels[index+1])}" onclick="confirmProjectLifecycleVote(${id},'${target}')"><span>→</span></button>`;
-    if(!vote&&canAct&&back)return `<button type="button" class="idea-lifecycle-arrow back icon-only" aria-label="Rozpocznij głosowanie o powrót do etapu ${escAttr(labels[index])}" onclick="confirmProjectLifecycleVote(${id},'${order[index]}')"><span>←</span></button>`;
-    return '<span class="idea-lifecycle-line" aria-hidden="true"></span>';
+    const arrow=(direction)=>{const forward=direction==='forward',targetIndex=forward?index+1:index,available=forward?index===current:index===current-1,symbol=forward?'→':'←',label=`Rozpocznij głosowanie o ${forward?'przejście do':'powrót do'} etapu ${labels[targetIndex]}`;
+      if(vote&&available&&voteTarget===targetIndex)return `<button type="button" class="idea-lifecycle-arrow pending icon-only" aria-label="Otwórz trwające głosowanie o zmianę etapu" title="Otwórz trwające głosowanie" onclick="openVote(${id},'${escAttr(vote.id)}')"><span>${symbol}</span></button>`;
+      if(!vote&&canAct&&available)return `<button type="button" class="idea-lifecycle-arrow ${direction} icon-only" aria-label="${escAttr(label)}" title="${escAttr(label)}" onclick="confirmProjectLifecycleVote(${id},'${order[targetIndex]}')"><span>${symbol}</span></button>`;
+      return `<span class="idea-lifecycle-arrow inactive icon-only" aria-hidden="true"><span>${symbol}</span></span>`;
+    };
+    return `<div class="idea-lifecycle-connectors">${arrow('forward')}${arrow('back')}</div>`;
   };
   return `<section class="idea-lifecycle-strip" aria-label="Etapy projektu"><div class="idea-lifecycle-track">${order.map((_,index)=>step(index)+(index<order.length-1?connector(index):'')).join('')}</div></section>`;
 }
@@ -21011,6 +21011,16 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 #idea-hero-actions .draft-edit-gear{display:grid;place-items:center;width:40px;padding:9px}
 .draft-edit-gear svg{width:21px;height:21px}.draft-edit-gear.on{box-shadow:0 0 0 3px var(--p200)}
 .draft-preview-mode .idea-photo-change,.draft-preview-mode .st-kebab-wrap,.draft-preview-mode .draft-phase-add-tile{display:none!important}
+</style>
+<style id="lifecycle-bidirectional-arrows">
+.idea-lifecycle-connectors{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;align-self:stretch;justify-self:center;width:44px}
+.idea-lifecycle-connectors .idea-lifecycle-arrow.icon-only{display:grid;place-items:center;width:36px;min-width:36px;height:30px;padding:0}
+.idea-lifecycle-connectors .idea-lifecycle-arrow>span{font-size:25px;line-height:1;text-align:center}
+.idea-lifecycle-connectors .idea-lifecycle-arrow.inactive{color:var(--txf);opacity:.55;cursor:default;background:transparent}
+.idea-lifecycle-step.done>span{background:var(--p700);border-color:var(--p700);color:#fff}
+.idea-lifecycle-step.done>b,.idea-lifecycle-step.done>small{color:var(--p700)}
+.idea-lifecycle-step.current>span{background:var(--surf2);border-color:var(--bdr);color:var(--txt);box-shadow:none}
+.idea-lifecycle-step.current>b{color:var(--txt)}.idea-lifecycle-step.current>small{color:var(--txs)}
 </style>
 <script id="app-ready-script">
 (()=>{
