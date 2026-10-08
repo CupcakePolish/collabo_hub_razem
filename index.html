@@ -5484,6 +5484,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   #s-profile-me :is(.mp-feed-item,.mp-timeline-item) { grid-template-columns:44px minmax(0,1fr); }
 }
 </style>
+
+<style>
+.competency-open .dictionary-sidebar,.competency-open .dictionary-heading,.competency-open .dictionary-toolbar,.competency-open .dictionary-mobile-filter{display:none!important}.competency-open .dictionary-layout{display:block}.competency-open .dictionary-main{max-width:none;width:100%}.competency-open{background:#f8f7fd}.competency-breadcrumb{display:flex;gap:16px;align-items:center;margin:0 0 30px;color:var(--txm);font-size:13px}.competency-breadcrumb button{border:0;background:none;color:inherit;cursor:pointer;padding:0}.competency-columns{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(340px,1fr);gap:24px}.competency-hero{display:flex;gap:22px;margin:20px 0 30px}.competency-hero>i{width:90px;height:90px;flex-shrink:0;border-radius:22px;background:#eee5ff;display:grid;place-items:center;color:var(--p700)}.competency-hero>i svg{width:48px;height:48px}.competency-hero h1{font-size:36px;line-height:1.2;margin:0 0 12px}.competency-hero h1 span{display:inline-block;vertical-align:middle;font-size:13px;border-radius:24px;background:#eee5ff;color:var(--p700);padding:7px 13px}.competency-hero p{font-size:16px;line-height:1.65;color:var(--txm);margin:0}.competency-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.competency-stat,.competency-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;padding:18px}.competency-stat>div{display:flex;align-items:center;gap:10px;color:var(--p700)}.competency-stat b{font-size:21px;white-space:nowrap}.competency-stat p{font-size:13px;line-height:1.5;color:var(--txm);margin:12px 0 0}.competency-columns i{display:inline-grid;place-items:center;flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#f5efff;color:var(--p700);font-style:normal}.competency-columns i svg{width:25px;height:25px}.competency-stat .green,.competency-stat .green i{color:#12a66a}.competency-panel{margin-bottom:18px}.competency-panel h2{display:flex;align-items:center;gap:12px;font-size:18px;margin:0;font-weight:700}.competency-panel>p{color:var(--txm);font-size:13px;line-height:1.5;margin:0 0 16px 50px}.competency-usage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.competency-usage{padding:12px;border:1px solid var(--bdr);background:var(--surf);border-radius:12px;text-align:left;color:var(--txt);cursor:pointer}.competency-usage>span{display:flex;align-items:center;gap:8px;font-size:12px}.competency-usage>span>span{margin-left:auto;color:var(--txm)}.competency-usage strong{display:block;font-size:24px;margin:10px 0 3px}.competency-usage small{color:var(--txm);line-height:1.3;display:block}.competency-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.competency-tags button{background:#f4edff;color:var(--p700);border:0;border-radius:24px;padding:8px 16px;cursor:pointer;font-weight:600}.competency-ranking-scroll{max-height:610px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d7d0e9 transparent}.competency-rank-row{display:flex;align-items:center;gap:12px;width:100%;padding:16px 0;border:0;border-top:1px solid var(--bdr);background:none;text-align:left;cursor:pointer;color:var(--txt)}.competency-place{display:grid;place-items:center;width:28px;height:30px;border-radius:8px;background:#f8f7fc;font-weight:700}.place-0{background:#fff2d6;color:#d39916}.place-1{background:#eeeef6;color:#788098}.place-2{background:#fbe7dd;color:#bf764e}.competency-avatar{width:46px;height:46px;flex-shrink:0;border-radius:50%;overflow:hidden;background:#eee5ff;display:grid;place-items:center}.competency-avatar img{width:100%;height:100%;object-fit:cover}.competency-person{flex:1;min-width:0}.competency-person b{font-size:13px;display:block}.competency-person small{display:block;color:var(--txm);font-size:11px;margin:4px 0 7px}.competency-progress{display:block;background:#eeebf5;height:7px;border-radius:8px;overflow:hidden}.competency-progress>span{display:block;height:100%;background:#b376ff;border-radius:8px}.competency-rank-row>strong{color:var(--p700);font-size:14px;white-space:nowrap}.competency-ranking-note{display:block;color:var(--txm);font-size:11px;line-height:1.5;margin-top:12px}.competency-empty{padding:18px 0;color:var(--txm);font-size:13px}.competency-activity{padding:12px 0;border-top:1px solid var(--bdr);font-size:13px}.competency-usage:hover,.competency-rank-row:hover{background:#faf7ff}.competency-breadcrumb button:hover{text-decoration:underline}@media(max-width:1100px){.competency-columns{grid-template-columns:1fr}.competency-hero h1{font-size:30px}}@media(max-width:600px){.competency-stats,.competency-usage-grid{grid-template-columns:repeat(2,1fr)}.competency-hero{gap:12px}.competency-hero>i{width:60px;height:60px}.competency-hero h1{font-size:25px}.competency-hero p{font-size:14px}.competency-panel{padding:14px}}
+</style>
 </head>
 <body>
 
@@ -5872,12 +5876,12 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 
 <!-- MY PROFILE -->
 <style>
-#s-profile-me{background:#f8f7fb;min-height:calc(100vh - 64px);color:var(--ink)}
+#s-profile-me{background:#f8f7fb;min-height:calc(100vh - 64px);color:var(--txt)}
 #s-profile-me .mp-shell{max-width:1580px;margin:0 auto;padding:20px 28px 64px;display:grid;grid-template-columns:248px minmax(0,1fr);gap:22px;align-items:start}
 #s-profile-me .mp-sidebar{position:sticky;top:78px;display:grid;gap:16px}
 #s-profile-me .mp-side-card{background:rgba(255,255,255,.86);border:1px solid var(--bdr);border-radius:18px;padding:14px;box-shadow:0 10px 28px rgba(35,25,70,.035)}
 #s-profile-me .mp-side-actions{display:grid;gap:5px}
-#s-profile-me .mp-side-action{width:100%;min-height:42px;border:0;background:transparent;border-radius:11px;padding:0 12px;display:flex;align-items:center;gap:11px;color:var(--ink);font:inherit;font-size:14px;font-weight:650;text-align:left;cursor:pointer}
+#s-profile-me .mp-side-action{width:100%;min-height:42px;border:0;background:transparent;border-radius:11px;padding:0 12px;display:flex;align-items:center;gap:11px;color:var(--txt);font:inherit;font-size:14px;font-weight:650;text-align:left;cursor:pointer}
 #s-profile-me .mp-side-action:hover{background:var(--p50);color:var(--p800)}
 #s-profile-me .mp-side-action.primary{background:var(--p700);color:#fff;justify-content:center;margin-bottom:5px}
 #s-profile-me .mp-side-action.primary:hover{background:var(--p800)}
@@ -5922,12 +5926,12 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 #s-profile-me .mp-feed-tabs{display:flex;gap:7px;flex-wrap:wrap}
 #s-profile-me .mp-feed-tab{border:1px solid var(--bdr);background:#fff;border-radius:999px;padding:9px 15px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted)}
 #s-profile-me .mp-feed-tab.active{background:var(--p700);border-color:var(--p700);color:#fff}
-#s-profile-me .mp-sort{border:1px solid var(--bdr);background:#fff;border-radius:12px;padding:9px 12px;font:inherit;font-size:13px;font-weight:700;color:var(--ink)}
+#s-profile-me .mp-sort{border:1px solid var(--bdr);background:#fff;border-radius:12px;padding:9px 12px;font:inherit;font-size:13px;font-weight:700;color:var(--txt)}
 #s-profile-me .mp-feed{margin-top:13px;position:relative}
 #s-profile-me .mp-feed:before{content:'';position:absolute;left:77px;top:12px;bottom:12px;width:2px;background:#e5e0f0}
 #s-profile-me .mp-feed-row{position:relative;display:grid;grid-template-columns:78px minmax(0,1fr);gap:16px;margin-bottom:10px}
 #s-profile-me .mp-feed-date{text-align:right;padding-top:15px;color:var(--muted);font-size:12px;line-height:1.45}
-#s-profile-me .mp-feed-date strong{display:block;color:var(--ink);font-size:12px}
+#s-profile-me .mp-feed-date strong{display:block;color:var(--txt);font-size:12px}
 #s-profile-me .mp-feed-dot{position:absolute;left:72px;top:21px;width:11px;height:11px;border-radius:50%;background:var(--p500);border:3px solid #f8f7fb;z-index:2}
 #s-profile-me .mp-entry{background:rgba(255,255,255,.92);border:1px solid var(--bdr);border-radius:15px;padding:15px 17px;display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:14px;align-items:start;transition:.16s ease}
 #s-profile-me .mp-entry:hover{border-color:var(--p300);box-shadow:0 10px 28px rgba(52,34,96,.06);transform:translateY(-1px)}
@@ -18478,6 +18482,7 @@ let dictionaryBaseEntries=[
 const DICTIONARY_CATEGORY={competency:['Kompetencja','⌂'],city:['Miasto','⌖'],region:['Region','▱'],resource:['Zasób','◇']};
 function dictionaryDefinition(cap){
   const known={
+    'Analiza danych':'Systematyczne przetwarzanie, interpretacja i wizualizacja danych w celu wyciągania wniosków i wspierania podejmowania decyzji. Obejmuje pracę z danymi liczbowymi i jakościowymi oraz stosowanie odpowiednich narzędzi i metod analitycznych.',
     'Analiza prawna':'Analiza przepisów, projektów ustaw i innych dokumentów prawnych pod kątem treści, skutków i zgodności.',
     'Copywriting':'Tworzenie treści pisanych, które angażują odbiorców i wspierają komunikację projektów.',
     'React':'Biblioteka JavaScript do budowania interfejsów użytkownika.',
@@ -18549,6 +18554,7 @@ function dictionaryRow(item){
 }
 function renderPlatform(){
   const body=document.getElementById('platform-body');if(!body)return;
+  document.getElementById('s-platform').classList.remove('competency-open');
   const all=dictionaryEntries(),filtered=dictionaryFilteredEntries();
   renderDictionarySidebar(all);
   const pages=Math.max(1,Math.ceil(filtered.length/dictionaryPageSize));dictionaryPage=Math.min(dictionaryPage,pages);
@@ -18572,9 +18578,46 @@ function toggleDictionarySort(event){event.stopPropagation();document.getElement
 function setDictionarySort(value){dictionarySort=value;dictionaryPage=1;renderPlatform()}
 function openDictionaryEntry(id){
   const item=dictionaryEntries().find(x=>x.id===id);if(!item)return;
-  const competency=item.category==='competency'&&item.source;
+  if(item.category==='competency'){renderDictionaryCompetency(item);return;}
+  const competency=false;
   appModal(`<div class="dictionary-detail-head">${dictionaryIcon(item.category)}<div><span class="dictionary-category ${item.category}">${dictionaryLabel(item.category)}</span><h3>${escHtml(item.name)}</h3></div></div><p class="dictionary-detail-definition">${escHtml(item.definition)}</p><div class="dictionary-detail-grid"><div><small>Użycie</small><b>${item.people} ${plural(item.people,['osoba','osoby','osób'])} · ${escHtml(item.teams||'')}${item.projects?' · '+escHtml(item.projects):''}</b></div><div><small>Status</small><b>${item.status==='voting'?'W głosowaniu':item.status==='archived'?'Archiwalne':'Aktywne'}</b></div><div><small>Dodano</small><b>${escHtml(item.added)} · ${escHtml(item.by)}</b></div></div>${competency?`<div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal();openEditLevels('${item.source}','${item.sourceId}')">Zmień poziomy</button><button class="vbtn" onclick="closeAppModal();openProposeFix('${item.source}','${item.sourceId}')">Zaproponuj zmianę nazwy</button></div>`:''}`,'dictionary-detail-modal');
 }
+
+function competencyGlyph(kind){
+ const paths={chart:'<path d="M4 20v-6h4v6M10 20V9h4v11M16 20V4h4v16"/>',cup:'<path d="M8 3h8v6a4 4 0 0 1-8 0V3ZM8 5H4v3a4 4 0 0 0 4 4M16 5h4v3a4 4 0 0 1-4 4M12 13v7M8 21h8"/>',people:'<circle cx="9" cy="7" r="3"/><path d="M3 21v-4a6 6 0 0 1 12 0v4M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v2"/>',folder:'<path d="M3 7V4h6l3 3h9v13H3V7ZM3 10h18"/>',trend:'<path d="m3 17 6-6 4 4 8-10M15 5h6v6"/>',link:'<path d="m10 14 4-4M8 16l-2 2a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0M16 8l2-2a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0"/>',check:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>'};
+ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[kind]||paths.chart}</svg>`;
+}
+function dictionaryCompetencyData(item){
+ const matches=value=>parseLeveledValue(String(value||'')).name.toLocaleLowerCase('pl-PL')===item.name.toLocaleLowerCase('pl-PL');
+ const profiles=new Map(members.map(m=>[m.name,m]));if(myProfile?.name)profiles.set(myProfile.name,{...profiles.get(myProfile.name),...myProfile});
+ const portfolio=[],ranking=[];
+ for(const person of profiles.values()){
+  const rows=[...(person.profileFeed||[]),...(person.portfolio||[])].filter(row=>[...(row.tags||[]),...(row.skills||[]),row.type].some(matches));
+  portfolio.push(...(person.portfolio||[]).filter(row=>[...(row.skills||[]),row.type].some(matches)));
+  const points=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.pointsAwarded||row.points)||0),0);
+  if((person.skills||[]).some(matches)||rows.length)ranking.push({person,points});
+ }
+ const skillNames=rows=>(Array.isArray(rows)?rows:[]).map(value=>typeof value==='string'?value:value?.skill||value?.name);
+ const tasks=ideas.flatMap(idea=>(idea.tasks||[]).filter(task=>skillNames(task.skills||task.competencies).some(matches)));
+ const projects=ideas.filter(idea=>[...skillNames(idea.needs),...skillNames(idea.skills),...(idea.roleRequirements||[]).flatMap(role=>skillNames(role.skills)),...(idea.memberContributions||[]).filter(c=>c.active!==false).map(c=>c.skill),...(idea.tasks||[]).flatMap(task=>skillNames(task.skills||task.competencies))].some(matches));
+ ranking.sort((a,b)=>b.points-a.points||a.person.name.localeCompare(b.person.name,'pl'));
+ const related=dictionaryEntries().filter(x=>x.category==='competency'&&x.id!==item.id&&ranking.some(({person})=>(person.skills||[]).some(v=>parseLeveledValue(v).name===x.name)));
+ return {ranking,portfolio,projects,tasks,related,total:ranking.reduce((sum,r)=>sum+r.points,0)};
+}
+function showDictionaryCompetencyUsage(id,kind){
+ const item=dictionaryEntries().find(x=>x.id===id);if(!item)return;
+ const data=dictionaryCompetencyData(item);
+ const rows=kind==='people'?data.ranking.map(r=>r.person.name):kind==='portfolio'?data.portfolio.map(r=>r.title||'Praca w portfolio'):kind==='tasks'?data.tasks.map(r=>r.tytul||r.title||'Zadanie'):data.projects.map(r=>r.title||r.name||'Projekt');
+ appModal(`<h3>${kind==='people'?'Profile osób':kind==='portfolio'?'Portfolio':kind==='tasks'?'Zadania':'Projekty'} · ${escHtml(item.name)}</h3>${rows.length?rows.map(row=>`<p>${escHtml(row)}</p>`).join(''):'<p class="hint">Brak zarejestrowanych wpisów.</p>'}`);
+}
+function renderDictionaryCompetency(item){
+ const data=dictionaryCompetencyData(item),{ranking,projects,tasks,portfolio,related,total}=data;
+ document.getElementById('s-platform').classList.add('competency-open');
+ const stat=(icon,value,label,green=false)=>`<div class="competency-stat"><div${green?' class="green"':''}><i>${competencyGlyph(icon)}</i><b>${value}</b></div><p>${label}</p></div>`;
+ const usage=(icon,label,count,note,kind)=>`<button class="competency-usage" onclick="showDictionaryCompetencyUsage('${item.id}','${kind}')"><span><i>${competencyGlyph(icon)}</i><b>${label}</b><span>→</span></span><strong>${count}</strong><small>${note}</small></button>`;
+ document.getElementById('platform-body').innerHTML=`<nav class="competency-breadcrumb"><button onclick="renderPlatform()">Słownik</button><span>›</span><button onclick="dictionaryCategory='competency';renderPlatform()">Kompetencje</button><span>›</span><b>${escHtml(item.name)}</b></nav><div class="competency-columns"><div><header class="competency-hero"><i>${competencyGlyph('chart')}</i><div><h1>${escHtml(item.name)} <span>Kompetencja</span></h1><p>${escHtml(item.definition)}</p></div></header><div class="competency-stats">${stat('cup',total+' pkt','Łączna liczba punktów<br>na platformie')}${stat('people',ranking.length+' osób','Liczba osób z tą<br>kompetencją')}${stat('folder',projects.length,'Powiązane projekty')}${stat('trend',item.status==='active'?'Aktywna':item.status==='voting'?'W głosowaniu':'Archiwalna','Status kompetencji',true)}</div><section class="competency-panel"><h2><i>${competencyGlyph('people')}</i>Gdzie używana?</h2><p>Ta kompetencja pojawia się w różnych miejscach na platformie.</p><div class="competency-usage-grid">${usage('people','Profile osób',ranking.length,'użytkowników deklaruje tę kompetencję','people')}${usage('folder','Portfolio',portfolio.length,'prac i osiągnięć','portfolio')}${usage('folder','Projekty',projects.length,'projektów, w których jest wykorzystywana','projects')}${usage('check','Zadania',tasks.length,'zadań, w których jest wymagana','tasks')}</div></section><section class="competency-panel"><h2><i>${competencyGlyph('link')}</i>Powiązane pojęcia</h2><p>Inne kompetencje deklarowane przez te same osoby.</p><div class="competency-tags">${related.length?related.map(x=>`<button onclick="openDictionaryEntry('${x.id}')">${escHtml(x.name)}</button>`).join(''):'<small>Brak powiązanych pojęć.</small>'}</div></section></div><aside><section class="competency-panel competency-ranking"><h2><i>${competencyGlyph('cup')}</i>Ranking osób według kompetencji</h2><p>Osoby z największą liczbą punktów w tej kompetencji na całej platformie.</p><div class="competency-ranking-scroll">${ranking.map(({person,points},index)=>`<button class="competency-rank-row" onclick="openMember(${Number(person.id||0)})"><span class="competency-place place-${index}">${index+1}</span><span class="competency-avatar">${memberAvatarContent(person.name,person.ini)}</span><span class="competency-person"><b>${escHtml(person.name)}</b><small>${escHtml(person.roles?.[0]||'Członek')} · ${escHtml(person.city||'')}</small><span class="competency-progress"><span style="width:${total?Math.max(0,points/Math.max(1,ranking[0].points)*100):0}%"></span></span></span><strong>${points} pkt</strong></button>`).join('')||'<div class="competency-empty">Nikt jeszcze nie zadeklarował tej kompetencji.</div>'}</div><small class="competency-ranking-note">Punkty z zapisanych wpisów i portfolio. Deklaracja kompetencji nie przyznaje punktów.</small></section><section class="competency-panel"><h2><i>${competencyGlyph('clock')}</i>Ostatnia aktywność</h2><p>Projekty, w których użyto tej kompetencji.</p>${projects.length?projects.slice(-4).reverse().map(project=>`<div class="competency-activity">${escHtml(project.title||project.name||'Projekt')}</div>`).join(''):'<div class="competency-empty">Brak zarejestrowanej aktywności.</div>'}</section></aside></div>`;
+}
+
 function openDictionaryRowMenu(event,id){
   event.stopPropagation();document.querySelectorAll('.dictionary-floating-menu').forEach(x=>x.remove());
   const item=dictionaryEntries().find(x=>x.id===id);if(!item)return;
