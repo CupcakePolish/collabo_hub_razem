@@ -20979,6 +20979,12 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 @container(max-width:600px){#s-ideas .ideas-list>.ic{grid-template-columns:120px minmax(0,1fr)!important;gap:14px;padding:18px!important}#s-ideas .idea-card-thumb{width:120px!important;height:140px!important}#s-ideas .ic-top{flex-direction:column}}
 @container(max-width:380px){#s-ideas .ideas-list>.ic{grid-template-columns:1fr!important}#s-ideas .idea-card-thumb{width:100%!important;height:180px!important}}
 </style>
+<style id="ideas-toolbar-alignment">
+#s-ideas .ideas-search-row{width:100%;max-width:none;margin-left:0;margin-right:0}
+#s-ideas .ideas-scope-tabs{width:100%;max-width:none;margin-left:0;margin-right:0}
+#s-ideas .ideas-results-toolbar,#s-ideas .ideas-list{width:100%;max-width:none;margin-left:0;margin-right:0}
+#s-ideas .ideas-scope-tabs .tab:first-child{padding-left:0}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
