@@ -21123,6 +21123,19 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 .profile-portfolio-actions .portfolio-icon-action{display:grid;place-items:center;width:44px;min-width:44px;height:44px;padding:10px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);color:var(--p700);cursor:pointer}
 .portfolio-icon-action svg{width:23px;height:23px}.profile-portfolio-actions .portfolio-icon-action:hover{background:var(--p100);border-color:var(--p300)}.profile-portfolio-actions .portfolio-icon-publish{background:var(--p700);border-color:var(--p700);color:#fff}.profile-portfolio-actions .portfolio-icon-publish:hover{background:var(--p800)}
 </style>
+<style id="portfolio-list-layout-repair">
+:is(#s-profile,#s-profile-me) .social-profile-main{align-content:start!important;grid-auto-rows:max-content!important}
+:is(#s-profile,#s-profile-me) .social-profile-main>.social-profile-tabs{align-self:start;height:44px!important;min-height:44px!important;max-height:44px;flex:none;margin:0 0 14px!important}
+:is(#s-profile,#s-profile-me) .social-profile-tabs button{height:44px!important;align-self:stretch}
+:is(#s-profile,#s-profile-me) .social-profile-main>.profile-portfolio-content:not(.is-editing){margin:0;padding:10px 0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+:is(#s-profile,#s-profile-me) .profile-portfolio-list-head{margin:0 0 20px;align-items:center}
+:is(#s-profile,#s-profile-me) .profile-portfolio-list-head h2{font:750 23px/1.3 'DM Sans',sans-serif;margin:0 0 6px}
+:is(#s-profile,#s-profile-me) .profile-portfolio-add{display:inline-flex!important;align-items:center;justify-content:center;min-height:43px!important;height:43px;padding:0 23px!important;border:0!important;border-radius:10px!important;background:linear-gradient(#782ff4,#452397)!important;color:#fff!important;font:650 12px 'DM Sans',sans-serif!important;box-shadow:0 3px 8px #6633bb16!important;cursor:pointer;white-space:nowrap;transform:none!important}
+:is(#s-profile,#s-profile-me) .profile-portfolio-add:hover{background:linear-gradient(#6a27da,#3c1d86)!important;transform:none!important}
+:is(#s-profile,#s-profile-me) .profile-portfolio-add:focus-visible{outline:2px solid var(--p400);outline-offset:3px}
+:is(#s-profile,#s-profile-me) .profile-portfolio-list-actions button{background:var(--surf)!important;border:1px solid var(--bdr)!important;border-radius:8px!important;padding:8px 12px!important;font:600 12px 'DM Sans',sans-serif!important;color:var(--txm)!important}
+:is(#s-profile,#s-profile-me) .profile-portfolio-list-actions button:hover{background:var(--p100)!important;border-color:var(--p300)!important;color:var(--p700)!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
