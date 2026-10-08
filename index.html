@@ -20985,6 +20985,20 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 #s-ideas .ideas-results-toolbar,#s-ideas .ideas-list{width:100%;max-width:none;margin-left:0;margin-right:0}
 #s-ideas .ideas-scope-tabs .tab:first-child{padding-left:0}
 </style>
+<style id="idea-drafts-two-columns">
+#s-ideas .ideas-list>.draft-list{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;min-width:0}
+#s-ideas .draft-list>.draft-card{display:flex;flex-direction:column;min-width:0;margin:0}
+#s-ideas .draft-card-head{grid-template-columns:160px minmax(0,1fr);gap:18px}
+#s-ideas .draft-preview-photo{width:160px;height:180px}
+#s-ideas .draft-meta{flex-wrap:wrap}
+#s-ideas .draft-card h3{overflow-wrap:anywhere}
+#s-ideas .draft-card p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+#s-ideas .draft-list .draft-actions{margin-top:auto;padding-top:16px}
+#s-ideas .draft-card-head{padding-bottom:18px}
+@container(max-width:950px){#s-ideas .ideas-list>.draft-list{grid-template-columns:1fr}}
+@container(max-width:600px){#s-ideas .draft-card-head{grid-template-columns:120px minmax(0,1fr);gap:14px}#s-ideas .draft-preview-photo{width:120px;height:140px}}
+@container(max-width:380px){#s-ideas .draft-card-head{grid-template-columns:1fr}#s-ideas .draft-preview-photo{width:100%;height:180px}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
