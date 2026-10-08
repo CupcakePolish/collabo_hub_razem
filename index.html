@@ -18355,7 +18355,7 @@ function buildPersistentData(){
   return {
     ideas:ideas.map(idea=>draftEditSession&&idea.id===draftEditSession.id?draftEditSession.saved:idea),members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,demoAccounts,activeDemoAccountId,
     deletedBoardPostIds:[...deletedBoardPostIds],
-    platformSkills,platformRoles,platformDecisions,
+    myProfile,platformSkills,platformRoles,platformDecisions,
     notifications,wizardDraft,ideaDrafts,activeWizardDraftId,
     recentEmojis:RECENT_EMOJIS,customEmojis:CUSTOM_EMOJIS,
     followedIdeas:[...followedIdeas],followedComments:[...followedComments],
@@ -18473,6 +18473,8 @@ function loadPersistentData(){
     if(!validObject(envelope)||envelope.version!==COLLABOHUB_STATE_VERSION||!validObject(envelope.data))throw new Error('version');
     const storedDataJson=JSON.stringify(envelope.data,persistenceJsonReplacer);
     applyPersistentData(envelope.data);
+    // Restore the active profile before serialization synchronizes it back to its account.
+    if(activeDemoAccountId&&demoAccounts[activeDemoAccountId])loadDemoAccountState(activeDemoAccountId);
     __persistenceLastSavedAt=typeof envelope.savedAt==='string'?envelope.savedAt:'';
     const normalizedDataJson=persistentDataJson();
     // Jeżeli migracja odbudowała katalog, nie uznajemy starego pustego zapisu
@@ -21142,6 +21144,10 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 :is(#s-profile,#s-profile-me) .social-profile-main>.profile-portfolio-content:not(.is-editing){padding-top:4px!important}
 :is(#s-profile,#s-profile-me) .profile-portfolio-list-actions .portfolio-edit-gear{display:grid;place-items:center;width:34px;height:34px;min-width:34px;padding:7px!important;border-radius:9px!important}
 .portfolio-edit-gear svg{width:20px;height:20px}
+</style>
+<style id="portfolio-gear-hover-isolation">
+:is(#s-profile,#s-profile-me) .profile-portfolio-list-item:has(.portfolio-edit-gear:is(:hover,:focus-visible)){background:var(--surf)!important;border-color:#e7e3ee!important;transform:none!important;box-shadow:0 4px 14px rgba(43,31,72,.035)!important}
+html.theme-dark :is(#s-profile,#s-profile-me) .profile-portfolio-list-item:has(.portfolio-edit-gear:is(:hover,:focus-visible)){border-color:var(--bdr)!important}
 </style>
 <script id="app-ready-script">
 (()=>{

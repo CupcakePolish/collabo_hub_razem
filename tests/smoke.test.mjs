@@ -1000,3 +1000,26 @@ test('search results use one sidebar filter set with ranked results and helper r
   assert.match(html, /max-width:calc\(100vw - 132px\)/);
   assert.match(html, /grid-template-columns:repeat\(8,64px\)!important/);
 });
+
+
+test('startup restores the saved portfolio before syncing the active account', () => {
+  const source = html.match(/function loadPersistentData\(\)\{([\s\S]*?)\n\}/)[1];
+  const entry = {id:'portfolio-user',title:'Moja praca',skills:['Grafika'],skillDescriptions:{Grafika:'Projekt identyfikacji'},attachments:[{name:'efekt.png',skill:'Grafika',data:'data:image/png;base64,AA=='}]};
+  const run = new Function('source','entry', `
+    let activeDemoAccountId=null,demoAccounts={},myProfile={name:'Patrycja Kowalska',portfolio:[]};
+    let __persistenceLastSavedAt='',__persistenceLastDataJson='',__persistenceLastSize=0;
+    const COLLABOHUB_STORAGE_KEY='test',COLLABOHUB_STATE_VERSION=1;
+    const localStorage={getItem:()=>JSON.stringify({version:1,data:{activeDemoAccountId:'patrycja',demoAccounts:{patrycja:{profile:{name:'Patrycja Kowalska',portfolio:[entry]}}}}})};
+    const validObject=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
+    const persistenceJsonReplacer=(key,value)=>value;
+    const applyPersistentData=data=>{activeDemoAccountId=data.activeDemoAccountId;demoAccounts=data.demoAccounts;};
+    const loadDemoAccountState=id=>{myProfile=JSON.parse(JSON.stringify(demoAccounts[id].profile));};
+    const persistentDataJson=()=>{demoAccounts[activeDemoAccountId].profile=JSON.parse(JSON.stringify(myProfile));return JSON.stringify({demoAccounts});};
+    const persistenceError=message=>{throw new Error(message);};
+    const restored=eval('(function(){'+source+'})')();
+    return {restored,profile:myProfile,account:demoAccounts.patrycja.profile};
+  `)(source,entry);
+  assert.equal(run.restored,true);
+  assert.deepEqual(run.profile.portfolio,[entry]);
+  assert.deepEqual(run.account.portfolio,[entry]);
+});
