@@ -97,7 +97,7 @@ test('discover board has navigation, composer and publish interactions', () => {
 test('organization resource catalog has three starter items and routed detail pages', () => {
   assert.match(html, /id="nl-resources"[^>]*onclick="go\('resources'/);
   assert.match(html, /id="nl-resources"[\s\S]*?data-icon="resource-box"/);
-  assert.match(html, /class="nav-resource-icon" data-icon="resource-box" src="assets\/resource-open-box\.png"/);
+  assert.match(html, /<svg data-icon="resource-box"[^>]*stroke="currentColor"/);
   assert.equal(existsSync(new URL('../assets/resource-open-box.png', import.meta.url)), true);
   assert.match(html, /id="s-resources" class="screen resource-catalog-screen"/);
   assert.match(html, /id="s-resource" class="screen resource-detail-screen"/);
