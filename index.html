@@ -20962,6 +20962,23 @@ html.theme-dark #s-ideas .ic:has(.idea-quick-follow:is(:hover,:focus-visible)){b
 #s-ideas .ideas-add-button:focus-visible{outline:2px solid var(--p400);outline-offset:3px;box-shadow:0 3px 8px #6633bb16}
 #s-ideas .ideas-add-button:active{box-shadow:0 3px 8px #6633bb16}
 </style>
+<style id="ideas-two-column-cards">
+#s-ideas .ideas-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px!important;align-items:stretch}
+#s-ideas .ideas-list>.ic{grid-template-columns:160px minmax(0,1fr)!important;gap:18px;padding:22px!important;min-width:0}
+#s-ideas .idea-card-thumb{width:160px!important;height:180px!important;border-radius:13px}
+#s-ideas .idea-card-thumb img{width:100%!important;height:100%!important;object-fit:cover}
+#s-ideas .idea-card-content{display:flex;flex-direction:column;min-width:0}
+#s-ideas .ic-top{flex-direction:column;align-items:flex-start;gap:10px}
+#s-ideas .ic-title-wrap{width:100%;min-width:0}
+#s-ideas .ic-title{overflow-wrap:anywhere}
+#s-ideas .ic-badges{flex-wrap:wrap;max-width:100%}
+#s-ideas .ic-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+#s-ideas .ic-stats{margin-top:auto;padding-top:13px;gap:10px}
+#s-ideas .ideas-list>:is(.draft-card,.empty){grid-column:1/-1}
+@container(max-width:950px){#s-ideas .ideas-list{grid-template-columns:1fr}#s-ideas .ideas-list>.ic{grid-template-columns:160px minmax(0,1fr)!important}#s-ideas .ic-top{flex-direction:row;align-items:flex-start}#s-ideas .ic-title-wrap{flex:1}#s-ideas .ic-stats{margin-top:13px}}
+@container(max-width:600px){#s-ideas .ideas-list>.ic{grid-template-columns:120px minmax(0,1fr)!important;gap:14px;padding:18px!important}#s-ideas .idea-card-thumb{width:120px!important;height:140px!important}#s-ideas .ic-top{flex-direction:column}}
+@container(max-width:380px){#s-ideas .ideas-list>.ic{grid-template-columns:1fr!important}#s-ideas .idea-card-thumb{width:100%!important;height:180px!important}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
