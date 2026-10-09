@@ -1219,3 +1219,10 @@ test('invitation read receipts apply per viewer and only to visible message ids'
   const result=new Function('source',`let MY_NAME='Adresat',saved=0;const inv={by:'Autor',why:'Hej',messages:[{id:'next',person:'Autor',text:'Jeszcze jedno'}]},idea={},invitationCanMessage=()=>true,queuePersistence=()=>saved++;eval(source);markInvitationMessagesRead(idea,inv,['initial-Autor']);const partial=invitationConversationRows(inv).map(row=>row.readBy||[]);markInvitationMessagesRead(idea,inv);markInvitationMessagesRead(idea,inv);MY_NAME='Inna osoba';const other=invitationConversationRows(inv).filter(row=>!(row.readBy||[]).includes(MY_NAME)).length;return {partial,saved,other};`)(source);
   assert.deepEqual(result.partial,[['Adresat'],[]]);assert.equal(result.saved,2);assert.equal(result.other,2);
 });
+
+
+test('opening a team chat marks incoming messages read on every page',()=>{
+  const source=html.slice(html.indexOf('function finishChatConversation('),html.indexOf(' const writeRows=',html.indexOf('function finishChatConversation(')))+'}';
+  const result=new Function('source',`const MY_NAME='Adresat',rows=[{by:'Zespół',text:'Hej'},{by:'Adresat',text:'Moja'}];let saved=0;const document={visibilityState:'visible'},discoverChatMessages=()=>rows,persistChatMessages=()=>saved++;const list={querySelectorAll:()=>[]},win={querySelector:()=>list},host={querySelector:()=>win};eval(source);finishChatConversation(host,{type:'team'},{});finishChatConversation(host,{type:'team'},{});return {rows,saved};`)(source);
+  assert.deepEqual(result.rows[0].readBy,['Adresat']);assert.equal(result.rows[1].readBy,undefined);assert.equal(result.saved,1);
+});

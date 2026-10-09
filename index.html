@@ -20116,7 +20116,7 @@ function enhanceChatControls(host,c,ui){
 function finishChatConversation(host,c,ui){
  const win=host.querySelector('.dc-window'),list=win.querySelector('.dc-messages'),rows=discoverChatMessages(c),bubbles=[...list.querySelectorAll('.dc-message')];
  let changed=false;
- if((['team-vote','team-channel'].includes(c.type)||document.getElementById('s-discover').classList.contains('on'))&&document.visibilityState==='visible')rows.forEach(m=>{if(m.by!==MY_NAME&&!m.readBy?.includes(MY_NAME)){m.readBy=[...(m.readBy||[]),MY_NAME];changed=true;}});
+ if(document.visibilityState==='visible')rows.forEach(m=>{if(m.by!==MY_NAME&&!m.readBy?.includes(MY_NAME)){m.readBy=[...(m.readBy||[]),MY_NAME];changed=true;}});
  if(changed)try{persistChatMessages(c,rows);}catch{}
  const writeRows=next=>{try{persistChatMessages(c,next);rerenderChat(ui);return true;}catch{toast('Nie udało się zapisać zmiany.','warn');return false;}};
  const button=(label,svg,fn)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',label);b.title=label;b.innerHTML=svg;b.onclick=fn;return b;};
