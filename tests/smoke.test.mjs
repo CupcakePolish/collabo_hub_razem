@@ -153,7 +153,7 @@ test('organization resource catalog has three starter items and routed detail pa
 });
 
 test('communicator stays available across collaboration screens but not inside documents', () => {
-  assert.match(html, /supported=\['s-discover','s-search','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
+  assert.match(html, /supported=\['s-watch','s-discover','s-search','s-ideas','s-idea','s-idea-person','s-members','s-teams','s-team-profile','s-platform','s-profile-me','s-profile'\]/);
   assert.match(html, /collaborativeDocument=screen\?\.id==='s-idea'&&!!screen\.querySelector\('\.doc-workspace'\)/);
   assert.match(html, /document\.body\.append\(host\)/);
   assert.match(html, /if\(typeof renderDiscoverChats==='function'\)renderDiscoverChats\(\);[\s\S]*if\(!opts\.preserveScroll\)/);
@@ -1125,4 +1125,35 @@ test('support is distinct from co-inviting and competencies are the union of inv
     ({onlySupport,supporters:inv.supporters,coInviters:inv.coInviters,skills:inv.requestedSkills});
   `);
   assert.equal(result.onlySupport,false);assert.deepEqual(result.supporters,['Kasia']);assert.deepEqual(result.coInviters,['Patrycja','Kasia']);assert.deepEqual(result.skills,['Grafika','Copywriting']);
+});
+
+
+test('attention center filters invitations by requested competencies and inviter and sorts each view',()=>{
+  const names=['watchMatches','sortWatchRows'];
+  const source=names.map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+  const result=new Function('source', `
+    let watchTab='invitations';
+    const watchViews={invitations:{query:'reforma',sort:'newest',filters:{skills:['Grafika'],inviters:['Anna']}}};
+    eval(source);
+    const rows=[
+      {title:'Reforma A',search:'Reforma A',stamp:100,skills:['Grafika'],inviters:['Anna']},
+      {title:'Reforma B',search:'Reforma B',stamp:300,skills:['Grafika'],inviters:['Anna','Kasia']},
+      {title:'Reforma C',search:'Reforma C',stamp:400,skills:['Copywriting'],inviters:['Anna']},
+      {title:'Reforma D',search:'Reforma D',stamp:500,skills:['Grafika'],inviters:['Kasia']}
+    ];
+    const newest=sortWatchRows(rows.filter(watchMatches)).map(row=>row.title);
+    watchViews.invitations.sort='oldest';
+    const oldest=sortWatchRows(rows.filter(watchMatches)).map(row=>row.title);
+    return {newest,oldest};
+  `)(source);
+  assert.deepEqual(result.newest,['Reforma B','Reforma A']);
+  assert.deepEqual(result.oldest,['Reforma A','Reforma B']);
+});
+
+test('attention center separates invitation notices from comments',()=>{
+  const source=html.match(/function watchNotificationIsInvitation\([^\n]+/)[0];
+  const classify=new Function(source+';return watchNotificationIsInvitation;')();
+  assert.equal(classify({text:'Anna dodała komentarz',source:'discussion'}),false);
+  assert.equal(classify({text:'Masz zaproszenie do projektu',meta:{inviteId:'inv-1'}}),true);
+  assert.equal(classify({text:'Zaproszenie oczekuje na finalizację zespołu'}),true);
 });
