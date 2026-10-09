@@ -7191,9 +7191,7 @@ function renderRoleRequirements(idea,ideaId){
     </article>`;
   };
   const needsSec=roles.length?`<div class="idea-competency-list">${roles.map(buildRow).join('')}</div>`:'<div class="idea-competency-empty">Nie dodano jeszcze kompetencji potrzebnych przy tym pomyśle.</div>';
-  const pendingInvites=ensurePendingInviteIds(idea);
-  const draftInvites=isPrivateIdeaDraft(idea),invitesSec=(ideaId&&pendingInvites.length)?`<section class="team-invites-bottom"><div class="role-group-h" style="color:var(--p700);margin-top:0">${draftInvites?'Zaproszenia przygotowane':'Zaproszenia do zespołu'} <span>${pendingInvites.length}</span></div><div class="hint" style="margin-bottom:7px">${draftInvites?'Nikt jeszcze ich nie widzi. Zostaną wysłane dopiero po publikacji pomysłu.':'Zaproszona osoba odpowiada na swoim koncie w zakładce „Dla mnie”.'}</div>${pendingInvites.map(inv=>{const project=inv.kind==='project';const mine=inv.person===MY_NAME;return `<div class="invite-row"><div class="invite-info">${personChip(inv.person,true)}<div class="invite-meta">${project?'do projektu':'do potrzeby „'+escHtml(inv.role)+'"'} · zaprasza ${escHtml(inv.by)} · ${escHtml(inv.date)}${inv.why?`<div class="dt invite-saved-message">${mdRender(inv.why)}</div>`:''}</div></div><div class="invite-acts">${draftInvites?'<span class="dt">wyślemy po publikacji</span>':mine?`<button type="button" class="tiny-action go" onclick="go('ideas');switchTab('for-me')">Odpowiedz w „Dla mnie”</button>`:'<span class="dt">oczekuje na odpowiedź</span>'}</div></div>`;}).join('')}</section>`:'';
-  return needsSec + invitesSec;
+  return needsSec;
 }
 
 function renderTeamAddActions(ideaId){
