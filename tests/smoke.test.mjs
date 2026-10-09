@@ -1023,3 +1023,46 @@ test('startup restores the saved portfolio before syncing the active account', (
   assert.deepEqual(run.profile.portfolio,[entry]);
   assert.deepEqual(run.account.portfolio,[entry]);
 });
+
+test('project invitations join only the addressed recipient with their chosen competencies and cannot replay', () => {
+  const source=html.match(/function acceptReceivedProjectInvitation\([^\n]+/)[0];
+  const run=new Function('source', `
+    let MY_NAME='Anna',TODAY='today',notifications=[],myProfile={skills:['Grafika','Komunikacja']};
+    let ideas=[{id:1,title:'Projekt',pendingInvites:[{id:'invite',kind:'project',person:'Anna',by:'Patrycja',requestedSkills:['Grafika']}],log:[]}];
+    let receivedInvitationSkills={'1:invite':['Komunikacja','Nie moja kompetencja']},members=[];
+    let joined=[],saves=0;
+    const pendingInviteByRef=(idea,ref)=>{const index=idea.pendingInvites.findIndex(i=>i.id===ref);return index<0?null:{inv:idea.pendingInvites[index],index};};
+    const isPrivateIdeaDraft=()=>false,markProjectMember=(idea,name)=>joined.push(name),queuePersistence=()=>saves++;
+    const notifyDemoPerson=()=>{},updateBell=()=>{},go=()=>{},switchWatchTab=()=>{},toast=()=>{},NOW_TIME=()=>'',escHtml=s=>s;
+    eval(source);
+    const unauthorized=acceptReceivedProjectInvitation(1,'invite','Patrycja');
+    const accepted=acceptReceivedProjectInvitation(1,'invite','Anna');
+    const replay=acceptReceivedProjectInvitation(1,'invite','Anna');
+    return {unauthorized,accepted,replay,joined,saves,idea:ideas[0]};
+  `)(source);
+  assert.equal(run.unauthorized,false);
+  assert.equal(run.accepted,true);
+  assert.equal(run.replay,false);
+  assert.deepEqual(run.joined,['Anna']);
+  assert.equal(run.idea.pendingInvites.length,0);
+  assert.deepEqual(run.idea.memberContributions.map(row=>row.skill),['Komunikacja']);
+  assert.equal(run.saves,1);
+});
+
+test('project invitations send individual messages and requested competencies once', () => {
+  const source=html.match(/function saveProjectInviteWorkflow\([^\n]+/)[0];
+  const run=new Function('source', `
+    let activeProjectInviteIdeaId=1,MY_NAME='Patrycja',TODAY='today';
+    let members=[{id:2,name:'Anna'}],ideas=[{id:1,title:'Projekt',invitationComposer:{selected:[2],messages:{2:'Cześć Anno'},skills:{2:['Grafika']}}}];
+    const projectInviteDraft=i=>i.invitationComposer,requireProjectMemberPermission=()=>true;
+    const projectInviteCandidates=i=>members.filter(m=>!(i.pendingInvites||[]).some(inv=>inv.person===m.name));
+    const createPendingInviteId=()=> 'invite',isPrivateIdeaDraft=()=>false,touchPrivateIdeaDraft=()=>false;
+    let sent=[];const notifyDemoPerson=(...args)=>sent.push(args),queuePersistence=()=>{},openIdea=()=>{},toast=()=>{};
+    eval(source);saveProjectInviteWorkflow();saveProjectInviteWorkflow();return {idea:ideas[0],sent};
+  `)(source);
+  assert.equal(run.idea.pendingInvites.length,1);
+  assert.equal(run.idea.pendingInvites[0].why,'Cześć Anno');
+  assert.deepEqual(run.idea.pendingInvites[0].requestedSkills,['Grafika']);
+  assert.equal(run.sent.length,1);
+  assert.equal(run.idea.invitationPage,false);
+});
