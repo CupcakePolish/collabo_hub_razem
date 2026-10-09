@@ -21276,6 +21276,10 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar).filter-is-scrolling::-webkit-scrollbar-thumb,:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar) .filter-is-scrolling::-webkit-scrollbar-thumb{background:var(--p200)!important}
 
 #s-watch .watch-filter-sidebar label small{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;color:var(--txs)}
+
+/* Reserve scrollbar space so expanding filter groups never shifts controls. */
+:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar){scrollbar-gutter:stable;overflow-x:hidden;box-sizing:border-box}
+.shared-filter-toggle>.shared-filter-chevron{flex:0 0 18px;width:18px;text-align:center}
 </style>
 <script id="app-ready-script">
 (()=>{
