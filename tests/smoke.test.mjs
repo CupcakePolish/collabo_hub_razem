@@ -1025,11 +1025,11 @@ test('startup restores the saved portfolio before syncing the active account', (
 });
 
 test('project invitations join only the addressed recipient with their chosen competencies and cannot replay', () => {
-  const source=html.match(/function acceptReceivedProjectInvitation\([^\n]+/)[0];
+  const source=['invitationPolicy','finalizeProtocolMembership','notifyProtocolInvitation','acceptReceivedProjectInvitation'].map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
   const run=new Function('source', `
     let MY_NAME='Anna',TODAY='today',notifications=[],myProfile={skills:['Grafika','Komunikacja']};
     let ideas=[{id:1,title:'Projekt',pendingInvites:[{id:'invite',kind:'project',person:'Anna',by:'Patrycja',requestedSkills:['Grafika']}],log:[]}];
-    let receivedInvitationSkills={'1:invite':['Komunikacja','Nie moja kompetencja']},members=[];
+    let receivedInvitationSkills={'1:invite':['Komunikacja','Nie moja kompetencja']},members=[{name:'Anna',skills:['Grafika','Komunikacja']}];
     let joined=[],saves=0;
     const pendingInviteByRef=(idea,ref)=>{const index=idea.pendingInvites.findIndex(i=>i.id===ref);return index<0?null:{inv:idea.pendingInvites[index],index};};
     const isPrivateIdeaDraft=()=>false,markProjectMember=(idea,name)=>joined.push(name),queuePersistence=()=>saves++;
@@ -1057,7 +1057,8 @@ test('project invitations send individual messages and requested competencies on
     const projectInviteDraft=i=>i.invitationComposer,requireProjectMemberPermission=()=>true;
     const projectInviteCandidates=i=>members.filter(m=>!(i.pendingInvites||[]).some(inv=>inv.person===m.name));
     const createPendingInviteId=()=> 'invite',isPrivateIdeaDraft=()=>false,touchPrivateIdeaDraft=()=>false;
-    let sent=[];const notifyDemoPerson=(...args)=>sent.push(args),queuePersistence=()=>{},openIdea=()=>{},toast=()=>{};
+    let sent=[];const startInvitationProtocol=(idea,inv)=>notifyDemoPerson(inv.person,inv.why,idea.id);
+    const notifyDemoPerson=(...args)=>sent.push(args),queuePersistence=()=>{},openIdea=()=>{},toast=()=>{};
     eval(source);saveProjectInviteWorkflow();saveProjectInviteWorkflow();return {idea:ideas[0],sent};
   `)(source);
   assert.equal(run.idea.pendingInvites.length,1);
@@ -1065,4 +1066,63 @@ test('project invitations send individual messages and requested competencies on
   assert.deepEqual(run.idea.pendingInvites[0].requestedSkills,['Grafika']);
   assert.equal(run.sent.length,1);
   assert.equal(run.idea.invitationPage,false);
+});
+
+function runInvitationProtocolScenario(scenario){
+  const names=['invitationPolicy','startInvitationProtocol','beginInvitationSend','notifyProtocolInvitation','deliverProtocolInvitation','createInvitationProtocolVote','finalizeProtocolMembership','resolveInvitationProtocolVote','reconcileInvitationProtocols','submitInvitationObjection','invitationTeamAction','toggleInvitationCoSkill'];
+  const source=names.map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+  return new Function('source','scenario', `
+    let now=1000,MY_NAME='Patrycja',TODAY='today',Date={now:()=>now};
+    let members=[{id:2,name:'Anna',skills:['Grafika','Copywriting']}],ideas=[{id:1,title:'Pomysł',pendingInvites:[],votes:[],log:[],invitationPolicy:{sendMode:'reaction',sendHours:24,joinMode:'reaction',joinHours:48,objection:'vote'}}];
+    let sent=[],joined=[];
+    const idea=ideas[0],inv={id:'test',kind:'project',person:'Anna',by:'Patrycja',why:'Zapraszamy',requestedSkills:['Grafika']};idea.pendingInvites.push(inv);
+    const isPrivateIdeaDraft=()=>false,notifyDemoPerson=(...args)=>sent.push(args),notifyVote=()=>{},ensureVoteModeSnapshot=()=>{},DEADLINE=()=>'',NOW_TIME=()=>'',escHtml=s=>s,markProjectMember=(idea,name)=>joined.push(name),queuePersistence=()=>{},closeAppModal=()=>{},openIdea=()=>{},toast=()=>{},canManageProjectMembers=()=>MY_NAME!=='Obca';
+    const pendingInviteByRef=(idea,ref)=>{const index=idea.pendingInvites.findIndex(inv=>inv.id===ref);return index<0?null:{inv:idea.pendingInvites[index],index};};
+    const document={getElementById:()=>({value:'Mam uzasadnione zastrzeżenie'})};
+    eval(source);return eval(scenario);
+  `)(source,scenario);
+}
+
+test('invitation reaction windows keep membership separate and finalize once after expiry',()=>{
+  const result=runInvitationProtocolScenario(`
+    startInvitationProtocol(idea,inv);const first=inv.status;
+    idea.invitationPolicy.sendMode='immediate';
+    now+=23*3600000;reconcileInvitationProtocols(idea,now);const early=inv.status;
+    now+=3600000;reconcileInvitationProtocols(idea,now);const sentState=inv.status;
+    inv.acceptedSkills=['Copywriting'];inv.status='join_reaction';inv.reactUntil=now+48*3600000;
+    now+=47*3600000;reconcileInvitationProtocols(idea,now);const beforeJoin=joined.length;
+    now+=3600000;reconcileInvitationProtocols(idea,now);reconcileInvitationProtocols(idea,now);
+    ({first,early,sentState,beforeJoin,joined,skills:idea.memberContributions.map(row=>row.skill),pending:idea.pendingInvites.length,history:idea.invitationHistory.length,policy:inv.policy.sendMode});
+  `);
+  assert.equal(result.first,'send_reaction');assert.equal(result.early,'send_reaction');assert.equal(result.sentState,'waiting');assert.equal(result.beforeJoin,0);assert.deepEqual(result.joined,['Anna']);assert.deepEqual(result.skills,['Copywriting']);assert.equal(result.pending,0);assert.equal(result.history,1);assert.equal(result.policy,'reaction');
+});
+
+test('objection starts one vote and approval delivers invitation without adding a member',()=>{
+  const result=runInvitationProtocolScenario(`
+    startInvitationProtocol(idea,inv);submitInvitationObjection(1,'test');submitInvitationObjection(1,'test');
+    const status=inv.status,count=idea.votes.length;idea.votes[0].open=false;idea.votes[0].accepted=true;
+    reconcileInvitationProtocols(idea,now);reconcileInvitationProtocols(idea,now);
+    ({status,count,final:inv.status,joined,delivered:inv.delivered});
+  `);
+  assert.equal(result.status,'send_vote');assert.equal(result.count,1);assert.equal(result.final,'waiting');assert.deepEqual(result.joined,[]);assert.equal(result.delivered,true);
+});
+
+test('blocking objection and rejected joining vote never grant membership',()=>{
+  const result=runInvitationProtocolScenario(`
+    idea.invitationPolicy.objection='block';startInvitationProtocol(idea,inv);submitInvitationObjection(1,'test');
+    now+=100*3600000;reconcileInvitationProtocols(idea,now);const blocked=inv.status;
+    inv.status='waiting';createInvitationProtocolVote(idea,inv,'join');idea.votes[0].open=false;idea.votes[0].accepted=false;reconcileInvitationProtocols(idea,now);
+    ({blocked,final:inv.status,joined});
+  `);
+  assert.equal(result.blocked,'blocked');assert.equal(result.final,'rejected');assert.deepEqual(result.joined,[]);
+});
+
+test('support is distinct from co-inviting and competencies are the union of inviter requests',()=>{
+  const result=runInvitationProtocolScenario(`
+    startInvitationProtocol(idea,inv);MY_NAME='Kasia';invitationTeamAction(1,'test','support');
+    const onlySupport=inv.coInviters.includes('Kasia');invitationTeamAction(1,'test','coInvite');toggleInvitationCoSkill(1,'test',1);toggleInvitationCoSkill(1,'test',0);toggleInvitationCoSkill(1,'test',0);
+    MY_NAME='Obca';invitationTeamAction(1,'test','coInvite');
+    ({onlySupport,supporters:inv.supporters,coInviters:inv.coInviters,skills:inv.requestedSkills});
+  `);
+  assert.equal(result.onlySupport,false);assert.deepEqual(result.supporters,['Kasia']);assert.deepEqual(result.coInviters,['Patrycja','Kasia']);assert.deepEqual(result.skills,['Grafika','Copywriting']);
 });
