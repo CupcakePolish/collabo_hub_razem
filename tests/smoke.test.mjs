@@ -1205,3 +1205,11 @@ test('full message reaction selection calls its callback instead of inserting co
   const result=new Function('source',`let picked='',removed=false;const messageReactionCallbacks=new Map([['message-reaction-test',emoji=>picked=emoji]]),useEmoji=()=>{},document={getElementById:()=>({remove(){removed=true;}})};eval(source);pickEmoji('message-reaction-test','❤️');return {picked,removed,pending:messageReactionCallbacks.size};`)(source);
   assert.equal(result.picked,'❤️');assert.equal(result.removed,true);assert.equal(result.pending,0);
 });
+
+
+test('invitation messenger shares messages and reactions without copying the conversation',()=>{
+  const names=['invitationConversationRows','invitationChatRecord','invitationChatMessages','persistChatMessages'];
+  const source=names.map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+  const result=new Function('source',`const MY_NAME='Adresat',inv={id:'invite',person:'Adresat',by:'Autor',why:'Cześć',createdAt:1},idea={id:1,pendingInvites:[inv]},ideas=[idea],c={type:'invitation',ideaId:1,inviteId:'invite'};const pendingInviteByRef=()=>({inv}),invitationCanMessage=()=>true,queuePersistence=()=>{},document={getElementById:()=>null};eval(source);let rows=invitationChatMessages(c);rows[0].reactions[MY_NAME]='❤️';rows.push({by:MY_NAME,text:'Odpowiedź',at:new Date(100).toISOString(),reply:{by:'Autor',text:'Cześć'}});persistChatMessages(c,rows);rows=invitationChatMessages(c);persistChatMessages(c,rows);const count=inv.messages.length,heart=rows[0].reactions[MY_NAME],reply=inv.messages[0].reply;persistChatMessages(c,rows.slice(0,1));return {count,heart,reply,remaining:invitationChatMessages(c).length};`)(source);
+  assert.equal(result.count,1);assert.equal(result.heart,'❤️');assert.equal(result.reply.person,'Autor');assert.equal(result.remaining,1);
+});
