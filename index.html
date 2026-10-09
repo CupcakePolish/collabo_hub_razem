@@ -7188,8 +7188,8 @@ function renderRoleRequirements(idea,ideaId){
     const primary=needPrimaryCapability(r);
     const inviteButton=!ok&&hasRoom&&canManageProjectMembers(idea)?`<button type="button" class="idea-competency-invite" onclick="startInviteRole(${ideaId},${idx})">Zaproś</button>`:'';
     return `<article class="idea-competency-row need-${needState}">
-      <div class="idea-competency-copy"><strong>${escHtml(primary.name)}</strong><p>${escHtml(r.task||'Ta kompetencja jest potrzebna do rozwijania pomysłu.')}</p></div>
-      <div class="idea-competency-actions">${statusBadge}<div class="idea-competency-people">${filled}</div>${inviteButton}${kebab}</div>
+      <div class="idea-competency-tile-top"><span class="idea-competency-tile-icon">${ideaCompetencyTileIcon(primary.name)}</span>${kebab}</div><div class="idea-competency-copy"><strong>${escHtml(primary.name)}</strong><p>${escHtml(r.task||'Ta kompetencja jest potrzebna do rozwijania pomysłu.')}</p></div>
+      <div class="idea-competency-actions">${statusBadge}<div class="idea-competency-people">${filled}</div>${inviteButton}</div>
       <div class="idea-competency-details">${ongoingHtml}${candHtml}${joinPanel}${invitePanel}${revokePanel}</div>
     </article>`;
   };
@@ -7197,6 +7197,7 @@ function renderRoleRequirements(idea,ideaId){
   return needsSec;
 }
 
+function ideaCompetencyTileIcon(name){const key=String(name).toLocaleLowerCase('pl'),paths=key.includes('mandat')?'<path d="M3 21h18M5 18V10m5 8V10m4 8V10m5 8V10M3 9h18M6 9a6 6 0 0 1 12 0M12 3V1h3"/>':key.includes('weryfik')?'<path d="m12 2 8 3v6c0 5-4 8-8 11-4-3-8-6-8-11V5l8-3Z"/><path d="m8 11 3 3 5-6"/>':key.includes('praw')?'<path d="M12 3v18M6 21h12M3 7h18M6 7l-4 9h8L6 7Zm12 0-4 9h8l-4-9Z"/>':key.includes('research')||key.includes('źród')?'<circle cx="14" cy="11" r="6"/><path d="m18 16 4 5M2 3h11M2 8h3M2 13h3M2 18h5M2 23h11"/>':key.includes('koordyn')?'<circle cx="12" cy="4" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><path d="M8 10 5 13m11-3 3 3M9 8h6M2 23v-2a3 3 0 0 1 6 0v2m8 0v-2a3 3 0 0 1 6 0v2"/>':key.includes('redakc')?'<path d="m4 16 12-12 4 4L8 20H4v-4ZM13 7l4 4M3 23h18"/>':null;return paths?`<svg viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`:competencyChosenIcon(name);}
 function renderTeamAddActions(ideaId){
   return `<div class="team-add-actions"><button class="prop-btn" onclick="startRoleForm(${ideaId})">+ Dodaj kompetencję</button></div>`;
 }
@@ -21387,6 +21388,9 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 </style>
 <style>.dc-hover-tools{background:transparent!important;box-shadow:none!important;padding:0!important;gap:4px}.dc-hover-tools button,.dc-hover-tools .dc-react{border-radius:50%!important;background:var(--p100)!important;width:30px!important;height:30px!important;flex-basis:30px!important;color:var(--p700)!important}.dc-hover-tools button:hover{background:var(--p200)!important}</style>
 <style>.inv-message-tools button,.dc-hover-tools button,.dc-hover-tools .dc-react{background:var(--p050)!important;color:#a28fc6!important;opacity:1!important;display:grid!important;place-items:center!important;padding:6px!important}.inv-message-tools button:hover,.dc-hover-tools button:hover{background:var(--p100)!important;color:var(--p700)!important}.inv-message-tools svg,.dc-hover-tools svg{display:block;width:18px!important;height:18px!important}.inv-message-tools{opacity:0;pointer-events:none;transition:opacity .14s}.inv-message-row:hover .inv-message-tools,.inv-message-row:focus-within .inv-message-tools{opacity:1;pointer-events:auto}.inv-time-break{text-align:center;color:var(--txs);font:400 11px 'DM Sans',sans-serif;margin:7px 0 2px}.dc-head>div{padding-right:0!important}.dc-head .dc-options-toggle{position:static!important;align-self:center;flex:0 0 32px!important;margin:0!important}.dc-head strong{overflow-wrap:anywhere}@media(hover:none){.inv-message-tools{opacity:1;pointer-events:auto}}</style>
+<style>
+.idea-competency-list{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px}.idea-competency-row{display:flex!important;flex-direction:column;gap:12px;min-width:0;padding:18px!important;border:1px solid var(--bdr)!important;border-radius:13px;background:var(--surf);position:relative}.idea-competency-tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.idea-competency-tile-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:11px;background:var(--p100);color:var(--p700)}.idea-competency-tile-icon svg{width:30px;height:30px}.idea-competency-tile-top .kwrap{margin-left:auto;z-index:35}.idea-competency-copy{flex:1;min-width:0}.idea-competency-copy strong{display:block;font:700 15px/1.3 'DM Sans',sans-serif}.idea-competency-copy p{margin:8px 0 0;font:400 13px/1.55 'DM Sans',sans-serif;color:var(--txs)}.idea-competency-actions{display:flex!important;align-items:center;justify-content:flex-start!important;gap:12px;min-width:0!important;min-height:42px;border-top:1px solid var(--bdr);padding-top:12px;margin-top:4px;flex-wrap:wrap}.idea-competency-invite{margin-left:auto}.idea-competency-details{width:100%}.idea-competencies-card .team-add-actions .prop-btn{border:1px dashed var(--p300);background:transparent;color:var(--p700);border-radius:12px}.idea-competencies-card .team-add-actions .prop-btn:hover{background:var(--p050)}@media(max-width:1100px){.idea-competency-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.idea-competency-list{grid-template-columns:1fr}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
