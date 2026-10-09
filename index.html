@@ -21274,6 +21274,8 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar)::-webkit-scrollbar,:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar) *::-webkit-scrollbar{width:5px;height:5px;background:transparent}
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar)::-webkit-scrollbar-thumb,:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar) *::-webkit-scrollbar-thumb{background:transparent!important;border-radius:8px}
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar).filter-is-scrolling::-webkit-scrollbar-thumb,:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar) .filter-is-scrolling::-webkit-scrollbar-thumb{background:var(--p200)!important}
+
+#s-watch .watch-filter-sidebar label small{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;color:var(--txs)}
 </style>
 <script id="app-ready-script">
 (()=>{
@@ -21308,7 +21310,7 @@ function normalizeSharedFilterSidebars(){
   const titleRoot=button.parentElement===section?button:button.parentElement;
   const content=document.createElement('div');content.className='shared-filter-content';
   [...section.children].filter(child=>child!==titleRoot).forEach(child=>content.append(child));section.append(content);
-  const collapsed=sharedFilterClosed.has(key)?sharedFilterClosed.get(key):section.classList.contains('collapsed')||original?.getAttribute('aria-expanded')==='false';
+  const collapsed=sharedFilterClosed.has(key)?sharedFilterClosed.get(key):true;
   section.classList.remove('collapsed');section.classList.add('shared-filter-section');button.setAttribute('aria-expanded',String(!collapsed));content.classList.toggle('shared-filter-closed',collapsed);content.inert=collapsed;
   button.onclick=()=>{const closed=button.getAttribute('aria-expanded')==='true';sharedFilterClosed.set(key,closed);button.setAttribute('aria-expanded',String(!closed));content.classList.toggle('shared-filter-closed',closed);content.inert=closed;
    const teamKey=handler.match(/toggleTeamFilterSection\('([^']+)'/);if(teamKey)teamFilterSections[teamKey[1]]=!closed;
