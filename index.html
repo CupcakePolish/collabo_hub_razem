@@ -8231,7 +8231,7 @@ function renderIdeaBreadcrumb(idea,d=null,previewMode=false){
     const docCrumb=previewMode?`<button type="button" onclick="closeDocPreview(${id},'${d.did}')">${escHtml(d.title)}</button><span class="sep">›</span><span class="current">Podgląd</span>`:`<span class="current">${escHtml(d.title)}</span>`;
     return `<nav class="doc-breadcrumb" aria-label="Ścieżka"><button type="button" onclick="closeDocToIdeas(${id})">Pomysły</button><span class="sep">›</span><button type="button" onclick="closeDocToIdea(${id})">${escHtml(idea.title)}</button><span class="sep">›</span><button type="button" onclick="closeDoc(${id})">Dokumenty i pliki</button><span class="sep">›</span>${docCrumb}</nav>`;
   }
-  return `<nav class="doc-breadcrumb" aria-label="Ścieżka"><button type="button" onclick="closeDocToIdeas(${id})">Pomysły</button><span class="sep">›</span><button type="button" onclick="closeDocToIdea(${id})">${escHtml(idea.title)}</button><span class="sep">›</span><span class="current">${escHtml(tabLabels[tab]||'Sekcja')}</span>${tab==='zespol'&&idea.invitationPage?'<span class="sep">›</span><span class="current">Zapraszanie</span>':''}</nav>`;
+  return `<nav class="doc-breadcrumb" aria-label="Ścieżka"><button type="button" onclick="closeDocToIdeas(${id})">Pomysły</button><span class="sep">›</span><button type="button" onclick="closeDocToIdea(${id})">${escHtml(idea.title)}</button><span class="sep">›</span>${tab==='zespol'&&idea.invitationPage?'<button type="button" onclick="closeProjectInviteWorkflow()">Zespół</button><span class="sep">›</span><span class="current">Zapraszanie</span>':`<span class="current">${escHtml(tabLabels[tab]||'Sekcja')}</span>`}</nav>`;
 }
 
 
