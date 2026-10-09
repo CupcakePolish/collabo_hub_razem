@@ -1169,3 +1169,19 @@ test('entering notifications marks notices read without marking pending invitati
   `)(source);
   assert.deepEqual(result.read,[false,false,true]);assert.equal(result.persisted,1);assert.equal(result.bells,1);
 });
+
+test('invitation conversation appends messages with attachments and rejects outsiders',async()=>{
+  const source=html.match(/async function sendInvitationMessage\([^\n]+/)[0];
+  const result=await new Function('source',`return (async()=>{
+    let MY_NAME='Adresat';const inv={id:'invite',person:'Adresat'},idea={id:1,pendingInvites:[inv]},ideas=[idea];
+    const invitationMessageDrafts={'1-invite':{text:'Cześć 😊',files:[{name:'plan.txt',type:'text/plain'}]}};
+    let saved=0;const safeId=x=>x,pendingInviteByRef=(idea,ref)=>idea.pendingInvites.find(x=>x.id===ref)?{inv}:null;
+    const invitationCanMessage=(idea,inv)=>MY_NAME===inv.person||MY_NAME==='Członek',fileAsData=async()=> 'data:text/plain;base64,cGxhbg==';
+    const queuePersistence=()=>saved++,document={getElementById:()=>null,querySelectorAll:()=>[]},openIdea=()=>{},requestAnimationFrame=fn=>fn(),toast=()=>{};
+    eval(source);await sendInvitationMessage(1,'invite');
+    MY_NAME='Członek';invitationMessageDrafts['1-invite']={text:'Dzięki!',files:[]};await sendInvitationMessage(1,'invite');
+    MY_NAME='Obca';invitationMessageDrafts['1-invite']={text:'Nie wolno',files:[]};await sendInvitationMessage(1,'invite');
+    return {messages:inv.messages,saved};
+  })();`)(source);
+  assert.equal(result.messages.length,2);assert.equal(result.messages[0].text,'Cześć 😊');assert.equal(result.messages[0].files[0].name,'plan.txt');assert.equal(result.messages[1].person,'Członek');assert.equal(result.saved,2);
+});
