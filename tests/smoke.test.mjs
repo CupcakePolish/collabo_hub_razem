@@ -1226,3 +1226,15 @@ test('opening a team chat marks incoming messages read on every page',()=>{
   const result=new Function('source',`const MY_NAME='Adresat',rows=[{by:'Zespół',text:'Hej'},{by:'Adresat',text:'Moja'}];let saved=0;const document={visibilityState:'visible'},discoverChatMessages=()=>rows,persistChatMessages=()=>saved++;const list={querySelectorAll:()=>[]},win={querySelector:()=>list},host={querySelector:()=>win};eval(source);finishChatConversation(host,{type:'team'},{});finishChatConversation(host,{type:'team'},{});return {rows,saved};`)(source);
   assert.deepEqual(result.rows[0].readBy,['Adresat']);assert.equal(result.rows[1].readBy,undefined);assert.equal(result.saved,1);
 });
+
+
+test('competency description changes await approval and preserve competency skills',()=>{
+  const submit=html.match(/function submitEditRole\([^\n]+/)[0];
+  const approval=html.split("} else if(v.kind==='role-edit'&&typeof v.roleIndex==='number'){")[1].split("} else if(v.kind==='skill'")[0];
+  const result=new Function('submit','approval',`
+    const r={role:'Prawo',task:'Stary opis',skills:[{name:'Prawo',lvl:2}]},idea={id:1,roleRequirements:[r],votes:[],log:[]},ideas=[idea];
+    const document={getElementById:()=>({value:'Nowy opis'})},canManageProjectMembers=()=>true,isPrivateIdeaDraft=()=>false,needPrimaryCapability=r=>({name:r.role}),MY_NAME='Anna',TODAY='2026-10-09',DEADLINE=()=>TODAY,NOW_TIME=()=> '12:00',escHtml=x=>x,notifyVote=()=>{},maybeNotify=()=>{},queuePersistence=()=>{},openIdea=()=>{},toast=()=>{};
+    eval(submit);submitEditRole(1,0);const before=r.task;submitEditRole(1,0);const count=idea.votes.length,v=idea.votes[0];eval(approval);return {before,after:r.task,skills:r.skills,count,descriptionOnly:v.descriptionOnly};
+  `)(submit,approval);
+  assert.equal(result.before,'Stary opis');assert.equal(result.after,'Nowy opis');assert.equal(result.count,1);assert.equal(result.descriptionOnly,true);assert.deepEqual(result.skills,[{name:'Prawo',lvl:2}]);
+});
