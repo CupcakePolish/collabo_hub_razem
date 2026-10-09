@@ -1185,3 +1185,11 @@ test('invitation conversation appends messages with attachments and rejects outs
   })();`)(source);
   assert.equal(result.messages.length,2);assert.equal(result.messages[0].text,'Cześć 😊');assert.equal(result.messages[0].files[0].name,'plan.txt');assert.equal(result.messages[1].person,'Członek');assert.equal(result.saved,2);
 });
+
+
+test('invitation message deletion preserves other authors and hides initial notes',()=>{
+  const names=['invitationConversationRows','invitationMessageRecord','deleteInvitationMessage'];
+  const source=names.map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+  const result=new Function('source',`let MY_NAME='Adresat';const inv={id:'i',person:'Adresat',by:'Autor',why:'Pierwsza',messages:[{id:'own',person:'Adresat',text:'Moja'}]},idea={id:1,pendingInvites:[inv]},ideas=[idea];let saved=0;const pendingInviteByRef=()=>({inv}),invitationCanMessage=()=>true,queuePersistence=()=>saved++,refreshInvitationMessages=()=>{};eval(source);deleteInvitationMessage(1,'i','initial-Autor');deleteInvitationMessage(1,'i','own');MY_NAME='Autor';deleteInvitationMessage(1,'i','initial-Autor');return {rows:invitationConversationRows(inv),saved,why:inv.why};`)(source);
+  assert.equal(result.saved,2);assert.equal(result.rows.length,0);assert.equal(result.why,'Pierwsza');
+});
