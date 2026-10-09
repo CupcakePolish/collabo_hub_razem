@@ -6874,6 +6874,7 @@ function removeIdeaFilter(key){
 function clearIdeaListFilters(){
   Object.assign(ideaListFilters,{status:'all',type:'all',archive:'all',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';searchQ='';const search=document.getElementById('idea-search');if(search)search.value='';document.querySelectorAll('#s-ideas .idea-skill-search input').forEach(input=>input.value='');syncIdeaQueryControls();renderIdeas();
 }
+function renderIdeaSidebarCounts(){const rows=ideas.filter(i=>i?.isDraft!==true);document.querySelectorAll('#s-ideas .idea-side-option').forEach(button=>{const key=button.dataset.filterKey,value=button.dataset.filterValue;const count=rows.filter(idea=>key==='status'?projectLifecycleStatus(idea)===value:key==='archive'?(value==='archived'?projectIsArchived(idea):!projectIsArchived(idea)):button.id==='idea-type-ideas'?!ideaIsVariant(idea):button.id==='idea-type-variants'?ideaIsVariant(idea):button.id==='idea-filter-open-needs'?missingRoleCount(idea)>0:button.id==='idea-filter-followed'?followedIdeas.has(idea.id):true).length;let badge=button.querySelector('.idea-filter-count');if(!badge){badge=document.createElement('small');badge.className='idea-filter-count';button.append(badge);}badge.textContent=count;});}
 function syncIdeaQueryControls(){
   const sortLabel=document.getElementById('idea-sort-label');if(sortLabel)sortLabel.textContent=IDEA_FILTER_LABELS.sort[ideaListFilters.sort]||'';
   document.querySelectorAll('#idea-sort-menu button').forEach(row=>row.classList.toggle('selected',String(row.getAttribute('onclick')||'').includes(`'${ideaListFilters.sort}'`)));
@@ -6886,7 +6887,7 @@ function syncIdeaQueryControls(){
   document.getElementById('ideas-clear-sidebar')?.classList.add('show');
   const mobileCount=document.getElementById('ideas-mobile-filter-count');if(mobileCount)mobileCount.textContent=activeCount?`(${activeCount})`:'';
   document.getElementById('ideas-catalog-layout')?.classList.toggle('draft-mode',currentTab==='drafts');
-  renderIdeaSkillFilters();
+  renderIdeaSkillFilters();renderIdeaSidebarCounts();
 }
 
 const PL_MON=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
@@ -17766,13 +17767,13 @@ function catalogFilteredResources(){
 }
 function catalogFilterOptions(field){return [...new Set(catalogResources.map(resource=>resource[field]).filter(Boolean))].map(value=>`<option value="${escAttr(value)}" ${resourceCatalogState[field]===value?'selected':''}>${escHtml(value)}</option>`).join('');}
 function resourceStatCard(icon,value,label,tone){return `<article class="resource-stat-card"><span class="resource-stat-icon ${tone}">${icon}</span><span><b>${value}</b><small>${label}</small></span></article>`;}
-function setResourceCatalogFilter(field,value){resourceCatalogState[field]=value;if(field==='status'&&['available','reserved'].includes(resourceCatalogState.scope))resourceCatalogState.scope='all';renderResourceCatalog();const focusIds={query:'resource-catalog-query',typeQuery:'resource-type-search',locationQuery:'resource-location-search'},focusId=focusIds[field];if(focusId)requestAnimationFrame(()=>{const input=document.getElementById(focusId);if(!input)return;input.focus({preventScroll:true});input.setSelectionRange(input.value.length,input.value.length);});}
+function setResourceCatalogFilter(field,value){if(['status','scope','type','location','category','condition'].includes(field)&&resourceCatalogState[field]===value)value='all';resourceCatalogState[field]=value;if(field==='status'&&['available','reserved'].includes(resourceCatalogState.scope))resourceCatalogState.scope='all';renderResourceCatalog();const focusIds={query:'resource-catalog-query',typeQuery:'resource-type-search',locationQuery:'resource-location-search'},focusId=focusIds[field];if(focusId)requestAnimationFrame(()=>{const input=document.getElementById(focusId);if(!input)return;input.focus({preventScroll:true});input.setSelectionRange(input.value.length,input.value.length);});}
 function setResourceCatalogScope(value){resourceCatalogState.scope=value;resourceCatalogState.status='all';renderResourceCatalog();}
 function setResourceCatalogSort(value){resourceCatalogState.sort=value;renderResourceCatalog();}
 function setResourceCatalogView(value){resourceCatalogState.view=value;renderResourceCatalog();}
 function toggleResourceCatalogFilterGroup(key){resourceCatalogCollapsed.has(key)?resourceCatalogCollapsed.delete(key):resourceCatalogCollapsed.add(key);renderResourceCatalog();}
 function resetResourceCatalogFilters(){const {sort,view}=resourceCatalogState;resourceCatalogState={query:'',type:'all',status:'all',location:'all',category:'all',condition:'all',scope:'all',sort,view,typeQuery:'',locationQuery:''};renderResourceCatalog();}
-function catalogSidebarOption(field,value,label,count){const active=resourceCatalogState[field]===value;return `<button type="button" class="resource-sidebar-option ${active?'on':''}" role="checkbox" aria-checked="${active}" onclick="setResourceCatalogFilter('${escAttr(field)}','${escAttr(value)}')"><i>${active?'✓':''}</i><span>${escHtml(label)}</span><small>${count}</small></button>`;}
+function catalogSidebarOption(field,value,label,count){if(value==='all')return '';const active=resourceCatalogState[field]===value;return `<button type="button" class="resource-sidebar-option ${active?'on':''}" role="checkbox" aria-checked="${active}" onclick="setResourceCatalogFilter('${escAttr(field)}','${escAttr(value)}')"><i>${active?'✓':''}</i><span>${escHtml(label)}</span><small>${count}</small></button>`;}
 function catalogSidebarGroup(key,title,content,options={}){const collapsed=resourceCatalogCollapsed.has(key);return `<section class="resource-sidebar-group ${collapsed?'collapsed':''}" data-filter-group="${escAttr(key)}"><button type="button" class="resource-sidebar-group-toggle" aria-expanded="${!collapsed}" onclick="toggleResourceCatalogFilterGroup('${escAttr(key)}')"><b>${escHtml(title)}</b><span>⌃</span></button><div class="resource-sidebar-group-content">${options.search||''}${content}</div></section>`;}
 function renderResourceCatalog(){
   const host=document.getElementById('resource-catalog-page');if(!host)return;
@@ -21280,6 +21281,12 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 /* Reserve scrollbar space so expanding filter groups never shifts controls. */
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar){scrollbar-gutter:stable;overflow-x:hidden;box-sizing:border-box}
 .shared-filter-toggle>.shared-filter-chevron{flex:0 0 18px;width:18px;text-align:center}
+
+/* Consistent filter text and counts aligned with the search field edge. */
+:is(.dictionary-sidebar,.resource-filter-sidebar) .shared-filter-toggle{font:700 13px/1.4 'DM Sans',sans-serif!important}.shared-filter-toggle>b{font:inherit}
+:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar) :is(.idea-skill-option,.members-skill-option,.dictionary-choice,.resource-sidebar-option,.idea-side-option){box-sizing:border-box;padding-right:0!important}
+:is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar) :is(.idea-skill-option>i,.members-skill-option>i,.dictionary-count,.resource-sidebar-option>small,.idea-filter-count,.watch-filter-sidebar label small){margin-left:auto;font:500 12px/1.4 'DM Sans',sans-serif!important;flex:none;color:var(--txs);background:transparent;border:0;border-radius:0;padding:0;min-width:20px;text-align:right}
+#s-ideas .idea-skill-option{display:flex;align-items:center;gap:9px;width:100%;min-height:36px;padding:6px 4px;border-radius:8px;font:500 13px/1.4 'DM Sans',sans-serif;cursor:pointer;transition:background .15s,color .15s}#s-ideas .idea-skill-option:hover,#s-teams .members-skill-option:hover{background:var(--p100)!important;color:var(--p700)!important}.idea-skill-option>span,.members-skill-option>span{flex:1;min-width:0}
 </style>
 <script id="app-ready-script">
 (()=>{
@@ -21330,6 +21337,11 @@ new MutationObserver(()=>{if(sharedFilterNormalizeQueued)return;sharedFilterNorm
 
 <script>
 document.addEventListener('scroll',event=>{const target=event.target;if(!(target instanceof Element)||!target.closest('.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar,.discover-sidebar'))return;target.classList.add('filter-is-scrolling');clearTimeout(target._filterScrollbarTimer);target._filterScrollbarTimer=setTimeout(()=>target.classList.remove('filter-is-scrolling'),700);},true);
+</script>
+
+<script>
+let sharedFilterActiveScreen=document.querySelector('.screen.on')?.id;
+new MutationObserver(()=>{const current=document.querySelector('.screen.on')?.id;if(!current||current===sharedFilterActiveScreen)return;sharedFilterActiveScreen=current;sharedFilterClosed.clear();document.querySelectorAll('.shared-filter-toggle').forEach(button=>{button.setAttribute('aria-expanded','false');const section=button.closest('.shared-filter-section'),content=section?.querySelector(':scope > .shared-filter-content');if(content){content.classList.add('shared-filter-closed');content.inert=true;}});}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 </script>
 </body>
 </html>
