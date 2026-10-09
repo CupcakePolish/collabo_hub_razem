@@ -8133,6 +8133,7 @@ function renderIdeas(){
         <div class="cbar-roster">${rosterSummary}</div>
         <div class="cbar-track"><div class="cbar-fill" style="width:${pct}%"></div></div>
       </div>
+      </div>
       <div class="ic-stats">
         <div class="ic-stat" title="Wpisy aktywności: ${ideaActivityEntryCount(idea)}">${IC.log} <b>${ideaActivityEntryCount(idea)}</b></div>
         <div class="ic-stat" title="Data utworzenia: ${escAttr(createdLabel(idea.date))}">${IC.cal} <span class="meta-label">Utworzono ${escHtml(createdLabel(idea.date))}</span></div>
@@ -8140,7 +8141,6 @@ function renderIdeas(){
         <div class="ic-stat" title="Uczestnicy projektu: ${participantsOf(idea).length}">${IC.users} <b>${participantsOf(idea).length}</b></div>
       </div>
       ${archived?`<div class="archive-strip"><div class="archive-strip-copy"><b>Projekt w archiwum</b>${escHtml(projectArchiveReason(idea))}</div><button type="button" class="archive-reactivate" onclick="event.preventDefault();event.stopPropagation();requestReactivateArchivedProject(${idea.id})">Reaktywuj projekt</button></div>`:''}
-      </div>
     </a>`;
   }).join('');
 }
@@ -21191,6 +21191,14 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 </style>
 <style id="nav-resource-icon-size">
 .global-nav #nl-resources svg[data-icon="resource-box"]{transform:scale(1.14);transform-origin:center}
+</style>
+<style id="idea-card-full-width-metadata">
+#s-ideas .ideas-list>.ic{row-gap:18px!important}
+#s-ideas .ideas-list>.ic>.ic-stats{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:0!important;padding-top:14px!important;border-top:1px solid var(--bdr);min-width:0}
+#s-ideas .ic-footer{padding-bottom:5px;overflow:visible;min-height:max-content}
+#s-ideas .cbar-roster .ros-tags{display:flex;flex-wrap:wrap;gap:7px;overflow:visible}
+#s-ideas .ideas-list>.ic>.archive-strip{grid-column:1/-1}
+#s-ideas .ic-stats .ic-stat{white-space:nowrap;font-size:11px}
 </style>
 <script id="app-ready-script">
 (()=>{
