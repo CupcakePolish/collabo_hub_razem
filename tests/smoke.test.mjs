@@ -1193,3 +1193,15 @@ test('invitation message deletion preserves other authors and hides initial note
   const result=new Function('source',`let MY_NAME='Adresat';const inv={id:'i',person:'Adresat',by:'Autor',why:'Pierwsza',messages:[{id:'own',person:'Adresat',text:'Moja'}]},idea={id:1,pendingInvites:[inv]},ideas=[idea];let saved=0;const pendingInviteByRef=()=>({inv}),invitationCanMessage=()=>true,queuePersistence=()=>saved++,refreshInvitationMessages=()=>{};eval(source);deleteInvitationMessage(1,'i','initial-Autor');deleteInvitationMessage(1,'i','own');MY_NAME='Autor';deleteInvitationMessage(1,'i','initial-Autor');return {rows:invitationConversationRows(inv),saved,why:inv.why};`)(source);
   assert.equal(result.saved,2);assert.equal(result.rows.length,0);assert.equal(result.why,'Pierwsza');
 });
+
+
+test('message options close when the same trigger is clicked again',()=>{
+  const source=html.match(/function openMessageDeleteMenu\([^\n]+/)[0];
+  const result=new Function('source',`const anchor={},current={_anchor:anchor,remove(){this.removed=true;}};let created=0;const document={querySelector:()=>current,querySelectorAll:()=>[current],createElement:()=>{created++;throw Error('Should close only');}};eval(source);openMessageDeleteMenu(anchor,()=>{});return {removed:current.removed,created};`)(source);
+  assert.equal(result.removed,true);assert.equal(result.created,0);
+});
+test('full message reaction selection calls its callback instead of inserting composer text',()=>{
+  const source=html.slice(html.indexOf('function pickEmoji(key,e){'),html.indexOf('function addPanelEmoji(key){'));
+  const result=new Function('source',`let picked='',removed=false;const messageReactionCallbacks=new Map([['message-reaction-test',emoji=>picked=emoji]]),useEmoji=()=>{},document={getElementById:()=>({remove(){removed=true;}})};eval(source);pickEmoji('message-reaction-test','❤️');return {picked,removed,pending:messageReactionCallbacks.size};`)(source);
+  assert.equal(result.picked,'❤️');assert.equal(result.removed,true);assert.equal(result.pending,0);
+});
