@@ -21284,6 +21284,10 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar) :is(.idea-skill-option,.members-skill-option,.dictionary-choice,.resource-sidebar-option,.idea-side-option){box-sizing:border-box;padding-right:0!important}
 :is(.ideas-filter-sidebar,.members-filter-sidebar,.dictionary-sidebar,.resource-filter-sidebar,.watch-filter-sidebar) :is(.idea-skill-option>i,.members-skill-option>i,.dictionary-count,.resource-sidebar-option>small,.idea-filter-count,.watch-filter-sidebar label small){margin-left:auto;font:500 12px/1.4 'DM Sans',sans-serif!important;flex:none;color:var(--txs);background:transparent;border:0;border-radius:0;padding:0;min-width:20px;text-align:right}
 #s-ideas .idea-skill-option{display:flex;align-items:center;gap:9px;width:100%;min-height:36px;padding:6px 4px;border-radius:8px;font:500 13px/1.4 'DM Sans',sans-serif;cursor:pointer;transition:background .15s,color .15s}#s-ideas .idea-skill-option:hover,#s-teams .members-skill-option:hover{background:var(--p100)!important;color:var(--p700)!important}.idea-skill-option>span,.members-skill-option>span{flex:1;min-width:0}
+
+/* Filter labels inherit the same typography as the Ideas headings. */
+:is(#s-ideas,#s-platform,.resource-catalog-page) :is(.ideas-section-toggle,.dictionary-section-title,.resource-sidebar-group-toggle){font:700 13px/1.4 'DM Sans',sans-serif!important;letter-spacing:0;text-transform:none}
+:is(#s-platform,.resource-catalog-page) :is(.dictionary-section-title,.resource-sidebar-group-toggle)>:not(.shared-filter-chevron){font:inherit!important;color:inherit;letter-spacing:inherit}
 </style>
 <script id="app-ready-script">
 (()=>{
