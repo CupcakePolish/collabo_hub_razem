@@ -5536,7 +5536,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   <button type="button" class="bell-pill" onclick="go('watch')" title="Powiadomienia i obserwowane" aria-label="Powiadomienia i obserwowane"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 1.6 6.5 2 7H4c.4-.5 2-2 2-7Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bell-count" id="bell-count" style="display:none">0</span></button>
   <div class="nav-pill" onclick="go('ideas');switchTab('for-me')">
     <div class="dot"></div>
-    Dla mnie <span class="for-me-count" id="for-me-nav-count">0</span>
+    Dla mnie
   </div>
 </nav>
 <div id="toast-host" class="toast-host" aria-live="polite"></div>
@@ -5666,7 +5666,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
       <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
         <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></svg>Wszystkie</button>
-        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-4.5 3.3-6.5 7.5-6.5s6.7 2 7.5 6.5"/></svg>Dla mnie <span class="for-me-count" id="for-me-tab-count">0</span></button>
+        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-4.5 3.3-6.5 7.5-6.5s6.7 2 7.5 6.5"/></svg>Dla mnie</button>
         <button class="tab" id="tab-followed" onclick="switchTab('followed',this,'tab-followed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>Obserwowane</button><button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5ZM14 3v5h5M8 12h8M8 16h6"/></svg>Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
       </div>
       <div class="ideas-results-toolbar">
@@ -6968,10 +6968,8 @@ function toggleReceivedInvitationSkill(id,ref,index){const inv=ideas.find(i=>i.i
 function declineReceivedInvitation(id,ref){declineMyInvite(id,ref);go('watch');switchWatchTab('invitations');queuePersistence();}
 function acceptReceivedProjectInvitation(id,ref,person=MY_NAME){const idea=ideas.find(i=>i.id===id),found=idea&&pendingInviteByRef(idea,ref);if(!found||found.inv.kind!=='project'||isPrivateIdeaDraft(idea)||found.inv.person!==MY_NAME||person!==MY_NAME)return false;const inv=found.inv;if(inv.status&&inv.status!=='waiting'){go('watch');switchWatchTab('invitations');return false;}const key=id+':'+inv.id;if(!receivedInvitationSkills[key]){go('watch');switchWatchTab('invitations');return false;}inv.acceptedSkills=receivedInvitationSkills[key].filter(s=>(myProfile.skills||[]).includes(s));inv.acceptedAt=Date.now();const p=inv.policy||invitationPolicy(idea);if(p.joinMode==='vote')createInvitationProtocolVote(idea,inv,'join');else if(p.joinMode==='reaction'){inv.status='join_reaction';inv.statusChangedAt=Date.now();inv.reactUntil=Date.now()+Number(p.joinHours)*3600000;(inv.coInviters||[inv.by]).forEach(person=>notifyDemoPerson(person,MY_NAME+' przyjęła zaproszenie — trwa okres reakcji',id,'zespol'));}else finalizeProtocolMembership(idea,inv);notifications.filter(n=>n.meta?.inviteId===inv.id).forEach(n=>n.unread=false);queuePersistence();updateBell();go('watch');switchWatchTab('invitations');toast(p.joinMode==='automatic'?'Dołączono do zespołu.':'Zaproszenie przyjęte. Trwa zatwierdzanie dołączenia.','ok');return true;}
 
-function updateForMeInviteBadges(){
-  const count=myDirectInvitations().length;
-  ['for-me-nav-count','for-me-tab-count'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent=String(count);el.classList.toggle('on',count>0);});
-}
+function updateForMeInviteBadges(){}
+
 function acceptTaskPhaseInvite(ideaId,tid,pid){const {idea,t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!idea||!f||!(f.zaproszeni||[]).includes(MY_NAME))return;const owner=(f.wlasciciele||[])[0]||null;f.zaproszeni=f.zaproszeni.filter(x=>x!==MY_NAME);if(owner&&owner!==MY_NAME){f.wspolpracownicy=f.wspolpracownicy||[];if(!f.wspolpracownicy.includes(MY_NAME))f.wspolpracownicy.push(MY_NAME);touchTaskPhase(f);const action=`${MY_NAME} przyjęła zaproszenie do fazy „${f.tytul}"`;taskActivity(t,action);idea.log.push({text:action,date:TODAY,time:NOW_TIME(),type:'zadanie'});notifyDemoPerson(owner,`${MY_NAME} przyjęła zaproszenie do Twojej fazy „${f.tytul}"`,idea.id,'zadania','tasks',{taskId:t.id,phaseId:f.id,phaseJoinType:'invite'});toast('Dołączyłaś do pracy nad tą fazą.','ok');openTaskDetail(ideaId,tid);return;}joinTaskPhase(ideaId,tid,pid);}
 function declineTaskPhaseInvite(ideaId,tid,pid){const {idea,t}=findTask(ideaId,tid),f=t?.fazy?.find(x=>x.id===pid);if(!idea||!f)return;const owner=(f.wlasciciele||[])[0]||null;f.zaproszeni=(f.zaproszeni||[]).filter(x=>x!==MY_NAME);taskActivity(t,`${MY_NAME} odrzuciła zaproszenie do fazy „${f.tytul}"`);idea.log.push({text:`${MY_NAME} odrzuciła zaproszenie do fazy: ${f.tytul}`,date:TODAY,time:NOW_TIME(),type:'zadanie'});if(owner)notifyDemoPerson(owner,`${MY_NAME} odrzuciła zaproszenie do Twojej fazy „${f.tytul}"`,idea.id,'zadania','tasks',{taskId:t.id,phaseId:f.id,phaseJoinType:'invite-result'});toast('Zaproszenie odrzucone.','warn');openTaskDetail(ideaId,tid);}
 function ideaMatchLabels(idea){
@@ -8123,14 +8121,13 @@ function renderIdeas(){
   filtered.sort((a,b)=>(sorters[ideaListFilters.sort]||sorters['activity-desc'])(a,b)||(Number(b.id)||0)-(Number(a.id)||0));
   if(resultCount)resultCount.textContent=`${filtered.length} ${plural(filtered.length,['propozycja','propozycje','propozycji'])}`;
 
-  const forMeInvites=currentTab==='for-me'?renderForMeInvites():'';
   if(!filtered.length){
     const emptyTitle=ideaListFilters.archive==='archived'?'Archiwum jest puste':'Brak pomysłów dla tej kombinacji';
     const emptyCopy=ideaListFilters.archive==='archived'?`Trafiają tu projekty bez aktywnych osób albo bez aktywności merytorycznej zespołu przez ${PROJECT_ARCHIVE_IDLE_DAYS} dni.`:'Zmień zakres, filtr lub wyszukiwaną frazę.';
-    list.innerHTML=forMeInvites+`<div class="empty"><div style="font-size:32px">○</div><div class="empty-t">${emptyTitle}</div>${emptyCopy?`<p>${emptyCopy}</p>`:''}</div>`;return;
+    list.innerHTML=`<div class="empty"><div style="font-size:32px">○</div><div class="empty-t">${emptyTitle}</div>${emptyCopy?`<p>${emptyCopy}</p>`:''}</div>`;return;
   }
 
-  list.innerHTML=forMeInvites+filtered.map(idea=>{
+  list.innerHTML=filtered.map(idea=>{
     const auth=authorOf(idea);
     const variant=ideaVariantInfo(idea);
     const displayTitle=ideaCatalogTitle(idea);
