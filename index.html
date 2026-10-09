@@ -7174,7 +7174,7 @@ function renderRoleRequirements(idea,ideaId){
       }
       if((r.filledBy||[]).includes(MY_NAME)) opts.push({label:'Wycofaj moje użyczenie',run:`withdrawNeedContribution(${ideaId},${idx})`});
       (r.filledBy||[]).filter(n=>n!==MY_NAME).forEach(n=>opts.push({label:`Odwołaj osobę: ${n}`,run:`startRecall(${ideaId},'${escAttr(n)}')`,kind:'danger'}));
-      opts.push({label:'Zmień wymagania',run:`startEditRole(${ideaId},${idx})`});
+      opts.push({label:'Zmień opis',run:`startEditRole(${ideaId},${idx})`});
       opts.push({label:'Usuń potrzebę',run:`startRevokeRole(${ideaId},${idx})`,kind:'danger'});
     }
     const kebab=ideaId?renderActionMenu(`rkm-${ideaId}-${idx}`,'',opts,{title:'Opcje potrzeby'}):'';
@@ -7188,7 +7188,7 @@ function renderRoleRequirements(idea,ideaId){
     const primary=needPrimaryCapability(r);
     const inviteButton=!ok&&hasRoom&&canManageProjectMembers(idea)?`<button type="button" class="idea-competency-invite" onclick="startInviteRole(${ideaId},${idx})">Zaproś</button>`:'';
     return `<article class="idea-competency-row need-${needState}">
-      <div class="idea-competency-tile-top"><span class="idea-competency-tile-icon">${ideaCompetencyTileIcon(primary.name)}</span>${kebab}</div><div class="idea-competency-copy"><strong>${escHtml(primary.name)}</strong><p>${escHtml(r.task||'Ta kompetencja jest potrzebna do rozwijania pomysłu.')}</p></div>
+      <div class="idea-competency-tile-top"><span class="idea-competency-tile-icon">${ideaCompetencyTileIcon(primary.name)}</span>${kebab}</div><div class="idea-competency-copy"><strong>${escHtml(primary.name)}</strong>${idea?.roleEditIndex===idx?`<textarea class="competency-description-editor" id="role-edit-task-${ideaId}" rows="4" maxlength="3000" aria-label="Opis kompetencji w projekcie">${escHtml(r.task||'')}</textarea><div class="competency-description-actions"><button type="button" class="inv-secondary" onclick="cancelEditRole(${ideaId})">Anuluj</button><button type="button" class="inv-primary" onclick="submitEditRole(${ideaId},${idx})">${isPrivateIdeaDraft(idea)?'Zapisz opis':'Wyślij pod głosowanie'}</button></div>`:`<p>${escHtml(r.task||'Ta kompetencja jest potrzebna do rozwijania pomysłu.')}</p>`}</div>
       <div class="idea-competency-actions">${statusBadge}<div class="idea-competency-people">${filled}</div>${inviteButton}</div>
       <div class="idea-competency-details">${ongoingHtml}${candHtml}${joinPanel}${invitePanel}${revokePanel}</div>
     </article>`;
@@ -12605,42 +12605,9 @@ function parseRoleSkills(str){
     return name?{name,lvl}:null;
   }).filter(Boolean);
 }
-function startEditRole(ideaId,idx){
-  const idea=ideas.find(i=>i.id===ideaId);const r=idea?.roleRequirements?.[idx];if(!idea||!r)return;
-  const skills=(r.skills||[]).map(s=>s.name+(s.lvl?':'+s.lvl:'')).join(', ');
-  actionModal({
-    sideTitle:'Zmień wymagania potrzeby',
-    sideText:isPrivateIdeaDraft(idea)?'W szkicu zmiana zapisze się bezpośrednio.':'Ta propozycja trafi pod głosowanie zespołu. Po przyjęciu zaktualizuje opis oraz wymagane kompetencje i możliwości.',
-    steps:['Opis potrzeby','Wymagania','Powód zmiany'],
-    title:escHtml(needDisplayName(r.role)),
-    intro:isPrivateIdeaDraft(idea)?'Doprecyzuj opis oraz wymagane kompetencje.':'Zmień tylko to, co faktycznie ma zostać przegłosowane.',
-    body:`<div class="modal-form-grid">
-        <label>Po co tego potrzebujemy<textarea id="role-edit-task-${ideaId}" placeholder="Co ta potrzeba wnosi do projektu?">${escHtml(r.task||'')}</textarea></label>
-        <label>Wymagane kompetencje lub możliwości${platformCapabilityMultiPicker('role-edit-skills-'+ideaId,skills)}</label>
-        <label>Dlaczego zmieniamy kryteria<textarea id="role-edit-why-${ideaId}" placeholder="Uzasadnienie tej zmiany"></textarea></label>
-        <div class="role-actions"><button class="vbtn voted-yes" onclick="submitEditRole(${ideaId},${idx})">${isPrivateIdeaDraft(idea)?'Zapisz':'Wyślij'}</button><button class="vbtn" onclick="closeAppModal()">Anuluj</button></div>
-      </div>`
-  });
-  setTimeout(()=>document.getElementById('role-edit-task-'+ideaId)?.focus(),60);
-}
-function cancelEditRole(ideaId){closeAppModal();}
-function submitEditRole(ideaId,idx){
-  const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
-  const r=(idea.roleRequirements||[])[idx];if(!r)return;
-  const task=(document.getElementById('role-edit-task-'+ideaId)?.value||'').trim();
-  const min=1;
-  const skills=parseRoleSkills(document.getElementById('role-edit-skills-'+ideaId)?.value||'');
-  const why=(document.getElementById('role-edit-why-'+ideaId)?.value||'').trim();
-  if(!why){toast('Zmiana kryteriów roli wymaga uzasadnienia.','warn');return;}
-  if(isPrivateIdeaDraft(idea)){const oldSkills=new Set((r.skills||[]).map(s=>s.name));r.task=task;r.skills=skills;idea.skillsNeeded=(idea.skillsNeeded||[]).filter(s=>!oldSkills.has(s.skill));skills.forEach(s=>idea.skillsNeeded.push({skill:s.name,why:task,minLvl:s.lvl||1,filled:false,date:TODAY}));touchPrivateIdeaDraft(idea);closeAppModal();toast('Potrzeba zaktualizowana w szkicu.','ok');openIdea(ideaId,true);return;}
-  const vId='v'+Date.now();
-  idea.votes.push({id:vId,kind:'role-edit',roleIndex:idx,roleName:r.role,newTask:task,newSkills:skills,prop:`Zmienić kryteria roli „${r.role}"`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[{rid:'r'+Date.now(),stance:'za',author:MY_NAME,text:why,date:TODAY,supporters:[],debunks:[]}]});
-  idea.log.push({text:`Pod głosowanie: zmiana kryteriów roli „${r.role}"`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:'<b>Powód:</b> „'+escHtml(why)+'"'});
-  idea.roleEditIndex=null;notifyVote(idea);
-  maybeNotify(idea,'Głosowanie: zmiana kryteriów roli '+r.role);
-  closeAppModal();
-  openIdea(ideaId,true);
-}
+function startEditRole(ideaId,idx){const idea=ideas.find(row=>row.id===ideaId),r=idea?.roleRequirements?.[idx];if(!r||!canManageProjectMembers(idea))return;idea.roleEditIndex=idx;openIdea(ideaId,true);requestAnimationFrame(()=>document.getElementById('role-edit-task-'+ideaId)?.focus({preventScroll:true}));}
+function cancelEditRole(ideaId){const idea=ideas.find(row=>row.id===ideaId);if(!idea)return;idea.roleEditIndex=null;openIdea(ideaId,true);}
+function submitEditRole(ideaId,idx){const idea=ideas.find(row=>row.id===ideaId),r=idea?.roleRequirements?.[idx];if(!r||!canManageProjectMembers(idea))return;const task=(document.getElementById('role-edit-task-'+ideaId)?.value||'').trim();if(!task)return toast('Dodaj opis kompetencji w tym projekcie.','warn');if(task===(r.task||'').trim())return toast('Opis nie został zmieniony.','warn');if(isPrivateIdeaDraft(idea)){r.task=task;idea.roleEditIndex=null;touchPrivateIdeaDraft(idea);openIdea(ideaId,true);return;}if((idea.votes||[]).some(v=>v.open&&v.kind==='role-edit'&&v.roleIndex===idx))return toast('Zmiana tej kompetencji jest już pod głosowaniem.','warn');const name=needPrimaryCapability(r).name;idea.votes=idea.votes||[];idea.votes.push({id:'v'+Date.now(),kind:'role-edit',descriptionOnly:true,roleIndex:idx,roleName:r.role,oldTask:r.task||'',newTask:task,prop:`Zmienić opis kompetencji „${name}”`,description:`Obecny opis: ${r.task||'Brak'}\n\nProponowany opis: ${task}`,proposedBy:MY_NAME,yes:0,no:0,myVote:null,open:true,date:TODAY,deadline:DEADLINE(),reasons:[]});(idea.log||(idea.log=[])).push({text:`Pod głosowanie: zmiana opisu kompetencji „${name}”`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Obecny opis:</b> ${escHtml(r.task||'')}<br><b>Proponowany opis:</b> ${escHtml(task)}`});idea.roleEditIndex=null;notifyVote(idea);maybeNotify(idea,'Głosowanie: zmiana opisu kompetencji '+name);queuePersistence();openIdea(ideaId,true);toast('Zmiana opisu trafiła pod głosowanie.','ok');}
 function isActiveProjectMember(idea,name=MY_NAME){return !!idea&&participantsOf(idea).includes(name);}
 function canManageProjectMembers(idea,name=MY_NAME){return isActiveProjectMember(idea,name);}
 function applyPrivateDraftPolicy(root){if(!root)return;root.querySelectorAll('[onclick]').forEach(el=>{const action=el.getAttribute('onclick')||'';if(/openVote|submit.*Vote|start.*Dispute|reconfirm|notifyVote|startPhaseAdvance|startPhaseBack|addLog\(|openTask.*Invite|saveTask.*Invite|assignTask/i.test(action)){el.classList.add('draft-action-disabled');el.setAttribute('aria-disabled','true');el.title='Dostępne po publikacji pomysłu';}});}
@@ -14526,8 +14493,8 @@ function checkQuorum(idea,v){
       const r=(idea.roleRequirements||[])[v.roleIndex];
       if(r){
         if(v.newTask) r.task=v.newTask;
-        r.skills=v.newSkills||[];
-        idea.log.push({text:`Zmieniono kryteria roli „${r.role}" głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Nowy opis:</b> „${escHtml(v.newTask||r.task||'')}".${(r.skills&&r.skills.length)?' Umiejętności: '+escHtml(r.skills.map(s=>s.name+(s.lvl?' P'+s.lvl:'')).join(', '))+'.':''}`});
+        if(!v.descriptionOnly)r.skills=v.newSkills||[];
+        idea.log.push({text:`${v.descriptionOnly?'Zmieniono opis kompetencji':'Zmieniono kryteria roli'} „${needPrimaryCapability(r).name}" głosowaniem (${v.yes} za)`,date:TODAY,time:NOW_TIME(),type:'głosowanie',detail:`<b>Nowy opis:</b> „${escHtml(v.newTask||r.task||'')}".${(r.skills&&r.skills.length)?' Umiejętności: '+escHtml(r.skills.map(s=>s.name+(s.lvl?' P'+s.lvl:'')).join(', '))+'.':''}`});
       }
     } else if(v.kind==='skill'&&v.skillData){
       idea.skillsNeeded=idea.skillsNeeded||[];
@@ -21416,6 +21383,7 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 </style>
 <style>.idea-competency-list>.idea-competency-row{min-height:0!important;padding:16px!important}.idea-competency-row .idea-competency-tile-top{margin-bottom:10px!important}.idea-competency-row .idea-competency-copy{min-height:0!important;flex:1}.idea-competency-row .idea-competency-copy strong{margin-bottom:6px!important}.idea-competency-row .idea-competency-actions{margin-top:12px!important;padding-top:10px!important;min-height:44px!important}.idea-competency-row:has(.idea-competency-details:not(:empty)){min-height:0!important}</style>
 <style>.idea-participant-tile>.idea-participant-facts:last-child{border-radius:0 0 15px 15px;overflow:hidden}.idea-participant-tile>.idea-participant-facts:last-child>.idea-participant-fact:nth-last-child(2){border-bottom-left-radius:15px}.idea-participant-tile>.idea-participant-facts:last-child>.idea-participant-fact:last-child{border-bottom-right-radius:15px}</style>
+<style>.competency-description-editor{display:block;width:100%;box-sizing:border-box;margin-top:8px;min-height:100px;border:1px solid var(--p300);border-radius:10px;padding:10px;background:var(--surf);color:var(--txt);font:400 13px/1.55 'DM Sans',sans-serif;resize:vertical}.competency-description-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;margin-top:9px}.competency-description-actions button{font-size:11px;padding:8px 10px}</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
