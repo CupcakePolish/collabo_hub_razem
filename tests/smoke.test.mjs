@@ -1157,3 +1157,15 @@ test('attention center separates invitation notices from comments',()=>{
   assert.equal(classify({text:'Masz zaproszenie do projektu',meta:{inviteId:'inv-1'}}),true);
   assert.equal(classify({text:'Zaproszenie oczekuje na finalizację zespołu'}),true);
 });
+
+
+test('entering notifications marks notices read without marking pending invitations',()=>{
+  const source=['watchNotificationIsInvitation','markWatchNotificationsRead'].map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+  const result=new Function('source', `
+    const notifications=[{text:'Nowy komentarz',unread:true},{text:'Nowe głosowanie',unread:true},{text:'Zaproszenie',meta:{inviteId:'inv'},unread:true}];
+    let persisted=0,bells=0;const queuePersistence=()=>persisted++,updateBell=()=>bells++;
+    eval(source);markWatchNotificationsRead();markWatchNotificationsRead();
+    return {read:notifications.map(n=>n.unread),persisted,bells};
+  `)(source);
+  assert.deepEqual(result.read,[false,false,true]);assert.equal(result.persisted,1);assert.equal(result.bells,1);
+});
