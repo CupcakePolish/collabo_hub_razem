@@ -21174,6 +21174,18 @@ html.theme-dark :is(#s-profile,#s-profile-me) .profile-portfolio-list-item:has(.
 @media(max-width:700px){.profile-portfolio-editor .portfolio-title-row{grid-template-columns:120px minmax(0,1fr)!important}.portfolio-title-thumbnail{width:120px}.portfolio-title-thumbnail .portfolio-thumbnail-picker{width:120px!important;height:120px!important}}
 @media(max-width:430px){.profile-portfolio-editor .portfolio-title-row{grid-template-columns:1fr!important}}
 </style>
+<style id="text-input-native-colors">
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),textarea{-webkit-appearance:none;appearance:none;caret-color:var(--p700)}
+input[type=search]::-webkit-search-decoration,input[type=search]::-webkit-search-results-button,input[type=search]::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none}
+input::selection,textarea::selection,[contenteditable]::selection{background:#e4d8fa;color:#2d2048}
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,textarea:-webkit-autofill{-webkit-text-fill-color:var(--txt)!important;caret-color:var(--p700);-webkit-box-shadow:0 0 0 1000px var(--surf) inset!important;transition:background-color 99999s ease-out}
+html.theme-dark input::selection,html.theme-dark textarea::selection{background:#59417f;color:#fff}
+</style>
+<style id="idea-delete-neutral-buttons">
+#s-ideas .draft-actions .danger,.app-modal .draft-delete-confirm{background:var(--surf)!important;border:1px solid var(--bdr)!important;color:var(--txm)!important;box-shadow:none!important}
+#s-ideas .draft-actions .danger:hover,.app-modal .draft-delete-confirm:hover{background:var(--p050)!important;border-color:var(--p300)!important;color:var(--p700)!important}
+#s-ideas .draft-actions .danger:focus-visible,.app-modal .draft-delete-confirm:focus-visible{outline:2px solid var(--p400);outline-offset:3px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
