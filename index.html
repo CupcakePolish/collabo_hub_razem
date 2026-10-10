@@ -21469,6 +21469,12 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 <style>
 .dictionary-row-icon .competency-formatted-icon,.competency-hero>i .competency-formatted-icon,.idea-competency-tile-icon .competency-formatted-icon{width:100%;height:100%}.dictionary-row-icon .competency-formatted-icon img,.competency-hero>i .competency-formatted-icon img,.idea-competency-tile-icon .competency-formatted-icon img{width:100%;height:100%;object-fit:contain}.competency-no-icon{display:block;width:100%;height:100%}
 </style>
+<style>
+.global-nav .nl::before,.global-nav .theme-toggle::after,.global-nav .bell-pill::after{top:auto;bottom:calc(100% + 8px);transform:translate(-50%,3px)}.global-nav .nl:hover::before,.global-nav .nl:focus-visible::before,.global-nav .theme-toggle:hover::after,.global-nav .theme-toggle:focus-visible::after,.global-nav .bell-pill:hover::after,.global-nav .bell-pill:focus-visible::after{transform:translate(-50%,0)}
+</style>
+<style>
+.global-nav .nl::before,.global-nav .theme-toggle::after,.global-nav .bell-pill::after{display:none!important}#global-nav-tooltip{position:fixed;z-index:2147483647;pointer-events:none;width:max-content;max-width:180px;padding:7px 10px;border:1px solid #ded9ea;border-radius:8px;background:#2e2540;color:white;font:700 11px/1.3 'DM Sans',sans-serif;box-shadow:0 4px 14px #24173520}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
@@ -21537,5 +21543,8 @@ function openTopAccountSettings(){closeTopAccountMenu();appModal(`<h3>Ustawienia
 function openTopHelp(){closeTopAccountMenu();appModal('<h3>Pomoc i wsparcie</h3><p>Wybierz pomysł, aby zobaczyć jego zespół, zadania i dyskusje. Zaproszenia i powiadomienia znajdziesz w centrum uwagi.</p><div class="top-settings-actions"><button type="button" class="inv-secondary" onclick="closeAppModal();go(\'about\')">O CollaboHub</button><button type="button" class="inv-secondary" onclick="closeAppModal();go(\'watch\')">Centrum uwagi</button></div>','top-account-modal');}
 </script>
 
+<script>
+(()=>{let anchor=null;const selector='.global-nav .nl,.global-nav .theme-toggle,.global-nav .bell-pill';function hide(){document.getElementById('global-nav-tooltip')?.remove();anchor=null;}function show(el){hide();const label=el.dataset.navLabel||el.getAttribute('title');if(!label)return;el.dataset.navLabel=label;el.removeAttribute('title');if(!el.hasAttribute('aria-label'))el.setAttribute('aria-label',label);const tip=document.createElement('div');tip.id='global-nav-tooltip';tip.setAttribute('role','tooltip');tip.textContent=label;document.body.append(tip);anchor=el;const rect=el.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-8,rect.left+rect.width/2-tip.offsetWidth/2))+'px';tip.style.top=(rect.top-tip.offsetHeight-8>=8?rect.top-tip.offsetHeight-8:rect.bottom+8)+'px';}document.addEventListener('pointerover',e=>{const el=e.target.closest(selector);if(el&&el!==anchor)show(el);});document.addEventListener('pointerout',e=>{if(anchor&&e.target.closest(selector)===anchor&&!anchor.contains(e.relatedTarget))hide();});document.addEventListener('focusin',e=>{const el=e.target.closest(selector);if(el)show(el);});document.addEventListener('focusout',hide);document.addEventListener('pointerdown',hide);window.addEventListener('scroll',hide,true);window.addEventListener('resize',hide);})();
+</script>
 </body>
 </html>
