@@ -6775,7 +6775,7 @@ const IC=(()=>{
 
 let currentTab='all';
 let searchQ='';
-const ideaListFilters={status:'all',type:'all',archive:'all',openNeeds:false,followed:false,sort:'activity-desc'};
+const ideaListFilters={status:'all',type:'all',archive:'active',openNeeds:false,followed:false,sort:'activity-desc'};
 const selectedIdeaNeededSkills=new Set();
 const selectedIdeaPresentSkills=new Set();
 const ideaSkillQueries={needed:'',present:''};
@@ -6872,11 +6872,11 @@ function toggleIdeaSidebarSection(button){
   button.setAttribute('aria-expanded',String(!collapsed));
 }
 function removeIdeaFilter(key){
-  const defaults={status:'all',type:'all',archive:'all',openNeeds:false,followed:false};if(!Object.prototype.hasOwnProperty.call(defaults,key))return;
+  const defaults={status:'all',type:'all',archive:'active',openNeeds:false,followed:false};if(!Object.prototype.hasOwnProperty.call(defaults,key))return;
   ideaListFilters[key]=defaults[key];syncIdeaQueryControls();renderIdeas();
 }
 function clearIdeaListFilters(){
-  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'all',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';searchQ='';const search=document.getElementById('idea-search');if(search)search.value='';document.querySelectorAll('#s-ideas .idea-skill-search input').forEach(input=>input.value='');syncIdeaQueryControls();renderIdeas();
+  Object.assign(ideaListFilters,{status:'all',type:'all',archive:'active',openNeeds:false,followed:false});selectedIdeaNeededSkills.clear();selectedIdeaPresentSkills.clear();ideaSkillQueries.needed='';ideaSkillQueries.present='';searchQ='';const search=document.getElementById('idea-search');if(search)search.value='';document.querySelectorAll('#s-ideas .idea-skill-search input').forEach(input=>input.value='');syncIdeaQueryControls();renderIdeas();
 }
 function renderIdeaSidebarCounts(){const rows=ideas.filter(i=>i?.isDraft!==true);document.querySelectorAll('#s-ideas .idea-side-option').forEach(button=>{const key=button.dataset.filterKey,value=button.dataset.filterValue;const count=rows.filter(idea=>key==='status'?projectLifecycleStatus(idea)===value:key==='archive'?(value==='archived'?projectIsArchived(idea):!projectIsArchived(idea)):button.id==='idea-type-ideas'?!ideaIsVariant(idea):button.id==='idea-type-variants'?ideaIsVariant(idea):button.id==='idea-filter-open-needs'?missingRoleCount(idea)>0:button.id==='idea-filter-followed'?followedIdeas.has(idea.id):true).length;let badge=button.querySelector('.idea-filter-count');if(!badge){badge=document.createElement('small');badge.className='idea-filter-count';button.append(badge);}badge.textContent=count;});}
 function syncIdeaQueryControls(){
@@ -7216,7 +7216,7 @@ function platformVoteCategory(v){return v.before?.[0]?.category||v.after?.catego
 function platformVoteStatusLabel(status){return {active:'Aktywne',upcoming:'Nadchodzące',closed:'Zakończone'}[status]||status;}
 function platformVoteChangeKinds(v){const before=v.before?.[0],after=v.after,kinds=[];if(v.kind==='dictionary-new')kinds.push('new');if(v.kind==='competency-merge')kinds.push('merge');if(!before||!after||before.name!==after.name||before.definition!==after.definition)kinds.push('description');if(after&&(before?.icon!==after.icon||JSON.stringify(before?.iconFormat)!==JSON.stringify(after.iconFormat)))kinds.push('image');if(before&&after&&before.category!==after.category)kinds.push('category');return kinds;}
 function clearPlatformVoteFilters(){Object.assign(platformVoteView,{status:'active',query:'',category:'',changeKind:'',selected:null});renderPlatformVotes();}
-function renderPlatformVoteFilters(all){const state=platformVoteView,section=(title,key,options,count)=>`<details open class="pv-filter-section"><summary>${title}<span>⌃</span></summary>${options.map(([value,label])=>`<button type="button" class="pv-filter-option ${state[key]===value?'on':''}" aria-pressed="${state[key]===value}" onclick="setPlatformVoteView('${key}','${value===state[key]&&key!=='status'?'':value}')"><span class="pv-filter-check">✓</span>${label}<small>${count(value)}</small></button>`).join('')}</details>`;return `<div class="pv-filter-head"><b>Filtry</b><button type="button" onclick="clearPlatformVoteFilters()" aria-label="Wyczyść filtry">↻</button></div>${section('Status','status',[['active','Aktywne'],['upcoming','Nadchodzące'],['closed','Zakończone']],value=>all.filter(v=>v.status===value).length)}${section('Kategoria','category',Object.entries(DICTIONARY_CATEGORY).map(([key,[label]])=>[key,label]),value=>all.filter(v=>platformVoteCategory(v)===value).length)}${section('Rodzaj zmiany','changeKind',[['new','Nowe pojęcie'],['description','Zmiana nazwy lub opisu'],['image','Zmiana grafiki'],['merge','Połączenie pojęć'],['category','Zmiana kategorii']],value=>all.filter(v=>platformVoteChangeKinds(v).includes(value)).length)}`;}
+function renderPlatformVoteFilters(all){const state=platformVoteView,section=(title,key,options,count)=>`<details ${state.expandedFilters?.[key]?'open':''} class="pv-filter-section" ontoggle="(platformVoteView.expandedFilters||(platformVoteView.expandedFilters={}))['${key}']=this.open"><summary>${title}<span>⌃</span></summary>${options.map(([value,label])=>`<button type="button" class="pv-filter-option ${state[key]===value?'on':''}" aria-pressed="${state[key]===value}" onclick="setPlatformVoteView('${key}','${value===state[key]&&key!=='status'?'':value}')"><span class="pv-filter-check">✓</span>${label}<small>${count(value)}</small></button>`).join('')}</details>`;return `<div class="pv-filter-head"><b>Filtry</b><button type="button" onclick="clearPlatformVoteFilters()" aria-label="Wyczyść filtry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6.5 7.3V18l-3 1.6v-7.3L4 5Z"/></svg></button></div>${section('Status','status',[['active','Aktywne'],['upcoming','Nadchodzące'],['closed','Zakończone']],value=>all.filter(v=>v.status===value).length)}${section('Kategoria','category',Object.entries(DICTIONARY_CATEGORY).map(([key,[label]])=>[key,label]),value=>all.filter(v=>platformVoteCategory(v)===value).length)}${section('Rodzaj zmiany','changeKind',[['new','Nowe pojęcie'],['description','Zmiana nazwy lub opisu'],['image','Zmiana grafiki'],['merge','Połączenie pojęć'],['category','Zmiana kategorii']],value=>all.filter(v=>platformVoteChangeKinds(v).includes(value)).length)}`;}
 function updatePlatformVoteSearch(field){const value=field.value,start=field.selectionStart,end=field.selectionEnd;platformVoteView.query=value;renderPlatformVotes();const input=document.querySelector('.pv-filter-search input');input?.focus();try{input?.setSelectionRange(start,end);}catch{}}
 function renderPlatformVoteArt(){return `<div class="pv-hero-art" aria-hidden="true"><svg viewBox="0 0 260 150"><defs><linearGradient id="pv-gavel-gradient" x2="0" y2="1"><stop stop-color="#f5edff"/><stop offset="1" stop-color="#b68aef"/></linearGradient></defs><ellipse cx="137" cy="132" rx="70" ry="9" fill="#eadefa"/><g transform="rotate(-32 130 70)"><rect x="122" y="51" width="17" height="76" rx="8" fill="#a875e4"/><rect x="86" y="24" width="91" height="37" rx="11" fill="url(#pv-gavel-gradient)" stroke="#c39fea" stroke-width="2"/><path d="M98 27v31m67-31v31" stroke="#b583e6" stroke-width="4"/></g><path d="M105 122h70l8 13H97Z" fill="#c5a4ef"/><path d="m43 35 12 8m-7 14 14 1m140-32-8 11m18 3-13 6" stroke="#c7a5ed" stroke-width="3" stroke-linecap="round"/><g fill="#f1e8fc" stroke="#ddc8f5"><rect x="8" y="75" width="48" height="37" rx="7" transform="rotate(-12 32 93)"/><rect x="204" y="77" width="44" height="36" rx="7" transform="rotate(12 226 95)"/></g><path d="m20 91 7 7 13-17m173 14 7 6 10-13" fill="none" stroke="#ab79df" stroke-width="3" stroke-linecap="round"/></svg></div>`;}
 function renderPlatformVotes(){
@@ -21610,6 +21610,16 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 .pv-search-toolbar .pv-filter-search:focus-within{border-color:var(--p400);box-shadow:0 0 0 3px #7d5bc31a}
 .pv-search-toolbar>.inv-primary{flex:none;min-height:44px;white-space:nowrap}
 @media(max-width:700px){.pv-head{min-height:0}.pv-search-toolbar{flex-wrap:wrap}.pv-search-toolbar .pv-filter-search{flex-basis:200px}.pv-search-toolbar>.inv-primary{font-size:12px}}
+</style>
+<style>
+#s-voting .pv-search-toolbar{gap:12px}
+#s-voting .pv-search-toolbar .pv-filter-search{box-sizing:border-box;height:52px;border-radius:13px;padding:0 16px;background:var(--surf);box-shadow:0 2px 9px rgba(30,23,52,.025);font-family:'DM Sans',sans-serif}
+#s-voting .pv-search-toolbar .pv-filter-search input{box-sizing:border-box;appearance:none;display:block;flex:1;width:100%;min-width:0;height:100%;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font:400 16px 'DM Sans',sans-serif!important;color:var(--txt)}
+#s-voting .pv-search-toolbar .pv-filter-search input::placeholder{color:var(--txs);opacity:1}
+#s-voting .pv-search-toolbar .pv-filter-search svg{width:20px;height:20px}
+#s-voting .pv-search-toolbar>.inv-primary{height:52px;padding:0 20px;font:650 14px 'DM Sans',sans-serif;border-radius:13px}
+.pv-filter-head button{display:grid;place-items:center;width:28px;height:28px;padding:0}.pv-filter-head button svg{width:20px;height:20px}
+.pv-filter-section summary{min-height:34px;padding-bottom:0;font-size:15px}.pv-filter-section[open] summary{margin-bottom:9px}
 </style>
 <script id="app-ready-script">
 (()=>{
