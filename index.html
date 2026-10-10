@@ -21563,6 +21563,28 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 <style>
 .competency-editor-right{display:flex;flex-direction:column;gap:16px;grid-column:2;grid-row:1/4;min-width:0}.competency-editor-main .competency-editor-right>.competency-editor-fields,.competency-editor-main:has(.competency-icon-controls) .competency-editor-right>.competency-editor-fields,.competency-editor-main .competency-editor-right>.competency-merge-picker:not(.dictionary-category-editor),.competency-editor-main .competency-editor-right>.dictionary-category-editor{grid-column:auto;grid-row:auto;align-self:stretch;margin:0}.competency-editor-main .competency-editor-right>.competency-editor-fields{min-height:360px}.competency-editor-main .competency-editor-media{min-height:360px}@media(max-width:650px){.competency-editor-right{grid-column:1;grid-row:auto}.competency-editor-main .competency-editor-media{min-height:0}.competency-editor-main .competency-editor-right>.competency-editor-fields{min-height:0}}
 </style>
+<style>
+.dictionary-new-icon-layout{grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
+.dictionary-new-icon-layout .competency-icon-controls{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto auto;column-gap:28px;padding:0;border:0;border-radius:0;background:transparent;align-content:start}
+.dictionary-new-icon-layout .competency-icon-controls>h3{grid-column:1;grid-row:1;margin:0 0 6px;font-size:14px}
+.dictionary-new-icon-layout .competency-icon-controls>p{grid-column:1;grid-row:2;margin:0 0 12px;font-size:12px;line-height:1.45;color:var(--txm)}
+.dictionary-new-icon-layout .competency-icon-controls>.competency-icon-crop{display:none}
+.dictionary-new-icon-layout .competency-zoom-label{grid-column:1;grid-row:3;margin:0;font-size:12px}
+.dictionary-new-icon-layout .competency-icon-controls>input[type=range]{grid-column:1;grid-row:4;margin:12px 0 16px;height:16px}
+.dictionary-new-icon-layout .competency-icon-buttons{grid-column:1;grid-row:5;display:flex;flex-wrap:nowrap;gap:10px}
+.dictionary-new-icon-layout .competency-icon-buttons button{flex:1;font-size:12px;padding:12px 8px}
+.dictionary-new-icon-layout .competency-icon-controls>.competency-icon-background{grid-column:2;grid-row:1/6;border-top:0;border-left:1px solid var(--bdr);padding:0 0 0 28px;margin:0;align-self:stretch}
+.dictionary-new-icon-layout .competency-icon-background>p{font-size:12px;line-height:1.45;margin:5px 0 12px;color:var(--txm)}
+.dictionary-new-icon-layout .competency-color-swatches{gap:8px;max-width:300px}
+.dictionary-new-icon-layout .competency-color-swatches button{width:38px;height:32px}
+.dictionary-new-icon-layout .competency-rainbow-picker{display:flex;align-items:center;gap:12px;position:relative;margin:14px 0 0;padding:12px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);font-size:12px;cursor:pointer}
+.dictionary-new-icon-layout .competency-rainbow-picker:after{content:'›';margin-left:auto;color:var(--p700);font-size:24px}
+.dictionary-new-icon-layout .competency-rainbow-picker small{text-align:left;font-size:11px}
+.dictionary-new-icon-layout .competency-rainbow-picker input[type=color]{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0;cursor:pointer}
+.dictionary-new-icon-layout #competency-background-label{display:none}
+@media(max-width:900px){.dictionary-new-icon-layout{grid-template-columns:180px minmax(0,1fr);gap:18px}.dictionary-new-icon-layout .competency-edit-icon{width:180px;height:180px}.dictionary-new-icon-layout .competency-icon-controls{column-gap:16px}.dictionary-new-icon-layout .competency-icon-controls>.competency-icon-background{padding-left:16px}}
+@media(max-width:650px){.dictionary-new-icon-layout{grid-template-columns:1fr}.dictionary-new-icon-layout .competency-icon-controls{grid-template-columns:1fr}.dictionary-new-icon-layout .competency-icon-controls>.competency-icon-background{grid-column:1;grid-row:6;border-left:0;border-top:1px solid var(--bdr);padding:16px 0 0;margin-top:16px}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
