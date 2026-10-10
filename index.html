@@ -7775,7 +7775,8 @@ function profileRecordRows(rows,empty){
 }
 
 
-let myPoints=46; // Patrycja: 3× zespół (+30), 7 komentarzy (+7), zrobione zadanie... demo
+let profilePointsResetVersion=0;
+let myPoints=0; // Patrycja: 3× zespół (+30), 7 komentarzy (+7), zrobione zadanie... demo
 
 const DEMO_PROFILE_NAMES=new Set(['Patrycja Kowalska','Anna Wiśniewska','Katarzyna Zielińska']);
 function demoPerspectiveProfiles(rows){return (Array.isArray(rows)?rows:[]).filter(member=>DEMO_PROFILE_NAMES.has(member?.name));}
@@ -7871,7 +7872,7 @@ function demoAccountDefaults(){
     contact:'@katarzyna.zielinska'
   });
   return {
-    patrycja:{id:'patrycja',subject:'demo:patrycja-kowalska',profile:patProfile,points:Number(myPoints||46),scenario:'osoba zewnętrzna / kandydatka',followedIdeas:[...followedIdeas],followedComments:[...followedComments],notifications:cloneDemoValue(notifications),wizardDraft:cloneDemoValue(wizardDraft),ideaDrafts:cloneDemoValue(ideaDrafts),activeWizardDraftId, voteState:collectPersonalVoteState()},
+    patrycja:{id:'patrycja',subject:'demo:patrycja-kowalska',profile:patProfile,points:Number(myPoints||0),scenario:'osoba zewnętrzna / kandydatka',followedIdeas:[...followedIdeas],followedComments:[...followedComments],notifications:cloneDemoValue(notifications),wizardDraft:cloneDemoValue(wizardDraft),ideaDrafts:cloneDemoValue(ideaDrafts),activeWizardDraftId, voteState:collectPersonalVoteState()},
     anna:{id:'anna',subject:'demo:anna-wisniewska',profile:annaProfile,points:312,scenario:'autorka i aktywna uczestniczka',followedIdeas:[1],followedComments:[],notifications:[],wizardDraft:normalizeWizardDraft({}),ideaDrafts:[],activeWizardDraftId:null,voteState:{}},
     katarzyna:{id:'katarzyna',subject:'demo:katarzyna-zielinska',profile:katarzynaProfile,points:164,scenario:'uczestniczka i członkini zespołu',followedIdeas:[1],followedComments:[],notifications:[],wizardDraft:normalizeWizardDraft({}),ideaDrafts:[],activeWizardDraftId:null,voteState:{}}
   };
@@ -7902,7 +7903,7 @@ function ensureDemoAccounts(){
   if(!demoAccounts||typeof demoAccounts!=='object'||Array.isArray(demoAccounts))demoAccounts={};
   Object.keys(demoAccounts).forEach(id=>{if(!DEMO_ACCOUNT_ORDER.includes(id))delete demoAccounts[id];});
   DEMO_ACCOUNT_ORDER.forEach(id=>{
-    const base=defaults[id],saved=demoAccounts[id];
+    const base=defaults[id],saved=demoAccounts[id];base.points=0;base.profile.points=0;
     demoAccounts[id]=saved&&typeof saved==='object'?{
       ...base,...saved,id,subject:saved.subject||base.subject,
       profile:{...base.profile,...(saved.profile||{}),name:base.profile.name},
@@ -16502,7 +16503,7 @@ function profileCompetencyIcon(index){
   ];
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[index%paths.length]}</svg>`;
 }
-function profileCompetencyEvidence(member,skill){const name=parseLeveledValue(skill).name,match=value=>parseLeveledValue(typeof value==='string'?value:value?.name||value?.skill||'').name===name;const rows=[...(member.profileFeed||[]),...(member.portfolio||[])].filter(row=>[...(row.tags||[]),...(row.skills||[]),row.type].some(match));return {count:rows.length,points:rows.reduce((sum,row)=>sum+Math.max(0,Number(row.pointsAwarded??row.points)||0),0)};}
+function profileCompetencyEvidence(member,skill){const name=parseLeveledValue(skill).name,match=value=>parseLeveledValue(typeof value==='string'?value:value?.name||value?.skill||'').name===name;const rows=(member.portfolio||[]).filter(row=>!row.isDraft&&row.status!=='draft'&&!isLegacyProfilePortfolioEntry(row)&&[...(row.tags||[]),...(row.skills||[]),row.type].some(match));return {count:rows.length,points:rows.reduce((sum,row)=>sum+Math.max(0,Number(row.pointsAwarded??row.points)||0),0)};}
 function profileSkillEvidenceCount(member,skill,index){return profileCompetencyEvidence(member,skill).count;}
 function profileSkillPoints(member,skill,index){return profileCompetencyEvidence(member,skill).points;}
 let profileCompetencyManagementDraft=null;
@@ -18461,7 +18462,7 @@ function persistentMembersSnapshot(){
 function buildPersistentData(){
   saveActiveDemoAccountState();
   return {
-    ideas:ideas.map(idea=>draftEditSession&&idea.id===draftEditSession.id?draftEditSession.saved:idea),members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,demoAccounts,activeDemoAccountId,
+    ideas:ideas.map(idea=>draftEditSession&&idea.id===draftEditSession.id?draftEditSession.saved:idea),members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,profilePointsResetVersion,demoAccounts,activeDemoAccountId,
     deletedBoardPostIds:[...deletedBoardPostIds],
     myProfile,platformSkills,platformRoles,platformDecisions,
     notifications,wizardDraft,ideaDrafts,activeWizardDraftId,
@@ -18482,6 +18483,7 @@ function restoreDiscoverTeamBoardMedia(){
   (discoverPosts||[]).forEach(post=>{if(!post?.teamBoardPostId)return;const team=(projectTeams||[]).find(row=>String(row.id)===String(post.sourceId)),source=String(post.teamBoardPostId)==='welcome'?{image:team?.boardWelcomeImage||'',images:team?.boardWelcomeImages||[],documents:team?.boardWelcomeDocuments||[]}:(team?.boardPosts||[]).find(row=>String(row.id)===String(post.teamBoardPostId));if(!source)return;if(!post.images?.length)post.images=teamBoardPostImages(source);if(!post.documents?.length)post.documents=teamBoardPostDocuments(source);if(!post.image)post.image=post.images[0]||source.image||'';});
 }
 function applyPersistentData(data){
+  profilePointsResetVersion=Number(data.profilePointsResetVersion)||0;
   if(!validObject(data))throw new Error('Nieprawidłowy format danych.');
   if(Array.isArray(data.ideas)){
     const savedIdeas=data.ideas.filter(item=>item&&typeof item==='object');
@@ -18595,6 +18597,7 @@ function loadPersistentData(){
     return false;
   }
 }
+function resetExistingProfilePoints(){if(profilePointsResetVersion>=1)return false;const reset=person=>{if(!person)return;person.points=0;for(const field of ['skillPoints','competencyPoints','pointsBySkill'])if(person[field])person[field]={};for(const row of [...(person.portfolio||[]),...(person.profileFeed||[])]){row.points=0;row.pointsAwarded=0;}};members.forEach(reset);reset(myProfile);Object.values(demoAccounts).forEach(account=>{account.points=0;reset(account.profile);});myPoints=0;profilePointsResetVersion=1;return true;}
 function initPersistence(){
   __persistenceDemoDataJson=persistentDataJson();
   loadPersistentData();
@@ -18967,6 +18970,7 @@ function profileCollaborationLine(member){
 installProjectMemberGuards();
 initPersistence();
 initDemoAccounts();
+if(resetExistingProfilePoints()){syncProfileToMember();saveActiveDemoAccountState();persistNow();}
 compactOversizedBoardMedia();
 initWizardDraftUI();
 applyTheme();

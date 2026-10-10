@@ -1280,3 +1280,12 @@ test('profile competency sorting supports alphabetical and both point orders',()
  const source=html.match(/function compareProfileManagedCompetencies\([^\n]+/)[0],compare=new Function('profileCompetencyEvidence','myProfile',source+';return compareProfileManagedCompetencies;')((p,name)=>({points:{Grafika:5,Analiza:10,Komunikacja:0}[name]}),{}),names=['Grafika','Komunikacja','Analiza'];
  assert.deepEqual([...names].sort((a,b)=>compare(a,b,'az')),['Analiza','Grafika','Komunikacja']);assert.deepEqual([...names].sort((a,b)=>compare(a,b,'points-desc')),['Analiza','Grafika','Komunikacja']);assert.deepEqual([...names].sort((a,b)=>compare(a,b,'points-asc')),['Komunikacja','Grafika','Analiza']);
 });
+
+
+test('competency examples count published portfolio only',()=>{
+ const source=html.match(/function profileCompetencyEvidence\([^\n]+/)[0],evidence=new Function('parseLeveledValue','isLegacyProfilePortfolioEntry',source+';return profileCompetencyEvidence;')(name=>({name}),row=>row.title==='Legacy');
+ const person={profileFeed:[{tags:['Grafika']}],portfolio:[{title:'Legacy',skills:['Grafika']},{isDraft:true,skills:['Grafika']}]};assert.deepEqual(evidence(person,'Grafika'),{count:0,points:0});person.portfolio.push({title:'Praca',skills:['Grafika'],pointsAwarded:5});assert.deepEqual(evidence(person,'Grafika'),{count:1,points:5});
+});
+test('profile point reset clears all accounts once and preserves portfolio',()=>{
+ const source=html.match(/function resetExistingProfilePoints\([^\n]+/)[0];const result=new Function('source',`let profilePointsResetVersion=0,myPoints=46;const myProfile={points:46,portfolio:[{title:'Praca',points:5}]},members=[{points:100}],demoAccounts={anna:{points:200,profile:{points:200,skillPoints:{Prawo:5}}}};eval(source);const first=resetExistingProfilePoints();myPoints=2;const second=resetExistingProfilePoints();return {first,second,myPoints,myProfile,members,demoAccounts};`)(source);assert.equal(result.first,true);assert.equal(result.second,false);assert.equal(result.myPoints,2);assert.equal(result.members[0].points,0);assert.equal(result.demoAccounts.anna.points,0);assert.equal(result.myProfile.portfolio[0].points,0);assert.equal(result.myProfile.portfolio[0].title,'Praca');
+});
