@@ -1268,3 +1268,9 @@ test('approved competency lookups reuse the index instead of rereading images',(
  const result=new Function('source',`let platformApprovedIndex=null,reads=0;const after={name:'Analiza',icon:'large-image'},platformVoteRows=()=>{reads++;return [{accepted:true,appliedAt:1,before:[{name:'Dane'}],after}]};eval(source);for(let i=0;i<10000;i++){platformCompetencyName('Dane');platformCompetencyAppearance('Dane');}return {reads,name:platformCompetencyName('Dane'),icon:platformCompetencyAppearance('Dane').icon};`)(source);
  assert.equal(result.reads,1);assert.equal(result.name,'Analiza');assert.equal(result.icon,'large-image');
 });
+
+
+test('profile competency manager keeps selected skills out of available skills',()=>{
+ const source=html.match(/function profileCompetencyManagementGroups\([^\n]+/)[0],group=new Function(source+';return profileCompetencyManagementGroups;')();
+ const selected=new Set(['Grafika']);assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Grafika'],available:['Analiza']});selected.add('Analiza');assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Grafika','Analiza'],available:[]});selected.delete('Grafika');assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Analiza'],available:['Grafika']});
+});
