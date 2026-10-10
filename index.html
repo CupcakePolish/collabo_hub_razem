@@ -18762,13 +18762,13 @@ let edit=draft?renderCompetencyEditableHero(item).replace('Ikona kompetencji','Z
 function dictionaryCompetencyData(item){
  if(dictionaryUsageCache?.has(item.id))return dictionaryUsageCache.get(item.id);
  const matches=value=>parseLeveledValue(String(value||'')).name.toLocaleLowerCase('pl-PL')===item.name.toLocaleLowerCase('pl-PL');
- const profiles=new Map(members.map(m=>[m.name,m]));if(myProfile?.name)profiles.set(myProfile.name,{...profiles.get(myProfile.name),...myProfile});
+ const profiles=new Map(members.map(m=>[m.name,m]));Object.values(demoAccounts).forEach(account=>{const person=account.profile;if(person?.name)profiles.set(person.name,{...profiles.get(person.name),...person});});if(myProfile?.name)profiles.set(myProfile.name,{...profiles.get(myProfile.name),...myProfile});
  const portfolio=[],ranking=[];
  for(const person of profiles.values()){
-  const rows=[...(person.profileFeed||[]),...(person.portfolio||[])].filter(row=>[...(row.tags||[]),...(row.skills||[]),row.type].some(matches));
-  portfolio.push(...(person.portfolio||[]).filter(row=>[...(row.skills||[]),row.type].some(matches)));
+  const rows=(person.portfolio||[]).filter(row=>!row.isDraft&&row.status!=='draft'&&!isLegacyProfilePortfolioEntry(row)&&[...(row.tags||[]),...(row.skills||[]),row.type].some(matches));
+  portfolio.push(...rows);
   const points=rows.reduce((sum,row)=>sum+Math.max(0,Number(row.pointsAwarded||row.points)||0),0);
-  if((person.skills||[]).some(matches)||rows.length)ranking.push({person,points});
+  if((person.skills||[]).some(matches))ranking.push({person,points});
  }
  const skillNames=rows=>(Array.isArray(rows)?rows:[]).map(value=>typeof value==='string'?value:value?.skill||value?.name);
  const tasks=ideas.flatMap(idea=>(idea.tasks||[]).filter(task=>skillNames(task.skills||task.competencies).some(matches)));
