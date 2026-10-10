@@ -1238,3 +1238,14 @@ test('competency description changes await approval and preserve competency skil
   `)(submit,approval);
   assert.equal(result.before,'Stary opis');assert.equal(result.after,'Nowy opis');assert.equal(result.count,1);assert.equal(result.descriptionOnly,true);assert.deepEqual(result.skills,[{name:'Prawo',lvl:2}]);
 });
+
+
+test('competency proposals preserve originals and capture both merge sources',()=>{
+ const source=html.match(/function submitCompetencyChange\([^\n]+/)[0];
+ const result=new Function('source',`
+ const entries=[{id:'a',category:'competency',name:'Analiza',definition:'Obecny opis'},{id:'b',category:'competency',name:'Badania',definition:'Drugi opis'}],dictionaryEntries=()=>entries,MY_NAME='Anna';
+ let competencyChangeDraft={id:'a',name:'Analiza i badania',definition:'Nowy opis',mergeId:'b',icon:'data:image/png;base64,AA==',removeIcon:false},platformVoteView={},saved;
+ const platformVoteRows=()=>[],savePlatformVoteRows=rows=>saved=rows,go=()=>{},toast=()=>{};eval(source);submitCompetencyChange({preventDefault(){}});return {saved,entries,draft:competencyChangeDraft};
+ `)(source);
+ assert.equal(result.saved[0].kind,'competency-merge');assert.equal(result.saved[0].before.length,2);assert.equal(result.saved[0].after.name,'Analiza i badania');assert.equal(result.entries[0].definition,'Obecny opis');assert.equal(result.saved[0].after.icon,'data:image/png;base64,AA==');assert.equal(result.draft,null);
+});
