@@ -1240,13 +1240,13 @@ test('competency description changes await approval and preserve competency skil
 });
 
 
-test('competency proposals preserve originals and capture both merge sources',()=>{
- const source=html.match(/function submitCompetencyChange\([^\n]+/)[0];
- const result=new Function('source',`
- const platformCompetencyAppearance=()=>null;const entries=[{id:'a',category:'competency',name:'Analiza',definition:'Obecny opis'},{id:'b',category:'competency',name:'Badania',definition:'Drugi opis'}],dictionaryEntries=()=>entries,MY_NAME='Anna';
+test('competency proposals preserve originals and capture both merge sources',async()=>{
+ const source=html.match(/async function submitCompetencyChange\([^\n]+/)[0];
+ const result=await new Function('source',`return (async()=>{
+ const compactCompetencyIcon=async x=>x;const platformCompetencyAppearance=()=>null;const entries=[{id:'a',category:'competency',name:'Analiza',definition:'Obecny opis'},{id:'b',category:'competency',name:'Badania',definition:'Drugi opis'}],dictionaryEntries=()=>entries,MY_NAME='Anna';
  let competencyChangeDraft={id:'a',name:'Analiza i badania',definition:'Nowy opis',mergeId:'b',icon:'data:image/png;base64,AA==',removeIcon:false},platformVoteView={},saved;
- const platformVoteRows=()=>[],savePlatformVoteRows=rows=>saved=rows,go=()=>{},toast=()=>{};eval(source);submitCompetencyChange({preventDefault(){}});return {saved,entries,draft:competencyChangeDraft};
- `)(source);
+ const platformVoteRows=()=>[],savePlatformVoteRows=rows=>saved=rows,go=()=>{},toast=()=>{};eval(source);await submitCompetencyChange({preventDefault(){}});return {saved,entries,draft:competencyChangeDraft};
+ })();`)(source);
  assert.equal(result.saved[0].kind,'competency-merge');assert.equal(result.saved[0].before.length,2);assert.equal(result.saved[0].after.name,'Analiza i badania');assert.equal(result.entries[0].definition,'Obecny opis');assert.equal(result.saved[0].after.icon,'data:image/png;base64,AA==');assert.equal(result.draft,null);
 });
 
