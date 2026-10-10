@@ -1289,3 +1289,8 @@ test('competency examples count published portfolio only',()=>{
 test('profile point reset clears all accounts once and preserves portfolio',()=>{
  const source=html.match(/function resetExistingProfilePoints\([^\n]+/)[0];const result=new Function('source',`let profilePointsResetVersion=0,myPoints=46;const myProfile={points:46,portfolio:[{title:'Praca',points:5}]},members=[{points:100}],demoAccounts={anna:{points:200,profile:{points:200,skillPoints:{Prawo:5}}}};eval(source);const first=resetExistingProfilePoints();myPoints=2;const second=resetExistingProfilePoints();return {first,second,myPoints,myProfile,members,demoAccounts};`)(source);assert.equal(result.first,true);assert.equal(result.second,false);assert.equal(result.myPoints,2);assert.equal(result.members[0].points,0);assert.equal(result.demoAccounts.anna.points,0);assert.equal(result.myProfile.portfolio[0].points,0);assert.equal(result.myProfile.portfolio[0].title,'Praca');
 });
+
+
+test('dictionary city statistics use actual locations and published portfolio',()=>{
+ const source=html.match(/function dictionaryCityData\([^\n]+/)[0];const data=new Function('source',`const members=[{name:'Anna',city:'Wrocław',points:0,portfolio:[{title:'Praca'},{title:'Szkic',isDraft:true}]},{name:'Kasia',city:'Warszawa',points:0}],ideas=[{city:'Wrocław',title:'Projekt'}],projectTeams=[{cities:['Wrocław'],name:'Zespół'}],isLegacyProfilePortfolioEntry=()=>false;eval(source);return dictionaryCityData({name:'Wrocław'});`)(source);assert.equal(data.people.length,1);assert.equal(data.projects.length,1);assert.equal(data.teams.length,1);assert.equal(data.portfolio.length,1);assert.equal(data.people[0].points,0);
+});
