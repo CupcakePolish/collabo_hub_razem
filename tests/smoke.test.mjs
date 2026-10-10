@@ -1243,9 +1243,21 @@ test('competency description changes await approval and preserve competency skil
 test('competency proposals preserve originals and capture both merge sources',()=>{
  const source=html.match(/function submitCompetencyChange\([^\n]+/)[0];
  const result=new Function('source',`
- const entries=[{id:'a',category:'competency',name:'Analiza',definition:'Obecny opis'},{id:'b',category:'competency',name:'Badania',definition:'Drugi opis'}],dictionaryEntries=()=>entries,MY_NAME='Anna';
+ const platformCompetencyAppearance=()=>null;const entries=[{id:'a',category:'competency',name:'Analiza',definition:'Obecny opis'},{id:'b',category:'competency',name:'Badania',definition:'Drugi opis'}],dictionaryEntries=()=>entries,MY_NAME='Anna';
  let competencyChangeDraft={id:'a',name:'Analiza i badania',definition:'Nowy opis',mergeId:'b',icon:'data:image/png;base64,AA==',removeIcon:false},platformVoteView={},saved;
  const platformVoteRows=()=>[],savePlatformVoteRows=rows=>saved=rows,go=()=>{},toast=()=>{};eval(source);submitCompetencyChange({preventDefault(){}});return {saved,entries,draft:competencyChangeDraft};
  `)(source);
  assert.equal(result.saved[0].kind,'competency-merge');assert.equal(result.saved[0].before.length,2);assert.equal(result.saved[0].after.name,'Analiza i badania');assert.equal(result.entries[0].definition,'Obecny opis');assert.equal(result.saved[0].after.icon,'data:image/png;base64,AA==');assert.equal(result.draft,null);
+});
+
+
+test('platform competency changes apply only after all three eligible members approve',()=>{
+ const source=['castPlatformVote','approvedCompetencyChanges','platformCompetencyName','applyApprovedCompetencyCatalog'].map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+ const result=new Function('source',`
+ let MY_NAME='Anna',saved=[];const eligible=['Anna','Patrycja','Katarzyna'],platformVotingMembers=()=>eligible,platformVoteView={};
+ const vote={id:'v',status:'active',ballots:{},before:[{id:'cap-skill-data',name:'Analiza danych'}],after:{name:'Nowa analiza',definition:'Nowy opis',icon:'data:image/png;base64,AA=='}};
+ const platformVoteRows=()=>JSON.parse(JSON.stringify(saved.length?saved:[vote])),savePlatformVoteRows=rows=>saved=rows,renderPlatformVotes=()=>{},toast=()=>{};
+ eval(source);castPlatformVote('v','yes');castPlatformVote('v','yes');MY_NAME='Patrycja';castPlatformVote('v','yes');const before=saved[0].status;MY_NAME='Obca';castPlatformVote('v','yes');MY_NAME='Katarzyna';castPlatformVote('v','yes');const final=saved[0],catalog=applyApprovedCompetencyCatalog([{id:'data',source:'skill',name:'Analiza danych'}]);return {before,final,catalog,alias:platformCompetencyName('Analiza danych')};
+ `)(source);
+ assert.equal(result.before,'active');assert.equal(result.final.status,'closed');assert.equal(result.final.accepted,true);assert.equal(Object.keys(result.final.ballots).length,3);assert.equal(result.catalog[0].name,'Nowa analiza');assert.equal(result.catalog[0].definition,'Nowy opis');assert.equal(result.alias,'Nowa analiza');
 });
