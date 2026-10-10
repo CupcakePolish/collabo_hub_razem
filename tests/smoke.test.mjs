@@ -1274,3 +1274,9 @@ test('profile competency manager keeps selected skills out of available skills',
  const source=html.match(/function profileCompetencyManagementGroups\([^\n]+/)[0],group=new Function(source+';return profileCompetencyManagementGroups;')();
  const selected=new Set(['Grafika']);assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Grafika'],available:['Analiza']});selected.add('Analiza');assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Grafika','Analiza'],available:[]});selected.delete('Grafika');assert.deepEqual(group(['Grafika'],['Grafika','Analiza'],selected),{profile:['Analiza'],available:['Grafika']});
 });
+
+
+test('profile competency sorting supports alphabetical and both point orders',()=>{
+ const source=html.match(/function compareProfileManagedCompetencies\([^\n]+/)[0],compare=new Function('profileCompetencyEvidence','myProfile',source+';return compareProfileManagedCompetencies;')((p,name)=>({points:{Grafika:5,Analiza:10,Komunikacja:0}[name]}),{}),names=['Grafika','Komunikacja','Analiza'];
+ assert.deepEqual([...names].sort((a,b)=>compare(a,b,'az')),['Analiza','Grafika','Komunikacja']);assert.deepEqual([...names].sort((a,b)=>compare(a,b,'points-desc')),['Analiza','Grafika','Komunikacja']);assert.deepEqual([...names].sort((a,b)=>compare(a,b,'points-asc')),['Komunikacja','Grafika','Analiza']);
+});
