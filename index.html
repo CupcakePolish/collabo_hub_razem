@@ -21830,6 +21830,14 @@ function dismissChatOptionsOutside(event){document.querySelectorAll('.dc-options
 document.addEventListener('pointerdown',dismissChatOptionsOutside,true);
 document.addEventListener('keydown',event=>{if(event.key==='Escape')dismissChatOptionsOutside(event);});
 </script>
+<style>
+.pv-ballot .pv-choice-wrap{transition:background .15s,box-shadow .15s,transform .15s}
+.pv-ballot .pv-choice-wrap .pv-choice:hover{background:transparent!important;box-shadow:none!important;transform:none!important}
+.pv-ballot .pv-choice-wrap:has(.pv-choice:hover:not(:disabled)){background:#d7f3e8;box-shadow:0 5px 16px #30244014;transform:translateY(-2px)}
+.pv-ballot .pv-choice-wrap.abstain:has(.pv-choice:hover:not(:disabled)){background:#fff1cd}
+.pv-ballot .pv-choice-wrap.no:has(.pv-choice:hover:not(:disabled)){background:#ffe0e7}
+.pv-ballot .pv-choice-wrap:has(.pv-vote-count:hover){box-shadow:none;transform:none}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
