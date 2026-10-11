@@ -21772,6 +21772,15 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 .pv-header-chat{position:relative;overflow:visible}
 .pv-header-chat.has-unread:after{content:"";position:absolute;top:0;right:0;width:10px;height:10px;border-radius:50%;background:#e41e3f;box-shadow:0 0 0 2px var(--surf);pointer-events:none}
 </style>
+<style>
+#pv-discussion-chat .dc-compose{transition:border-color .16s,box-shadow .16s,background .16s}
+#pv-discussion-chat .dc-compose:has(textarea:hover),#pv-discussion-chat .dc-compose:focus-within{border-color:var(--p300);background:var(--p50);box-shadow:0 0 0 2px var(--p100)}
+#pv-discussion-chat .dc-compose textarea:hover::placeholder{color:var(--p700)}
+</style>
+<style>
+.pv-author-line .pv-author>.board-person-hover-card{position:fixed!important;left:var(--board-person-card-left,16px)!important;top:var(--board-person-card-top,16px)!important;right:auto!important;bottom:auto!important;white-space:normal;z-index:2147483000!important}
+.pv-author-line .pv-author.board-person-hover-open>.board-person-hover-card{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:none!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
