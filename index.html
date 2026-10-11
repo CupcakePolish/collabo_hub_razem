@@ -21781,6 +21781,11 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 .pv-author-line .pv-author>.board-person-hover-card{position:fixed!important;left:var(--board-person-card-left,16px)!important;top:var(--board-person-card-top,16px)!important;right:auto!important;bottom:auto!important;white-space:normal;z-index:2147483000!important}
 .pv-author-line .pv-author.board-person-hover-open>.board-person-hover-card{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:none!important}
 </style>
+<style>
+.dc-message-row .dc-reaction-badge{bottom:-18px}
+.dc-message-row:has(.dc-reaction-badge){margin-bottom:20px}
+.inv-message-copy>.msg-reaction-strip{margin-top:-2px;margin-bottom:14px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
