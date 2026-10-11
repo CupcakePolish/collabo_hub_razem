@@ -21915,6 +21915,11 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape')dismissChatO
 <script>
 document.addEventListener('pointerdown',event=>document.querySelectorAll('.pv-rule-select[open]').forEach(menu=>{if(!menu.contains(event.target))menu.open=false;}));
 </script>
+<style>
+.dc-window .dc-head>.dc-options-toggle,.dc-window .dc-head>[data-action="minimize"],.dc-window .dc-head>[data-action="close"]{display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex:0 0 32px;padding:0!important;margin:0;border:0!important;border-radius:10px!important;background:transparent!important;color:var(--chat-accent,var(--p700));box-shadow:none!important;transition:background .15s,color .15s}
+.dc-window .dc-head>.dc-options-toggle:hover,.dc-window .dc-head>[data-action="minimize"]:hover,.dc-window .dc-head>[data-action="close"]:hover{background:var(--p100)!important;color:var(--p700)}
+.dc-window .dc-head>.dc-options-toggle:focus-visible,.dc-window .dc-head>[data-action="minimize"]:focus-visible,.dc-window .dc-head>[data-action="close"]:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
