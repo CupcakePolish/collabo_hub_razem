@@ -21693,6 +21693,15 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 :is(.profile-gear-button,.profile-competencies-manage,.portfolio-edit-gear,.portfolio-detail-gear,.competency-edit-toggle) svg{width:21px!important;height:21px!important}
 :is(.profile-gear-button,.profile-competencies-manage,.portfolio-edit-gear,.portfolio-detail-gear,.competency-edit-toggle):hover{background:var(--p100)!important;border-color:var(--p400)!important;box-shadow:0 0 0 2px var(--p50)!important}
 </style>
+<style>
+.pv-result-tiles{grid-template-columns:1fr;gap:10px}
+.pv-result-tile{width:100%;box-sizing:border-box;padding:14px 18px;min-height:64px;gap:14px}
+.pv-result-tile>span{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:1;min-width:0}
+.pv-result-tile b{font-size:13px}.pv-result-tile strong{margin:0;font-size:24px}
+.pv-ballot .pv-choice{transition:box-shadow .15s,transform .15s}
+.pv-ballot .pv-choice:hover:not(:disabled){box-shadow:0 4px 12px #30244015;transform:translateY(-2px)}
+.pv-ballot .pv-choice:focus-visible,.pv-result-tile:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
