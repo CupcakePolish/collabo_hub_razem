@@ -21825,6 +21825,11 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 .pv-detail>header{margin-bottom:6px!important;padding-bottom:0!important;min-height:0!important}
 .pv-detail>.pv-tabs{margin-top:0!important}
 </style>
+<script>
+function dismissChatOptionsOutside(event){document.querySelectorAll('.dc-options:not([hidden])').forEach(menu=>{const win=menu.closest('.dc-window'),toggle=win?.querySelector('.dc-options-toggle');if(event.type!=='keydown'&&(menu.contains(event.target)||toggle?.contains(event.target)))return;menu.hidden=true;toggle?.setAttribute('aria-expanded','false');});}
+document.addEventListener('pointerdown',dismissChatOptionsOutside,true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape')dismissChatOptionsOutside(event);});
+</script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
