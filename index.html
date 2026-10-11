@@ -10351,7 +10351,7 @@ function renderHoverReactionActions(popId,onReactTpl,buttons='',opts={}){
   const emojiGrid=emojis.map(e=>`<span class="reaction-pop-item" data-reaction-search="${escAttr(String(e).toLowerCase())}" onclick="${reactionCall(onReactTpl,e,popId)}">${reactionLabelHTML(e)}</span>`).join('');
   const recentGrid=recent.map(e=>`<span class="reaction-pop-item" data-reaction-search="${escAttr(String(e).toLowerCase())}" onclick="${reactionCall(onReactTpl,e,popId)}">${reactionLabelHTML(e)}</span>`).join('');
   const gifGrid=Object.keys(GIF_REACTIONS).map(k=>{const e='gif:'+k,g=gifReactionMeta(e);return `<span class="reaction-pop-item" data-reaction-search="${escAttr(('gif '+g.label+' tenor').toLowerCase())}" onclick="${reactionCall(onReactTpl,e,popId)}">${reactionLabelHTML(e)}</span>`;}).join('');
-  const picker=`<div class="emoji-pop" id="ep-${popId}" data-reaction-tab="emoji"><div class="reaction-pop-tabs"><button type="button" class="on" data-reaction-tab-btn="emoji" onclick="event.stopPropagation();setReactionPickerTab('${popId}','emoji')">☻ Emotikony</button><button type="button" data-reaction-tab-btn="gif" onclick="event.stopPropagation();setReactionPickerTab('${popId}','gif')">◰ GIF-y</button></div><div class="reaction-pop-search"><input placeholder="Szukaj reakcji" oninput="filterReactionPicker('${popId}',this.value)" onclick="event.stopPropagation()"></div><div class="reaction-pop-scroll"><div class="reaction-pop-page on" data-reaction-page="emoji"><div class="reaction-pop-cat">Ostatnio używane</div><div class="reaction-pop-grid">${recentGrid}</div><div class="reaction-pop-cat">Uśmieszki i emotikony</div><div class="reaction-pop-grid">${emojiGrid}</div></div><div class="reaction-pop-page" data-reaction-page="gif"><div class="reaction-pop-cat">GIF-y</div><div class="reaction-pop-grid reaction-pop-gifs">${gifGrid}</div></div></div></div>`;
+  const picker=`<div class="emoji-pop" id="ep-${popId}" data-reaction-tab="emoji"><div class="reaction-pop-tabs"><button type="button" class="on" data-reaction-tab-btn="emoji" onclick="event.stopPropagation();setReactionPickerTab('${popId}','emoji')">☺</button><button type="button" data-reaction-tab-btn="gif" onclick="event.stopPropagation();setReactionPickerTab('${popId}','gif')">GIF</button></div><div class="reaction-pop-search"><input placeholder="Wyszukaj emoji lub GIF…" oninput="filterReactionPicker('${popId}',this.value)" onclick="event.stopPropagation()"></div><div class="reaction-pop-scroll"><div class="reaction-pop-page on" data-reaction-page="emoji"><div class="reaction-pop-cat">Ostatnio używane</div><div class="reaction-pop-grid">${recentGrid}</div><div class="reaction-pop-cat">Uśmieszki i emotikony</div><div class="reaction-pop-grid">${emojiGrid}</div></div><div class="reaction-pop-page" data-reaction-page="gif"><div class="reaction-pop-cat">GIF-y</div><div class="reaction-pop-grid reaction-pop-gifs">${gifGrid}</div></div></div></div>`;
   return `<div class="msg-hover-actions">${quickBtns}${buttons}${picker}</div>`;
 }
 function boardReactionTotal(reactions){return Object.values(reactions||{}).reduce((sum,row)=>sum+Math.max(0,Number(row?.n||0)),0);}
@@ -11606,19 +11606,10 @@ function toggleEmojiPanel(key,sourceEvent){
   document.body.appendChild(pan);
   pan.classList.add('emoji-portal');
   pan.classList.add('on');
-  const btnRect=trigger.getBoundingClientRect();
-  requestAnimationFrame(()=>{
-    const width=Math.min(360,window.innerWidth-24);
-    pan.style.width=width+'px';
-    pan.style.maxHeight=Math.min(430,window.innerHeight-24)+'px';
-    const panelRect=pan.getBoundingClientRect();
-    pan.style.left=Math.max(12,Math.min(window.innerWidth-width-12,btnRect.right-width))+'px';
-    const above=btnRect.top-panelRect.height-8;
-    const below=btnRect.bottom+8;
-    pan.style.top=(above>=12?above:Math.min(window.innerHeight-panelRect.height-12,below))+'px';
-  });
+  requestAnimationFrame(()=>positionSharedEmojiMenu(pan,trigger));
   setTimeout(()=>document.getElementById('ep-search-'+key)?.focus(),50);
 }
+function positionSharedEmojiMenu(pan,anchor){if(!anchor)return;pan._emojiAnchor=anchor;const rect=anchor.getBoundingClientRect(),width=Math.min(318,innerWidth-24);pan.style.width=width+'px';pan.style.maxHeight=Math.min(330,innerHeight-24)+'px';const height=pan.getBoundingClientRect().height,left=Math.max(12,Math.min(innerWidth-width-12,rect.right-width+12)),above=rect.top-height-14,top=above>=12?above:Math.min(innerHeight-height-12,rect.bottom+14);pan.style.left=left+'px';pan.style.top=top+'px';pan.classList.toggle('emoji-below',above<12);pan.style.setProperty('--emoji-tip-x',Math.max(18,Math.min(width-18,rect.left+rect.width/2-left))+'px');}
 function closeEmojiPanel(pan){
   if(!pan)return;
   pan._emojiHome?.classList.remove('emoji-open');
@@ -11632,9 +11623,9 @@ function renderEmojiPanel(key){
   const recent=[...new Set([...(RECENT_EMOJIS||[]),'💜','👍','XD'])].map(e=>[e,'recent '+String(e).toLowerCase()]);
   const custom=(CUSTOM_EMOJIS||[]).map(e=>[e,'custom wlasne '+String(e).toLowerCase()]);
   const grid=(arr)=>arr.map(([e,n])=>`<span class="reaction-pop-item" data-reaction-search="${escAttr(String(n||e).toLowerCase())}" onclick="pickEmoji('${key}','${escAttr(e)}')">${reactionLabelHTML(e)}</span>`).join('');
-  const emojiCats=Object.entries(EMOJI_DB).map(([cat,arr])=>`<div class="reaction-pop-cat">${cat}</div><div class="reaction-pop-grid">${grid(arr)}</div>`).join('');
+  const emojiCats=`<div class="reaction-pop-grid">${grid(Object.values(EMOJI_DB).flat())}</div>`;
   const gifGrid=Object.keys(GIF_REACTIONS).map(k=>{const e='gif:'+k,g=gifReactionMeta(e);return `<span class="reaction-pop-item" data-reaction-search="${escAttr(('gif '+g.label+' tenor').toLowerCase())}" onclick="pickEmoji('${key}','${escAttr(e)}')">${reactionLabelHTML(e)}</span>`;}).join('');
-  pan.innerHTML=`<div class="reaction-pop-tabs"><button type="button" class="on" data-reaction-tab-btn="emoji" onclick="event.stopPropagation();setComposerEmojiTab('${key}','emoji')">☻ Emotikony</button><button type="button" data-reaction-tab-btn="gif" onclick="event.stopPropagation();setComposerEmojiTab('${key}','gif')">◰ GIF-y</button></div><div class="reaction-pop-search"><input id="ep-search-${key}" placeholder="Szukaj reakcji" oninput="filterEmoji('${key}',this.value)" onclick="event.stopPropagation()"></div><div class="reaction-pop-scroll"><div class="reaction-pop-page on" data-reaction-page="emoji"><div class="reaction-pop-cat">Ostatnio używane</div><div class="reaction-pop-grid">${grid(recent)}</div>${custom.length?`<div class="reaction-pop-cat">Własne emotki</div><div class="reaction-pop-grid">${grid(custom)}</div>`:''}${emojiCats}</div><div class="reaction-pop-page" data-reaction-page="gif"><div class="reaction-pop-cat">GIF-y</div><div class="reaction-pop-grid reaction-pop-gifs">${gifGrid}</div></div></div>`;
+  pan.innerHTML=`<div class="reaction-pop-tabs"><button type="button" class="on" data-reaction-tab-btn="emoji" onclick="event.stopPropagation();setComposerEmojiTab('${key}','emoji')">☻ Emotikony</button><button type="button" data-reaction-tab-btn="gif" onclick="event.stopPropagation();setComposerEmojiTab('${key}','gif')">◰ GIF-y</button></div><div class="reaction-pop-search"><input id="ep-search-${key}" placeholder="Szukaj reakcji" oninput="filterEmoji('${key}',this.value)" onclick="event.stopPropagation()"></div><div class="reaction-pop-scroll"><div class="reaction-pop-page on" data-reaction-page="emoji">${emojiCats}</div><div class="reaction-pop-page" data-reaction-page="gif"><div class="reaction-pop-cat">GIF-y</div><div class="reaction-pop-grid reaction-pop-gifs">${gifGrid}</div></div></div>`;
 }
 function filterEmoji(key,q){
   const pan=document.getElementById('epanel-'+key),needle=String(q||'').trim().toLowerCase();
@@ -11649,7 +11640,7 @@ function setComposerEmojiTab(key,tab){
 }
 function openMessageDeleteMenu(anchor,onDelete){const current=document.querySelector('.message-options-bubble'),same=current?._anchor===anchor;document.querySelectorAll('.message-options-bubble').forEach(menu=>menu.remove());if(same)return;const menu=document.createElement('div');menu.className='message-options-bubble';menu._anchor=anchor;menu.setAttribute('role','menu');const button=document.createElement('button');button.type='button';button.textContent='Usuń';button.setAttribute('role','menuitem');button.onclick=()=>{menu.remove();onDelete();};menu.append(button);document.body.append(menu);const rect=anchor.getBoundingClientRect(),left=Math.max(12,Math.min(innerWidth-menu.offsetWidth-12,rect.left+rect.width/2-menu.offsetWidth/2));menu.style.left=left+'px';menu.style.top=Math.max(12,rect.top-menu.offsetHeight-12)+'px';menu.style.setProperty('--tip-left',Math.max(12,Math.min(menu.offsetWidth-12,rect.left+rect.width/2-left))+'px');button.focus();setTimeout(()=>{const dismiss=e=>{if(e.type==='keydown'&&e.key!=='Escape')return;if(e.type==='pointerdown'&&(menu.contains(e.target)||anchor.contains(e.target)))return;menu.remove();document.removeEventListener('pointerdown',dismiss);document.removeEventListener('keydown',dismiss);};document.addEventListener('pointerdown',dismiss);document.addEventListener('keydown',dismiss);},0);}
 const messageReactionCallbacks=new Map();
-function openFullMessageReaction(anchor,onPick){document.querySelectorAll('.emoji-panel.on').forEach(closeEmojiPanel);const key='message-reaction-'+Date.now(),pan=document.createElement('div');pan.id='epanel-'+key;pan.className='emoji-panel emoji-pop emoji-portal on';pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Wybierz reakcję');document.body.append(pan);messageReactionCallbacks.set(key,onPick);renderEmojiPanel(key);const rect=anchor.getBoundingClientRect();pan.style.width=Math.min(360,innerWidth-24)+'px';pan.style.maxHeight=Math.min(430,innerHeight-24)+'px';pan.style.left=Math.max(12,Math.min(innerWidth-372,rect.right-360))+'px';pan.style.top=Math.max(12,Math.min(innerHeight-pan.offsetHeight-12,rect.top-pan.offsetHeight-8))+'px';pan.querySelector('input')?.focus();}
+function openFullMessageReaction(anchor,onPick){document.querySelectorAll('.emoji-panel.on').forEach(closeEmojiPanel);const key='message-reaction-'+Date.now(),pan=document.createElement('div');pan.id='epanel-'+key;pan.className='emoji-panel emoji-pop emoji-portal on';pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Wybierz reakcję');document.body.append(pan);messageReactionCallbacks.set(key,onPick);renderEmojiPanel(key);positionSharedEmojiMenu(pan,anchor);pan.querySelector('input')?.focus();}
 function pickEmoji(key,e){
   if(messageReactionCallbacks.has(key)){const callback=messageReactionCallbacks.get(key);messageReactionCallbacks.delete(key);useEmoji(String(e));document.getElementById('epanel-'+key)?.remove();callback(String(e));return;}
   const raw=String(e);
@@ -20177,15 +20168,8 @@ function replaceChatEmoticons(input){
  const converted=before.replace(/<3(?=$|[\s.,!?])/g,'❤️').replace(/:-?D(?=$|[\s.,!?])/gi,'😄').replace(/xD(?=$|[\s.,!?])/gi,'😆').replace(/;-?\)(?=$|[\s.,!?])/g,'😉').replace(/:-?\)(?=$|[\s.,!?])/g,'🙂').replace(/:-?\((?=$|[\s.,!?])/g,'🙁').replace(/:-?[pP](?=$|[\s.,!?])/g,'😛');
  if(converted===before)return false;input.value=converted+after;const shift=converted.length-before.length;input.setSelectionRange(start+shift,end+shift);return true;
 }
-function toggleChatComposerEmoji(win,input){
- const form=win.querySelector('.dc-compose'),existing=form.querySelector('.dc-composer-emoji-panel');if(existing){existing.remove();input.focus();return;}
- const panel=document.createElement('div');panel.className='dc-composer-emoji-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Wybierz emoji');
- panel.innerHTML='<div class="dc-composer-emoji-search"><span aria-hidden="true">⌕</span><input aria-label="Wyszukaj emoji" placeholder="Wyszukaj emoji"></div><strong>Emoji</strong><div class="dc-composer-emoji-grid"></div>';
- const search=panel.querySelector('input'),grid=panel.querySelector('.dc-composer-emoji-grid');
- const draw=q=>{grid.replaceChildren();CHAT_EMOJI.filter(([emoji,name])=>(emoji+' '+name).includes(q.trim().toLocaleLowerCase('pl'))).forEach(([emoji,name])=>{const b=document.createElement('button');b.type='button';b.textContent=emoji;b.title=name;b.setAttribute('aria-label',name);b.onclick=()=>{input.setRangeText(emoji,input.selectionStart,input.selectionEnd,'end');input.dispatchEvent(new Event('input'));panel.remove();input.focus();};grid.append(b);});};
- draw('');search.oninput=()=>draw(search.value);panel.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();panel.remove();input.focus();}};form.append(panel);search.focus();
- setTimeout(()=>document.addEventListener('pointerdown',function close(e){if(!panel.isConnected){document.removeEventListener('pointerdown',close);return;}if(!panel.contains(e.target)&&!e.target.closest('.dc-compose-emoji')){panel.remove();document.removeEventListener('pointerdown',close);}}),0);
-}
+function toggleChatComposerEmoji(win,input){const anchor=win.querySelector('.dc-compose-emoji');const existing=[...document.querySelectorAll('.emoji-panel.on')].find(p=>p._emojiAnchor===anchor);if(existing){closeEmojiPanel(existing);return;}openFullMessageReaction(anchor,value=>{const text=value.startsWith('gif:')?'[[gif:'+value.slice(4)+']]':value;input.setRangeText(text,input.selectionStart,input.selectionEnd,'end');input.dispatchEvent(new Event('input'));input.focus();});}
+
 function enhanceChatControls(host,c,ui){
  const win=host.querySelector('.dc-window'),form=win.querySelector('form'),input=form.querySelector('textarea');win.querySelector('.dc-local')?.remove();if(!['team-vote','team-channel'].includes(c.type))win.querySelector('.dc-head small')?.remove();
  const head=win.querySelector('.dc-head'),title=head.querySelector('strong');title.textContent=chatSetting(c,'nickname')||c.name;
@@ -21707,6 +21691,15 @@ new MutationObserver(observeInvitationReadMessages).observe(document.body,{child
 .pv-discussion-heading .inv-open-chat>svg{width:26px;height:26px}.pv-discussion-heading .inv-open-chat .competency-formatted-icon{border-radius:50%}
 .pv-discussion-heading .inv-open-chat:hover{background:var(--p100);box-shadow:0 0 0 2px var(--p200)}
 .pv-remove-action:empty{display:none}
+</style>
+<style>
+.emoji-panel.emoji-portal.on{display:flex!important;flex-direction:column;position:fixed;border-radius:18px!important;padding:12px!important;background:var(--surf)!important;box-shadow:0 8px 32px #24183628;overflow:visible!important;box-sizing:border-box;z-index:2147483100}
+.emoji-panel.emoji-portal:after{content:'';position:absolute;left:var(--emoji-tip-x,50%);bottom:-9px;width:18px;height:18px;background:var(--surf);border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);transform:translateX(-50%) rotate(45deg);z-index:-1}
+.emoji-panel.emoji-portal.emoji-below:after{bottom:auto;top:-9px;transform:translateX(-50%) rotate(225deg)}
+.emoji-panel .reaction-pop-search{order:0;padding:0 0 10px!important}.emoji-panel .reaction-pop-search input{width:100%;box-sizing:border-box;border:1px solid var(--bdr)!important;border-radius:20px!important;background:var(--surf2)!important;padding:10px 14px!important;font:13px 'DM Sans',sans-serif!important;color:var(--txt)}
+.emoji-panel .reaction-pop-scroll{order:1;height:188px!important;max-height:188px!important;overflow-y:auto!important;padding:0!important}
+.emoji-panel .reaction-pop-grid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:3px!important}.emoji-panel .reaction-pop-item{height:44px!important;min-height:44px!important;display:flex!important;align-items:center;justify-content:center;padding:0!important;border-radius:9px;font-size:28px!important;cursor:pointer}.emoji-panel .reaction-pop-item:hover{background:var(--p100)}
+.emoji-panel .reaction-pop-tabs{order:2;display:flex!important;justify-content:center;gap:8px;border-top:1px solid var(--bdr);margin:10px -12px -4px;padding:8px 12px 0!important}.emoji-panel .reaction-pop-tabs button{flex:none!important;width:64px;height:32px;border:0!important;border-radius:10px!important;background:transparent;font:700 14px 'DM Sans',sans-serif!important;color:var(--txm)}.emoji-panel .reaction-pop-tabs button.on{background:var(--p100)!important;color:var(--p700)!important}.emoji-panel .reaction-pop-tabs button:first-child{font-size:23px!important}.emoji-panel .reaction-pop-gifs{grid-template-columns:repeat(3,minmax(0,1fr))!important}.emoji-panel .reaction-pop-cat{display:none}.emoji-panel .reaction-pop-item.hidden{display:none!important}
 </style>
 <script id="app-ready-script">
 (()=>{
