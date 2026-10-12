@@ -22051,6 +22051,16 @@ renderPlatformVoteDetail=function(v){
 #s-voting .pv-platform-type-pill+button{margin-top:8px}
 </style>
 
+
+<style>
+#s-voting .pv-unified-choice.yes{color:#008c60;background:#f1faf6;border-color:#cce9dc}
+#s-voting .pv-unified-choice.abstain{color:#ad5c00;background:#fffaf0;border-color:#f1dfb8}
+#s-voting .pv-unified-choice.no{color:#e00038;background:#fff4f7;border-color:#f6ccd7}
+#s-voting .pv-unified-choice .pv-unified-count{display:grid;place-items:center;align-self:center;flex:0 0 48px;width:48px;min-width:48px;height:48px;margin:10px 12px 10px 4px;padding:0;border:1px solid #e4ddeb;border-radius:12px;background:#ffffffd9;color:#191827;font-size:23px!important;font-weight:750!important;box-shadow:0 1px 3px #30234208;transition:background .15s,box-shadow .15s,transform .15s}
+#s-voting .pv-unified-choice .pv-unified-count:hover{background:#fff;border-color:currentColor;box-shadow:0 3px 9px #30234218;transform:translateY(-1px);text-decoration:none}
+#s-voting .pv-unified-choice .pv-unified-count:active{transform:translateY(0);box-shadow:none}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
