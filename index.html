@@ -22284,6 +22284,14 @@ renderVotingRightsProfile=function(person){let html=renderVotingRightsBeforeVisu
 .rights-grid article{padding:22px}.rights-grid header h3{display:flex;align-items:center;gap:10px}.rights-area-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f0e9fc;color:#7450b0;flex-shrink:0}.rights-area-icon svg{width:23px;height:23px;margin:0}.rights-grid header .at-risk{background:#fff2d9;color:#a36c13}.rights-grid dl{margin-top:16px}.rights-grid dl>div{border:0;padding:8px 0}.rights-grid dl>div:first-child{border-top:1px solid #eae4f3;padding-top:13px;margin-bottom:6px}.rights-grid dl>.rights-time-track{display:block;height:8px;padding:0;border:0;background:#ece5fb;border-radius:8px;margin:0 0 8px;overflow:hidden}.rights-time-track>span{display:block;height:100%;background:#ad91df}.rights-missed-dots{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}.rights-missed-dots i{width:10px;height:10px;border-radius:50%;background:#ece5fb}.rights-missed-dots i.filled{background:#ad91df}.rights-missed-dots.at-risk i.filled{background:#d9a742}.rights-missed-dots.suspended i.filled{background:#dc7895}
 </style>
 
+
+<style>
+.rights-grid .rights-missed-dots.active,.rights-grid .rights-missed-dots.at-risk,.rights-grid .rights-missed-dots.suspended{background:transparent!important;padding:0!important;border:0!important}
+.rights-grid .rights-missed-dots{gap:12px;margin-top:12px;min-height:24px}
+.rights-grid .rights-missed-dots i{width:24px;height:24px;flex:0 0 24px}
+.rights-grid h3{font-size:18px}.rights-grid header>span{font-size:13px}.rights-grid .rights-active-votes{font-size:18px}.rights-grid p{font-size:14px}.rights-grid dl>div{font-size:13px}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
