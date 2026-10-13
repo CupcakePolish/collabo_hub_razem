@@ -21960,12 +21960,13 @@ function syncPlatformChangeOutcome(v){
  }
  let idea=ideas.find(i=>i.platformChangeSourceVoteId===v.id);
  if(!idea){
-  idea=createBlankPrivateIdeaDraft();Object.assign(idea,{title:v.title,desc:v.proposed||'',isDraft:false,stage:'active',lifecycleStatus:'in_progress',cat:'Zmiana platformowa',authorName:v.author,authorId:members.find(m=>m.name===v.author)?.id||99,authorSubject:'',platformChangeSourceVoteId:v.id,platformChangePhase:'implementation',date:v.closedDate||v.date});
+  idea=createBlankPrivateIdeaDraft();Object.assign(idea,{title:v.title,desc:v.proposed||'',isDraft:false,stage:'active',lifecycleStatus:'in_progress',cat:'Zmiana platformowa',authorName:v.author,authorId:members.find(m=>m.name===v.author)?.id||99,authorSubject:'',platformChangeSourceVoteId:v.id,projectPhoto:platformChangeIdeaIcon(v),platformChangePhase:'implementation',date:v.closedDate||v.date});
   delete idea.draftOwnerSubject;delete idea.draftCreatedAt;delete idea.draftUpdatedAt;
   idea.fields.cel.text=v.proposed||'';idea.files=JSON.parse(JSON.stringify(v.attachments||[]));
   idea.coalition=[];idea.log.push({text:'Utworzono pomysł po przyjęciu zmiany platformowej',date:TODAY,type:'status'});
   ideas.push(idea);queuePersistence();
  }
+ if(!idea.projectPhoto){idea.projectPhoto=platformChangeIdeaIcon(v);queuePersistence();}
  if(v.implementationIdeaId!==idea.id){v.implementationIdeaId=idea.id;return true;}return false;
 }
 function createPlatformResultVote(idea){
@@ -22333,6 +22334,11 @@ setupPlatformVoteDiscussion=function(v){setupPlatformVoteDiscussionBeforeFourRow
 <style>
 #s-voting .pv-unified-turnout{padding-right:48px;margin-top:22px}.pv-unified-turnout .pv-electorate-button{width:34px;height:34px;padding:7px;top:22px;border-radius:10px;display:grid;place-items:center}.pv-unified-turnout .pv-electorate-button svg{width:20px;height:20px}.pv-unified-turnout .pv-turnout-track{margin-top:20px}.pv-unified-turnout-labels small{font-size:10px;color:#9589a3;margin-left:7px;font-weight:400}.pv-unified-turnout-labels>span:first-child{font-size:12px}.pv-inline-chat.dc-window{min-height:0!important}.pv-unified-turnout-labels{flex-wrap:wrap}
 </style>
+
+
+<script>
+function platformChangeIdeaIcon(v){if(v.icon)return v.icon;const markup=platformVoteOriginalIcon(v),svg=markup.match(/<svg[\s\S]*?<\/svg>/)?.[0];if(svg){const colored=svg.replace(/currentColor/g,'#65419e');return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(colored);}return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="160" height="160" rx="24" fill="#eee6fb"/><text x="80" y="105" text-anchor="middle" font-size="75">'+markup.replace(/<[^>]*>/g,'')+'</text></svg>');}
+</script>
 
 <script id="app-ready-script">
 (()=>{
