@@ -22507,6 +22507,9 @@ ideas.filter(i=>i.platformChangeSourceVoteId&&platformChangeIconNeedsRepair(i.pr
 function platformPersonCountsForQuorum(v,name){const area=v.settingsChange?'settings':v.kind==='platform-change'?'platform':'dictionary';return ['yes','no','abstain'].includes(v.ballots?.[name])||votingRightStatus(name,area).counts;}
 </script>
 
+<style>
+.board-person-work-points::after,.board-person-work-points:hover::after{content:none!important;display:none!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
