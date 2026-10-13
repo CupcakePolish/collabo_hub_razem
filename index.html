@@ -22439,6 +22439,29 @@ renderPlatformDevelopmentSupport=function(idea,initial){const ballots=platformDe
 .pv-unified-meta .pv-countdown{cursor:default}
 </style>
 
+
+<script>
+stylePlatformVoteInlineDiscussion=function(host,c){const rows=platformVoteChatMessages(c),win=host.querySelector('.dc-window'),form=win.querySelector('.dc-compose');host.querySelectorAll('.dc-message-row').forEach((row,i)=>{row.querySelector('.dc-message-avatar')?.remove();const avatar=document.createElement('span');avatar.className='pv-message-avatar';avatar.innerHTML=platformVoteAuthorAvatar(rows[i]?.by||MY_NAME);row.prepend(avatar);});const toggle=win.querySelector('.dc-options-toggle'),tools=form.querySelector('.dc-media-tools');if(toggle&&tools){tools.append(toggle);toggle.classList.add('pv-compose-options');toggle.type='button';}const menu=win.querySelector('.dc-options');if(menu){menu.classList.add('pv-compose-menu');menu.style.top='auto';menu.style.bottom='76px';menu.style.right='8px';}host.querySelectorAll('.dc-message').forEach((bubble,i)=>{(rows[i]?.files||[]).filter(f=>!String(f.type).startsWith('image/')).forEach(file=>{const a=document.createElement('a');a.className='pv-chat-file';a.href=safeUserUrl(file.data,'file');a.download=file.name;a.textContent='↓ '+file.name;bubble.append(a);});});};
+</script>
+<style>
+#pv-discussion-chat .pv-inline-chat .dc-compose{flex-wrap:nowrap!important;align-items:center!important;border:0!important;border-radius:0!important;background:transparent!important;padding:12px 0!important;gap:8px!important}
+#pv-discussion-chat .pv-inline-chat .dc-compose-box{order:initial!important;flex:1!important;min-width:0!important;width:auto!important;border-radius:25px!important;background:var(--surf2)!important;padding:8px 12px!important}
+#pv-discussion-chat .pv-inline-chat .dc-compose-box textarea{min-height:24px!important;max-height:140px!important;resize:none!important;font-size:14px!important;padding:3px!important;background:transparent!important}
+#pv-discussion-chat .pv-inline-chat .dc-media-tools{display:flex!important;flex:0 0 136px!important;width:136px!important;max-width:136px!important;gap:6px!important;height:34px;overflow:visible}
+#pv-discussion-chat .pv-inline-chat .dc-media-tools button{width:28px!important;min-width:28px!important;height:32px!important;flex:0 0 28px!important;margin:0!important;padding:2px!important;border:0!important;background:transparent!important;border-radius:8px!important;position:static!important;color:var(--txs)!important}
+#pv-discussion-chat .pv-inline-chat .dc-media-tools button:hover{background:var(--p100)!important}
+#pv-discussion-chat .pv-inline-chat .dc-media-tools button svg{width:25px!important;height:25px!important}
+#pv-discussion-chat .pv-inline-chat .dc-media-tools .dc-obsolete-tool{display:none!important}
+#pv-discussion-chat .pv-inline-chat .dc-compose.is-writing .dc-tools-toggle{display:flex!important;align-items:center;justify-content:center;width:30px;height:32px;flex:0 0 30px;color:var(--p700);background:transparent}
+#pv-discussion-chat .pv-inline-chat .dc-compose:not(.is-writing) .dc-tools-toggle{display:none!important}
+#pv-discussion-chat .pv-inline-chat .dc-compose.is-writing:not(.tools-open) .dc-media-tools{display:none!important}
+#pv-discussion-chat .pv-inline-chat .dc-compose.is-writing.tools-open .dc-media-tools{display:flex!important;position:absolute!important;bottom:60px!important;left:0!important;width:150px!important;max-width:150px!important;flex-basis:150px!important;height:auto!important;padding:8px!important;background:var(--surf)!important;border:1px solid var(--bdr)!important;border-radius:12px!important;opacity:1!important;transform:none!important;pointer-events:auto!important}
+#pv-discussion-chat .pv-inline-chat .dc-quick{display:grid!important;place-items:center;width:30px;flex:0 0 30px;color:var(--p700)}
+#pv-discussion-chat .pv-inline-chat .dc-quick[hidden],#pv-discussion-chat .pv-inline-chat .dc-send[hidden]{display:none!important}
+#pv-discussion-chat .pv-inline-chat .dc-send{margin:0!important;order:initial!important;flex:0 0 30px!important}
+#pv-discussion-chat .pv-inline-chat .pv-compose-menu{position:absolute;z-index:200;max-height:350px}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
