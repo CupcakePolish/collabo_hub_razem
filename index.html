@@ -22125,7 +22125,7 @@ renderPlatformVoteBallot=function(v){
  html=html.replace('<header class="pv-unified-heading"><div>','<header class="pv-unified-heading"><div class="pv-vote-heading-icon" aria-hidden="true">'+IC.users+'</div><div class="pv-vote-heading-copy">');
  const question=v.kind==='platform-change'&&!v.settingsChange?(v.platformChangePhase==='result'?'Czy przyjmujemy przygotowane rozwiązanie i wdrażamy je na platformie?':'Czy popierasz rozpoczęcie prac nad tą zmianą?'):'Czy popierasz proponowaną zmianę?';
  html=html.replace('</h3></div><div class="pv-unified-meta">','</h3><p>'+question+'</p></div><div class="pv-unified-meta">');
- if(v.status==='active')html=html.replace('<div class="pv-unified-badges">','<div class="pv-unified-badges"><span class="pv-vote-active"><i></i>Aktywne</span>');
+
  return html;
 };
 </script>
@@ -22432,6 +22432,11 @@ renderPlatformDevelopmentSupport=function(idea,initial){const ballots=platformDe
 
 <style>
 .pv-electorate-person-name{border:0;background:transparent;padding:0;font:inherit;font-weight:700;color:inherit;text-align:left;cursor:pointer}.pv-electorate-person-name:hover{color:var(--p700)}
+</style>
+
+
+<style>
+.pv-unified-meta .pv-countdown{cursor:default}
 </style>
 
 <script id="app-ready-script">
