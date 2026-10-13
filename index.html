@@ -22076,6 +22076,44 @@ renderPlatformVoteDetail=function(v){
 #s-voting .pv-quorum-marker,#s-voting .pv-quorum-marker::before,#s-voting .pv-quorum-marker::after,#s-voting .pv-quorum-marker>span,#s-voting .pv-segment,#s-voting .pv-segment-tooltip{cursor:default!important}
 </style>
 
+
+<script>
+const renderPlatformVoteDetailBeforeCompactStages=renderPlatformVoteDetail;
+renderPlatformVoteDetail=function(v){
+ let html=renderPlatformVoteDetailBeforeCompactStages(v);
+ if(v.kind!=='platform-change'||v.settingsChange)return html;
+ html=html.replace('<header>','<header class="pv-platform-change-header">');
+ if(platformVoteView.tab==='description'){
+  const stages=html.match(/<div class="pv-change-stages">(?:<div[^>]*>[\s\S]*?<\/div>){4}<\/div>/);
+  if(stages){html=html.replace(stages[0],'');html=html.replace('<div class="pv-proposal-description">',stages[0]+'<div class="pv-proposal-description">');}
+  if(String(v.proposed||'').length>420){html=html.replace('<p>'+escHtml(v.proposed)+'</p>','<p>'+escHtml(v.proposed.slice(0,420))+'…</p><details class="pv-description-more"><summary>Czytaj więcej</summary><p>'+escHtml(v.proposed)+'</p></details>');}
+ }
+ return html;
+};
+</script>
+<style>
+#s-voting .pv-detail>.pv-platform-change-header{align-items:flex-start!important;gap:20px!important}
+#s-voting .pv-platform-change-header>.pv-icon{width:108px!important;height:108px!important;min-width:108px!important;border-radius:23px!important;flex:0 0 108px!important;font-size:64px!important}
+#s-voting .pv-platform-change-header>.pv-icon svg{width:68px!important;height:68px!important}
+#s-voting .pv-platform-change-header>.pv-icon img{width:100%!important;height:100%!important;object-fit:cover;border-radius:23px}
+#s-voting .pv-card:has(.pv-icon)>.pv-icon{width:130px!important;height:130px!important;min-width:130px!important;flex:0 0 130px!important;font-size:72px!important;border-radius:23px!important}
+#s-voting .pv-card>.pv-icon svg{width:76px!important;height:76px!important}
+#s-voting .pv-card>.pv-icon img{width:100%!important;height:100%!important;object-fit:cover;border-radius:23px}
+#s-voting .pv-card{gap:20px!important;align-items:flex-start!important}
+#s-voting .pv-detail>.pv-change-stages{display:flex;gap:0;padding:16px 0 20px;margin:0 0 20px;border-bottom:1px solid #e7e2ef}
+#s-voting .pv-detail>.pv-change-stages>div{position:relative;flex:1;min-width:0;gap:9px;border:0;background:transparent;padding:0 14px 0 0;border-radius:0;font-size:12px}
+#s-voting .pv-detail>.pv-change-stages>div:not(:last-child)::after{content:"";height:1px;background:#e5dfef;flex:1;min-width:12px;margin-left:4px}
+#s-voting .pv-detail>.pv-change-stages>div.current::after,#s-voting .pv-detail>.pv-change-stages>div.done::after{background:#9774dc}
+#s-voting .pv-detail>.pv-change-stages>div>span{white-space:nowrap}
+#s-voting .pv-detail>.pv-change-stages b{width:28px;height:28px}
+#s-voting .pv-detail>.pv-change-stages .done{color:#63409c}
+#s-voting .pv-detail>.pv-change-stages .done b{background:#eee7fb;color:#63409c}
+#s-voting .pv-proposal-description{padding-bottom:20px;border-bottom:1px solid #e7e2ef}
+.pv-description-more summary{cursor:pointer;color:var(--p700);font-size:13px;margin-top:10px;font-weight:600}
+.pv-description-more[open]+p{display:none}
+@media(max-width:700px){#s-voting .pv-detail>.pv-change-stages{flex-wrap:wrap;gap:14px}#s-voting .pv-detail>.pv-change-stages>div{flex:1 1 42%}#s-voting .pv-card:has(.pv-icon)>.pv-icon{width:90px!important;height:90px!important;min-width:90px!important;flex-basis:90px!important}#s-voting .pv-platform-change-header>.pv-icon{width:84px!important;height:84px!important;min-width:84px!important;flex-basis:84px!important}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
