@@ -8392,7 +8392,7 @@ function openIdea(id,preserveScroll=false,opts={}){
     const baseMeta=isPrivateIdeaDraft(idea)
       ?''
       :`<span class="idea-meta-status">Status: ${escHtml(statusLabel)}</span>`;
-    ideaMeta.innerHTML=`${baseMeta}<button type="button" class="idea-meta-item" onclick="openIdeaTeamMembers(${id})">${IC.users}<span>Zespół: <b>${people} ${plural(people,['osoba','osoby','osób'])}</b></span></button>${lastLog?`<button type="button" class="idea-meta-item idea-meta-activity" onclick="openLatestProjectActivity(${id})" title="Otwórz ostatni wpis w rejestrze">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></button>`:`<span class="idea-meta-item">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></span>`}<span class="idea-meta-item" title="${escAttr(ideaSubmissionExactDate(idea))}">${IC.cal}<span>Zgłoszono ${escHtml(ideaSubmissionRelativeTime(idea))}</span></span><span class="idea-meta-item"><button type="button" onclick="openMember(${Number(auth.id)||99})">Autor: ${escHtml(auth.name)}</button></span>${platformChangeProjectHeader(idea)}`;
+    ideaMeta.innerHTML=`${platformChangeProjectHeader(idea)}${baseMeta}<button type="button" class="idea-meta-item" onclick="openIdeaTeamMembers(${id})">${IC.users}<span>Zespół: <b>${people} ${plural(people,['osoba','osoby','osób'])}</b></span></button>${lastLog?`<button type="button" class="idea-meta-item idea-meta-activity" onclick="openLatestProjectActivity(${id})" title="Otwórz ostatni wpis w rejestrze">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></button>`:`<span class="idea-meta-item">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></span>`}<span class="idea-meta-item" title="${escAttr(ideaSubmissionExactDate(idea))}">${IC.cal}<span>Zgłoszono ${escHtml(ideaSubmissionRelativeTime(idea))}</span></span><span class="idea-meta-item"><button type="button" onclick="openMember(${Number(auth.id)||99})">Autor: ${escHtml(auth.name)}</button></span>`;
   }
   {const isF=followedIdeas.has(id);
    const ha=document.getElementById('idea-hero-actions');
@@ -9728,10 +9728,10 @@ function ensureProjectOverviewModel(idea){
     const primary=Number(idea.id)===1;
     idea.projectCardVersions.push({
       version:primary?3:1,status:'approved',approvedBy:'Zatwierdzona przez zespół',author:primary?'Anna Wiśniewska':authorOf(idea).name,date:primary?'4 sierpnia 2026':(idea.date||TODAY),
-      problem:primary?'Marszałek Sejmu może przez długi czas blokować inicjatywy ustawodawcze bez nadania im biegu i bez publicznego uzasadnienia.':(idea.desc||'Problem wymaga doprecyzowania przez zespół.'),
-      importance:primary?'Skutkiem obecnej sytuacji jest możliwość faktycznego zamrożenia projektu bez formalnej decyzji, którą można publicznie ocenić lub zakwestionować.':(idea.fields?.cel?.text||'Znaczenie projektu wymaga doprecyzowania.'),
+      problem:idea.platformChangeSourceVoteId?'':primary?'Marszałek Sejmu może przez długi czas blokować inicjatywy ustawodawcze bez nadania im biegu i bez publicznego uzasadnienia.':(idea.desc||'Problem wymaga doprecyzowania przez zespół.'),
+      importance:idea.platformChangeSourceVoteId?'':primary?'Skutkiem obecnej sytuacji jest możliwość faktycznego zamrożenia projektu bez formalnej decyzji, którą można publicznie ocenić lub zakwestionować.':(idea.fields?.cel?.text||'Znaczenie projektu wymaga doprecyzowania.'),
       goal:idea.fields?.cel?.text||'Cel projektu wymaga doprecyzowania.',
-      solution:primary?'Wprowadzić terminy proceduralne, obowiązek jawnego uzasadniania opóźnień oraz publiczny rejestr projektów oczekujących.':(idea.desc||'Kierunek działania wymaga doprecyzowania.'),
+      solution:idea.platformChangeSourceVoteId?'':primary?'Wprowadzić terminy proceduralne, obowiązek jawnego uzasadniania opóźnień oraz publiczny rejestr projektów oczekujących.':(idea.desc||'Kierunek działania wymaga doprecyzowania.'),
       scope:primary?'Projekt obejmuje terminy pierwszej czynności, jawność powodów opóźnień i rejestr oczekujących projektów. Nie wymusza automatycznego kierowania każdego projektu na salę plenarną.':'Zakres projektu wymaga doprecyzowania.'
     });
   }
@@ -9743,7 +9743,7 @@ function ensureProjectOverviewModel(idea){
     );
     Object.assign(current,{version:3});
   }
-  idea.projectCardVersions.forEach(row=>{row.author=row.author||'Anna Wiśniewska';row.description=typeof row.description==='string'?row.description:String(idea.desc||'');row.importance=row.importance||row.goal||'Znaczenie projektu wymaga doprecyzowania.';row.attachments=row.attachments&&typeof row.attachments==='object'?row.attachments:{};['problem','importance','solution','description'].forEach(key=>{if(!Array.isArray(row.attachments[key]))row.attachments[key]=[];});if(Number(idea.id)===1&&Number(row.version)===3&&/^Kierunek reformy:/i.test(row.importance))row.importance='Skutkiem obecnej sytuacji jest możliwość faktycznego zamrożenia projektu bez formalnej decyzji, którą można publicznie ocenić lub zakwestionować.';});
+  idea.projectCardVersions.forEach(row=>{row.author=row.author||'Anna Wiśniewska';row.description=typeof row.description==='string'?row.description:String(idea.desc||'');row.importance=idea.platformChangeSourceVoteId?(row.importance??''):(row.importance||row.goal||'Znaczenie projektu wymaga doprecyzowania.');row.attachments=row.attachments&&typeof row.attachments==='object'?row.attachments:{};['problem','importance','solution','description'].forEach(key=>{if(!Array.isArray(row.attachments[key]))row.attachments[key]=[];});if(Number(idea.id)===1&&Number(row.version)===3&&/^Kierunek reformy:/i.test(row.importance))row.importance='Skutkiem obecnej sytuacji jest możliwość faktycznego zamrożenia projektu bez formalnej decyzji, którą można publicznie ocenić lub zakwestionować.';});
   idea.outcomes=Array.isArray(idea.outcomes)?idea.outcomes:[];
   if(!idea.outcomes.length){
     if(Number(idea.id)===1)idea.outcomes=[
@@ -21962,7 +21962,7 @@ function syncPlatformChangeOutcome(v){
  if(!idea){
   idea=createBlankPrivateIdeaDraft();Object.assign(idea,{title:v.title,desc:v.proposed||'',isDraft:false,stage:'active',lifecycleStatus:'in_progress',cat:'Zmiana platformowa',authorName:v.author,authorId:members.find(m=>m.name===v.author)?.id||99,authorSubject:'',platformChangeSourceVoteId:v.id,platformIdeaCreatedAt:new Date().toISOString(),projectPhoto:platformChangeIdeaIcon(v),platformChangePhase:'implementation',date:v.closedDate||v.date});
   delete idea.draftOwnerSubject;delete idea.draftCreatedAt;delete idea.draftUpdatedAt;
-  idea.fields.cel.text=v.proposed||'';idea.files=JSON.parse(JSON.stringify(v.attachments||[]));
+  idea.fields.cel.text='';idea.files=JSON.parse(JSON.stringify(v.attachments||[]));
   idea.coalition=[];idea.log.push({text:'Utworzono pomysł po przyjęciu zmiany platformowej',date:TODAY,type:'status'});
   ideas.push(idea);queuePersistence();
  }
@@ -22538,6 +22538,15 @@ function openMeetingSummary(scope,id,mid){const owner=meetingOwner(scope,id),m=o
 </script>
 <style>
 .team-meetings-tab{padding:24px}.team-meetings-tab>header{display:flex;justify-content:space-between;align-items:center}.team-meeting-card{display:flex;align-items:center;gap:16px;width:100%;padding:20px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf);color:inherit;font:inherit;text-align:left;margin-top:14px;cursor:pointer}.team-meeting-card>div{flex:1}.team-meeting-card svg{width:28px;height:28px}.team-meeting-card p{font-size:12px;color:var(--txs)}.app-modal.meeting-summary-modal{width:min(960px,calc(100vw - 40px));max-width:960px;padding:32px;max-height:90vh;overflow:auto}.meeting-type{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;background:#eee7fd;color:#61449a;border-radius:12px;font-size:12px}.meeting-type svg{width:18px;height:18px}.meeting-summary h2{font-size:28px;margin:16px 40px 8px 0}.meeting-summary p{font-size:14px;line-height:1.6;color:var(--txs)}.meeting-summary-meta{display:flex;gap:18px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--bdr)}.meeting-summary-meta>span{display:flex;align-items:center;gap:9px;font-size:12px}.meeting-summary-meta svg{width:21px;height:21px;color:#795caf}.meeting-summary-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:26px;margin-top:24px}.meeting-summary-grid h3{font-size:17px}.meeting-summary-grid aside{border-left:1px solid var(--bdr);padding-left:24px}.meeting-location,.meeting-note,.meeting-detail-box{padding:16px;border:1px solid var(--bdr);border-radius:12px}.meeting-location a{display:block;font-size:12px;margin-top:8px}.meeting-open{display:block;text-align:center;text-decoration:none;padding:12px}.meeting-rsvp{display:flex;gap:7px}.meeting-rsvp button{flex:1;padding:10px 6px;border:1px solid var(--bdr);border-radius:10px;background:transparent;color:inherit;cursor:pointer}.meeting-rsvp .on.yes{background:#e5f8ef;border-color:#9ed8bc}.meeting-rsvp .on.maybe{background:#fff4db;border-color:#e8c879}.meeting-rsvp .on.no{background:#ffedf2;border-color:#e6a5b6}.meeting-calendar{border:0;background:none;color:var(--p700);padding:18px 0;cursor:pointer}.meeting-detail-box{margin-top:12px}.meeting-detail-box summary{cursor:pointer;font-weight:650}.meeting-person{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px}.meeting-person>img,.meeting-person>span:first-child{width:30px;height:30px;border-radius:50%;object-fit:cover}.meeting-person small{display:block;color:var(--txs)}.meeting-person button{font-size:10px;margin-left:auto;border:1px solid var(--bdr);border-radius:7px;background:transparent;padding:5px;cursor:pointer}@media(max-width:700px){.meeting-summary-grid{grid-template-columns:1fr}.meeting-summary-grid aside{border:0;padding:0}}
+</style>
+
+
+<script>
+ideas.filter(i=>i.platformChangeSourceVoteId).forEach(idea=>{const card=idea.projectCardVersions?.[0];let changed=false;if(card&&Number(card.version)===1){if(card.problem===idea.desc){card.problem='';changed=true;}if(card.solution===idea.desc){card.solution='';changed=true;}if(card.importance===idea.desc||card.importance==='Znaczenie projektu wymaga doprecyzowania.'){card.importance='';changed=true;}}if(idea.fields?.cel?.text===idea.desc){idea.fields.cel.text='';changed=true;}if(changed)queuePersistence();});
+</script>
+<style>
+#s-idea .idea-title-meta>.platform-project-origin{display:inline-flex;flex-basis:auto!important;margin:0!important;order:0}
+#s-idea .idea-title-meta>.platform-project-origin>button.support{padding:5px 9px!important;font-size:12px!important;border-radius:9px!important}
 </style>
 
 <script id="app-ready-script">
