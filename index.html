@@ -22406,6 +22406,18 @@ renderPlatformVoteBallot=function(v){let html=renderPlatformVoteBallotBeforeQuor
 #s-voting .pv-unified-options{margin-top:18px}
 </style>
 
+
+<script>
+const renderPlatformVoteBallotBeforeListByRequirement=renderPlatformVoteBallot;
+renderPlatformVoteBallot=function(v){let html=renderPlatformVoteBallotBeforeListByRequirement(v);const button=html.match(/<button class="pv-electorate-button"[\s\S]*?<\/button>/);if(button&&html.includes('pv-heading-quorum-required')){html=html.replace(button[0],'');html=html.replace(/<span class="pv-heading-quorum-required">([\s\S]*?)<\/span>/,(_,text)=>`<div class="pv-heading-quorum-required"><span>${text}</span>${button[0]}</div>`);}return html;};
+</script>
+<style>
+#s-voting .pv-unified-meta{padding-bottom:42px}
+.pv-heading-quorum-required{display:flex;align-items:center;gap:10px}
+#s-voting .pv-heading-quorum-required .pv-electorate-button{position:static!important;display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:5px;margin:0;order:initial}
+#s-voting .pv-unified-turnout .pv-turnout-track{margin:20px 0 8px;width:100%}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
