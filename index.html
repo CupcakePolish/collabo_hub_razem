@@ -22510,6 +22510,15 @@ function platformPersonCountsForQuorum(v,name){const area=v.settingsChange?'sett
 <style>
 .board-person-work-points::after,.board-person-work-points:hover::after{content:none!important;display:none!important}
 </style>
+
+<script>
+function toggleDevelopmentIdeaFollow(id,event){event.stopPropagation();if(followedIdeas.has(id))followedIdeas.delete(id);else followedIdeas.add(id);queuePersistence();renderPlatformVotes();}
+renderPlatformDevelopmentIdeaCard=function(idea,initial){const icon=idea.projectPhoto?`<img src="${escAttr(idea.projectPhoto)}" alt="">`:platformVoteOriginalIcon(initial),status={in_progress:'W toku',completed:'Zakończony',evaluation:'W ocenie',evaluation_completed:'Ocena zakończona'}[projectLifecycleStatus(idea)]||'W toku',last=idea.log?.at(-1),stamp=votingRightsDate(last?.date||idea.platformIdeaCreatedAt||idea.date),created=ideaSubmissionExactDate(idea),people=participantsOf(idea).length;return `<article role="button" tabindex="0" class="pv-development-idea-card" onclick="openIdea(${Number(idea.id)})" onkeydown="if(event.target===this&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openIdea(${Number(idea.id)})}"><span class="pv-development-idea-photo">${icon}</span><span class="pv-development-idea-copy"><strong>${escHtml(idea.title)}</strong><span class="pv-idea-card-actions"><small class="pv-idea-lifecycle">${status}</small><button type="button" class="pv-idea-follow ${followedIdeas.has(idea.id)?'on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Obserwuj'} pomysł" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleDevelopmentIdeaFollow(${Number(idea.id)},event)">${profileStarIcon()}</button></span><p>${escHtml(idea.desc||idea.fields?.cel?.text||'')}</p></span><footer class="pv-development-idea-meta"><span>${IC.log} ${(idea.tasks||[]).length}</span><span title="${escAttr(created)}">${IC.cal} Utworzono ${escHtml(idea.date||'')}</span><span title="${stamp?escAttr(new Date(stamp).toLocaleString('pl-PL')):''}">${IC.clock} Aktywność ${stamp?escHtml(platformVoteTimeAgo(stamp)):'—'}</span><span>${IC.users} ${people}</span></footer></article>`;};
+</script>
+<style>
+.pv-development-idea-card{flex-wrap:wrap}.pv-idea-card-actions{display:flex;align-items:center;gap:8px;margin:12px 0 18px}.pv-idea-card-actions .pv-idea-lifecycle{height:34px;display:inline-flex;align-items:center;box-sizing:border-box;padding:0 12px;font-weight:650}.pv-idea-follow{width:34px;height:34px;display:grid;place-items:center;border:1px solid #e0d4f2;background:transparent;border-radius:10px;color:#654098;cursor:pointer}.pv-idea-follow svg{width:21px;height:21px}.pv-idea-follow.on svg{fill:currentColor}.pv-idea-follow:hover{background:#eee6fa}.pv-development-idea-card>.pv-development-idea-meta{flex-basis:100%;border-top:1px solid #e8e1f1;padding-top:16px;margin-top:6px;gap:16px;flex-wrap:wrap;font-size:11px}.pv-development-idea-meta>span{display:inline-flex;gap:6px;align-items:center}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
