@@ -22114,6 +22114,39 @@ renderPlatformVoteDetail=function(v){
 @media(max-width:700px){#s-voting .pv-detail>.pv-change-stages{flex-wrap:wrap;gap:14px}#s-voting .pv-detail>.pv-change-stages>div{flex:1 1 42%}#s-voting .pv-card:has(.pv-icon)>.pv-icon{width:90px!important;height:90px!important;min-width:90px!important;flex-basis:90px!important}#s-voting .pv-platform-change-header>.pv-icon{width:84px!important;height:84px!important;min-width:84px!important;flex-basis:84px!important}}
 </style>
 
+
+<script>
+const renderPlatformVoteBallotBeforeCompactHeading=renderPlatformVoteBallot;
+renderPlatformVoteBallot=function(v){
+ let html=renderPlatformVoteBallotBeforeCompactHeading(v);
+ html=html.replace('<header class="pv-unified-heading"><div>','<header class="pv-unified-heading"><div class="pv-vote-heading-icon" aria-hidden="true">'+IC.users+'</div><div class="pv-vote-heading-copy">');
+ const question=v.kind==='platform-change'&&!v.settingsChange?(v.platformChangePhase==='result'?'Czy przyjmujemy przygotowane rozwiązanie i wdrażamy je na platformie?':'Czy popierasz rozpoczęcie prac nad tą zmianą?'):'Czy popierasz proponowaną zmianę?';
+ html=html.replace('</h3></div><div class="pv-unified-meta">','</h3><p>'+question+'</p></div><div class="pv-unified-meta">');
+ if(v.status==='active')html=html.replace('<div class="pv-unified-badges">','<div class="pv-unified-badges"><span class="pv-vote-active"><i></i>Aktywne</span>');
+ return html;
+};
+</script>
+<style>
+#s-voting .pv-proposal-description{padding-bottom:24px;margin-bottom:0}
+#s-voting .pv-change-chain:has(.pv-stage-summaries:empty):not(:has(.pv-implementation-owner)){display:none}
+#s-voting .pv-proposal-description+.pv-unified-vote{margin-top:0!important;padding-top:24px!important}
+#s-voting .pv-unified-heading{display:flex;align-items:flex-start;gap:14px;flex-wrap:nowrap;padding-bottom:0;border-bottom:0}
+.pv-vote-heading-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;background:#f0eafb;border-radius:12px;color:#61439d}
+.pv-vote-heading-icon svg{width:27px;height:27px}
+.pv-vote-heading-copy{flex:1;min-width:0}
+#s-voting .pv-unified-heading h3{margin:0 0 6px;font-size:19px}
+#s-voting .pv-unified-heading p{font-size:12px;margin:0;line-height:1.5}
+#s-voting .pv-unified-meta{width:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+#s-voting .pv-unified-meta .pv-countdown{padding:7px 10px;background:#f5f1fb;border-radius:20px;font-weight:650;font-size:12px}
+#s-voting .pv-unified-badges{position:static;display:flex;flex-direction:row;gap:8px;align-items:center}
+#s-voting .pv-unified-badges>span{padding:7px 10px;font-size:11px!important}
+.pv-vote-active{display:inline-flex;align-items:center;gap:6px;background:#eaf7f1;color:#238467;border-radius:20px;white-space:nowrap}
+.pv-vote-active i{width:7px;height:7px;border-radius:50%;background:#28b68c}
+#s-voting .pv-unified-turnout{margin-top:24px}
+@media(max-width:1000px){#s-voting .pv-unified-heading{flex-wrap:wrap}#s-voting .pv-unified-meta{margin-left:56px;flex-wrap:wrap}}
+@media(max-width:560px){#s-voting .pv-unified-meta{margin-left:0}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
