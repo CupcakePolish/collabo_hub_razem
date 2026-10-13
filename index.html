@@ -21966,7 +21966,7 @@ function syncPlatformChangeOutcome(v){
   idea.coalition=[];idea.log.push({text:'Utworzono pomysł po przyjęciu zmiany platformowej',date:TODAY,type:'status'});
   ideas.push(idea);queuePersistence();
  }
- if(!idea.projectPhoto){idea.projectPhoto=platformChangeIdeaIcon(v);queuePersistence();}
+ if(!idea.projectPhoto||platformChangeIconNeedsRepair(idea.projectPhoto)){idea.projectPhoto=platformChangeIdeaIcon(v);queuePersistence();}
  if(v.implementationIdeaId!==idea.id){v.implementationIdeaId=idea.id;return true;}return false;
 }
 function createPlatformResultVote(idea){
@@ -22337,7 +22337,7 @@ setupPlatformVoteDiscussion=function(v){setupPlatformVoteDiscussionBeforeFourRow
 
 
 <script>
-function platformChangeIdeaIcon(v){if(v.icon)return v.icon;const markup=platformVoteOriginalIcon(v),svg=markup.match(/<svg[\s\S]*?<\/svg>/)?.[0];if(svg){const colored=svg.replace(/currentColor/g,'#65419e');return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(colored);}return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="160" height="160" rx="24" fill="#eee6fb"/><text x="80" y="105" text-anchor="middle" font-size="75">'+markup.replace(/<[^>]*>/g,'')+'</text></svg>');}
+function platformChangeIdeaIcon(v){if(v.icon)return v.icon;const markup=platformVoteOriginalIcon(v),svg=markup.match(/<svg[\s\S]*?<\/svg>/)?.[0];if(svg){const colored=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"').replace(/currentColor/g,'#65419e');return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(colored);}return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="160" height="160" rx="24" fill="#eee6fb"/><text x="80" y="105" text-anchor="middle" font-size="75">'+markup.replace(/<[^>]*>/g,'')+'</text></svg>');}
 </script>
 
 
@@ -22464,7 +22464,7 @@ stylePlatformVoteInlineDiscussion=function(host,c){const rows=platformVoteChatMe
 
 
 <script>
-function renderPlatformDevelopmentIdeaCard(idea,initial){const icon=idea.projectPhoto?`<img src="${escAttr(idea.projectPhoto)}" alt="">`:platformVoteOriginalIcon(initial);return `<button type="button" class="pv-development-idea-card" onclick="openIdea(${Number(idea.id)})"><span class="pv-development-idea-photo">${icon}</span><span class="pv-development-idea-copy"><strong>${escHtml(idea.title)}</strong><small class="pv-idea-lifecycle">${{in_progress:'W toku',completed:'Zakończony',evaluation:'W ocenie',evaluation_completed:'Ocena zakończona'}[projectLifecycleStatus(idea)]||'W toku'}</small><p>${escHtml(idea.desc||idea.fields?.cel?.text||'')}</p><span class="pv-development-idea-meta">${IC.users} ${participantsOf(idea).length} osób w zespole · ${escHtml(idea.date||'')}</span></span></button>`;}
+function renderPlatformDevelopmentIdeaCard(idea,initial){const icon=idea.projectPhoto&&!platformChangeIconNeedsRepair(idea.projectPhoto)?`<img src="${escAttr(idea.projectPhoto)}" alt="">`:platformVoteOriginalIcon(initial);return `<button type="button" class="pv-development-idea-card" onclick="openIdea(${Number(idea.id)})"><span class="pv-development-idea-photo">${icon}</span><span class="pv-development-idea-copy"><strong>${escHtml(idea.title)}</strong><small class="pv-idea-lifecycle">${{in_progress:'W toku',completed:'Zakończony',evaluation:'W ocenie',evaluation_completed:'Ocena zakończona'}[projectLifecycleStatus(idea)]||'W toku'}</small><p>${escHtml(idea.desc||idea.fields?.cel?.text||'')}</p><span class="pv-development-idea-meta">${IC.users} ${participantsOf(idea).length} osób w zespole · ${escHtml(idea.date||'')}</span></span></button>`;}
 const renderPlatformVoteDetailBeforeSingleIdeaCard=renderPlatformVoteDetail;
 renderPlatformVoteDetail=function(v){let html=renderPlatformVoteDetailBeforeSingleIdeaCard(v);if(v.kind!=='platform-change'||v.settingsChange)return html;const {initial,idea,result}=platformChangeChain(v),phase=platformChangePhaseKey(initial),automatic={support:0,development:1,result:2,deployment:3,implemented:3,rejected:result?2:0}[phase],selected=platformChangeStageSelection[initial.id]??automatic;
  html=html.replace(/<button[^>]*onclick="openIdea\([^)]*\)"[^>]*>[\s\S]*?<\/button>/g,'');
@@ -22488,6 +22488,12 @@ platformChangeProjectHeader=function(idea){if(!idea.platformChangeSourceVoteId)r
 #s-idea .platform-project-origin>button.support{background:#e8f8ee!important;color:#23774e!important;cursor:pointer}
 #s-idea .platform-project-origin>button.support:hover{background:#dcf2e4!important;text-decoration:underline!important}
 </style>
+
+
+<script>
+function platformChangeIconNeedsRepair(src){if(!String(src).startsWith('data:image/svg+xml;charset=utf-8,'))return false;try{return !decodeURIComponent(src.split(',').slice(1).join(',')).includes('xmlns="http://www.w3.org/2000/svg"');}catch{return true;}}
+ideas.filter(i=>i.platformChangeSourceVoteId&&platformChangeIconNeedsRepair(i.projectPhoto)).forEach(idea=>{const source=platformVoteRows().find(v=>v.id===idea.platformChangeSourceVoteId);if(source){idea.projectPhoto=platformChangeIdeaIcon(source);queuePersistence();}});
+</script>
 
 <script id="app-ready-script">
 (()=>{
