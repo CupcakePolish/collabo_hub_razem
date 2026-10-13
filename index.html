@@ -22200,7 +22200,7 @@ const projectMemberQuorumBeforeAreaRights=projectMemberQuorumInfo;
 projectMemberQuorumInfo=function(idea,row){const original=projectMemberQuorumBeforeAreaRights(idea,row);if(original.counts&&!votingRightStatus(row.name,'ideas').counts)return {counts:false,reason:'Zawieszone liczenie do kworum w obszarze pomysłów: przekroczono czas bez głosu i liczbę pominiętych głosowań.'};return original;};
 const voteParticipantsBeforeAreaRights=voteParticipants;
 voteParticipants=function(idea,v){return voteParticipantsBeforeAreaRights(idea,v).filter(n=>projectPersonVoted(v||{},n)||votingRightStatus(n,'ideas').counts);};
-function renderVotingRightsProfile(person){const rows=VOTING_RIGHT_AREAS.map(([key,label])=>({key,label,...votingRightStatus(person.name,key)})),active=rows.filter(r=>r.counts).length;return `<div class="profile-voting-rights"><h2>Prawa wyborcze</h2><div class="rights-overview"><strong>${active} / ${rows.length}</strong><span>obszarów, w których liczysz się do kworum</span></div><h3>Gdzie liczysz się do kworum</h3><div class="rights-grid">${rows.map(r=>`<article><header><h3>${r.label}</h3><span class="${r.counts?'active':'suspended'}">${r.counts?'Aktywne':'Zawieszone'}</span></header><b>${r.active} aktywnych głosowań</b><p>${r.counts?'Osoba jest uwzględniana przy liczeniu kworum w tym obszarze.':'Osoba może oddać głos, ale nie zwiększa wymaganego kworum do czasu powrotu do aktywności.'}</p><dl><div><dt>Ostatni głos</dt><dd>${r.last?new Date(r.last).toLocaleDateString('pl-PL'):'Brak zarejestrowanego głosu'}</dd></div><div><dt>Czas bez głosu</dt><dd>${r.days} / ${r.rules.inactiveDays} dni</dd></div><div><dt>Pominięte głosowania</dt><dd>${r.missed} / ${r.rules.inactiveVotes}</dd></div></dl></article>`).join('')}</div><section class="rights-help"><h3>Jak działają prawa wyborcze?</h3><p>Każdy obszar jest rozliczany osobno. Liczenie do kworum zostaje zawieszone po spełnieniu obu warunków: czasu bez głosu i liczby pominiętych, zakończonych głosowań. Oddanie kolejnego głosu przywraca liczenie w danym obszarze.</p><p>Brak daty w starszych danych nie jest traktowany jako dowód nieaktywności. Dla osób bez historii okres obserwacji zaczyna się wraz z uruchomieniem tej funkcji.</p></section></div>`;}
+function renderVotingRightsProfile(person){const rows=VOTING_RIGHT_AREAS.map(([key,label])=>({key,label,...votingRightStatus(person.name,key)})),active=rows.filter(r=>r.counts).length;return `<div class="profile-voting-rights"><h2>Prawa wyborcze</h2><div class="rights-grid">${rows.map(r=>`<article><header><h3>${r.label}</h3><span class="${r.counts?'active':'suspended'}">${r.counts?'Aktywne':'Zawieszone'}</span></header><b>${r.active} aktywnych głosowań</b><p>${r.counts?'Osoba jest uwzględniana przy liczeniu kworum w tym obszarze.':'Osoba może oddać głos, ale nie zwiększa wymaganego kworum do czasu powrotu do aktywności.'}</p><dl><div><dt>Ostatni głos</dt><dd>${r.last?`<button class="rights-last-vote" onclick="openVotingRightsLastVote('${escAttr(person.name)}','${r.key}')">${new Date(r.last).toLocaleDateString('pl-PL')}</button>`:'Brak zarejestrowanego głosu'}</dd></div><div><dt>Czas bez głosu</dt><dd>${r.days} / ${r.rules.inactiveDays} dni</dd></div><div><dt>Pominięte głosowania</dt><dd>${r.missed} / ${r.rules.inactiveVotes}</dd></div></dl></article>`).join('')}</div></div>`;}
 </script>
 <style>
 .rights-overview{display:flex;align-items:center;gap:16px;padding:18px;background:#f4effc;border-radius:14px;margin:18px 0 26px}.rights-overview strong{font-size:28px;color:#63419a}.rights-overview span{font-size:13px;color:#80748e}.rights-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.rights-grid article{border:1px solid #e5dfee;border-radius:14px;padding:20px}.rights-grid header{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:18px}.rights-grid h3{font-size:16px;margin:0}.rights-grid header span{font-size:11px;padding:5px 9px;border-radius:20px}.rights-grid .active{background:#e8f8f0;color:#278564}.rights-grid .suspended{background:#ffedf2;color:#c7365a}.rights-grid p,.rights-help p{font-size:12px;line-height:1.6;color:#82748e}.rights-grid dl>div{display:flex;justify-content:space-between;gap:10px;font-size:11px;padding:7px 0;border-top:1px solid #eee8f5}.rights-grid dd{margin:0;text-align:right}.rights-help{padding:20px;border:1px solid #e6dfee;border-radius:14px;margin-top:18px}@media(max-width:650px){.rights-grid{grid-template-columns:1fr}}
@@ -22211,6 +22211,25 @@ function renderVotingRightsProfile(person){const rows=VOTING_RIGHT_AREAS.map(([k
 const teamDecisionEligibleBeforeRights=teamDecisionEligible;
 teamDecisionEligible=function(t,d){const names=teamAcceptedMembers(t),suspended=names.filter(n=>!projectPersonVoted(d,n)&&!votingRightStatus(n,'teams').counts).length;return Math.max(1,teamDecisionEligibleBeforeRights(t,d)-suspended);};
 </script>
+
+
+<script>
+function openVotingRightsLastVote(name,area){
+ if(['dictionary','settings','platform'].includes(area)){
+  const votes=platformVoteRows().filter(v=>(v.settingsChange?'settings':v.kind==='platform-change'?'platform':'dictionary')===area&&['yes','no','abstain'].includes(v.ballots?.[name])).sort((a,b)=>votingRightsDate(b.ballotTimes?.[name]||b.closedDate||b.date)-votingRightsDate(a.ballotTimes?.[name]||a.closedDate||a.date));
+  if(votes[0]){openPlatformChangeSource(votes[0].id);if(area==='dictionary'){platformVoteView.section='dictionary';renderPlatformVotes();}}return;
+ }
+ const sources=area==='ideas'?ideas.filter(i=>participantsOf(i).includes(name)):teamsForPerson(name),votes=sources.flatMap(source=>(area==='ideas'?source.votes||[]:source.decisions||[]).filter(v=>projectPersonVoted(v,name)).map(v=>({source,v,at:votingRightsDate(v.ballotTimes?.[name]||v.date)}))).sort((a,b)=>b.at-a.at),latest=votes[0];
+ if(!latest)return;
+ if(area==='ideas')openVote(latest.source.id,latest.v.id);
+ else{teamProfileTab='votes';teamVoteUI.selectedId=String(latest.v.id);openTeam(latest.source.id);}
+}
+</script>
+<style>
+.profile-voting-rights>.rights-grid{margin-top:20px}
+.rights-grid h3{font-size:17px}.rights-grid header span{font-size:12px}.rights-grid article>b{font-size:17px}.rights-grid p{font-size:13px}.rights-grid dl>div{font-size:12px}
+.rights-last-vote{font:inherit;color:var(--p700);background:transparent;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.rights-last-vote:hover{color:var(--p500)}
+</style>
 
 <script id="app-ready-script">
 (()=>{
