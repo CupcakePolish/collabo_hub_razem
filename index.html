@@ -22385,6 +22385,27 @@ renderPlatformVoteDetail=function(v){let html=renderPlatformVoteDetailBeforeStag
 #s-voting .pv-detail>.pv-change-stages>div{padding-right:0}
 </style>
 
+
+<style>
+#s-voting .pv-unified-choice .pv-unified-count{width:42px!important;min-width:42px!important;height:42px!important;flex-basis:42px!important;font-size:20px!important;margin-right:10px!important;margin-left:8px!important}
+#s-voting .pv-unified-cast{padding-right:0;gap:10px}
+#s-voting .pv-unified-cast>span{min-width:0;overflow-wrap:normal}
+</style>
+
+
+<script>
+const renderPlatformVoteBallotBeforeQuorumAlignment=renderPlatformVoteBallot;
+renderPlatformVoteBallot=function(v){let html=renderPlatformVoteBallotBeforeQuorumAlignment(v);const match=html.match(/<div class="pv-unified-turnout-labels">[\s\S]*?<span>Wymagane:[\s\S]*?<\/span><\/div>/);if(match){const required=match[0].match(/<span>(Wymagane:[\s\S]*?)<\/span>/)?.[1];html=html.replace(match[0],'');if(required)html=html.replace('<div class="pv-unified-meta">','<div class="pv-unified-meta"><span class="pv-heading-quorum-required">'+required+'</span>');}return html;};
+</script>
+<style>
+#s-voting .pv-unified-meta{position:relative;padding-bottom:26px}
+.pv-heading-quorum-required{position:absolute;right:0;bottom:0;font-size:12px;color:#877593;white-space:nowrap}
+#s-voting .pv-unified-turnout{display:flex;align-items:center;gap:14px;padding-right:0!important}
+#s-voting .pv-unified-turnout .pv-turnout-track{flex:1;min-width:0;margin-top:20px;margin-bottom:8px}
+#s-voting .pv-unified-turnout .pv-electorate-button{position:static!important;order:2;flex:0 0 34px;margin-top:12px;align-self:center}
+#s-voting .pv-unified-options{margin-top:18px}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
