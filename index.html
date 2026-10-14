@@ -22640,6 +22640,20 @@ openTeam=function(id,opts={}){const result=openTeamBeforeSocialLayout(id,opts);l
 @media(max-width:680px){.team-profile-social-columns{grid-template-columns:1fr}#s-team-profile .team-profile-identity .tp-hero-main{flex-direction:row;gap:16px!important}#s-team-profile .team-profile-identity .tp-avatar{width:85px!important;height:85px!important;flex-basis:85px!important}.team-profile-social-main{min-height:400px}}
 </style>
 
+
+<script>
+function openBoardComposerEmoji(button,event){event.preventDefault();event.stopPropagation();const input=boardPostCommentInput();if(!input)return;const existing=[...document.querySelectorAll('.emoji-panel.on')].find(p=>p._emojiAnchor===button);if(existing){closeEmojiPanel(existing);return;}openExpandedMessageReaction(button,value=>{const text=value.startsWith('gif:')?'[[gif:'+value.slice(4)+']]':value;input.focus();if(typeof input.setRangeText==='function')input.setRangeText(text,input.selectionStart,input.selectionEnd,'end');else document.execCommand('insertText',false,text);input.dispatchEvent(new Event('input',{bubbles:true}));});}
+function normalizeBoardComposerTools(){document.querySelectorAll('.board-post-comment-tools').forEach(tools=>{tools.querySelectorAll('button.board-post-modal-tool').forEach(button=>{if(button.dataset.sharedComposerReady)return;button.dataset.sharedComposerReady='true';const label=button.getAttribute('aria-label')||'',handler=button.getAttribute('onclick')||'';if(button.classList.contains('mb-emoji')||label.includes('emotikon')){button.innerHTML=invitationToolIcon('smile');button.removeAttribute('onclick');button.onclick=e=>openBoardComposerEmoji(button,e);}else if(button.classList.contains('board-post-modal-gif'))button.hidden=true;else if(handler.includes("'image'"))button.innerHTML=invitationToolIcon('photo');else if(handler.includes("'file'"))button.innerHTML=invitationToolIcon('file');});});}
+new MutationObserver(normalizeBoardComposerTools).observe(document.body,{childList:true,subtree:true});normalizeBoardComposerTools();
+</script>
+<style>
+.board-post-comment-tools .board-post-modal-tool{width:30px!important;height:32px!important;padding:3px!important;display:inline-flex!important;align-items:center;justify-content:center;border:0!important;background:transparent!important;color:var(--txs)!important;border-radius:8px!important;margin:0!important}
+.board-post-comment-tools .board-post-modal-tool svg{width:25px!important;height:25px!important;display:block}
+.board-post-comment-tools .board-post-modal-tool:hover{background:var(--p100)!important;color:var(--p700)!important}
+.board-post-comment-tools .board-post-modal-gif{display:none!important}
+.board-post-comment-tools>span{display:flex;align-items:center;gap:7px}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
