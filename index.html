@@ -22654,6 +22654,26 @@ new MutationObserver(normalizeBoardComposerTools).observe(document.body,{childLi
 .board-post-comment-tools>span{display:flex;align-items:center;gap:7px}
 </style>
 
+
+<style>
+#s-team-profile{box-sizing:border-box!important;padding-left:24px!important;padding-right:96px!important;overflow-x:clip}
+#s-team-profile #team-profile-body{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box}
+#s-team-profile .team-profile-social-columns{width:100%;min-width:0;grid-template-columns:300px minmax(0,1fr)}
+#s-team-profile .team-profile-identity{display:block!important;width:100%!important;min-width:0!important;box-sizing:border-box}
+#s-team-profile .team-profile-identity .tp-hero-main{display:block!important;width:100%!important;min-width:0!important}
+#s-team-profile .team-profile-identity .tp-avatar{display:block!important;margin:0 0 20px!important;box-sizing:border-box}
+#s-team-profile .team-profile-identity .tp-identity{display:block!important;flex:none!important;width:100%!important;min-width:0!important;max-width:100%!important}
+#s-team-profile .team-profile-identity .tp-title-row{display:block!important;width:100%!important;min-width:0!important}
+#s-team-profile .team-profile-identity .tp-title-row h1,#s-team-profile .team-profile-identity .tp-title-row h2{display:block!important;width:100%!important;min-width:0!important;max-width:none!important;word-break:normal!important;overflow-wrap:break-word!important;white-space:normal!important}
+#s-team-profile .team-profile-identity .tp-title-row>span{display:inline-flex;margin-top:12px}
+#s-team-profile .team-profile-identity .tp-hero-actions{width:100%!important;min-width:0!important}
+#s-team-profile .team-profile-social-main{width:100%;max-width:100%;box-sizing:border-box;overflow:visible}
+#s-team-profile .team-profile-social-main .tp-board-post,#s-team-profile .team-profile-social-main .board-feed-toolbar{max-width:100%!important;min-width:0!important;box-sizing:border-box}
+#s-team-profile .team-profile-social-main .tp-board-post img{max-width:100%}
+@media(max-width:1050px){#s-team-profile .team-profile-social-columns{grid-template-columns:250px minmax(0,1fr)}#s-team-profile{padding-left:16px!important;padding-right:86px!important}}
+@media(max-width:720px){#s-team-profile .team-profile-social-columns{grid-template-columns:1fr}#s-team-profile .team-profile-social-main .board-feed-toolbar{display:flex;flex-wrap:wrap}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
