@@ -22703,6 +22703,14 @@ new MutationObserver(normalizeBoardComposerTools).observe(document.body,{childLi
 @media(max-width:720px){#s-team-profile .team-profile-social-columns{grid-template-columns:minmax(0,1fr)!important}#s-team-profile .team-profile-social-main{max-width:100%!important}#s-team-profile .team-profile-social-main .board-feed-toolbar{grid-template-columns:minmax(0,1fr)!important}#s-team-profile .team-profile-social-main .board-feed-controls{grid-column:1!important;justify-self:end}}
 </style>
 
+
+<style>
+#s-team-profile .team-profile-social-columns{grid-template-columns:minmax(290px,370px) minmax(0,1fr)!important}
+#s-team-profile .team-profile-social-main{max-width:calc(100vw - 510px)!important}
+@media(max-width:900px){#s-team-profile .team-profile-social-columns{grid-template-columns:minmax(270px,330px) minmax(0,1fr)!important}#s-team-profile .team-profile-social-main{max-width:calc(100vw - 452px)!important}}
+@media(max-width:650px){#s-team-profile .team-profile-social-columns{grid-template-columns:minmax(0,1fr)!important}#s-team-profile .team-profile-social-main{max-width:100%!important}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
