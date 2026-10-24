@@ -1395,3 +1395,11 @@ test('document library includes project documents and direct uploads but skips p
  const result=new Function('source',`const resourceLibraryDocuments=[{name:'Wspólny.pdf',by:'Anna'}],ideas=[{id:1,title:'Pomysł',docs:[{did:'d1',title:'Regulamin'}],files:[{name:'Notatki.txt'}]},{id:2,isDraft:true,title:'Prywatny',docs:[{title:'Sekret'}]}],isPrivateIdeaDraft=x=>!!x.isDraft,taskFileLibraryEntries=()=>[],discoverPosts=[],projectTeams=[],members=[],MY_NAME='Anna';eval(source);return resourceLibraryEntries().map(x=>x.title);`)(source);
  assert.deepEqual(result,['Wspólny.pdf','Regulamin','Notatki.txt']);
 });
+
+test('dictionary mentions route to their entry and legacy Wrocław mentions are repaired when displayed',()=>{
+ const hrefSource=html.match(/function teamBoardMentionHref\([^\n]+/)[0],href=new Function(hrefSource+';return teamBoardMentionHref;')();assert.equal(href({kind:'dictionary',dictionaryId:'city-wroclaw'}),'#dictionary/city-wroclaw');
+ const parser=html.match(/function parseAppRoute\([^]*?\n\}/)[0],parse=new Function('SCREEN_ROUTES','safeRoutePart',parser+';return parseAppRoute;')({},decodeURIComponent);
+ assert.deepEqual(parse(href({kind:'dictionary',dictionaryId:'city-wroclaw'})),{kind:'dictionary',dictionaryId:'city-wroclaw'});
+ const source=html.match(/function renderTeamBoardText\([^]*?\n\}/)[0],render=new Function('mdRender','safeUserUrl','escAttr','escHtml','dictionaryEntries',source+';return renderTeamBoardText;')(x=>x,x=>x,x=>x,x=>x,()=>[{id:'city-wroclaw',name:'Wrocław'}]);
+ assert.ok(render('@[Wrocław](#odkrywaj)').includes('href="#dictionary/city-wroclaw"'));assert.ok(render('@[Pomysł](#idea/1)').includes('href="#idea/1"'));
+});

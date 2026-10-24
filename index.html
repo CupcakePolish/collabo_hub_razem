@@ -13348,7 +13348,7 @@ function resizePostComposerText(input){if(!input?.closest('.tbp-composer'))retur
 function renderCollapsedBoardText(raw){return `<div class="board-text-preview">${renderTeamBoardText(raw)}</div><button type="button" class="board-text-expand" hidden aria-expanded="false" onclick="toggleBoardTextPreview(this)">Pokaż więcej</button>`;}
 function toggleBoardTextPreview(button){const text=button.previousElementSibling,expanded=button.getAttribute('aria-expanded')!=='true';text.classList.toggle('expanded',expanded);button.setAttribute('aria-expanded',String(expanded));button.textContent=expanded?'Pokaż mniej':'Pokaż więcej';}
 function renderTeamBoardText(raw){
-  return mdRender(raw).replace(/@\[([^\]]+)\]\((#[^)]+)\)/g,(_,label,href)=>{const safe=safeUserUrl(href,'link');return safe?`<a class="tp-board-mention" href="${escAttr(safe)}">@${label}</a>`:`@${label}`;});
+  return mdRender(raw).replace(/@\[([^\]]+)\]\((#[^)]+)\)/g,(_,label,href)=>{if(['#odkrywaj','#discover','#platform'].includes(href)){const entry=dictionaryEntries().find(item=>escHtml(item.name)===label);if(entry)href='#dictionary/'+encodeURIComponent(entry.id);}const safe=safeUserUrl(href,'link');return safe?`<a class="tp-board-mention" href="${escAttr(safe)}">@${label}</a>`:`@${label}`;});
 }
 function teamBoardPostImages(post){
   const rows=Array.isArray(post?.images)&&post.images.length?post.images:[post?.image];
@@ -13633,7 +13633,7 @@ function renderTeamBoardComposerPreview(){
   box.classList.toggle('has-image',hasImage);media?.classList.toggle('has-media',hasMedia);media?.classList.toggle('has-image',hasImage);media?.classList.toggle('has-documents',hasDocuments);grid?.classList.toggle('has-media',hasMedia);box.innerHTML=hasImage?`<div class="tbp-selected-gallery" data-count="${teamBoardComposerImages.length}">${teamBoardComposerImages.map((src,index)=>`<div><img src="${escAttr(src)}" alt="Podgląd zdjęcia ${index+1}"><button type="button" onclick="removeTeamBoardPostImage(${index})" aria-label="Usuń zdjęcie ${index+1}">×</button></div>`).join('')}</div>`:'';
   if(docs)docs.innerHTML=teamBoardComposerDocuments.map((doc,index)=>`<div class="tbp-document-preview"><span class="post-document-icon">${teamBoardDocumentIcon()}</span><span><b>${escHtml(doc.name)}</b><small>${escHtml([doc.name.split('.').pop()?.toUpperCase(),teamBoardFileSize(doc.size)].filter(Boolean).join(' · '))}</small></span><button type="button" onclick="removeTeamBoardPostDocument(${index})" aria-label="Usuń dokument">×</button></div>`).join('');
 }
-function teamBoardMentionHref(item){if(item.kind==='member')return memberHash(item.memberId);if(item.kind==='team')return teamHash(item.teamId);if(item.kind==='project')return `#idea/${encodeURIComponent(item.ideaId)}`;if(item.scope==='platform')return '#platform';if(item.scope==='team')return teamHash(item.teamId);const tabs={task:'zadania',vote:'decyzje',doc:'dokumenty',discussion:'dyskusja',register:'rejestr',resource:'zasoby',role:'zespol'};return item.ideaId?`#idea/${encodeURIComponent(item.ideaId)}/${tabs[item.kind]||''}`:'#odkrywaj';}
+function teamBoardMentionHref(item){if(item.kind==='dictionary')return '#dictionary/'+encodeURIComponent(item.dictionaryId);if(item.kind==='resource'&&item.scope==='catalog')return resourceHash(item.resourceId);if(item.kind==='doc'&&item.ideaId)return '#idea/'+encodeURIComponent(item.ideaId)+'/dokumenty/doc/'+encodeURIComponent(item.targetId);if(item.kind==='vote'&&item.ideaId)return '#idea/'+encodeURIComponent(item.ideaId)+'/decyzje/glosowanie/'+encodeURIComponent(item.targetId);if(item.kind==='member')return memberHash(item.memberId);if(item.kind==='team')return teamHash(item.teamId);if(item.kind==='project')return `#idea/${encodeURIComponent(item.ideaId)}`;if(item.scope==='platform')return '#platform';if(item.scope==='team')return teamHash(item.teamId);const tabs={task:'zadania',vote:'decyzje',doc:'dokumenty',discussion:'dyskusja',register:'rejestr',resource:'zasoby',role:'zespol'};return item.ideaId?`#idea/${encodeURIComponent(item.ideaId)}/${tabs[item.kind]||''}`:'#odkrywaj';}
 const TEAM_BOARD_MENTION_CATEGORIES=[
   {id:'project',label:'Pomysły',kinds:['project']},
   {id:'member',label:'Członkowie',kinds:['member']},
@@ -18125,6 +18125,7 @@ function parseAppRoute(hash=location.hash){
   const screen=Object.entries(SCREEN_ROUTES).find(([,route])=>route===raw)?.[0];
   if(screen)return {kind:'screen',screen};
   const parts=raw.split('/'),head=parts[0];
+  if(head==='dictionary'&&parts[1])return {kind:'dictionary',dictionaryId:safeRoutePart(parts[1])};
   if(head==='resources'&&parts[1])return {kind:'resource',resourceId:safeRoutePart(parts[1])};
   if(head==='member'&&parts[1])return {kind:'member',memberId:Number(parts[1])};
   if(head==='team'&&parts[1])return {kind:'team',teamId:safeRoutePart(parts[1])};
@@ -18159,6 +18160,7 @@ function routeFromLocation(){
   if(draftEditSession&&route.ideaId!==draftEditSession.id){const target=location.hash;if(guardDraftExit(()=>{setAppHash(target);routeFromLocation();})){setAppHash(ideaHash(ideas.find(i=>i.id===draftEditSession.id)),true);return;}}
   if(route.canonical)setAppHash(route.canonical,true);
   if(route.kind==='screen')return go(route.screen,null,null,{fromRoute:true});
+  if(route.kind==='dictionary'){if(!dictionaryEntries().some(item=>item.id===route.dictionaryId))return routeFallback();platformTab='dictionary';go('platform',null,null,{fromRoute:true});return openDictionaryEntry(route.dictionaryId);}
   if(route.kind==='resource')return catalogResources.some(resource=>resource.id===route.resourceId)?openCatalogResource(route.resourceId,{fromRoute:true}):routeFallback();
   if(route.kind==='member')return members.some(m=>m.id===route.memberId)?openMember(route.memberId,{fromRoute:true}):routeFallback();
   if(route.kind==='team')return ensureIdeaTeams({}).some(t=>t.id===route.teamId)?openTeam(route.teamId,{fromRoute:true}):routeFallback();
