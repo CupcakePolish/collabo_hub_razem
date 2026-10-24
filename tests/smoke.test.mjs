@@ -1369,3 +1369,17 @@ test('post mention tabs follow navigation and exclude unrequested result categor
  const nav=[...html.matchAll(/<button class="nl[^"\n]*" id="nl-([^"]+)"/g)].map(m=>({ideas:'project',members:'member',resources:'resource',teams:'team',voting:'vote',platform:'dictionary'}[m[1]])).filter(Boolean);
  assert.deepEqual(result.tabs,nav);assert.deepEqual(result.results,[{kind:'team',title:'Zespół'}]);assert.equal((result.markup.match(/role="tab"/g)||[]).length,6);
 });
+
+test('invitation history deduplicates completed records and leaves waiting invitations active',()=>{
+ const source=['invitationIsFinished','projectInvitationHistory','renderFinishedInvitations'].map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+ const api=new Function('escHtml',source+';return {finished:invitationIsFinished,history:projectInvitationHistory,render:renderFinishedInvitations};')(x=>String(x));
+ const idea={title:'Pomysł',pendingInvites:[{id:'waiting',kind:'project',status:'waiting',person:'Anna'},{id:'rejected',kind:'project',status:'rejected',person:'Anna',statusChangedAt:10}],invitationHistory:[{id:'joined',kind:'project',status:'joined',person:'Kasia',joinedAt:20},{id:'rejected',kind:'project',status:'rejected',person:'Anna',statusChangedAt:10},{id:'declined',kind:'project',status:'declined',person:'Patrycja',declinedAt:30}]};
+ const rows=api.history(idea);assert.deepEqual(rows.map(x=>x.id),['declined','joined','rejected']);assert.equal(api.finished(idea.pendingInvites[0]),false);
+ const markup=api.render(rows.map(inv=>({idea,inv})));assert.ok(markup.includes('Dołączono do zespołu'));assert.ok(markup.includes('Osoba odrzuciła zaproszenie'));assert.ok(markup.includes('Odrzucone przez zespół'));assert.ok(!markup.includes('onclick='));assert.ok(!markup.includes('<button'));
+});
+
+test('declining a project invitation archives it before removing it from pending',()=>{
+ const source=html.match(/function declineInvite\([^]*?\n\}/)[0];
+ const result=new Function('source',`const inv={id:'invite',kind:'project',person:'Anna'},idea={id:1,log:[],pendingInvites:[inv]},ideas=[idea],pendingInviteByRef=()=>({inv,index:0}),TODAY='2026-10-24',NOW_TIME=()=> '16:00',escHtml=x=>x,toast=()=>{},openIdea=()=>{},renderIdeas=()=>{};let saves=0;const queuePersistence=()=>saves++;eval(source);declineInvite(1,'invite','Anna','Brak czasu');return {pending:idea.pendingInvites,history:idea.invitationHistory,saves};`)(source);
+ assert.equal(result.pending.length,0);assert.equal(result.history.length,1);assert.equal(result.history[0].status,'declined');assert.equal(result.history[0].declineReason,'Brak czasu');assert.equal(result.saves,1);
+});
