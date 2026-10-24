@@ -23040,6 +23040,11 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 @media(max-width:1200px){#s-team-profile .team-profile-social-columns.team-three-columns:not(.team-three-voting)>.team-profile-context-rail{grid-column:2;grid-row:3}}
 @media(max-width:700px){#s-team-profile .team-profile-social-columns.team-three-columns:not(.team-three-voting)>.tp-tabs{grid-column:1;grid-row:2}#s-team-profile .team-profile-social-columns.team-three-columns:not(.team-three-voting)>.team-profile-context-rail{grid-column:1;grid-row:4}}
 </style>
+<style id="team-tabs-center-color-style">
+#s-team-profile .team-three-columns>.tp-tabs{justify-content:center!important}
+#s-team-profile .team-three-columns>.tp-tabs .team-tab-icon .project-vote-gavel{color:inherit!important;margin-top:0;width:22px;height:22px}
+@media(max-width:500px){#s-team-profile .team-three-columns>.tp-tabs{gap:3px}#s-team-profile .team-three-columns>.tp-tabs button{width:36px;min-width:36px}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
