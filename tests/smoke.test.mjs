@@ -1437,3 +1437,13 @@ test('team context rail shows real upcoming meetings and opens the selected vote
  const markup=render(team);assert.ok(markup.includes('Nowe spotkanie'));assert.ok(!markup.includes('Minione'));assert.ok(markup.includes("openMeetingSummary('team','team','next')"));assert.ok(markup.includes("openTeamRailVote('team','vote')"));
  const empty=render({id:'team',meetings:[],decisions:[]});assert.ok(empty.includes('Brak nadchodzących spotkań.'));assert.ok(empty.includes('Brak otwartych głosowań.'));
 });
+
+test('team vote cleanup keeps the existing profile-name proposal once and preserves future votes',()=>{
+ const source=html.match(/function cleanExistingTeamVotes\(\)\{[\s\S]*?\n\}/)[0];
+ const result=new Function('source',`let teamVotesCleanupVersion=0;const retained={id:'name',kind:'team-profile-edit',prop:'Zatwierdzić zmianę profilu zespołu: nazwa',proposedTeam:{name:'Nowa nazwa'},yes:1,comments:[{text:'Uwaga'}]},projectTeams=[{id:'tm-leg',name:'Obecna',decisions:[{id:'demo',kind:'general'},retained,{id:'other',kind:'governance-edit'}]},{id:'other-team',decisions:[{id:'old'}]}];eval(source);const changed=cleanExistingTeamVotes(),after=projectTeams.map(t=>t.decisions.map(d=>d.id));projectTeams[0].decisions.push({id:'new'});const repeated=cleanExistingTeamVotes();return {changed,after,repeated,final:projectTeams[0].decisions.map(d=>d.id),retained};`)(source);
+ assert.equal(result.changed,true);assert.deepEqual(result.after,[['name'],[]]);assert.equal(result.repeated,false);assert.deepEqual(result.final,['name','new']);assert.equal(result.retained.beforeTeamName,'Obecna');assert.equal(result.retained.yes,1);assert.equal(result.retained.comments[0].text,'Uwaga');
+});
+
+test('team vote view no longer recreates removed demo decisions',()=>{
+ const source=html.match(/function ensureTeamVoteDemo\([^\n]+/)[0],ensure=new Function(source+';return ensureTeamVoteDemo;')(),team={id:'tm-leg',decisions:[]};ensure(team);assert.deepEqual(team.decisions,[]);assert.equal(team.demoVotesSeeded,true);
+});
