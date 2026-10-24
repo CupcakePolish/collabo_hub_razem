@@ -1294,3 +1294,20 @@ test('profile point reset clears all accounts once and preserves portfolio',()=>
 test('dictionary city statistics use actual locations and published portfolio',()=>{
  const source=html.match(/function dictionaryCityData\([^\n]+/)[0];const data=new Function('source',`const members=[{name:'Anna',city:'Wrocław',points:0,portfolio:[{title:'Praca'},{title:'Szkic',isDraft:true}]},{name:'Kasia',city:'Warszawa',points:0}],ideas=[{city:'Wrocław',title:'Projekt'}],projectTeams=[{cities:['Wrocław'],name:'Zespół'}],isLegacyProfilePortfolioEntry=()=>false;eval(source);return dictionaryCityData({name:'Wrocław'});`)(source);assert.equal(data.people.length,1);assert.equal(data.projects.length,1);assert.equal(data.teams.length,1);assert.equal(data.portfolio.length,1);assert.equal(data.people[0].points,0);
 });
+
+test('board image paste uses existing upload handlers and leaves ordinary text paste alone',async()=>{
+ const source=html.match(/async function pasteBoardComposerImages\(event\)\{[\s\S]*?\n\}/)[0];
+ class Textarea{
+  constructor(scope){this.id=scope==='post'?'mb-inp-team-board-post-body':'mb-inp-board-post-reply';this.scope=scope;this.value='';this.selectionStart=0;this.selectionEnd=0;}
+  closest(selector){return this.scope==='post'?selector==='.tbp-composer':this.scope==='comment'&&selector==='.board-post-modal-composer';}
+  setRangeText(text){this.value=text;}
+  dispatchEvent(){}
+ }
+ const calls=[],paste=new Function('HTMLTextAreaElement','previewTeamBoardPostImage','handleBoardPostCommentAttachments',source+';return pasteBoardComposerImages;')(Textarea,async input=>calls.push(['post',input.files]),async(kind,input)=>calls.push([kind,input.files]));
+ const png={type:'image/png'},gif={type:'image/gif'};
+ const event=(scope,files,text='')=>({target:new Textarea(scope),preventDefault(){this.prevented=true;},clipboardData:{items:files.map(file=>({kind:'file',getAsFile:()=>file})),getData:()=>text}});
+ const post=event('post',[png]);await paste(post);assert.equal(post.prevented,true);assert.deepEqual(calls.shift(),['post',[png]]);
+ const reply=event('comment',[png,gif],'Opis');await paste(reply);assert.equal(reply.target.value,'Opis');assert.deepEqual(calls.splice(0),[['image',[png]],['gif',[gif]]]);
+ const text=event('comment',[],'Zwykły tekst');await paste(text);assert.equal(text.prevented,undefined);
+ const unrelated=event('other',[png]);await paste(unrelated);assert.equal(unrelated.prevented,undefined);assert.equal(calls.length,0);
+});
