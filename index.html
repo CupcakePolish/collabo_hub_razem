@@ -17563,7 +17563,7 @@ function initTeamUiLanguage(){
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&document.querySelector('#app-modal-bg.on .global-search-modal')){event.preventDefault();closeAppModal();return;}
   if((event.ctrlKey||event.metaKey)&&String(event.key).toLowerCase()==='k'){
-    event.preventDefault();closeAppModal();setTimeout(()=>document.getElementById('global-search-input')?.focus(),0);
+    event.preventDefault();closeAppModal();setTimeout(()=>{const field=document.documentElement.classList.contains('team-workspace-mode')?document.querySelector('.team-workspace-search input'):document.getElementById('global-search-input');field?.focus();},0);
   }
 });
 document.addEventListener('pointerdown',event=>{if(!event.target.closest('.global-search-wrap'))closeGlobalSearchPopover();});
