@@ -22748,7 +22748,10 @@ function layoutTeamLikeProfile(){
  const sidebar=document.createElement('aside');sidebar.className='team-profile-social-sidebar';
  const main=document.createElement('main');main.className='team-profile-social-main';
  const rail=document.createElement('aside');rail.className='team-profile-context-rail';rail.setAttribute('aria-label',teamProfileTab==='votes'?'Lista głosowań':'Informacje zespołu');
- const content=[...host.children].filter(el=>el!==hero);hero.classList.add('team-profile-identity');tabs.remove();sidebar.append(hero);content.forEach(el=>main.append(el));
+ const content=[...host.children].filter(el=>el!==hero);hero.classList.add('team-profile-identity');tabs.remove();
+ const tabIcons=['<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></svg>',IC.users,teamBoardMentionIcon('project'),IC.chat,IC.cal,projectVoteGavelIcon(),teamBoardMentionIcon('dictionary'),IC.log];
+ [...tabs.children].forEach((button,index)=>{const icon=document.createElement('i');icon.className='team-tab-icon';icon.setAttribute('aria-hidden','true');icon.innerHTML=tabIcons[index]||'';button.prepend(icon);button.setAttribute('aria-current',button.classList.contains('on')?'page':'false');});
+ sidebar.append(hero);content.forEach(el=>main.append(el));
  if(teamProfileTab==='votes'){
   const page=main.querySelector('.team-voting-page'),list=page?.querySelector('.team-vote-list'),toolbar=page?.querySelector('.team-voting-toolbar');
   if(toolbar)rail.append(toolbar);if(list)rail.append(list);columns.classList.add('team-three-voting');
@@ -22990,6 +22993,15 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 #s-team-profile .team-three-voting .team-vote-list>header{flex-wrap:wrap;gap:8px}#s-team-profile .team-three-voting .team-vote-detail{width:100%;box-sizing:border-box}
 @media(max-width:1200px){#s-team-profile .team-profile-social-columns.team-three-columns{grid-template-columns:210px minmax(0,1fr)!important;max-width:100%!important}#s-team-profile .team-three-columns>.tp-tabs{grid-column:2}#s-team-profile .team-three-columns>.team-profile-context-rail{grid-column:2;grid-row:3}#s-team-profile .team-three-voting>.team-profile-context-rail{grid-row:2}#s-team-profile .team-three-voting>.team-profile-social-main{grid-row:3}#s-team-profile .team-three-voting .team-vote-list{max-height:320px}}
 @media(max-width:700px){#s-team-profile .team-profile-social-columns.team-three-columns{grid-template-columns:minmax(0,1fr)!important}#s-team-profile .team-three-columns>.team-profile-social-sidebar{grid-column:1;grid-row:1}#s-team-profile .team-three-columns>.tp-tabs{grid-column:1;grid-row:2}#s-team-profile .team-three-columns>.team-profile-social-main{grid-column:1;grid-row:3}#s-team-profile .team-three-columns>.team-profile-context-rail{grid-column:1;grid-row:4}#s-team-profile .team-three-voting>.team-profile-context-rail{grid-row:3}#s-team-profile .team-three-voting>.team-profile-social-main{grid-row:4}}
+</style>
+<style id="team-minimal-tabs-style">
+#s-team-profile .team-three-columns>.tp-tabs{border:0;border-bottom:1px solid var(--bdr);border-radius:0;background:transparent;box-shadow:none;padding:0;gap:18px;align-items:stretch}
+#s-team-profile .team-three-columns>.tp-tabs button{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 3px 16px;border:0!important;border-radius:0;background:transparent!important;box-shadow:none;color:var(--txs);font:650 13px 'DM Sans',sans-serif;cursor:pointer}
+#s-team-profile .team-three-columns>.tp-tabs button.on{color:var(--p700)}
+#s-team-profile .team-three-columns>.tp-tabs button:after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:3px;background:transparent}
+#s-team-profile .team-three-columns>.tp-tabs button.on:after{background:var(--p700)}
+#s-team-profile .team-three-columns>.tp-tabs button:hover{color:var(--p700)}
+.team-tab-icon{display:grid;place-items:center;width:20px;height:20px;flex-shrink:0;font-style:normal}.team-tab-icon svg{display:block;width:20px;height:20px}
 </style>
 <script id="app-ready-script">
 (()=>{
