@@ -1361,7 +1361,7 @@ test('successful photo uploads do not warn unless files were actually skipped',a
 });
 
 test('post mention tabs follow navigation and exclude unrequested result categories',()=>{
- const categories=html.match(/const TEAM_BOARD_MENTION_CATEGORIES=\[[\s\S]*?\n\];/)[0],source=html.match(/function renderTeamBoardMentionPicker\(\)\{[\s\S]*?\n\}/)[0];
+ const categories=html.match(/const TEAM_BOARD_MENTION_CATEGORIES=\[[\s\S]*?\n\];/)[0],source=html.match(/function renderTeamBoardMentionPicker\([^\n]*\)\{[\s\S]*?\n\}/)[0];
  const result=new Function('categories','source',`
  const document={getElementById:()=>pop},pop={innerHTML:'',classList:{add(){}}};let teamBoardMentionCategory='team',teamBoardMentionQuery='',teamBoardMentionResults=[];const buildGlobalSearchIndex=()=>[{kind:'team',title:'Zespół'},{kind:'doc',title:'Dokument'},{kind:'post',title:'Post'}],runGlobalSearch=buildGlobalSearchIndex,escAttr=x=>x,escHtml=x=>x,teamBoardMentionIcon=x=>x,GLOBAL_SEARCH_META={team:{singular:'Zespół'}},positionTeamBoardMentionPicker=()=>{};
  return new Function('pop','document','buildGlobalSearchIndex','runGlobalSearch','escAttr','escHtml','teamBoardMentionIcon','GLOBAL_SEARCH_META','positionTeamBoardMentionPicker',categories+';let teamBoardMentionCategory="team",teamBoardMentionQuery="",teamBoardMentionResults=[];'+source+';renderTeamBoardMentionPicker();return {tabs:TEAM_BOARD_MENTION_CATEGORIES.map(x=>x.id),results:teamBoardMentionResults,markup:pop.innerHTML};')(pop,document,buildGlobalSearchIndex,runGlobalSearch,escAttr,escHtml,teamBoardMentionIcon,GLOBAL_SEARCH_META,positionTeamBoardMentionPicker);
@@ -1415,4 +1415,12 @@ test('outside clicks close team and personal city lists without changing draft v
  const lists={'.team-profile-pill-options':[{hidden:false}],'.tp-location-suggestions':[{classList:{remove(value){this.removed=value;}}}],'.profile-city-suggestions':[{hidden:false}]};
  const close=new Function('document',source+';return dismissProfileSearchLists;')({querySelectorAll:selector=>lists[selector]});close({target:{closest:()=>null}});
  assert.equal(lists['.team-profile-pill-options'][0].hidden,true);assert.equal(lists['.profile-city-suggestions'][0].hidden,true);assert.equal(lists['.tp-location-suggestions'][0].classList.removed,'on');
+});
+
+test('mention search switches empty tabs to the highest ranked supported category with hits',()=>{
+ const source=html.match(/function mentionCategoryWithHits\([^\n]+/)[0],select=new Function(source+';return mentionCategoryWithHits;')(),tabs=[{id:'project',kinds:['project']},{id:'member',kinds:['member']},{id:'dictionary',kinds:['dictionary']}];
+ assert.equal(select('project',[{kind:'dictionary',title:'Warszawa'}],tabs),'dictionary');
+ assert.equal(select('member',[{kind:'dictionary'},{kind:'member'}],tabs),'member');
+ assert.equal(select('project',[{kind:'post'},{kind:'member'},{kind:'dictionary'}],tabs),'member');
+ assert.equal(select('project',[],tabs),'project');
 });
