@@ -300,7 +300,7 @@ test('team catalog toolbar keeps search and create action together', () => {
 
 test('add idea still starts the existing private-draft flow', () => {
   assert.match(html, /class="ideas-add-button" onclick="beginNewIdea\(\)"/);
-  assert.match(html, /#s-ideas \.ideas-add-button\{[\s\S]*border:2px solid #cbb8ee[\s\S]*background:#fff[\s\S]*color:#57329f/);
+  assert.match(html, /:is\(#s-ideas,#team-workspace-ideas-catalog\) \.ideas-add-button\{[\s\S]*border:2px solid #cbb8ee[\s\S]*background:#fff[\s\S]*color:#57329f/);
   assert.doesNotMatch(html, /<button[^>]*class="btn-add"[^>]*onclick="beginNewIdea\(\)"/);
   assert.match(html, /ideas-search-row/);
   assert.match(html, /function beginNewIdea\(\)/);
@@ -833,8 +833,8 @@ test('idea catalogs show visual cards without dead overflow actions', () => {
   assert.match(html, /function ideaCatalogPhoto\(idea\)/);
   assert.match(html, /class="idea-card-thumb"/);
   assert.match(html, /class="idea-card-content"/);
-  assert.match(html, /#s-ideas \.ic\{\s*display:grid!important;min-height:0!important;grid-template-columns:132px/);
-  assert.match(html, /#s-ideas \.idea-card-thumb\{[^}]*width:132px;height:132px/);
+  assert.match(html, /:is\(#s-ideas,#team-workspace-ideas-catalog\) \.ic\{\s*display:grid!important;min-height:0!important;grid-template-columns:132px/);
+  assert.match(html, /:is\(#s-ideas,#team-workspace-ideas-catalog\) \.idea-card-thumb\{[^}]*width:132px;height:132px/);
   assert.match(html, /class="ic-title-wrap"><div class="ic-title">/);
   assert.match(html, /Array\.from\(groups\.values\(\)\)\.filter\(g=>g\.filled<g\.min\)/);
   const ideaCatalogCard=html.match(/list\.innerHTML=forMeInvites\+filtered\.map\(idea=>\{([\s\S]*?)\n  \}\)\.join/)?.[1] || '';
