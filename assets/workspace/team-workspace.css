@@ -20,7 +20,7 @@ html.team-workspace-mode #s-team-profile.on{padding-top:calc(var(--global-nav-he
 #s-team-profile .team-workspace-profile .team-profile-identity .tp-identity>p{font-size:13px!important}
 #s-team-profile .team-workspace-profile .team-profile-identity .team-compact-metadata{gap:10px;flex-wrap:wrap}
 #s-team-profile .team-ws-board .tp-board-feed{max-width:none!important;width:100%!important;margin:0!important}
-#s-team-profile .team-ws-board .board-feed-toolbar{grid-template-columns:minmax(0,1fr)!important}.team-ws-board .board-feed-controls{justify-self:end}
+#s-team-profile .team-ws-board .board-feed-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;gap:12px}.team-ws-board .board-feed-controls{justify-self:end}
 #s-team-profile .team-workspace-view .tp-hidden{display:none!important}
 #s-team-profile .team-workspace-vote-columns{display:grid;grid-template-columns:220px minmax(240px,.9fr) minmax(0,2fr);gap:20px;align-items:start}
 #s-team-profile .team-workspace-vote-columns>.team-voting-toolbar{display:flex;flex-direction:column;gap:16px;padding:18px;margin:0;border:1px solid var(--bdr);border-radius:14px;background:var(--surf)}
@@ -47,3 +47,5 @@ html.team-workspace-mode #s-team-profile.on{padding-top:calc(var(--global-nav-he
 .team-context-people{display:flex;align-items:center;gap:5px;margin:12px 0}.team-context-people>span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;overflow:hidden;background:var(--p050)}.team-context-people img{width:100%;height:100%;object-fit:cover}.team-context-people small{font-size:11px;color:var(--txs)}.team-context-vote-status{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .team-workspace-cover{grid-column:1/-1;width:100%;height:140px;object-fit:cover;border-radius:14px}.team-workspace-view[data-pattern="stars"]{background-image:radial-gradient(circle at 18px 20px,var(--bdr) 1px,transparent 2px);background-size:68px 68px}.team-ws-invitation-history{margin-top:24px;border-top:1px solid var(--bdr);padding-top:18px;color:var(--txs)}.team-ws-invitation-history summary{cursor:pointer;font-size:13px}.team-ws-invitation-history article{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--bdr);font-size:12px}.team-ws-invitation-history article b{color:var(--txt)}.team-ws-invitation-history time{margin-left:auto}
 .team-workspace-switcher summary:focus-visible,.team-workspace-navigation a:focus-visible{outline:2px solid var(--p700);outline-offset:2px}
+
+@media(max-width:980px){#s-team-profile .team-ws-board .board-feed-toolbar{grid-template-columns:minmax(0,1fr)!important}}

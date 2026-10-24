@@ -1432,9 +1432,9 @@ test('team metadata shows compact values with accessible hover labels and no tem
 
 test('team context rail shows real upcoming meetings and opens the selected vote',()=>{
  const source=html.match(/function renderTeamContextRail\(team\)\{[\s\S]*?\n\}/)[0];
- const render=new Function('IC','escHtml','escAttr','teamAcceptedMembers','MY_NAME','projectVoteGavelIcon','teamDecisionTurnout','teamDecisionEligible','teamBoardMentionIcon',source+';return renderTeamContextRail;')({cal:'calendar'},x=>x,x=>x,()=>['Anna'],'Anna',()=>'',()=>1,()=>3,()=> 'idea');
+ const render=new Function('IC','escHtml','escAttr','teamAcceptedMembers','MY_NAME','projectVoteGavelIcon','teamDecisionTurnout','teamDecisionEligible','teamBoardMentionIcon','meetingConfirmedParticipants','memberAvatarContent','teamVoteStatusPill','teamVoteNeedLabel',source+';return renderTeamContextRail;')({cal:'calendar'},x=>x,x=>x,()=>['Anna'],'Anna',()=>'',()=>1,()=>3,()=> 'idea',()=>['Anna'],name=>name,()=>'<span>Trwa</span>',()=>'<span>Twój głos potrzebny</span>');
  const team={id:'team',meetings:[{id:'old',title:'Minione',date:'2000-01-01'},{id:'next',title:'Nowe spotkanie',date:'2099-01-01',location:'Online'}],decisions:[{id:'vote',prop:'Wybór narzędzia',open:true}]};
- const markup=render(team);assert.ok(markup.includes('Nowe spotkanie'));assert.ok(!markup.includes('Minione'));assert.ok(markup.includes("openMeetingSummary('team','team','next')"));assert.ok(markup.includes("openTeamRailVote('team','vote')"));
+ const markup=render(team);assert.ok(markup.includes('1 potwierdzonych'));assert.ok(markup.includes('Twój głos potrzebny'));assert.ok(markup.includes('Nowe spotkanie'));assert.ok(!markup.includes('Minione'));assert.ok(markup.includes("openMeetingSummary('team','team','next')"));assert.ok(markup.includes("openTeamRailVote('team','vote')"));
  const empty=render({id:'team',meetings:[],decisions:[]});assert.ok(empty.includes('Brak nadchodzących spotkań.'));assert.ok(empty.includes('Brak otwartych głosowań.'));
 });
 
