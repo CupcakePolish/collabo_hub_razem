@@ -1352,3 +1352,10 @@ test('screenshot files without a MIME type are accepted by their extension',()=>
  const source=html.match(/function isBoardImageFile\([^\n]+/)[0],accept=new Function(source+';return isBoardImageFile;')();
  assert.equal(accept({name:'Screenshot 2026-10-24.png',type:''}),true);assert.equal(accept({name:'screen.PNG',type:'application/octet-stream'}),true);assert.equal(accept({name:'file.docx',type:''}),false);
 });
+
+test('successful photo uploads do not warn unless files were actually skipped',async()=>{
+ const source=html.match(/async function previewTeamBoardPostImage\(input\)\{[\s\S]*?\n\}/)[0];
+ const run=new Function('source',`return async function(count,existing,fail=false){let teamBoardComposerImages=Array(existing).fill('old');const BOARD_POST_MAX_IMAGES=4,warnings=[],isBoardImageFile=()=>true,toast=x=>warnings.push(x),boardPostImageData=async()=>fail?'':'image',renderTeamBoardComposerPreview=()=>{};eval(source);await previewTeamBoardPostImage({files:Array(count).fill({type:'image/png'}),value:''});return {count:teamBoardComposerImages.length,warnings};};`)(source);
+ for(const count of [1,2,3,4])assert.deepEqual(await run(count,0),{count,warnings:[]});
+ assert.equal((await run(2,3)).warnings.length,1);assert.equal((await run(1,0,true)).warnings.length,1);
+});

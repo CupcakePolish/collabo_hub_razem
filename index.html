@@ -13611,7 +13611,7 @@ async function pasteBoardComposerImages(event){
 }
 document.addEventListener('paste',pasteBoardComposerImages);
 async function previewTeamBoardPostImage(input){
-  const files=[...(input?.files||[])].filter(isBoardImageFile);if(!files.length)return toast('Wybierz pliki graficzne.','warn');const room=Math.max(0,BOARD_POST_MAX_IMAGES-teamBoardComposerImages.length);if(!room){input.value='';return toast('Do jednego wpisu możesz dodać maksymalnie 4 zdjęcia.','warn');}let rejected=files.length-room;for(const file of files.slice(0,room)){const data=await boardPostImageData(file);if(data)teamBoardComposerImages.push(data);else rejected++;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast(files.length>room?'Część zdjęć pominięto — jeden post może mieć maksymalnie 4 zdjęcia.':'Nie udało się odczytać części zdjęć. Spróbuj ponownie lub zapisz je jako PNG albo JPG.','warn');
+  const files=[...(input?.files||[])].filter(isBoardImageFile);if(!files.length)return toast('Wybierz pliki graficzne.','warn');const room=Math.max(0,BOARD_POST_MAX_IMAGES-teamBoardComposerImages.length);if(!room){input.value='';return toast('Do jednego wpisu możesz dodać maksymalnie 4 zdjęcia.','warn');}let rejected=Math.max(0,files.length-room);for(const file of files.slice(0,room)){const data=await boardPostImageData(file);if(data)teamBoardComposerImages.push(data);else rejected++;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast(files.length>room?'Część zdjęć pominięto — jeden post może mieć maksymalnie 4 zdjęcia.':'Nie udało się odczytać części zdjęć. Spróbuj ponownie lub zapisz je jako PNG albo JPG.','warn');
 }
 async function previewTeamBoardPostDocuments(input){
   const files=[...(input?.files||[])];if(!files.length)return;let total=boardPostDocumentBytes(),rejected=0;for(const file of files){if(file.size>BOARD_POST_DOCUMENT_FILE_LIMIT||total+file.size>BOARD_POST_DOCUMENT_TOTAL_LIMIT){rejected++;continue;}const data=await fileAsData(file);if(!data){rejected++;continue;}teamBoardComposerDocuments.push({name:file.name,type:file.type,size:file.size,data});total+=file.size;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast('Dokument pominięto, aby wpis dało się zapisać. Limit to 900 KB na plik i 1,2 MB łącznie.','warn');
@@ -22798,9 +22798,12 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention~.board-post-comment-tools{grid-row:3!important}
 </style>
 <style id="post-close-hover-style">
-:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close){cursor:pointer;transition:background-color .15s,color .15s}
-:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close):is(:hover,:focus-visible){background:var(--p700)!important;color:#fff!important}
+:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close){cursor:pointer;transition:filter .15s}
+:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close):is(:hover,:focus-visible){filter:brightness(.86)!important}
 :is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close):focus-visible{outline:2px solid var(--p400)!important;outline-offset:2px!important}
+.app-modal .tbp-publish{transition:background-color .15s,box-shadow .15s,transform .15s}
+.app-modal .tbp-publish:not(:disabled):is(:hover,:focus-visible){background:var(--p800)!important;border-color:var(--p800)!important;box-shadow:0 4px 12px #49319e40!important;transform:translateY(-1px)}
+.app-modal .tbp-publish:not(:disabled):active{transform:translateY(0);box-shadow:none!important}
 </style>
 <script id="app-ready-script">
 (()=>{
