@@ -1315,7 +1315,7 @@ test('board image paste uses existing upload handlers and leaves ordinary text p
 test('post mention input opens for @ and filters by text after it',()=>{
  const source=html.match(/function handleTeamBoardMention\([^\n]+/)[0];
  const result=new Function('source',`let teamBoardMentionResults=[],teamBoardMentionQuery='',teamBoardMentionCategory='member',opened=false,renders=0;const pop={innerHTML:'',classList:{contains:()=>opened,remove:()=>{opened=false;}}},document={getElementById:()=>pop},renderTeamBoardMentionPicker=()=>{renders++;opened=true;};eval(source);handleTeamBoardMention({value:'@',selectionStart:1});const initial={opened,category:teamBoardMentionCategory,query:teamBoardMentionQuery};handleTeamBoardMention({value:'Hej @Patrycja',selectionStart:13});const query=teamBoardMentionQuery;handleTeamBoardMention({value:'Zwykły tekst',selectionStart:12});return {initial,query,opened,renders};`)(source);
- assert.deepEqual(result,{initial:{opened:true,category:'all',query:''},query:'Patrycja',opened:false,renders:2});
+ assert.deepEqual(result,{initial:{opened:true,category:'project',query:''},query:'Patrycja',opened:false,renders:2});
 });
 
 test('reply mentions display @ with the existing profile and hover card',()=>{
@@ -1358,4 +1358,14 @@ test('successful photo uploads do not warn unless files were actually skipped',a
  const run=new Function('source',`return async function(count,existing,fail=false){let teamBoardComposerImages=Array(existing).fill('old');const BOARD_POST_MAX_IMAGES=4,warnings=[],isBoardImageFile=()=>true,toast=x=>warnings.push(x),boardPostImageData=async()=>fail?'':'image',renderTeamBoardComposerPreview=()=>{};eval(source);await previewTeamBoardPostImage({files:Array(count).fill({type:'image/png'}),value:''});return {count:teamBoardComposerImages.length,warnings};};`)(source);
  for(const count of [1,2,3,4])assert.deepEqual(await run(count,0),{count,warnings:[]});
  assert.equal((await run(2,3)).warnings.length,1);assert.equal((await run(1,0,true)).warnings.length,1);
+});
+
+test('post mention tabs follow navigation and exclude unrequested result categories',()=>{
+ const categories=html.match(/const TEAM_BOARD_MENTION_CATEGORIES=\[[\s\S]*?\n\];/)[0],source=html.match(/function renderTeamBoardMentionPicker\(\)\{[\s\S]*?\n\}/)[0];
+ const result=new Function('categories','source',`
+ const document={getElementById:()=>pop},pop={innerHTML:'',classList:{add(){}}};let teamBoardMentionCategory='team',teamBoardMentionQuery='',teamBoardMentionResults=[];const buildGlobalSearchIndex=()=>[{kind:'team',title:'Zespół'},{kind:'doc',title:'Dokument'},{kind:'post',title:'Post'}],runGlobalSearch=buildGlobalSearchIndex,escAttr=x=>x,escHtml=x=>x,teamBoardMentionIcon=x=>x,GLOBAL_SEARCH_META={team:{singular:'Zespół'}},positionTeamBoardMentionPicker=()=>{};
+ return new Function('pop','document','buildGlobalSearchIndex','runGlobalSearch','escAttr','escHtml','teamBoardMentionIcon','GLOBAL_SEARCH_META','positionTeamBoardMentionPicker',categories+';let teamBoardMentionCategory="team",teamBoardMentionQuery="",teamBoardMentionResults=[];'+source+';renderTeamBoardMentionPicker();return {tabs:TEAM_BOARD_MENTION_CATEGORIES.map(x=>x.id),results:teamBoardMentionResults,markup:pop.innerHTML};')(pop,document,buildGlobalSearchIndex,runGlobalSearch,escAttr,escHtml,teamBoardMentionIcon,GLOBAL_SEARCH_META,positionTeamBoardMentionPicker);
+ `)(categories,source);
+ const nav=[...html.matchAll(/<button class="nl[^"\n]*" id="nl-([^"]+)"/g)].map(m=>({ideas:'project',members:'member',resources:'resource',teams:'team',voting:'vote',platform:'dictionary'}[m[1]])).filter(Boolean);
+ assert.deepEqual(result.tabs,nav);assert.deepEqual(result.results,[{kind:'team',title:'Zespół'}]);assert.equal((result.markup.match(/role="tab"/g)||[]).length,6);
 });
