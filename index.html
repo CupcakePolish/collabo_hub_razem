@@ -13572,11 +13572,30 @@ const BOARD_POST_IMAGE_DATA_LIMIT=360000;
 const BOARD_POST_DOCUMENT_FILE_LIMIT=900000;
 const BOARD_POST_DOCUMENT_TOTAL_LIMIT=1200000;
 function boardPostDocumentBytes(rows=teamBoardComposerDocuments){return rows.reduce((sum,row)=>sum+Number(row?.size||0),0);}
+function isBoardImageFile(file){return !!file&&(String(file.type||'').startsWith('image/')||/\.(png|jpe?g|webp|gif|bmp|avif)$/i.test(file.name||''));}
+function encodeBoardImage(img){
+  const maxSide=1600,ratio=Math.min(1,maxSide/Math.max(img.naturalWidth||1,img.naturalHeight||1)),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');if(!ctx)throw new Error('canvas');
+  let width=Math.max(1,Math.round(img.naturalWidth*ratio)),height=Math.max(1,Math.round(img.naturalHeight*ratio));
+  for(let pass=0;pass<16;pass++){
+    canvas.width=width;canvas.height=height;ctx.clearRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);
+    const quality=Math.max(.45,.88-pass*.04);let data=canvas.toDataURL('image/webp',quality);
+    if(!data.startsWith('data:image/webp')){ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);data=canvas.toDataURL('image/jpeg',quality);}
+    if(data.startsWith('data:image/')&&data.length<=BOARD_POST_IMAGE_DATA_LIMIT)return data;
+    width=Math.max(1,Math.round(width*.78));height=Math.max(1,Math.round(height*.78));
+  }
+  throw new Error('Nie udało się zmniejszyć obrazu');
+}
 function boardPostImageData(file){
-  return new Promise(resolve=>{if(!file||!String(file.type||'').startsWith('image/'))return resolve('');const fallback=()=>{if(file.size>BOARD_POST_IMAGE_DATA_LIMIT*.72)return resolve('');fileAsData(file).then(resolve);},url=URL.createObjectURL(file),img=new Image();img.onload=()=>{try{const maxSide=1440,ratio=Math.min(1,maxSide/Math.max(img.naturalWidth||1,img.naturalHeight||1)),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');let width=Math.max(1,Math.round(img.naturalWidth*ratio)),height=Math.max(1,Math.round(img.naturalHeight*ratio)),quality=.82,data='';if(!ctx)throw new Error('canvas');for(let pass=0;pass<6;pass++){canvas.width=width;canvas.height=height;ctx.clearRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);quality=Math.max(.5,.82-pass*.07);data=canvas.toDataURL('image/webp',quality);if(data.length<=BOARD_POST_IMAGE_DATA_LIMIT)break;width=Math.max(480,Math.round(width*.82));height=Math.max(320,Math.round(height*.82));}URL.revokeObjectURL(url);resolve(data.length<=BOARD_POST_IMAGE_DATA_LIMIT?data:'');}catch{URL.revokeObjectURL(url);fallback();}};img.onerror=()=>{URL.revokeObjectURL(url);fallback();};img.src=url;});
+  return new Promise(resolve=>{
+    if(!isBoardImageFile(file))return resolve('');
+    let url;try{url=URL.createObjectURL(file);}catch{return resolve('');}
+    const img=new Image();img.onload=()=>{try{resolve(encodeBoardImage(img));}catch{resolve('');}finally{URL.revokeObjectURL(url);}};
+    img.onerror=()=>{URL.revokeObjectURL(url);resolve('');};img.src=url;
+  });
 }
 function compactBoardPostImageData(source){
-  source=String(source||'');if(!source.startsWith('data:image/')||source.length<=BOARD_POST_IMAGE_DATA_LIMIT)return Promise.resolve(source);return new Promise(resolve=>{const img=new Image();img.onload=()=>{try{const maxSide=1440,ratio=Math.min(1,maxSide/Math.max(img.naturalWidth||1,img.naturalHeight||1)),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');let width=Math.max(1,Math.round(img.naturalWidth*ratio)),height=Math.max(1,Math.round(img.naturalHeight*ratio)),data='';if(!ctx)throw new Error('canvas');for(let pass=0;pass<6;pass++){canvas.width=width;canvas.height=height;ctx.clearRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);data=canvas.toDataURL('image/webp',Math.max(.5,.82-pass*.07));if(data.length<=BOARD_POST_IMAGE_DATA_LIMIT)break;width=Math.max(480,Math.round(width*.82));height=Math.max(320,Math.round(height*.82));}resolve(data.length<source.length?data:source);}catch{resolve(source);}};img.onerror=()=>resolve(source);img.src=source;});
+  source=String(source||'');if(!source.startsWith('data:image/')||source.length<=BOARD_POST_IMAGE_DATA_LIMIT)return Promise.resolve(source);
+  return new Promise(resolve=>{const img=new Image();img.onload=()=>{try{const data=encodeBoardImage(img);resolve(data.length<source.length?data:source);}catch{resolve(source);}};img.onerror=()=>resolve(source);img.src=source;});
 }
 async function pasteBoardComposerImages(event){
   const input=event.target;if(!(input instanceof HTMLTextAreaElement))return;
@@ -13592,7 +13611,7 @@ async function pasteBoardComposerImages(event){
 }
 document.addEventListener('paste',pasteBoardComposerImages);
 async function previewTeamBoardPostImage(input){
-  const files=[...(input?.files||[])].filter(file=>String(file.type||'').startsWith('image/'));if(!files.length)return toast('Wybierz pliki graficzne.','warn');const room=Math.max(0,BOARD_POST_MAX_IMAGES-teamBoardComposerImages.length);if(!room){input.value='';return toast('Do jednego wpisu możesz dodać maksymalnie 4 zdjęcia.','warn');}let rejected=files.length-room;for(const file of files.slice(0,room)){const data=await boardPostImageData(file);if(data)teamBoardComposerImages.push(data);else rejected++;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast('Część zdjęć pominięto. Dodaj maksymalnie 4 zdjęcia w formacie JPG, PNG lub WebP.','warn');
+  const files=[...(input?.files||[])].filter(isBoardImageFile);if(!files.length)return toast('Wybierz pliki graficzne.','warn');const room=Math.max(0,BOARD_POST_MAX_IMAGES-teamBoardComposerImages.length);if(!room){input.value='';return toast('Do jednego wpisu możesz dodać maksymalnie 4 zdjęcia.','warn');}let rejected=files.length-room;for(const file of files.slice(0,room)){const data=await boardPostImageData(file);if(data)teamBoardComposerImages.push(data);else rejected++;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast(files.length>room?'Część zdjęć pominięto — jeden post może mieć maksymalnie 4 zdjęcia.':'Nie udało się odczytać części zdjęć. Spróbuj ponownie lub zapisz je jako PNG albo JPG.','warn');
 }
 async function previewTeamBoardPostDocuments(input){
   const files=[...(input?.files||[])];if(!files.length)return;let total=boardPostDocumentBytes(),rejected=0;for(const file of files){if(file.size>BOARD_POST_DOCUMENT_FILE_LIMIT||total+file.size>BOARD_POST_DOCUMENT_TOTAL_LIMIT){rejected++;continue;}const data=await fileAsData(file);if(!data){rejected++;continue;}teamBoardComposerDocuments.push({name:file.name,type:file.type,size:file.size,data});total+=file.size;}input.value='';renderTeamBoardComposerPreview();if(rejected)toast('Dokument pominięto, aby wpis dało się zapisać. Limit to 900 KB na plik i 1,2 MB łącznie.','warn');

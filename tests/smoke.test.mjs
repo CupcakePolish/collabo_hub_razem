@@ -1340,3 +1340,15 @@ test('failed compressed writes preserve previous storage and do not mark changes
  const result=new Function('source',`let __persistenceEnabled=true,__persistenceLastDataJson='',__persistenceLastSavedAt='',__persistenceLastSize=0,__persistenceError='',__persistenceWarningShown=false;const COLLABOHUB_STORAGE_LIMIT=4000000,COLLABOHUB_STORAGE_KEY='state';let stored='previous',fail=false,error='';const persistentDataJson=()=> 'large draft',encodePersistentEnvelope=()=> 'compressed',updatePersistenceStatusDom=()=>{},toast=()=>{},persistenceError=x=>error=x,localStorage={setItem(key,value){if(fail)throw new Error('quota');stored=value;}};eval(source);fail=true;const failed=persistNow(),before={stored,last:__persistenceLastDataJson};fail=false;const saved=persistNow();return {failed,before,saved,stored,last:__persistenceLastDataJson};`)(source);
  assert.deepEqual(result,{failed:false,before:{stored:'previous',last:''},saved:true,stored:'compressed',last:'large draft'});
 });
+
+test('large screenshots fall back to JPEG when WebP encoding is unavailable and keep their proportions',()=>{
+ const source=html.match(/function encodeBoardImage\(img\)\{[\s\S]*?\n\}/)[0];
+ const sizes=[],formats=[],canvas={width:0,height:0,getContext:()=>({clearRect(){},drawImage(){},fillRect(){},set fillStyle(value){}}),toDataURL(format){formats.push(format);sizes.push([this.width,this.height]);return format==='image/webp'?'data:image/png;base64,'+'x'.repeat(500000):'data:image/jpeg;base64,'+'x'.repeat(Math.ceil(this.width*this.height*.7));}};
+ const encode=new Function('document','BOARD_POST_IMAGE_DATA_LIMIT',source+';return encodeBoardImage;')({createElement:()=>canvas},360000),result=encode({naturalWidth:3024,naturalHeight:1964});
+ assert.ok(result.startsWith('data:image/jpeg'));assert.ok(result.length<=360000);assert.ok(formats.includes('image/webp'));assert.ok(formats.includes('image/jpeg'));assert.ok(sizes.length>2);for(const [w,h] of sizes)assert.ok(Math.abs(w/h-3024/1964)<.02);
+});
+
+test('screenshot files without a MIME type are accepted by their extension',()=>{
+ const source=html.match(/function isBoardImageFile\([^\n]+/)[0],accept=new Function(source+';return isBoardImageFile;')();
+ assert.equal(accept({name:'Screenshot 2026-10-24.png',type:''}),true);assert.equal(accept({name:'screen.PNG',type:'application/octet-stream'}),true);assert.equal(accept({name:'file.docx',type:''}),false);
+});
