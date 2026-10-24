@@ -17035,7 +17035,17 @@ function updateStats(){
 let _lastToastAt=0;
 function toast(msg,type=''){_lastToastAt=Date.now();const host=document.getElementById('toast-host');if(!host){console.log(msg);return;}const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;host.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(8px)';setTimeout(()=>el.remove(),220)},3800);}
 function notifyVote(idea){if(Date.now()-_lastToastAt<250)return;toast('Głosowanie utworzone — jest w sekcji „Decyzje". Zostajesz w tym widoku.','ok');}
-function appModal(html,cls){const bg=document.getElementById('app-modal-bg');const box=document.getElementById('app-modal');if(!bg||!box)return;if(!cls&&String(html).includes('material-lifecycle'))cls='material-detail-modal';box.className='app-modal'+(cls?' '+cls:'');box.innerHTML=html;bg.classList.add('on');const idea=ideas.find(i=>String(i.id)===String(proposeTarget));if(idea)applyProjectAccessPolicy(idea,box);}
+function normalizeBoardPostComposer(box){
+  const composer=box.querySelector('.tbp-composer');if(!composer||composer.classList.contains('discover-composer-shell'))return;
+  composer.classList.add('discover-composer-shell');
+  const header=composer.querySelector('.tbp-composer-head');header?.classList.add('discover-composer-head');
+  const title=header?.querySelector('h3');if(title){const heading=document.createElement('h2');heading.textContent=title.textContent==='Nowy wpis'?'Utwórz post':title.textContent;title.replaceWith(heading);}
+  const context=composer.querySelector('.tbp-context');context?.classList.add('discover-composer-context');
+  const author=context?.querySelector('.tbp-author');if(author){const name=document.createElement('b');name.className='compact-post-author';name.textContent=author.textContent.trim();author.before(name);author.className='discover-composer-identity shared-composer-identity';author.textContent=composer.classList.contains('project-person-board-composer')?'Mój profil':'Zespół';}
+  context?.querySelector('.tbp-audience-picker')?.classList.add('discover-composer-audience');
+  const scope=context?.querySelector('.project-person-board-scope');if(scope)scope.classList.add('discover-composer-audience');
+}
+function appModal(html,cls){const bg=document.getElementById('app-modal-bg');const box=document.getElementById('app-modal');if(!bg||!box)return;if(!cls&&String(html).includes('material-lifecycle'))cls='material-detail-modal';box.className='app-modal'+(cls?' '+cls:'');box.innerHTML=html;normalizeBoardPostComposer(box);bg.classList.add('on');const idea=ideas.find(i=>String(i.id)===String(proposeTarget));if(idea)applyProjectAccessPolicy(idea,box);}
 function handleAppModalBackdrop(event){
   if(event.target?.id!=='app-modal-bg')return;
   if(projectPinPickerState){
@@ -22831,6 +22841,11 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 </style>
 <style id="invitation-history-style">
 .invitation-history{margin-top:24px;padding:22px;border:1px solid var(--bdr);border-radius:16px;background:var(--surf)}.invitation-history h2{margin:0 0 6px;font-size:20px}.invitation-history>p{margin:0 0 16px;color:var(--txs);font-size:13px}.invitation-history-row{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px 0;border-top:1px solid var(--bdr);color:var(--txs)}.invitation-history-row>div{display:grid;gap:6px}.invitation-history-row>div:last-child{text-align:right}.invitation-history-row b{color:var(--txm);font-size:14px}.invitation-history-row span,.invitation-history-row time,.invitation-history-row small{font-size:12px}.invitation-history-status{padding:6px 10px;border-radius:7px;background:var(--surf2);color:var(--txm)}.invitation-history-status.joined{background:var(--p050);color:var(--p700)}@media(max-width:600px){.invitation-history-row{align-items:flex-start;flex-direction:column}.invitation-history-row>div:last-child{text-align:left}}
+</style>
+<style id="shared-board-composer-identity-style">
+.discover-composer-shell .shared-composer-identity{display:inline-flex;align-items:center;justify-self:start;width:auto!important;min-height:28px!important;padding:0 8px;border-radius:7px;background:var(--surf2);font-size:11px;font-weight:600}
+.discover-composer-shell .project-person-board-scope{min-height:28px!important;padding:0 8px!important;border-radius:7px;background:var(--surf2);font-size:11px}
+.discover-composer-shell .project-person-board-scope small{font-size:10px}
 </style>
 <script id="app-ready-script">
 (()=>{
