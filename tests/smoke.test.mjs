@@ -1311,3 +1311,15 @@ test('board image paste uses existing upload handlers and leaves ordinary text p
  const text=event('comment',[],'Zwykły tekst');await paste(text);assert.equal(text.prevented,undefined);
  const unrelated=event('other',[png]);await paste(unrelated);assert.equal(unrelated.prevented,undefined);assert.equal(calls.length,0);
 });
+
+test('post mention input opens for @ and filters by text after it',()=>{
+ const source=html.match(/function handleTeamBoardMention\([^\n]+/)[0];
+ const result=new Function('source',`let teamBoardMentionResults=[],teamBoardMentionQuery='',teamBoardMentionCategory='member',opened=false,renders=0;const pop={innerHTML:'',classList:{contains:()=>opened,remove:()=>{opened=false;}}},document={getElementById:()=>pop},renderTeamBoardMentionPicker=()=>{renders++;opened=true;};eval(source);handleTeamBoardMention({value:'@',selectionStart:1});const initial={opened,category:teamBoardMentionCategory,query:teamBoardMentionQuery};handleTeamBoardMention({value:'Hej @Patrycja',selectionStart:13});const query=teamBoardMentionQuery;handleTeamBoardMention({value:'Zwykły tekst',selectionStart:12});return {initial,query,opened,renders};`)(source);
+ assert.deepEqual(result,{initial:{opened:true,category:'all',query:''},query:'Patrycja',opened:false,renders:2});
+});
+
+test('reply mentions display @ with the existing profile and hover card',()=>{
+ const source=html.match(/function boardCommentPersonHTML\([^\n]+/)[0];
+ const render=new Function('personProfileByName','escHtml','escAttr','boardPersonHoverCardHTML',source+';return boardCommentPersonHTML;')(()=>({id:7}),x=>x,x=>x,()=>'<div class="board-person-hover-card">Profil</div>');
+ const reply=render('Patrycja Kowalska','reply');assert.ok(reply.includes('@Patrycja Kowalska</button>'));assert.ok(reply.includes('openMember(7)'));assert.ok(reply.includes('board-person-hover-target'));assert.ok(reply.includes('board-person-hover-card'));assert.ok(!render('Patrycja Kowalska').includes('@Patrycja'));
+});
