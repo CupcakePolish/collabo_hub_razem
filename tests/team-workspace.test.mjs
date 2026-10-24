@@ -89,3 +89,12 @@ test('global and team member catalogs call one shared card renderer',()=>{
  for(const script of [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).filter(Boolean))assert.doesNotThrow(()=>new Function(script));
  assert.ok(html.indexOf('src="assets/workspace/team-catalogs.js"')<html.indexOf('src="assets/workspace/team-workspace.js"'));
 });
+test('icon workspace navigation keeps all six labeled routes and switcher return destinations',()=>{
+ const ctx=context({projectTeams:[{id:'one',name:'Alpha',members:['A']}]});
+ const links=vm.runInContext("TEAM_WORKSPACE_SECTIONS.map(([key,label])=>teamWorkspaceNavLink(projectTeams[0],key,label,key==='board'))",ctx);
+ assert.equal(links.length,6);
+ for(const link of links){assert.match(link,/<svg[^>]*stroke="currentColor"/);assert.match(link,/aria-label="[^"]+"/);assert.match(link,/role="tooltip"/);assert.match(link,/href="#team\/one/);}
+ assert.match(links[0],/aria-current="page"/);assert.doesNotMatch(links[4],/aria-current/);
+ const menu=vm.runInContext('teamWorkspaceSwitcher(projectTeams[0])',ctx);
+ assert.match(menu,/class="team-workspace-return-link" href="#discover"><svg/);assert.match(menu,/class="team-workspace-return-link" href="#teams"><svg/);assert.match(menu,/Przestrzeń zespołu/);
+});
