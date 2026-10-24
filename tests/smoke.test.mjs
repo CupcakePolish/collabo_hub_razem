@@ -653,8 +653,8 @@ test('team draft supports avatar upload and dictionary-backed locations', () => 
   assert.match(html, /accept="image\/\*"[^>]*updateTeamDraftAvatar/);
   assert.match(html, /function teamLocationDictionaryMatches\(query\)/);
   assert.match(html, /\['city','region'\]\.includes\(row\.category\)/);
-  assert.match(html, /Wybierz miasto lub region ze Słownika/);
-  assert.match(html, /id="team-location-suggestions"/);
+  assert.match(html, /Wybierz miasta lub regiony ze Słownika/);
+  assert.match(html, /class="team-profile-pill-options" hidden/);
   assert.match(html, /Brak pojęcia w Słowniku/);
   assert.match(html, /Przejdź do Słownika i dodaj/);
 });
@@ -683,7 +683,7 @@ test('team draft separates editing, publishing and deletion', () => {
   assert.match(html, /function confirmDeleteTeamDraft\(teamId\)/);
   assert.match(html, /function deleteTeamDraft\(teamId\)/);
   assert.match(html, /Usunąć szkic zespołu\?/);
-  assert.match(html, /editing\?`<button class="tp-button" onclick="saveTeamProfileEdit/);
+  assert.match(html, /editing\?`<button class="team-profile-save-icon"[^`]*saveTeamProfileEdit/);
   assert.doesNotMatch(html, /editing\?`[^`]*publishGlobalTeam/);
 });
 
@@ -1402,4 +1402,17 @@ test('dictionary mentions route to their entry and legacy Wrocław mentions are 
  assert.deepEqual(parse(href({kind:'dictionary',dictionaryId:'city-wroclaw'})),{kind:'dictionary',dictionaryId:'city-wroclaw'});
  const source=html.match(/function renderTeamBoardText\([^]*?\n\}/)[0],render=new Function('mdRender','safeUserUrl','escAttr','escHtml','dictionaryEntries',source+';return renderTeamBoardText;')(x=>x,x=>x,x=>x,x=>x,()=>[{id:'city-wroclaw',name:'Wrocław'}]);
  assert.ok(render('@[Wrocław](#odkrywaj)').includes('href="#dictionary/city-wroclaw"'));assert.ok(render('@[Pomysł](#idea/1)').includes('href="#idea/1"'));
+});
+
+test('team profile pill selections preserve multiple cities and derive the legacy work mode',()=>{
+ const source=['teamProfileSnapshot','captureTeamProfileEdit'].map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
+ const result=new Function('source',`const t={id:'team',name:'Zespół',workMode:'online',location:'Online'},projectTeams=[t],teamProfileEditId='team',teamProfileEditDrafts={},document={getElementById:()=>null};eval(source);const initial=teamProfileSnapshot(t);teamProfileEditDrafts.team={...initial,cities:['Wrocław','Warszawa'],workModes:['online','local']};const draft=captureTeamProfileEdit('team');return {initial,draft};`)(source);
+ assert.deepEqual(result.initial.cities,[]);assert.deepEqual(result.draft.cities,['Wrocław','Warszawa']);assert.equal(result.draft.location,'Wrocław');assert.equal(result.draft.workMode,'hybrid');assert.deepEqual(result.draft.workModes,['online','local']);
+});
+
+test('outside clicks close team and personal city lists without changing draft values',()=>{
+ const source=html.match(/function dismissProfileSearchLists\([^\n]+/)[0];
+ const lists={'.team-profile-pill-options':[{hidden:false}],'.tp-location-suggestions':[{classList:{remove(value){this.removed=value;}}}],'.profile-city-suggestions':[{hidden:false}]};
+ const close=new Function('document',source+';return dismissProfileSearchLists;')({querySelectorAll:selector=>lists[selector]});close({target:{closest:()=>null}});
+ assert.equal(lists['.team-profile-pill-options'][0].hidden,true);assert.equal(lists['.profile-city-suggestions'][0].hidden,true);assert.equal(lists['.tp-location-suggestions'][0].classList.removed,'on');
 });
