@@ -1323,3 +1323,20 @@ test('reply mentions display @ with the existing profile and hover card',()=>{
  const render=new Function('personProfileByName','escHtml','escAttr','boardPersonHoverCardHTML',source+';return boardCommentPersonHTML;')(()=>({id:7}),x=>x,x=>x,()=>'<div class="board-person-hover-card">Profil</div>');
  const reply=render('Patrycja Kowalska','reply');assert.ok(reply.includes('@Patrycja Kowalska</button>'));assert.ok(reply.includes('openMember(7)'));assert.ok(reply.includes('board-person-hover-target'));assert.ok(reply.includes('board-person-hover-card'));assert.ok(!render('Patrycja Kowalska').includes('@Patrycja'));
 });
+
+test('compressed persistence round-trips large media, documents and Polish text without duplicates',async()=>{
+ const {randomBytes}=await import('node:crypto');const pakoModule={exports:{}};
+ new Function('module','exports',await readFile(new URL('../assets/vendor/pako.min.js',import.meta.url),'utf8'))(pakoModule,pakoModule.exports);
+ const source=['encodePersistentEnvelope','decodePersistentEnvelope'].map(name=>html.match(new RegExp('function '+name+'\\([^]*?\\n\\}'))[0]).join('\n');
+ const {encode,decode}=new Function('pako',`const COLLABOHUB_STATE_VERSION=1;${source};return {encode:encodePersistentEnvelope,decode:decodePersistentEnvelope};`)(pakoModule.exports);
+ const image='data:image/png;base64,'+randomBytes(600000).toString('base64'),document='data:application/octet-stream;base64,'+randomBytes(13000).toString('base64');
+ const data={title:'Zażółć gęślą jaźń 😄',posts:Array.from({length:7},()=>({images:[image],documents:[{name:'Test.docx',data:document}]}))},json=JSON.stringify(data);
+ assert.ok(json.length>4000000);const stored=encode(json,'2026-10-24T12:00:00Z');assert.ok(stored.length<1500000);assert.deepEqual(decode(JSON.parse(stored)),data);
+ assert.throws(()=>decode({encoding:'deflate-base64',compressedData:'uszkodzone'}));
+});
+
+test('failed compressed writes preserve previous storage and do not mark changes saved',()=>{
+ const source=html.match(/function persistNow\([^]*?\n\}/)[0];
+ const result=new Function('source',`let __persistenceEnabled=true,__persistenceLastDataJson='',__persistenceLastSavedAt='',__persistenceLastSize=0,__persistenceError='',__persistenceWarningShown=false;const COLLABOHUB_STORAGE_LIMIT=4000000,COLLABOHUB_STORAGE_KEY='state';let stored='previous',fail=false,error='';const persistentDataJson=()=> 'large draft',encodePersistentEnvelope=()=> 'compressed',updatePersistenceStatusDom=()=>{},toast=()=>{},persistenceError=x=>error=x,localStorage={setItem(key,value){if(fail)throw new Error('quota');stored=value;}};eval(source);fail=true;const failed=persistNow(),before={stored,last:__persistenceLastDataJson};fail=false;const saved=persistNow();return {failed,before,saved,stored,last:__persistenceLastDataJson};`)(source);
+ assert.deepEqual(result,{failed:false,before:{stored:'previous',last:''},saved:true,stored:'compressed',last:'large draft'});
+});

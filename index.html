@@ -19,6 +19,7 @@ html:not(.app-booting) body{animation:app-ready-fade .14s ease-out}
 </style>
 <link rel="icon" type="image/png" sizes="256x256" href="assets/collabohub-mark.png?v=1">
 <link rel="apple-touch-icon" href="assets/collabohub-mark.png?v=1">
+<script src="assets/vendor/pako.min.js"></script>
 <script>
 (() => {
   const uaPlatform = navigator.userAgentData?.platform || navigator.platform || '';
@@ -18613,19 +18614,34 @@ function persistenceError(message,showToast=true){
   __persistenceError=message;updatePersistenceStatusDom();
   if(showToast&&!__persistenceWarningShown){__persistenceWarningShown=true;toast(message,'warn');}
 }
+function encodePersistentEnvelope(dataJson,savedAt){
+  const media=[],index=new Map(),data=JSON.parse(dataJson);
+  const packed=JSON.stringify({data,media},function(key,value){
+    if(typeof value!=='string'||!value.startsWith('data:')||value.length<256||this===media)return value;
+    if(!index.has(value)){index.set(value,media.length);media.push(value);}
+    return {$collaboMediaRef:index.get(value)};
+  });
+  const bytes=pako.deflate(packed),chunks=[];for(let offset=0;offset<bytes.length;offset+=8192)chunks.push(String.fromCharCode(...bytes.subarray(offset,offset+8192)));
+  return JSON.stringify({version:COLLABOHUB_STATE_VERSION,savedAt,encoding:'deflate-base64',compressedData:btoa(chunks.join(''))});
+}
+function decodePersistentEnvelope(envelope){
+  if(envelope.encoding!=='deflate-base64')throw new Error('Nieznany format zapisu');
+  const bytes=Uint8Array.from(atob(envelope.compressedData),char=>char.charCodeAt(0)),packed=JSON.parse(pako.inflate(bytes,{to:'string'}));
+  const restore=value=>{if(!value||typeof value!=='object')return value;if(Object.keys(value).length===1&&Number.isInteger(value.$collaboMediaRef)){const media=packed.media[value.$collaboMediaRef];if(typeof media!=='string')throw new Error('Brak załącznika');return media;}for(const key of Object.keys(value))value[key]=restore(value[key]);return value;};
+  return restore(packed.data);
+}
 function persistNow({silent=true}={}){
   if(!__persistenceEnabled)return false;
   let dataJson;
   try{dataJson=persistentDataJson();}
   catch(e){persistenceError('Nie udało się przygotować danych do zapisu.');return false;}
   if(dataJson===__persistenceLastDataJson){if(!silent)toast('Wszystkie zmiany są już zapisane lokalnie.','ok');return true;}
-  if(dataJson.length>COLLABOHUB_STORAGE_LIMIT){
-    persistenceError('Nowe dane są za duże na zapis w tej przeglądarce. Poprzednia kopia pozostała bez zmian.');return false;
-  }
   const savedAt=new Date().toISOString();
   try{
-    localStorage.setItem(COLLABOHUB_STORAGE_KEY,JSON.stringify({version:COLLABOHUB_STATE_VERSION,savedAt,data:JSON.parse(dataJson)}));
-    __persistenceLastDataJson=dataJson;__persistenceLastSavedAt=savedAt;__persistenceLastSize=dataJson.length;
+    const stored=encodePersistentEnvelope(dataJson,savedAt);
+    if(stored.length>COLLABOHUB_STORAGE_LIMIT){persistenceError('Zapis jest pełny nawet po kompresji. Poprzednia kopia pozostała bez zmian.');return false;}
+    localStorage.setItem(COLLABOHUB_STORAGE_KEY,stored);
+    __persistenceLastDataJson=dataJson;__persistenceLastSavedAt=savedAt;__persistenceLastSize=stored.length;
     __persistenceError='';__persistenceWarningShown=false;updatePersistenceStatusDom();
     if(!silent)toast('Zmiany zapisane w tej przeglądarce.','ok');
     return true;
@@ -18654,6 +18670,7 @@ function loadPersistentData(){
   if(!raw)return false;
   try{
     const envelope=JSON.parse(raw);
+    if(validObject(envelope)&&envelope.encoding)envelope.data=decodePersistentEnvelope(envelope);
     if(!validObject(envelope)||envelope.version!==COLLABOHUB_STATE_VERSION||!validObject(envelope.data))throw new Error('version');
     const storedDataJson=JSON.stringify(envelope.data,persistenceJsonReplacer);
     applyPersistentData(envelope.data);
@@ -18664,7 +18681,7 @@ function loadPersistentData(){
     // Jeżeli migracja odbudowała katalog, nie uznajemy starego pustego zapisu
     // za aktualny. Najbliższy autosave zapisze już naprawioną wersję.
     __persistenceLastDataJson=storedDataJson===normalizedDataJson?normalizedDataJson:'';
-    __persistenceLastSize=normalizedDataJson.length;
+    __persistenceLastSize=raw.length;
     return true;
   }catch(e){
     persistenceError('Zapis lokalny jest uszkodzony lub pochodzi z innej wersji. Uruchomiono bezpieczne dane demonstracyjne.',false);
@@ -22759,6 +22776,11 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention{grid-column:1!important;grid-row:1!important;min-width:0;padding:10px 14px 0}
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention~textarea{grid-row:2!important}
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention~.board-post-comment-tools{grid-row:3!important}
+</style>
+<style id="post-close-hover-style">
+:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close){cursor:pointer;transition:background-color .15s,color .15s}
+:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close):is(:hover,:focus-visible){background:var(--p700)!important;color:#fff!important}
+:is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close):focus-visible{outline:2px solid var(--p400)!important;outline-offset:2px!important}
 </style>
 <script id="app-ready-script">
 (()=>{
