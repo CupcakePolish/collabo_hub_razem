@@ -13896,7 +13896,7 @@ function openTeam(teamId,opts={}){
   const mode=({online:'Online',local:'Lokalnie',hybrid:'Hybrydowo'})[t.workMode]||'Tryb nieokreślony';
   const teamAvatarBox=editing?`<label class="tp-avatar tp-avatar-edit" title="Dodaj zdjęcie profilowe zespołu">${teamAvatar}<span class="team-photo-camera">${profileCameraIcon()}</span><input type="file" accept="image/*" onchange="updateTeamDraftAvatar('${escAttr(t.id)}',this)"></label>`:`<div class="tp-avatar">${teamAvatar}</div>`;
   const chipList=rows=>rows.map(s=>`<span class="tp-chip">${escHtml(s)}</span>`).join('');
-  document.getElementById('team-profile-header').innerHTML=`<nav class="tp-breadcrumb" aria-label="Okruszki"><a href="#teams">Zespoły</a><span>/</span><b>${escHtml(t.name||'Nowy zespół')}</b></nav>`;
+  document.getElementById('team-profile-header').replaceChildren();
   const projectCards=projects.map(i=>`<a class="tp-project" href="${escAttr(ideaHash(i))}"><span class="tp-project-icon">${IC.bulb}</span><div><h3>${escHtml(i.title)}</h3><p>${escHtml(String(i.desc||i.description||'').slice(0,180))}</p><span class="tp-meta">${escHtml(i.cat||'Projekt')} · ${escHtml(i.date||'')}</span></div><span class="tp-chip">${escHtml(ideaPhaseLabel(i))}</span></a>`).join('');
   const memberCards=people.map(name=>`<div class="tp-person">${personChip(name)}<span>${escHtml(t.memberRoles?.[name]||'Członek zespołu')}</span></div>`).join('');
   const pendingCards=mine?(t.pendingMembers||[]).map(name=>{const inv=(t.pendingInvites||[]).find(x=>x.name===name)||{};return `<div class="tp-request"><div>${personChip(name,true)}<p>${escHtml(inv.note||'Chęć dołączenia do zespołu')}${inv.suggestedRoles?.length?' · '+escHtml(inv.suggestedRoles.join(', ')):''}</p></div><div class="tp-actions"><button class="tp-button" aria-label="${escAttr('Przyjmij: '+name)}" onclick="${action('acceptGlobalTeamMember',t.id,name)}">Przyjmij</button><button class="tp-button" aria-label="${escAttr('Odrzuć: '+name)}" onclick="${action('declineGlobalTeamMember',t.id,name)}">Odrzuć</button></div></div>`;}).join(''):'';
@@ -23044,6 +23044,11 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 #s-team-profile .team-three-columns>.tp-tabs{justify-content:center!important}
 #s-team-profile .team-three-columns>.tp-tabs .team-tab-icon .project-vote-gavel{color:inherit!important;margin-top:0;width:22px;height:22px}
 @media(max-width:500px){#s-team-profile .team-three-columns>.tp-tabs{gap:3px}#s-team-profile .team-three-columns>.tp-tabs button{width:36px;min-width:36px}}
+</style>
+<style id="team-profile-no-breadcrumb-style">
+#s-team-profile>#team-profile-header{display:none!important;margin:0!important;padding:0!important}
+#s-team-profile.on{padding-top:calc(var(--global-nav-height,64px) + 12px)!important}
+#s-team-profile>#team-profile-body{margin-top:0!important;padding-top:0!important}
 </style>
 <script id="app-ready-script">
 (()=>{
