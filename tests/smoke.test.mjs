@@ -108,7 +108,7 @@ test('organization resource catalog has three starter items and routed detail pa
   assert.match(seed, /room-011/);
   assert.match(html, /function renderResourceCatalog\(\)/);
   assert.match(html, /function catalogFilteredResources\(\)/);
-  assert.match(html, /class="resource-filter-sidebar" aria-label="Filtry katalogu"/);
+  assert.match(html, /class="resource-filter-sidebar[^"\n]*" aria-label="Filtry katalogu"/);
   assert.match(html, /id="resource-type-search"[^>]*placeholder="Szukaj typu…"/);
   assert.match(html, /id="resource-location-search"[^>]*placeholder="Szukaj lokalizacji…"/);
   assert.match(html, /id="resource-catalog-query"[^>]*placeholder="Szukaj zasobów po nazwie, opisie, lokalizacji lub cechach…"/);
@@ -118,7 +118,7 @@ test('organization resource catalog has three starter items and routed detail pa
   assert.match(html, /focusIds=\{query:'resource-catalog-query',typeQuery:'resource-type-search',locationQuery:'resource-location-search'\}/);
   assert.match(html, /\.resource-sidebar-scroll\{max-height:116px;overflow-y:auto/);
   assert.match(html, /\.resource-filter-sidebar\{position:sticky;[^}]*overflow-y:auto/);
-  assert.match(html, /class="resource-catalog-list \$\{resourceCatalogState\.view==='grid'\?'grid':''\}"/);
+  assert.match(html, /class="resource-catalog-list [^\n]*resourceCatalogState\.view==='grid'\?'grid':''/);
   assert.match(html, /function openCatalogResource\(id,opts=\{\}\)/);
   assert.match(html, /if\(head==='resources'&&parts\[1\]\)return \{kind:'resource'/);
   assert.match(html, /function renderCatalogResourceDetail\(\)/);
@@ -1382,4 +1382,16 @@ test('declining a project invitation archives it before removing it from pending
  const source=html.match(/function declineInvite\([^]*?\n\}/)[0];
  const result=new Function('source',`const inv={id:'invite',kind:'project',person:'Anna'},idea={id:1,log:[],pendingInvites:[inv]},ideas=[idea],pendingInviteByRef=()=>({inv,index:0}),TODAY='2026-10-24',NOW_TIME=()=> '16:00',escHtml=x=>x,toast=()=>{},openIdea=()=>{},renderIdeas=()=>{};let saves=0;const queuePersistence=()=>saves++;eval(source);declineInvite(1,'invite','Anna','Brak czasu');return {pending:idea.pendingInvites,history:idea.invitationHistory,saves};`)(source);
  assert.equal(result.pending.length,0);assert.equal(result.history.length,1);assert.equal(result.history[0].status,'declined');assert.equal(result.history[0].declineReason,'Brak czasu');assert.equal(result.saves,1);
+});
+
+test('resource sections separate equipment, spaces and services while preserving other filters',()=>{
+ const group=html.match(/function resourceGroup\([^\n]+/)[0],filter=html.match(/function catalogFilteredResources\(\)\{[\s\S]*?\n\}/)[0];
+ const run=new Function('group','filter',`return function(section,status='all'){const MY_NAME='Anna',resourceCatalogState={section,status,query:'',scope:'all',type:'all',location:'all',category:'all',condition:'all',sort:'name'},catalogResources=[{name:'Projektor',brand:'',typeKey:'media',status:'available',features:[]},{name:'Sala',brand:'',typeKey:'space',status:'reserved',features:[]},{name:'Tłumaczenie',brand:'',typeKey:'service',status:'available',features:[]}];eval(group);eval(filter);return catalogFilteredResources().map(x=>x.name);}`)(group,filter);
+ assert.deepEqual(run('physical'),['Projektor']);assert.deepEqual(run('spaces'),['Sala']);assert.deepEqual(run('services'),['Tłumaczenie']);assert.equal(run('all').length,3);assert.deepEqual(run('spaces','available'),[]);
+});
+
+test('document library includes project documents and direct uploads but skips private drafts',()=>{
+ const source=html.match(/function resourceLibraryEntries\(\)\{[\s\S]*?\n\}/)[0];
+ const result=new Function('source',`const resourceLibraryDocuments=[{name:'Wspólny.pdf',by:'Anna'}],ideas=[{id:1,title:'Pomysł',docs:[{did:'d1',title:'Regulamin'}],files:[{name:'Notatki.txt'}]},{id:2,isDraft:true,title:'Prywatny',docs:[{title:'Sekret'}]}],isPrivateIdeaDraft=x=>!!x.isDraft,taskFileLibraryEntries=()=>[],discoverPosts=[],projectTeams=[],members=[],MY_NAME='Anna';eval(source);return resourceLibraryEntries().map(x=>x.title);`)(source);
+ assert.deepEqual(result,['Wspólny.pdf','Regulamin','Notatki.txt']);
 });
