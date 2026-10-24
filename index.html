@@ -8265,7 +8265,11 @@ function renderIdeas(){
     list.innerHTML=`<div class="empty"><div style="font-size:32px">○</div><div class="empty-t">${emptyTitle}</div>${emptyCopy?`<p>${emptyCopy}</p>`:''}</div>`;return;
   }
 
-  list.innerHTML=filtered.map(idea=>{
+  list.innerHTML=filtered.map(renderIdeaCatalogCard).join('');
+
+}
+
+function renderIdeaCatalogCard(idea){
     const auth=authorOf(idea);
     const variant=ideaVariantInfo(idea);
     const displayTitle=ideaCatalogTitle(idea);
@@ -8277,10 +8281,6 @@ function renderIdeas(){
     const lifecycle=projectLifecycleStatus(idea);
     const activity=latestSubstantiveActivity(idea);
     const photo=ideaCatalogPhoto(idea);
-    const skillTags=(idea.skillsNeeded||[]).map(s=>{
-      const mine=skillNeedMatchesUser(s);
-      return `<span class="skill-tag ${s.filled?'sk-filled':mine?'sk-mine':'sk-need'}">${escHtml(s.skill)}${s.filled?' ✓':mine?' ← ty':''}</span>`;
-    }).join('');
     const roles=idea.roleRequirements||[];
     const rosterSummary = roles.length ? `<div class="ros-tags">${compactRoleTags(idea)}</div>` : '';
     return `<a class="ic s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
@@ -8308,7 +8308,7 @@ function renderIdeas(){
       </div>
       ${archived?`<div class="archive-strip"><div class="archive-strip-copy"><b>Projekt w archiwum</b>${escHtml(projectArchiveReason(idea))}</div><button type="button" class="archive-reactivate" onclick="event.preventDefault();event.stopPropagation();requestReactivateArchivedProject(${idea.id})">Reaktywuj projekt</button></div>`:''}
     </a>`;
-  }).join('');
+
 }
 
 function toggleIdeaQuickFollow(event,id){event?.preventDefault();event?.stopPropagation();const idea=ideas.find(row=>row.id===id);if(!idea)return;const following=!followedIdeas.has(id);if(following){followedIdeas.add(id);const scopes=projectNotificationScopeMap();if(!scopes[String(id)])scopes[String(id)]='global';}else followedIdeas.delete(id);queuePersistence();const button=event?.currentTarget;if(button){button.classList.toggle('on',following);button.setAttribute('aria-pressed',String(following));button.setAttribute('aria-label',(following?'Przestań obserwować':'Zaobserwuj')+' pomysł');button.dataset.tooltip=following?'Przestań obserwować':'Zaobserwuj';}if(currentTab==='followed'||ideaListFilters.followed)renderIdeas();}
@@ -8379,7 +8379,7 @@ function openIdea(id,preserveScroll=false,opts={}){
   idea.viewTab=idea.viewTab||'przeglad';
   if(idea.viewTab==='pliki')idea.viewTab='dokumenty';
   if(idea.viewTab==='teamy')idea.viewTab='zespol';
-  if(!opts.fromRoute)setAppHash(ideaHash(idea),opts.replaceRoute!==undefined?opts.replaceRoute:isCurrentIdeaRoute(id));
+  if(!opts.fromRoute){const context=parseAppRoute(),scoped=context.kind==='team'&&teamProjects(projectTeams.find(t=>t.id===context.teamId)||{}).some(i=>i.id===idea.id),hash=scoped?teamHash(context.teamId,'ideas')+'/idea/'+idea.id+'/'+(IDEA_TAB_ROUTES[idea.viewTab]||'przeglad'):ideaHash(idea);setAppHash(hash,opts.replaceRoute!==undefined?opts.replaceRoute:isCurrentIdeaRoute(id));}
   idea.files=idea.files||[];idea.discussion=idea.discussion||[];idea.tasks=idea.tasks||[];idea.votes=idea.votes||[];idea.meetings=idea.meetings||[];
   const reconciledVotes=reconcileOpenVotes(idea);
   if(reconcileInvitationProtocols(idea))queuePersistence();
@@ -10013,7 +10013,7 @@ function cancelDraftExit(){draftExitAction=null;closeAppModal();}
 function resolveDraftExit(save){if(save){if(saveDraftEdits(false)===false)return;}else discardDraftEdits(false);const action=draftExitAction;draftExitAction=null;draftEditSession=null;closeAppModal();action?.();}
 window.addEventListener('beforeunload',event=>{if(draftEditsDirty()){event.preventDefault();event.returnValue='';}});
 
-function beginNewIdea(){const idea=createBlankPrivateIdeaDraft();ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);}
+function beginNewIdea(){const idea=createBlankPrivateIdeaDraft();ideas.push(idea);queuePersistence();renderDraftCount();if(typeof openTeamWorkspaceIdea==='function')openTeamWorkspaceIdea(t.id,idea.id);else openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);}
 function openIdeaDraft(id){const row=ideaDrafts.find(item=>item.id===id);if(!row)return;const d=normalizeWizardDraft(row.draft),f=d.fields||{},idea=createBlankPrivateIdeaDraft();idea.title=String(f.title||'');idea.desc=String(f.desc||'');idea.fields.cel.text=String(f.cel||'');idea.fields.skutki.text=String(f.skutki||'');idea.skillsNeeded=(d.skills||[]).map(r=>({skill:canonicalProjectCapabilityName(r.skill),why:String(r.why||''),minLvl:1,filled:false,date:TODAY})).filter(r=>r.skill);idea.roleRequirements=idea.skillsNeeded.map(r=>({role:r.skill,task:r.why,min:1,max:'',exclusive:false,skills:[{name:r.skill,lvl:1}],filledBy:[],status:'open'}));idea._preparedInviteNames=d.invited||[];idea._inviteCommonMessage=d.inviteCommonMessage||DEFAULT_INVITE_MESSAGE;idea._invitePersonalizations=d.invitePersonalizations||{};ideaDrafts=ideaDrafts.filter(item=>item.id!==id);ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);}
 function requestDeletePrivateIdeaDraft(id){const idea=ideas.find(i=>i.id===id&&isPrivateIdeaDraft(i));if(!idea)return;appModal(`<h3>Usunąć szkic?</h3><p>Szkic „${escHtml(idea.title||'Pomysł bez tytułu')}” zostanie usunięty bez możliwości cofnięcia.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn draft-delete-confirm" onclick="deletePrivateIdeaDraft(${id})">Usuń bezpowrotnie</button></div>`);}
 function deletePrivateIdeaDraft(id){ideas=ideas.filter(i=>!(i.id===id&&isPrivateIdeaDraft(i)));closeAppModal();queuePersistence();renderIdeas();toast('Szkic został usunięty.','ok');}
@@ -13061,7 +13061,7 @@ function renderTeamIdeasTab(t,mine){
   if(teamIdeasUI.teamId!==String(t.id))resetTeamIdeasUI(t.id);const all=teamProjects(t),rows=teamIdeaFilteredRows(t),shown=teamIdeasUI.expanded?rows:rows.slice(0,4),counts={progress:all.filter(i=>teamIdeaStatusKey(i)==='progress').length,completed:all.filter(i=>teamIdeaStatusKey(i)==='completed').length,evaluation:all.filter(i=>teamIdeaStatusKey(i)==='evaluation').length,evaluationCompleted:all.filter(i=>teamIdeaStatusKey(i)==='evaluationCompleted').length,active:all.filter(i=>!projectIsArchived(i)).length,archived:all.filter(projectIsArchived).length};
   const filter=(key,label)=>`<label><input type="checkbox" ${teamIdeasUI.filters[key]?'checked':''} onchange="toggleTeamIdeasFilter('${escAttr(t.id)}','${key}',this.checked)"><span></span><b>${label}</b><small>${counts[key]}</small></label>`;
   const sortLabels={activity:'Ostatnia aktywność',newest:'Najnowsze',people:'Najwięcej osób',title:'Nazwa A–Z'},sortOption=(value,label)=>`<button type="button" class="${teamIdeasUI.sort===value?'selected':''}" onclick="setTeamIdeasSort('${escAttr(t.id)}','${value}')">${label}</button>`;
-  return `<section class="team-ideas-page"><aside class="team-ideas-filters"><h2>Status</h2>${filter('progress','W toku')}${filter('completed','Projekt zakończony')}${filter('evaluation','W ocenie')}${filter('evaluationCompleted','Ocena zakończona')}<hr><h2>Archiwum</h2>${filter('active','Aktywne')}${filter('archived','Archiwalne')}</aside><main class="team-ideas-main"><div class="team-ideas-heading"><h1>Pomysły zespołu</h1>${mine?`<button type="button" onclick="beginTeamIdeaDraft('${escAttr(t.id)}')">＋ Dodaj pomysł</button>`:''}</div><div class="team-ideas-toolbar"><label class="team-ideas-search"><span>⌕</span><input type="search" value="${escAttr(teamIdeasUI.search)}" placeholder="Szukaj pomysłów zespołu…" oninput="updateTeamIdeasSearch('${escAttr(t.id)}',this.value)"></label><b>${rows.length} ${polishCountWord(rows.length,'pomysł','pomysły','pomysłów')}</b><div class="team-ideas-sort"><span>Sortuj:</span><button type="button" class="team-ideas-sort-trigger" aria-haspopup="true" aria-expanded="false" onclick="toggleTeamIdeasSort(event)"><b>${sortLabels[teamIdeasUI.sort]}</b><i>⌄</i></button><div class="team-ideas-sort-menu"><small>Aktywność</small>${sortOption('activity','Ostatnia aktywność')}<small>Pomysł</small>${sortOption('newest','Najnowsze')}${sortOption('people','Najwięcej osób')}${sortOption('title','Nazwa A–Z')}</div></div></div><div class="team-ideas-list">${shown.map(teamIdeaRowHTML).join('')||'<div class="team-ideas-empty"><h2>Brak pomysłów</h2><p>Zmień filtry albo rozpocznij pierwszy pomysł tego zespołu.</p></div>'}</div>${rows.length>shown.length?`<button type="button" class="team-ideas-more" onclick="expandTeamIdeas('${escAttr(t.id)}')">Pokaż kolejne ${rows.length-shown.length}⌄</button>`:''}</main></section>`;
+  return `<section class="team-ideas-page"><aside class="team-ideas-filters"><h2>Status</h2>${filter('progress','W toku')}${filter('completed','Projekt zakończony')}${filter('evaluation','W ocenie')}${filter('evaluationCompleted','Ocena zakończona')}<hr><h2>Archiwum</h2>${filter('active','Aktywne')}${filter('archived','Archiwalne')}</aside><main class="team-ideas-main"><div class="team-ideas-heading"><h1>Pomysły zespołu</h1>${mine?`<button type="button" onclick="beginTeamIdeaDraft('${escAttr(t.id)}')">＋ Dodaj pomysł</button>`:''}</div><div class="team-ideas-toolbar"><label class="team-ideas-search"><span>⌕</span><input type="search" value="${escAttr(teamIdeasUI.search)}" placeholder="Szukaj pomysłów zespołu…" oninput="updateTeamIdeasSearch('${escAttr(t.id)}',this.value)"></label><b>${rows.length} ${polishCountWord(rows.length,'pomysł','pomysły','pomysłów')}</b><div class="team-ideas-sort"><span>Sortuj:</span><button type="button" class="team-ideas-sort-trigger" aria-haspopup="true" aria-expanded="false" onclick="toggleTeamIdeasSort(event)"><b>${sortLabels[teamIdeasUI.sort]}</b><i>⌄</i></button><div class="team-ideas-sort-menu"><small>Aktywność</small>${sortOption('activity','Ostatnia aktywność')}<small>Pomysł</small>${sortOption('newest','Najnowsze')}${sortOption('people','Najwięcej osób')}${sortOption('title','Nazwa A–Z')}</div></div></div><div class="team-ideas-list">${shown.map(idea=>isPrivateIdeaDraft(idea)?teamIdeaRowHTML(idea):renderIdeaCatalogCard(idea)).join('')||'<div class="team-ideas-empty"><h2>Brak pomysłów</h2><p>Zmień filtry albo rozpocznij pierwszy pomysł tego zespołu.</p></div>'}</div>${rows.length>shown.length?`<button type="button" class="team-ideas-more" onclick="expandTeamIdeas('${escAttr(t.id)}')">Pokaż kolejne ${rows.length-shown.length}⌄</button>`:''}</main></section>`;
 }
 function teamPortfolioItemHTML(p){
   return `<div class="portfolio-item"><div class="pi-type">${escHtml(p.type||'Współpraca')}</div><div class="pi-title">${escHtml(p.title||'Wpis portfolio')}</div>${p.desc?`<div class="pi-desc">${escHtml(p.desc)}</div>`:''}${p.projectId?`<button class="dl-btn" onclick="openIdea(${Number(p.projectId)})">Otwórz projekt</button>`:''}</div>`;
@@ -18149,7 +18149,7 @@ function parseAppRoute(hash=location.hash){
   if(head==='dictionary'&&parts[1])return {kind:'dictionary',dictionaryId:safeRoutePart(parts[1])};
   if(head==='resources'&&parts[1])return {kind:'resource',resourceId:safeRoutePart(parts[1])};
   if(head==='member'&&parts[1])return {kind:'member',memberId:Number(parts[1])};
-  if(head==='team'&&parts[1]){const teamId=safeRoutePart(parts[1]),tab={overview:'board',ideas:'ideas',members:'members',meetings:'meetings',votes:'votes',log:'register'}[parts[2]];if(parts[2]&&!tab)return {kind:'invalid'};return {kind:'team',teamId,...(tab?{tab}:{}),...(tab==='votes'&&parts[3]?{voteId:safeRoutePart(parts[3])}:{})};}
+  if(head==='team'&&parts[1]){const teamId=safeRoutePart(parts[1]),tab={overview:'board',ideas:'ideas',members:'members',meetings:'meetings',votes:'votes',log:'register'}[parts[2]];if(parts[2]&&!tab)return {kind:'invalid'};return {kind:'team',teamId,...(tab?{tab}:{}),...(tab==='votes'&&parts[3]?{voteId:safeRoutePart(parts[3])}:{}),...(tab==='ideas'&&parts[3]==='idea'&&/^\d+$/.test(parts[4]||'')?{ideaId:Number(parts[4]),ideaTab:ROUTE_IDEA_TABS[parts[5]]||'przeglad'}:{})};}
   if(head==='idea'&&/^\d+$/.test(parts[1]||'')){
     const ideaId=Number(parts[1]),section=parts[2]||'przeglad';
     if(section==='rejestr')return {kind:'register',ideaId};
@@ -18184,7 +18184,7 @@ function routeFromLocation(){
   if(route.kind==='dictionary'){if(!dictionaryEntries().some(item=>item.id===route.dictionaryId))return routeFallback();platformTab='dictionary';go('platform',null,null,{fromRoute:true});return openDictionaryEntry(route.dictionaryId);}
   if(route.kind==='resource')return catalogResources.some(resource=>resource.id===route.resourceId)?openCatalogResource(route.resourceId,{fromRoute:true}):routeFallback();
   if(route.kind==='member')return members.some(m=>m.id===route.memberId)?openMember(route.memberId,{fromRoute:true}):routeFallback();
-  if(route.kind==='team'){if(!ensureIdeaTeams({}).some(t=>t.id===route.teamId))return routeFallback();if(teamVoteUI.teamId!==route.teamId)resetTeamVoteUI(route.teamId);teamProfileTabTeamId=route.teamId;teamProfileTab=route.tab||'board';if(route.voteId)teamVoteUI.selectedId=route.voteId;return openTeam(route.teamId,{fromRoute:true});}
+  if(route.kind==='team'){if(!ensureIdeaTeams({}).some(t=>t.id===route.teamId))return routeFallback();if(teamVoteUI.teamId!==route.teamId)resetTeamVoteUI(route.teamId);teamProfileTabTeamId=route.teamId;teamProfileTab=route.tab||'board';if(route.voteId)teamVoteUI.selectedId=route.voteId;openTeam(route.teamId,{fromRoute:true});if(route.ideaId){const idea=teamProjects(projectTeams.find(t=>t.id===route.teamId)).find(i=>i.id===route.ideaId);if(!idea)return routeFallback();idea.viewTab=route.ideaTab||'przeglad';return openIdea(idea.id,false,{fromRoute:true});}return;}
   const idea=ideas.find(i=>i.id===route.ideaId);
   if(!idea)return routeFallback();
   if(route.kind==='register')return openRegister(idea.id,{fromRoute:true});
@@ -18206,6 +18206,7 @@ function go(name,btn,nlId,opts={}){
   if(!opts.fromRoute){const hash=screenHash(name);if(hash)setAppHash(hash,!!opts.replaceRoute);}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   const sc=document.getElementById('s-'+name);if(sc) sc.classList.add('on');
+  {const context=parseAppRoute(),workspace=name==='team-profile'||name==='idea'&&context.kind==='team'&&!!context.ideaId;document.documentElement.classList.toggle('team-workspace-mode',workspace);}
   document.querySelectorAll('.nl').forEach(b=>b.classList.remove('on'));
   if(nlId) document.getElementById(nlId)?.classList.add('on');
   else if(name==='discover') document.getElementById('nl-discover')?.classList.add('on');
