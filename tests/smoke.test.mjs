@@ -688,8 +688,8 @@ test('team draft separates editing, publishing and deletion', () => {
 });
 
 test('published team uses metadata, real tabs and profile-change votes', () => {
-  assert.match(html, /Opublikowano: \$\{escHtml\(t\.publishedDate/);
-  assert.match(html, /Ostatnia aktywność: \$\{escHtml\(t\.lastActive/);
+  assert.match(html, /teamMetadataHTML\(t,people\.length\)/);
+  assert.match(html, /data-tooltip="\$\{escAttr\(label\)\}"/);
   assert.match(html, /setTeamProfileTab\('\$\{escAttr\(t\.id\)\}','board'\)\">Tablica/);
   assert.match(html, />Członkowie<\/button><button[^>]+>Pomysły<\/button><button[^>]+>Dyskusje<\/button><button[^>]+>Głosowania<\/button><button[^>]+>Zasady<\/button><button[^>]+>Rejestr<\/button>/);
   assert.match(html, /teamAcceptedMembers\(t\)\.length>1/);
@@ -820,7 +820,7 @@ test('team ideas tab filters assigned projects and starts a team-owned private d
   assert.match(html, /class="team-ideas-sort-menu"/);
   assert.match(html, /function toggleTeamIdeasSort\(event\)/);
   assert.match(html, /class="team-idea-card\$\{archived\?' archived':''\}" href="#idea\/\$\{idea\.id\}"/);
-  assert.match(html, /Aktywność \$\{escHtml\(polishRelative\(activity\)\)\}/);
+  assert.match(html, /Aktywność \$\{escHtml\(polishRelative\(activity\)\.replace/);
   const teamIdeas=html.match(/function renderTeamIdeasTab\(t,mine\)\{([\s\S]*?)\n\}/)?.[1] || '';
   assert.doesNotMatch(teamIdeas, /Powiąż istniejący/);
   assert.doesNotMatch(teamIdeas, /Brak zaznaczeń = bez ograniczeń/);
@@ -1423,4 +1423,9 @@ test('mention search switches empty tabs to the highest ranked supported categor
  assert.equal(select('member',[{kind:'dictionary'},{kind:'member'}],tabs),'member');
  assert.equal(select('project',[{kind:'post'},{kind:'member'},{kind:'dictionary'}],tabs),'member');
  assert.equal(select('project',[],tabs),'project');
+});
+
+test('team metadata shows compact values with accessible hover labels and no temu suffix',()=>{
+ const source=html.match(/function teamMetadataHTML\([^\n]+/)[0],render=new Function('IC','escAttr','escHtml',source+';return teamMetadataHTML;')({users:'<svg></svg>',cal:'<svg></svg>',clock:'<svg></svg>'},x=>x,x=>x);
+ const markup=render({date:'3 cze 2026',lastActive:'53 min temu'},4);assert.ok(markup.includes('Data utworzenia'));assert.ok(markup.includes('Liczba członków'));assert.ok(markup.includes('Ostatnia aktywność'));assert.ok(markup.includes('53 min</span>'));assert.ok(!markup.includes('temu'));assert.equal((markup.match(/tabindex="0"/g)||[]).length,3);
 });
