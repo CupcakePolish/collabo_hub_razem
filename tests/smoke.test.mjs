@@ -1429,3 +1429,11 @@ test('team metadata shows compact values with accessible hover labels and no tem
  const source=html.match(/function teamMetadataHTML\([^\n]+/)[0],render=new Function('IC','escAttr','escHtml',source+';return teamMetadataHTML;')({users:'<svg></svg>',cal:'<svg></svg>',clock:'<svg></svg>'},x=>x,x=>x);
  const markup=render({date:'3 cze 2026',lastActive:'53 min temu'},4);assert.ok(markup.includes('Data utworzenia'));assert.ok(markup.includes('Liczba członków'));assert.ok(markup.includes('Ostatnia aktywność'));assert.ok(markup.includes('53 min</span>'));assert.ok(!markup.includes('temu'));assert.equal((markup.match(/tabindex="0"/g)||[]).length,3);
 });
+
+test('team context rail shows real upcoming meetings and opens the selected vote',()=>{
+ const source=html.match(/function renderTeamContextRail\(team\)\{[\s\S]*?\n\}/)[0];
+ const render=new Function('IC','escHtml','escAttr','teamAcceptedMembers','MY_NAME','projectVoteGavelIcon','teamDecisionTurnout','teamDecisionEligible','teamBoardMentionIcon',source+';return renderTeamContextRail;')({cal:'calendar'},x=>x,x=>x,()=>['Anna'],'Anna',()=>'',()=>1,()=>3,()=> 'idea');
+ const team={id:'team',meetings:[{id:'old',title:'Minione',date:'2000-01-01'},{id:'next',title:'Nowe spotkanie',date:'2099-01-01',location:'Online'}],decisions:[{id:'vote',prop:'Wybór narzędzia',open:true}]};
+ const markup=render(team);assert.ok(markup.includes('Nowe spotkanie'));assert.ok(!markup.includes('Minione'));assert.ok(markup.includes("openMeetingSummary('team','team','next')"));assert.ok(markup.includes("openTeamRailVote('team','vote')"));
+ const empty=render({id:'team',meetings:[],decisions:[]});assert.ok(empty.includes('Brak nadchodzących spotkań.'));assert.ok(empty.includes('Brak otwartych głosowań.'));
+});
