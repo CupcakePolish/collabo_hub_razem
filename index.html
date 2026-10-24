@@ -13660,6 +13660,7 @@ function positionTeamBoardMentionPicker(){
   const width=Math.min(560,wrap.clientWidth),lineHeight=parseFloat(style.lineHeight)||parseFloat(style.fontSize)*1.6;
   pop.style.width=width+'px';pop.style.left=Math.max(0,Math.min(wrap.clientWidth-width,input.offsetLeft+caret.offsetLeft-input.scrollLeft))+'px';
   pop.style.top=Math.max(0,input.offsetTop+caret.offsetTop-input.scrollTop)+lineHeight+6+'px';mirror.remove();
+  wrap.style.setProperty('--mention-space',Math.ceil(parseFloat(pop.style.top)+pop.offsetHeight+16)+'px');
   if(!input._mentionScrollReady){input._mentionScrollReady=true;input.addEventListener('scroll',positionTeamBoardMentionPicker);}
 }
 window.addEventListener('resize',()=>positionTeamBoardMentionPicker());
@@ -22816,6 +22817,9 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention{grid-column:1!important;grid-row:1!important;min-width:0;padding:10px 14px 0}
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention~textarea{grid-row:2!important}
 .board-post-modal-composer.is-inline-reply .board-compose-reply-mention~.board-post-comment-tools{grid-row:3!important}
+.app-modal.team-board-post-modal .tbp-text-wrap:has(>.tbp-mention-pop.on){min-height:var(--mention-space,380px)!important;flex-shrink:0}
+.app-modal.team-board-post-modal .tbp-compose-grid:has(.tbp-mention-pop.on){flex-shrink:0}
+.app-modal.team-board-post-modal .tbp-toolbar{position:sticky;bottom:0;z-index:160;background:var(--surf)}
 </style>
 <style id="post-close-hover-style">
 :is(.app-modal .tbp-close,.app-modal .board-post-modal-head>button,.app-modal .tbp-selected-gallery button,.app-modal .tbp-document-preview>button,.board-comment-attachment-tray button,.board-post-image-viewer-close){cursor:pointer;transition:filter .15s}
