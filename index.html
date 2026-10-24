@@ -13032,7 +13032,7 @@ function ensureIdeaTeams(idea){
 }
 function teamAcceptedMembers(t){return (t.members||[]).filter(Boolean);}
 function teamSkills(t){return Array.from(new Set(teamAcceptedMembers(t).flatMap(n=>(members.find(m=>m.name===n)?.skills||[]).concat(n===MY_NAME?(myProfile.skills||[]):[]))));}
-function teamProjects(t){return (t.projectIds||[]).map(id=>ideas.find(i=>String(i.id)===String(id))).filter(i=>i&&(!isPrivateIdeaDraft(i)||canOpenPrivateIdeaDraft(i)));}
+function teamProjects(t){const ids=new Set((t.projectIds||[]).map(String));return ideas.filter(i=>(ids.has(String(i.id))||String(i.teamId||i.teamOriginId||'')===String(t.id))&&(!isPrivateIdeaDraft(i)||canOpenPrivateIdeaDraft(i)));}
 let teamIdeasUI={teamId:'',search:'',filters:{progress:false,completed:false,evaluation:false,evaluationCompleted:false,active:false,archived:false},sort:'activity',expanded:false};
 function resetTeamIdeasUI(teamId){teamIdeasUI={teamId:String(teamId),search:'',filters:{progress:false,completed:false,evaluation:false,evaluationCompleted:false,active:false,archived:false},sort:'activity',expanded:false};}
 function updateTeamIdeasSearch(teamId,value){teamIdeasUI.search=String(value||'');teamIdeasUI.expanded=false;const caret=teamIdeasUI.search.length;openTeam(teamId,{preserveVoteScroll:true});requestAnimationFrame(()=>{const input=document.querySelector('.team-ideas-search input');input?.focus();input?.setSelectionRange(caret,caret);});}
@@ -13051,7 +13051,7 @@ function teamIdeaFilteredRows(t){
 }
 function beginTeamIdeaDraft(teamId){
   const t=ensureIdeaTeams({}).find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return toast('Tylko członkowie zespołu mogą dodawać jego pomysły.','warn');
-  const idea=createBlankPrivateIdeaDraft();idea.teamOriginId=String(t.id);idea.teamOriginName=t.name;ideas.push(idea);t.projectIds=t.projectIds||[];if(!t.projectIds.some(id=>String(id)===String(idea.id)))t.projectIds.push(idea.id);queuePersistence();renderDraftCount();openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);
+  const idea=createBlankPrivateIdeaDraft();idea.teamId=String(t.id);idea.teamOriginId=String(t.id);idea.teamOriginName=t.name;ideas.push(idea);t.projectIds=t.projectIds||[];if(!t.projectIds.some(id=>String(id)===String(idea.id)))t.projectIds.push(idea.id);queuePersistence();renderDraftCount();openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);
 }
 function teamIdeaRowHTML(idea){
   const status=teamIdeaStatusKey(idea),src=ideaCatalogPhoto(idea),people=participantsOf(idea).length,archived=projectIsArchived(idea),auth=authorOf(idea),av=AV[auth.av]||AV[0],activity=latestSubstantiveActivity(idea),comments=ideaCommentCount(idea),title=ideaCatalogTitle(idea)||'Pomysł bez tytułu',roles=(idea.roleRequirements||[]).length?`<div class="ros-tags">${compactRoleTags(idea)}</div>`:'';
@@ -13884,8 +13884,8 @@ function deleteTeamDraft(teamId){const index=projectTeams.findIndex(row=>String(
 function teamAction(code){return escAttr(code);}
 function openTeam(teamId,opts={}){
   const t=ensureIdeaTeams({}).find(x=>x.id===teamId);if(!t)return;
-  if(!opts.fromRoute)setAppHash(teamHash(teamId),location.hash===teamHash(teamId));
   if(String(teamProfileTabTeamId)!==String(teamId)){teamProfileTabTeamId=teamId;teamProfileTab='board';}
+  if(!opts.fromRoute){const hash=teamHash(teamId,teamProfileTab,teamVoteUI.teamId===String(teamId)?teamVoteUI.selectedId:'');setAppHash(hash,location.hash===hash);}
   const people=teamAcceptedMembers(t),mine=people.includes(MY_NAME),pending=(t.pendingMembers||[]).includes(MY_NAME);
   const projects=teamProjects(t),skills=teamSkills(t),baseWanted=teamWantedSkills(t),g=teamGovernance(t),options='';
   const action=(fn,...args)=>teamAction(`${fn}(${args.map(a=>JSON.stringify(a)).join(',')})`);
@@ -18120,7 +18120,7 @@ const ROUTE_IDEA_TABS=Object.freeze(Object.fromEntries(Object.entries(IDEA_TAB_R
 
 function screenHash(name){return SCREEN_ROUTES[name]?`#${SCREEN_ROUTES[name]}`:'';}
 function memberHash(id){return `#member/${encodeURIComponent(id)}`;}
-function teamHash(id){return `#team/${encodeURIComponent(id)}`;}
+function teamHash(id,tab='board',voteId=''){const section={board:'',ideas:'ideas',members:'members',meetings:'meetings',votes:'votes',register:'log'}[tab]||'';return `#team/${encodeURIComponent(id)}${section?'/'+section:''}${section==='votes'&&voteId?'/'+encodeURIComponent(voteId):''}`;}
 function registerHash(id){return `#idea/${encodeURIComponent(id)}/rejestr`;}
 function voteHash(ideaId,voteId){return `#idea/${encodeURIComponent(ideaId)}/decyzje/glosowanie/${encodeURIComponent(voteId)}`;}
 function projectParticipantHash(ideaId,personId){return `#idea/${encodeURIComponent(ideaId)}/zespol/osoba/${encodeURIComponent(personId)}`;}
@@ -18149,7 +18149,7 @@ function parseAppRoute(hash=location.hash){
   if(head==='dictionary'&&parts[1])return {kind:'dictionary',dictionaryId:safeRoutePart(parts[1])};
   if(head==='resources'&&parts[1])return {kind:'resource',resourceId:safeRoutePart(parts[1])};
   if(head==='member'&&parts[1])return {kind:'member',memberId:Number(parts[1])};
-  if(head==='team'&&parts[1])return {kind:'team',teamId:safeRoutePart(parts[1])};
+  if(head==='team'&&parts[1]){const teamId=safeRoutePart(parts[1]),tab={overview:'board',ideas:'ideas',members:'members',meetings:'meetings',votes:'votes',log:'register'}[parts[2]];if(parts[2]&&!tab)return {kind:'invalid'};return {kind:'team',teamId,...(tab?{tab}:{}),...(tab==='votes'&&parts[3]?{voteId:safeRoutePart(parts[3])}:{})};}
   if(head==='idea'&&/^\d+$/.test(parts[1]||'')){
     const ideaId=Number(parts[1]),section=parts[2]||'przeglad';
     if(section==='rejestr')return {kind:'register',ideaId};
@@ -18184,7 +18184,7 @@ function routeFromLocation(){
   if(route.kind==='dictionary'){if(!dictionaryEntries().some(item=>item.id===route.dictionaryId))return routeFallback();platformTab='dictionary';go('platform',null,null,{fromRoute:true});return openDictionaryEntry(route.dictionaryId);}
   if(route.kind==='resource')return catalogResources.some(resource=>resource.id===route.resourceId)?openCatalogResource(route.resourceId,{fromRoute:true}):routeFallback();
   if(route.kind==='member')return members.some(m=>m.id===route.memberId)?openMember(route.memberId,{fromRoute:true}):routeFallback();
-  if(route.kind==='team')return ensureIdeaTeams({}).some(t=>t.id===route.teamId)?openTeam(route.teamId,{fromRoute:true}):routeFallback();
+  if(route.kind==='team'){if(!ensureIdeaTeams({}).some(t=>t.id===route.teamId))return routeFallback();if(teamVoteUI.teamId!==route.teamId)resetTeamVoteUI(route.teamId);teamProfileTabTeamId=route.teamId;teamProfileTab=route.tab||'board';if(route.voteId)teamVoteUI.selectedId=route.voteId;return openTeam(route.teamId,{fromRoute:true});}
   const idea=ideas.find(i=>i.id===route.ideaId);
   if(!idea)return routeFallback();
   if(route.kind==='register')return openRegister(idea.id,{fromRoute:true});
@@ -22661,7 +22661,7 @@ function renderTeamMeetings(t){const rows=(t.meetings||[]).slice().sort((a,b)=>n
 const openTeamBeforeMeetings=openTeam;
 openTeam=function(id,opts={}){const result=openTeamBeforeMeetings(id,opts);if(teamProfileTab==='meetings'){const t=meetingOwner('team',id),host=document.getElementById('team-profile-body');if(t&&host){[...host.children].filter(el=>!el.classList.contains('tp-hero')).forEach(el=>el.remove());host.insertAdjacentHTML('beforeend',renderTeamMeetings(t));}}return result;};
 function createTeamMeeting(id){const t=meetingOwner('team',id);if(!t||!canManageMeeting('team',t))return;appModal(`<h3>Zaplanuj spotkanie zespołu</h3><form onsubmit="saveTeamMeeting(event,'${escAttr(id)}')"><label>Tytuł<input name="title" required maxlength="120"></label><label>Opis<textarea name="description" maxlength="3000"></textarea></label><div class="form-grid-2"><label>Od<input name="date" type="datetime-local" required></label><label>Do<input name="endDate" type="datetime-local" required></label></div><label>Link spotkania<input name="link" type="url" placeholder="https://…"></label><label>Miejsce / platforma<input name="location" maxlength="160" placeholder="Np. Google Meet lub adres"></label><label>Notatka organizacyjna<textarea name="note" maxlength="1500"></textarea></label><button class="inv-primary">Utwórz spotkanie</button></form>`,'schedule-meeting-modal');}
-function saveTeamMeeting(event,id){event.preventDefault();const t=meetingOwner('team',id);if(!t||!canManageMeeting('team',t))return;const f=new FormData(event.target),get=k=>String(f.get(k)||'').trim(),date=get('date'),endDate=get('endDate');if(!get('title')||!date||!endDate||!Number.isFinite(new Date(date).getTime())||!Number.isFinite(new Date(endDate).getTime())||new Date(endDate)<=new Date(date))return toast('Podaj poprawny tytuł i termin zakończenia po rozpoczęciu.','warn');const link=get('link');if(link&&!/^https?:\/\//i.test(link))return toast('Link musi zaczynać się od https:// lub http://.','warn');const m={id:'tm-'+Date.now(),title:get('title'),description:get('description'),date,endDate,link,location:get('location'),note:get('note'),by:MY_NAME,createdAt:new Date().toISOString(),invited:[...teamAcceptedMembers(t)],rsvp:{},attendance:{},materials:[],hiddenBy:[]};(t.meetings||(t.meetings=[])).push(m);queuePersistence();closeAppModal();teamProfileTab='meetings';openTeam(id);openMeetingSummary('team',id,m.id);}
+function saveTeamMeeting(event,id){event.preventDefault();const t=meetingOwner('team',id);if(!t||!canManageMeeting('team',t))return;const f=new FormData(event.target),get=k=>String(f.get(k)||'').trim(),date=get('date'),endDate=get('endDate');if(!get('title')||!date||!endDate||!Number.isFinite(new Date(date).getTime())||!Number.isFinite(new Date(endDate).getTime())||new Date(endDate)<=new Date(date))return toast('Podaj poprawny tytuł i termin zakończenia po rozpoczęciu.','warn');const link=get('link');if(link&&!/^https?:\/\//i.test(link))return toast('Link musi zaczynać się od https:// lub http://.','warn');const m={id:'tm-'+Date.now(),teamId:String(id),title:get('title'),description:get('description'),date,endDate,link,location:get('location'),note:get('note'),by:MY_NAME,createdAt:new Date().toISOString(),invited:[...teamAcceptedMembers(t)],rsvp:{},attendance:{},materials:[],hiddenBy:[]};(t.meetings||(t.meetings=[])).push(m);queuePersistence();closeAppModal();teamProfileTab='meetings';openTeam(id);openMeetingSummary('team',id,m.id);}
 function setMeetingRSVP(scope,id,mid,choice){const owner=meetingOwner(scope,id),m=owner?.meetings?.find(r=>String(r.id)===String(mid));if(!m||!canManageMeeting(scope,owner)||!['yes','maybe','no'].includes(choice))return;(m.rsvp||(m.rsvp={}))[MY_NAME]=choice;queuePersistence();openMeetingSummary(scope,id,mid);}
 function toggleMeetingCalendar(scope,id,mid){const m=meetingOwner(scope,id)?.meetings?.find(r=>String(r.id)===String(mid));if(!m)return;m.hiddenBy=m.hiddenBy||[];m.hiddenBy=m.hiddenBy.includes(MY_NAME)?m.hiddenBy.filter(n=>n!==MY_NAME):[...m.hiddenBy,MY_NAME];queuePersistence();openMeetingSummary(scope,id,mid);}
 function recordMeetingAttendance(scope,id,mid,name){const owner=meetingOwner(scope,id),m=owner?.meetings?.find(r=>String(r.id)===String(mid));if(!m||!canManageMeeting(scope,owner))return;(m.attendance||(m.attendance={}))[name]=!m.attendance[name];queuePersistence();openMeetingSummary(scope,id,mid);}
@@ -22751,24 +22751,7 @@ function renderTeamContextRail(team){
  const upcoming=(team.meetings||[]).filter(meeting=>!meeting.cancelled&&new Date(meeting.endDate||meeting.date).getTime()>=Date.now()).sort((a,b)=>new Date(a.date)-new Date(b.date))[0],vote=(team.decisions||[]).find(row=>row.open),mine=teamAcceptedMembers(team).includes(MY_NAME);
  return `<section class="team-context-card"><h3>${IC.cal} Najbliższe spotkanie</h3>${upcoming?`<b>${escHtml(upcoming.title||'Spotkanie zespołu')}</b><p>${escHtml(new Date(upcoming.date).toLocaleString('pl-PL',{dateStyle:'medium',timeStyle:'short'}))}</p><p>${escHtml(upcoming.location||'')}</p><button type="button" onclick="openMeetingSummary('team','${escAttr(team.id)}','${escAttr(upcoming.id)}')">Zobacz szczegóły</button>`:'<p>Brak nadchodzących spotkań.</p>'}</section><section class="team-context-card"><h3>${projectVoteGavelIcon()} Otwarte głosowanie</h3>${vote?`<b>${escHtml(vote.prop||'Głosowanie zespołu')}</b><p>${teamDecisionTurnout(vote)} z ${teamDecisionEligible(team,vote)} uprawnionych zagłosowało</p><button type="button" onclick="openTeamRailVote('${escAttr(team.id)}','${escAttr(vote.id)}')">Zobacz głosowanie</button>`:'<p>Brak otwartych głosowań.</p>'}</section>${mine?`<section class="team-context-card"><h3>${teamBoardMentionIcon('project')} Dodaj nowy pomysł</h3><p>Podziel się propozycją z zespołem.</p><button type="button" onclick="beginTeamIdeaDraft('${escAttr(team.id)}')">＋ Dodaj pomysł</button></section>`:''}`;
 }
-function layoutTeamLikeProfile(){
- const host=document.getElementById('team-profile-body'),hero=host?.querySelector(':scope > .tp-hero'),tabs=hero?.querySelector('.tp-tabs');if(!host||!hero||!tabs)return;
- const columns=document.createElement('div');columns.className='team-profile-social-columns team-three-columns';
- const sidebar=document.createElement('aside');sidebar.className='team-profile-social-sidebar';
- const main=document.createElement('main');main.className='team-profile-social-main';
- const rail=document.createElement('aside');rail.className='team-profile-context-rail';rail.setAttribute('aria-label',teamProfileTab==='votes'?'Lista głosowań':'Informacje zespołu');
- const content=[...host.children].filter(el=>el!==hero);hero.classList.add('team-profile-identity');tabs.remove();
- const tabIcons=['<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></svg>',IC.users,teamBoardMentionIcon('project'),IC.chat,IC.cal,projectVoteGavelIcon(),teamBoardMentionIcon('dictionary'),IC.log];
- [...tabs.children].forEach((button,index)=>{const label=button.textContent.trim(),icon=document.createElement('i');icon.className='team-tab-icon';icon.setAttribute('aria-hidden','true');icon.innerHTML=tabIcons[index]||'';button.replaceChildren(icon);button.setAttribute('aria-label',label);button.setAttribute('title',label);button.setAttribute('aria-current',button.classList.contains('on')?'page':'false');});
- sidebar.append(hero);content.forEach(el=>main.append(el));
- if(teamProfileTab==='votes'){
-  const page=main.querySelector('.team-voting-page'),list=page?.querySelector('.team-vote-list'),toolbar=page?.querySelector('.team-voting-toolbar');
-  if(toolbar)rail.append(toolbar);if(list)rail.append(list);columns.classList.add('team-three-voting');
- }else{
-  const team=projectTeams.find(row=>String(row.id)===String(teamProfileTabTeamId));if(team)rail.innerHTML=renderTeamContextRail(team);
- }
- columns.append(sidebar,tabs,main,rail);host.replaceChildren(columns);
-}
+function layoutTeamLikeProfile(){if(typeof renderTeamWorkspaceLayout==='function')renderTeamWorkspaceLayout();}
 
 const openTeamBeforeSocialLayout=openTeam;
 openTeam=function(id,opts={}){const result=openTeamBeforeSocialLayout(id,opts);layoutTeamLikeProfile();return result;};
@@ -23050,6 +23033,8 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 #s-team-profile.on{padding-top:calc(var(--global-nav-height,64px) + 12px)!important}
 #s-team-profile>#team-profile-body{margin-top:0!important;padding-top:0!important}
 </style>
+<link rel="stylesheet" href="assets/workspace/team-workspace.css">
+<script src="assets/workspace/team-workspace.js"></script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
