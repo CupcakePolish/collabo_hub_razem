@@ -22694,7 +22694,7 @@ openMeetingSummary=function(scope,id,mid){openMeetingSummaryBeforeFinalPolish(sc
 
 
 <script>
-function layoutTeamLikeProfile(){const host=document.getElementById('team-profile-body'),hero=host?.querySelector(':scope > .tp-hero'),tabs=hero?.querySelector('.tp-tabs');if(!host||!hero||!tabs||hero.classList.contains('is-editing'))return;const columns=document.createElement('div');columns.className='team-profile-social-columns';const sidebar=document.createElement('aside');sidebar.className='team-profile-social-sidebar';const main=document.createElement('main');main.className='team-profile-social-main';const content=[...host.children].filter(el=>el!==hero);hero.classList.add('team-profile-identity');tabs.remove();sidebar.append(hero);main.append(tabs);content.forEach(el=>main.append(el));columns.append(sidebar,main);host.replaceChildren(columns);}
+function layoutTeamLikeProfile(){const host=document.getElementById('team-profile-body'),hero=host?.querySelector(':scope > .tp-hero'),tabs=hero?.querySelector('.tp-tabs');if(!host||!hero||!tabs)return;const columns=document.createElement('div');columns.className='team-profile-social-columns';const sidebar=document.createElement('aside');sidebar.className='team-profile-social-sidebar';const main=document.createElement('main');main.className='team-profile-social-main';const content=[...host.children].filter(el=>el!==hero);hero.classList.add('team-profile-identity');tabs.remove();sidebar.append(hero);main.append(tabs);content.forEach(el=>main.append(el));columns.append(sidebar,main);host.replaceChildren(columns);}
 const openTeamBeforeSocialLayout=openTeam;
 openTeam=function(id,opts={}){const result=openTeamBeforeSocialLayout(id,opts);layoutTeamLikeProfile();return result;};
 </script>
@@ -22846,6 +22846,14 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 .discover-composer-shell .shared-composer-identity{display:inline-flex;align-items:center;justify-self:start;width:auto!important;min-height:28px!important;padding:0 8px;border-radius:7px;background:var(--surf2);font-size:11px;font-weight:600}
 .discover-composer-shell .project-person-board-scope{min-height:28px!important;padding:0 8px!important;border-radius:7px;background:var(--surf2);font-size:11px}
 .discover-composer-shell .project-person-board-scope small{font-size:10px}
+</style>
+<style id="team-profile-edit-social-style">
+#s-team-profile .team-profile-identity.is-editing :is(.tp-inline-title,.tp-inline-description,.tp-inline-meta,.tp-location-picker){width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-title{font-size:25px;line-height:1.3}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-description{margin-top:16px;font-size:14px;min-height:130px;resize:vertical}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-meta{display:grid;grid-template-columns:minmax(0,1fr)}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-meta :is(input,select){width:100%;min-width:0;box-sizing:border-box}
+#s-team-profile .team-profile-identity.is-editing .tp-hero-actions .tp-button{width:100%;white-space:normal;line-height:1.4;padding:10px 12px}
 </style>
 <script id="app-ready-script">
 (()=>{
