@@ -97,3 +97,20 @@ html.team-workspace-mode #s-team-profile.on{padding-left:14px!important;padding-
 @media(max-width:1250px){html.team-workspace-mode .team-workspace-search{flex-basis:220px}html.team-workspace-mode .team-workspace-navigation{gap:7px}html.team-workspace-mode .team-workspace-navigation a{width:46px;flex-basis:46px}#s-team-profile .team-ws-board{grid-template-columns:240px minmax(0,1fr)}}
 @media(max-width:980px){html.team-workspace-mode .team-workspace-navigation{gap:4px}html.team-workspace-mode .team-workspace-navigation a{width:40px;flex-basis:40px;padding:8px}html.team-workspace-mode .team-workspace-search{flex-basis:170px}.team-workspace-search kbd{display:none}}
 @media(max-width:720px){html.team-workspace-mode .team-workspace-navigation{overflow-x:auto;overflow-y:hidden;justify-content:flex-start;margin-left:0;gap:2px;min-height:54px}html.team-workspace-mode .team-workspace-navigation a{width:35px;height:38px;flex-basis:35px;padding:6px;border-radius:10px}html.team-workspace-mode .team-workspace-navigation a>svg{width:23px;height:23px}html.team-workspace-mode .team-workspace-navigation a[aria-current]:after{bottom:-5px}.team-workspace-nav-tooltip{display:none}html.team-workspace-mode .team-workspace-navigation a[aria-current]:before{display:none}#s-team-profile .team-ws-board{grid-template-columns:minmax(0,1fr)}html.team-workspace-mode #s-team-profile.on{padding-left:10px!important;padding-right:64px!important}}
+
+/* Shared typography and spacing for platform and team vote catalogs. */
+:is(#s-voting,#team-workspace-votes-catalog) .pv-head h1{font-family:Georgia,'Times New Roman',serif!important;font-size:50px!important;font-weight:700!important;line-height:1.06!important;letter-spacing:-.035em!important;margin:8px 0 12px!important}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-head p{font-family:'DM Sans',sans-serif!important;font-size:14px!important;font-weight:400!important;line-height:1.6!important;color:var(--txm)!important;margin:8px 0 0!important}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-head{min-height:150px;gap:24px;align-items:flex-start;margin-bottom:22px}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-head .eyebrow{font:750 11px/1.4 'DM Sans',sans-serif!important;letter-spacing:.09em;color:var(--p700)}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-card h3{font:750 16px/1.4 'DM Sans',sans-serif!important;margin:8px 0 6px!important}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-card p{font:400 14px/1.5 'DM Sans',sans-serif!important;margin:6px 0!important}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-card footer{font:400 11px/1.5 'DM Sans',sans-serif!important}
+:is(#s-voting,#team-workspace-votes-catalog) .pv-tabs button{font-family:'DM Sans',sans-serif!important;font-size:13px!important;font-weight:650!important;padding:12px 14px!important}
+#team-workspace-votes-catalog .pv-layout{gap:20px;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+#team-workspace-votes-catalog .pv-card{padding:20px;border-radius:15px;background:var(--surf)}
+#team-workspace-votes-catalog .team-vote-detail{padding:20px;border-radius:16px}
+#team-workspace-votes-catalog .team-vote-detail>header h2{font:750 20px/1.35 'DM Sans',sans-serif!important}
+#team-workspace-votes-catalog .team-vote-detail p{font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6}
+@media(max-width:1150px){#team-workspace-votes-catalog .pv-layout{grid-template-columns:1fr}#team-workspace-votes-catalog .pv-card{flex-direction:row}}
+@media(max-width:700px){:is(#s-voting,#team-workspace-votes-catalog) .pv-head h1{font-size:34px!important}}
