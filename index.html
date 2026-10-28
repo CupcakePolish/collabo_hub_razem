@@ -23066,6 +23066,19 @@ function openFinishedInvitation(id,ref){const idea=ideas.find(i=>String(i.id)===
 #s-team-profile :is(.team-ideas-page,.team-voting-layout){min-height:calc(100dvh - 210px);align-items:stretch}
 </style>
 
+
+<style id="shared-ideas-catalog-typography">
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-catalog-heading h1{font-family:Georgia,'Times New Roman',serif!important;font-size:50px!important;font-weight:700!important;line-height:1.04!important;letter-spacing:-.035em!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-catalog-heading p{font-family:'DM Sans',sans-serif!important;font-size:14px!important;font-weight:400!important;line-height:1.55!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-results-toolbar{font-family:'DM Sans',sans-serif!important;font-size:13px!important;font-weight:600!important;color:var(--txs)!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-results-toolbar :is(b,strong){font-size:inherit!important;font-weight:600!important;color:inherit!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic h3{font-family:'DM Sans',sans-serif!important;font-size:16px!important;line-height:1.4!important;font-weight:750!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic :is(.ic-desc,.ic-description){font-family:'DM Sans',sans-serif!important;font-size:13px!important;font-weight:400!important;line-height:1.6!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-section-toggle{font:700 13px/1.4 'DM Sans',sans-serif!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-scope-tabs .tab{font-family:'DM Sans',sans-serif!important;font-size:13px!important;font-weight:650!important}
+@media(max-width:700px){:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-catalog-heading h1{font-size:38px!important}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
