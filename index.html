@@ -23058,6 +23058,14 @@ function openFinishedInvitation(id,ref){const idea=ideas.find(i=>String(i.id)===
 .invitation-history-row[role="button"]{cursor:pointer}.invitation-history-row[role="button"]:hover{background:var(--p50);border-color:var(--p300)}#app-modal.finished-invitation-detail{width:min(1000px,calc(100vw - 40px));max-width:1000px}.finished-invite-grid{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);gap:24px}.finished-invite-grid aside{border-right:1px solid var(--bdr);padding-right:20px}.finished-invite-grid h4{font-size:14px;margin:18px 0 10px}.finished-invite-grid p,.finished-invite-grid small{font-size:12px;line-height:1.6;color:var(--txs)}.finished-invite-person{display:flex;align-items:center;gap:9px;font-size:12px;margin:7px 0}.finished-invitation-modal .inv-conversation{max-height:60vh;overflow:auto}.finished-invitation-modal .inv-compose{display:none!important}@media(max-width:650px){.finished-invite-grid{grid-template-columns:1fr}.finished-invite-grid aside{border:0;padding:0}}
 </style>
 
+
+<style id="team-workspace-continuous-background">
+#s-team-profile:has(.team-ideas-page),#s-team-profile:has(.team-voting-page),#s-team-profile:has(.team-voting-layout){min-height:100dvh;background:var(--surf)!important}
+#s-team-profile :is(.team-ideas-page,.team-ideas-main,.team-voting-page,.team-voting-layout,.team-voting-main){background:transparent!important}
+#s-team-profile .team-profile-social-main:has(.team-ideas-page),#s-team-profile .team-profile-social-main:has(.team-voting-layout){min-height:calc(100dvh - 180px)!important;align-self:stretch}
+#s-team-profile :is(.team-ideas-page,.team-voting-layout){min-height:calc(100dvh - 210px);align-items:stretch}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
