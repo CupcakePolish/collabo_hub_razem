@@ -23637,6 +23637,14 @@ renderEmojiCenter();
 .ec-panel:has(.ec-last-used) .ec-emoji{height:76px;grid-template-rows:1fr auto;padding:7px 3px 6px;gap:4px}
 .ec-recent-symbol{display:grid;place-items:center;line-height:1}.ec-last-used{font:400 10px/1.3 'DM Sans',sans-serif;color:var(--txs);white-space:nowrap}
 </style>
+<style>
+.eq-slots>.eq-slot{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.eq-slots>.eq-slot:hover:not(.eq-drag-source):not(:has(.eq-remove:hover)){background:var(--p100);border-color:var(--p400);box-shadow:0 5px 16px #56329b18;transform:translateY(-2px)}
+.eq-slots>.eq-slot:has(.eq-remove:hover){background:#fcf9ff;border-color:#e9dfff;box-shadow:none;transform:none}
+.eq-slot .eq-remove{transition:background-color .16s,border-color .16s,box-shadow .16s}
+.eq-slot .eq-remove:hover{box-shadow:0 2px 8px #56329b24}
+@media(prefers-reduced-motion:reduce){.eq-slots>.eq-slot{transition:none}.eq-slots>.eq-slot:hover{transform:none!important}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
