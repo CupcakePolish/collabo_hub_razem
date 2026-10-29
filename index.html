@@ -23098,6 +23098,24 @@ function toggleIdeaParticipantFollow(button,name,event){event.stopPropagation();
 .idea-participant-follow{display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--p700);padding:0;cursor:pointer;flex-shrink:0}.idea-participant-follow svg{width:19px;height:19px}.idea-participant-follow.on svg{fill:currentColor}.idea-participant-follow:hover{background:var(--p100);border-color:var(--p300)}
 </style>
 
+
+<script>
+let discussionAvatarMenuAnchor=null;
+function closeDiscussionAvatarMenu(){document.getElementById('discussion-avatar-menu')?.remove();discussionAvatarMenuAnchor?.setAttribute('aria-expanded','false');discussionAvatarMenuAnchor=null;document.documentElement.classList.remove('discussion-avatar-menu-open');}
+function openDiscussionAvatarMenu(anchor,name){const same=discussionAvatarMenuAnchor===anchor;closeDiscussionAvatarMenu();if(same)return;const profile=personProfileByName(name);if(!profile)return;hideInvitationAvatarLabel();hidePlatformAuthorCard();document.getElementById('pv-person-card-portal')?.remove();document.querySelectorAll('.dc-person-menu,.chat-person-menu').forEach(el=>el.remove());const menu=document.createElement('div');menu.id='discussion-avatar-menu';menu.setAttribute('role','menu');const button=document.createElement('button');button.type='button';button.setAttribute('role','menuitem');button.innerHTML=chatPersonActionIcon('profile')+'<span>Zobacz profil</span>';button.onclick=event=>{event.stopPropagation();closeDiscussionAvatarMenu();closeAppModal();if(name===MY_NAME)go('myprofile');else openMember(Number(profile.id));};menu.append(button);document.body.append(menu);discussionAvatarMenuAnchor=anchor;anchor.setAttribute('aria-expanded','true');document.documentElement.classList.add('discussion-avatar-menu-open');const rect=anchor.getBoundingClientRect();menu.style.left=Math.max(8,Math.min(innerWidth-menu.offsetWidth-8,rect.left))+'px';menu.style.top=(rect.top-menu.offsetHeight-8>=8?rect.top-menu.offsetHeight-8:Math.min(innerHeight-menu.offsetHeight-8,rect.bottom+8))+'px';}
+openChatPersonMenu=function(anchor,name){openDiscussionAvatarMenu(anchor,name);};
+document.addEventListener('click',event=>{const avatar=event.target.closest('.dc-message-avatar,.inv-conversation .inv-face,.pv-message-avatar .pv-author-avatar,.dc-read-receipt [data-person-name]');if(!avatar)return;let name=avatar.dataset.personName||avatar.getAttribute('aria-label')||avatar.querySelector('img')?.alt||'';name=name.replace(/^Profil:\s*/,'').replace(/\s*[—–]\s*otwórz.*$/i,'');if(!personProfileByName(name))return;event.preventDefault();event.stopImmediatePropagation();openDiscussionAvatarMenu(avatar,name);},true);
+document.addEventListener('pointerdown',event=>{if(!event.target.closest('#discussion-avatar-menu')&&!discussionAvatarMenuAnchor?.contains(event.target))closeDiscussionAvatarMenu();},true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeDiscussionAvatarMenu();});window.addEventListener('resize',closeDiscussionAvatarMenu);window.addEventListener('hashchange',closeDiscussionAvatarMenu);window.addEventListener('scroll',()=>{if(discussionAvatarMenuAnchor)closeDiscussionAvatarMenu();},true);
+</script>
+<style>
+#discussion-avatar-menu{position:fixed;z-index:2147483500;width:210px;padding:7px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf);box-shadow:0 12px 38px #30213e26}
+#discussion-avatar-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:13px 12px;border:0;border-radius:9px;background:transparent;font:600 14px 'DM Sans',sans-serif;color:var(--txt);cursor:pointer;text-align:left}
+#discussion-avatar-menu button:hover,#discussion-avatar-menu button:focus-visible{background:var(--p100);color:var(--p700)}
+#discussion-avatar-menu svg{width:25px;height:25px;flex-shrink:0}
+html.discussion-avatar-menu-open .dc-message-avatar::after,html.discussion-avatar-menu-open #inv-avatar-label,html.discussion-avatar-menu-open .inv-face::after,html.discussion-avatar-menu-open .pv-message-avatar .board-person-hover-card{display:none!important}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
