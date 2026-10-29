@@ -23879,6 +23879,10 @@ renderEmojiCenter=function(){renderEmojiCenterBeforePassiveRecents();document.qu
 <style>
 .ec-emoji.ec-recent-static,.ec-emoji.ec-recent-static:hover{cursor:default;transform:none;background:linear-gradient(#fff,#fdfbff);transition:none}
 </style>
+<script>
+const renderEmojiCenterBeforePassiveQuickBar=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforePassiveQuickBar();document.querySelectorAll('#s-emoji-center .ec-quick-grid button.ec-emoji').forEach(button=>{const tile=document.createElement('div');tile.className=button.className+' ec-recent-static';while(button.firstChild)tile.append(button.firstChild);button.replaceWith(tile);});if(emojiCenterTab==='quick'&&!emojiQuickDraft)document.querySelectorAll('#s-emoji-center .ec-main-content .ec-library-grid button.ec-emoji').forEach(button=>{const tile=document.createElement('div');tile.className=button.className+' ec-recent-static';while(button.firstChild)tile.append(button.firstChild);button.replaceWith(tile);});};
+</script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
