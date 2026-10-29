@@ -23595,6 +23595,16 @@ renderEmojiCenter();
 .ec-edit-button{display:grid;place-items:center;width:40px;height:40px;padding:8px;box-sizing:border-box;border-radius:11px}
 .ec-edit-button svg{width:25px;height:25px}.ec-edit-button:hover{background:var(--p100);border-color:var(--p400)}
 </style>
+<script>
+const emojiQuickEditorBeforeCleanControls=emojiQuickEditorHTML;
+emojiQuickEditorHTML=function(){const host=document.createElement('div');host.innerHTML=emojiQuickEditorBeforeCleanControls();host.querySelector('[onclick="emojiQuickReset()"]')?.remove();host.querySelectorAll('.eq-move,.eq-handle').forEach(el=>el.remove());return host.innerHTML;};
+</script>
+<style>
+.eq-slot .eq-symbol{font-size:46px;line-height:1.1}
+.eq-slot .eq-symbol .reaction-thanks{font-size:28px;line-height:.85}
+.eq-slot .eq-remove{width:25px;height:25px;right:5px;top:5px;font-size:21px;line-height:1;border-color:#e4d8fa}
+.eq-slot .eq-remove:hover{background:var(--p100);border-color:var(--p400)}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
