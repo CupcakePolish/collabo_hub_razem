@@ -23505,6 +23505,28 @@ renderEmojiCenter();
 @media(max-width:1050px){#s-emoji-center .ec-page{padding-left:28px;padding-right:28px}}
 @media(max-width:700px){#s-emoji-center .ec-page{padding:24px 16px}}
 </style>
+<script>
+function emojiCenterSharedIcon(kind){
+ const nav={discover:'nl-discover',profile:'nl-profile',collections:'nl-resources'};
+ if(nav[kind])return document.querySelector('#'+nav[kind]+' svg')?.outerHTML||'';
+ if(kind==='star')return profileStarIcon();
+ if(kind==='clock')return IC.clock;
+ if(kind==='popular')return '<img src="assets/about/emoji-popularity.png" alt="">';
+ return '';
+}
+const renderEmojiCenterBeforeSharedIcons=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforeSharedIcons();const host=document.getElementById('s-emoji-center');if(!host)return;
+ const tabs=[...host.querySelectorAll('.ec-tabs button')];
+ ['discover','profile','collections',null,'popular'].forEach((kind,index)=>{const tab=tabs[index];if(!kind||!tab)return;tab.querySelector('i').innerHTML=emojiCenterSharedIcon(kind);if(index===0){tab.lastChild.textContent='Odkrywaj';}});
+ host.querySelectorAll('.ec-panel h2').forEach(title=>{const text=title.textContent.trim(),kind=text.includes('Twoje kolekcje')||text==='♧Kolekcje'?'collections':text.includes('Polecane kolekcje')?'star':text.includes('Ostatnio używane')?'clock':text.includes('popularne')||text.includes('Popularne')?'popular':null;if(kind&&title.querySelector('i'))title.querySelector('i').innerHTML=emojiCenterSharedIcon(kind);});
+};
+renderEmojiCenter();
+</script>
+<style>
+.ec-tabs button>i,.ec-panel h2>i{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;flex:0 0 23px;line-height:1;color:var(--p700)}
+.ec-tabs button>i svg,.ec-panel h2>i svg{display:block;width:23px;height:23px;max-width:none;flex:none}
+.ec-tabs button>i img,.ec-panel h2>i img{display:block;width:31px;height:25px;max-width:none;object-fit:contain;flex:none}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
