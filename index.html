@@ -7528,10 +7528,9 @@ function renderProjectInviteAction(ideaId){
 function projectInviteCandidates(idea){
   if(!idea)return [];
   const active=new Set(participantsOf(idea));
-  const invited=new Set(ensurePendingInviteIds(idea).filter(inv=>inv.kind==='project'&&!['blocked','rejected'].includes(inv.status)).map(inv=>inv.person));
+  const invited=new Set(ensurePendingInviteIds(idea).filter(inv=>inv.kind==='project'&&!invitationIsFinished(inv)).map(inv=>inv.person));
   const voting=new Set((idea.votes||[]).filter(v=>v.open&&v.kind==='project-join').map(v=>v.person));
-  const former=new Set(ensureProjectMembers(idea).filter(row=>row.status==='left'||row.status==='removed').map(row=>row.name));
-  return members.filter(member=>member.name!==MY_NAME&&!active.has(member.name)&&!invited.has(member.name)&&!voting.has(member.name)&&!former.has(member.name));
+  return members.filter(member=>member.name!==MY_NAME&&!active.has(member.name)&&!invited.has(member.name)&&!voting.has(member.name));
 }
 function projectInvitePersonPicker(idea,inputId){
   return dictionaryPicker(inputId,projectInviteCandidates(idea).map(member=>({name:member.name,meta:(member.skills||[]).slice(0,3).join(', ')})),{placeholder:'Wyszukaj osobę',kind:'person'});
@@ -23208,6 +23207,31 @@ document.addEventListener('pointerout',event=>{const person=event.target.closest
 .inv-summary-person:has(button) .inv-face::after,.finished-invite-person:has(button) .inv-face::after{content:none!important;display:none!important}
 </style>
 
+<script>
+// Accepted invitations remain historical records; leaving does not prevent a new invitation.
+const invitationSummaryBeforeAcceptedBadge=invitationCompactSummary;
+invitationCompactSummary=function(idea,inv){
+ const host=document.createElement('div');host.innerHTML='<details>'+invitationSummaryBeforeAcceptedBadge(idea,inv)+'</details>';
+ const badge=host.querySelector('.inv-summary-state.accepted');
+ if(badge){
+  badge.innerHTML='<span class="inv-accepted-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span><span>Przyjęte</span>';
+  const stamp=inv.acceptedAt||inv.joinedAt||inv.statusChangedAt;
+  if(stamp&&Number.isFinite(new Date(stamp).getTime())){
+   const label='Zaproszenie przyjęte: '+new Date(stamp).toLocaleString('pl-PL',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+   badge.dataset.dateTooltip=label;badge.setAttribute('aria-label',label);badge.tabIndex=0;
+   badge.setAttribute('onmouseenter','showBoardDateTooltip(this)');badge.setAttribute('onmouseleave','hideBoardDateTooltip()');
+   badge.setAttribute('onfocus','showBoardDateTooltip(this)');badge.setAttribute('onblur','hideBoardDateTooltip()');
+  }
+ }
+ return host.querySelector('details').innerHTML;
+};
+</script>
+<style>
+.team-invitation-card .inv-summary-state.accepted{display:inline-flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;border:1px solid #d7f0e2;border-radius:999px;background:linear-gradient(110deg,#f1fbf5,#effaf4);color:#148255;font-weight:600;white-space:nowrap}
+.inv-accepted-check{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#d9f5e5;color:#148255}
+.inv-accepted-check svg{width:23px;height:23px}
+.team-invitation-card .inv-summary-state.accepted::after{content:none!important;display:none!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
