@@ -23758,6 +23758,24 @@ renderEmojiCenter();
 .ec-hero>img{height:200px;transform:scale(1.3);transform-origin:center;pointer-events:none}
 @media(max-width:760px){.ec-hero>img{height:160px;transform:scale(1.1)}}
 </style>
+<script>
+const renderEmojiCenterBeforeSearchPolish=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforeSearchPolish();const icon=document.querySelector('#s-emoji-center .ec-search label>span');if(icon)icon.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg>';};
+renderEmojiCenter();
+</script>
+<style>
+#s-emoji-center .ec-search label{padding:0 17px!important;gap:12px;background:#f4f1fa!important;border:1px solid #e1dbed!important;border-radius:999px!important;min-height:46px;box-sizing:border-box;overflow:hidden;box-shadow:none;transition:border-color .16s,box-shadow .16s}
+#s-emoji-center .ec-search label:focus-within{border-color:var(--p400)!important;box-shadow:0 0 0 3px #b894ed20!important}
+#s-emoji-center .ec-search label>span{display:grid;place-items:center;flex:0 0 20px;width:20px;color:var(--p700)}
+#s-emoji-center .ec-search label>span svg{width:20px;height:20px;display:block}
+#s-emoji-center .ec-search label input{display:block;flex:1;min-width:0;width:100%;height:44px;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;font:500 13px 'DM Sans',sans-serif!important;color:var(--txt);appearance:none}
+#s-emoji-center .ec-search label input::placeholder{color:#9798aa;opacity:1}
+</style>
+<style>
+#s-emoji-center .ec-page{padding-top:10px!important}
+#s-emoji-center .ec-hero{align-items:start}
+#s-emoji-center .ec-hero>div{padding-top:8px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
