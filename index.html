@@ -23403,7 +23403,7 @@ renderAboutPlatform();
 </style>
 <script>
 const platformMapBeforeSoftEdges=platformMapHTML;
-platformMapHTML=function(){const host=document.createElement('div');host.innerHTML=platformMapBeforeSoftEdges();host.querySelector('header aside')?.remove();host.querySelectorAll('.map-card-arrow').forEach(el=>el.remove());for(const kind of ['emotions','guides','rules','register']){const art=host.querySelector('.'+kind+' .map-card-art');if(art)art.innerHTML='<img src="assets/about/map-'+kind+(kind==='emotions'?'-hq':'')+'.png" alt="">';}return host.innerHTML;};
+platformMapHTML=function(){const host=document.createElement('div');host.innerHTML=platformMapBeforeSoftEdges();host.querySelector('header aside')?.remove();host.querySelectorAll('.map-card-arrow').forEach(el=>el.remove());for(const kind of ['emotions','guides','rules','register']){const art=host.querySelector('.'+kind+' .map-card-art');if(art)art.innerHTML='<img src="assets/about/map-'+kind+(['emotions','rules'].includes(kind)?'-hq':'')+'.png" alt="">';}return host.innerHTML;};
 renderAboutPlatform();
 </script>
 <style>
@@ -23450,7 +23450,7 @@ renderAboutPlatform();
 @media(prefers-reduced-motion:reduce){:is(#s-profile,#s-profile-me) .profile-teams-card>.social-team-link{transition:none}}
 </style>
 <style>
-.platform-map-card.emotions .map-card-art img{mask-image:none;-webkit-mask-image:none;mix-blend-mode:normal;object-fit:contain}
+.platform-map-card.emotions .map-card-art img,.platform-map-card.rules .map-card-art img{mask-image:none;-webkit-mask-image:none;mix-blend-mode:normal;object-fit:contain}
 </style>
 <script id="app-ready-script">
 (()=>{
