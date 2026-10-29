@@ -23232,6 +23232,11 @@ invitationCompactSummary=function(idea,inv){
 .inv-accepted-check svg{width:23px;height:23px}
 .team-invitation-card .inv-summary-state.accepted::after{content:none!important;display:none!important}
 </style>
+<style>
+/* The whole invitation summary remains the expand target; its date closes the row. */
+.team-invitation-card>summary>.inv-team-chevron{display:none!important}
+.team-invitation-card>summary>.inv-team-summary-time{margin-left:auto!important;margin-right:0!important;text-align:right}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
