@@ -23921,6 +23921,17 @@ emojiCancelCollection=function(){if(emojiCollectionDraft)return confirmEmojiColl
 const goBeforeCollectionExitGuard=go;
 go=function(name,...args){if(emojiCollectionDraft&&name!=='emoji-center')return confirmEmojiCollectionExit(()=>goBeforeCollectionExitGuard(name,...args));return goBeforeCollectionExitGuard(name,...args);};
 </script>
+<script>
+function emojiMyRemovedIds(){try{return JSON.parse(localStorage.getItem('collabohub-hidden-owned-reactions:'+MY_NAME)||'[]');}catch{return [];}}
+const emojiMyResourcesBeforeDeletion=emojiMyResources;
+emojiMyResources=function(){const hidden=emojiMyRemovedIds();return emojiMyResourcesBeforeDeletion().filter(row=>!hidden.includes(row.id));};
+function emojiMyDeleteResource(id){const resource=emojiMyResources().find(r=>r.id===id);if(!resource)return;const rows=emojiOwnedResources().filter(r=>r.id!==id);localStorage.setItem('collabohub-owned-reactions:'+MY_NAME,JSON.stringify(rows));localStorage.setItem('collabohub-hidden-owned-reactions:'+MY_NAME,JSON.stringify([...new Set([...emojiMyRemovedIds(),id])]));renderEmojiCenter();}
+const emojiMyResourcesHTMLBeforeDeleteButtons=emojiMyResourcesHTML;
+emojiMyResourcesHTML=function(){const host=document.createElement('div');host.innerHTML=emojiMyResourcesHTMLBeforeDeleteButtons();host.querySelectorAll('.emr-item').forEach(tile=>{const text=tile.dataset.search||'',row=emojiMyResources().find(r=>(r.name+' '+r.value).toLocaleLowerCase('pl')===text);if(!row)return;const button=document.createElement('button');button.className='emr-delete';button.type='button';button.textContent='×';button.setAttribute('aria-label','Usuń '+row.name+' z moich zasobów');button.setAttribute('onclick',"emojiMyDeleteResource('"+escAttr(row.id)+"')");tile.append(button);});return host.innerHTML;};
+</script>
+<style>
+.emr-item{position:relative}.emr-delete{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:23px;height:23px;padding:0;border:1px solid var(--bdr);border-radius:50%;background:var(--surf);color:var(--p700);font-size:19px;cursor:pointer;transition:background .16s,border-color .16s}.emr-delete:hover{background:var(--p100);border-color:var(--p400)}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
