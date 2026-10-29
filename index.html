@@ -23611,6 +23611,16 @@ emojiQuickEditorHTML=function(){const host=document.createElement('div');host.in
 .platform-map-paths .platform-map-card.emotions .map-card-art img{display:block;width:100%!important;height:100%!important;max-height:none;max-width:none;object-fit:contain;transform:scale(1.08)}
 @media(max-width:700px){.platform-map-paths .platform-map-card.emotions .map-card-art{flex:0 0 90px;width:90px;height:100px}}
 </style>
+<script>
+const emojiQuickEditorBeforeIconActions=emojiQuickEditorHTML;
+emojiQuickEditorHTML=function(){const host=document.createElement('div');host.innerHTML=emojiQuickEditorBeforeIconActions();const save=host.querySelector('[onclick="emojiQuickSave()"]'),cancel=host.querySelector('[onclick="emojiQuickCancel()"]');if(save){save.innerHTML=draftHeaderIcon('save');save.classList.add('compact-edit-action');save.setAttribute('aria-label','Zapisz zmiany');save.title='Zapisz zmiany';}if(cancel){cancel.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19"/></svg>';cancel.classList.add('compact-edit-action');cancel.setAttribute('aria-label','Anuluj');cancel.title='Anuluj';if(save)save.after(cancel);}return host.innerHTML;};
+</script>
+<style>
+.eq-actions button.compact-edit-action,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon){display:inline-grid!important;place-items:center;width:38px!important;height:38px!important;min-width:38px;padding:8px!important;border:1px solid var(--bdr)!important;border-radius:10px!important;background:var(--surf)!important;color:var(--txt)!important;box-sizing:border-box;cursor:pointer;box-shadow:none;transition:background-color .16s,border-color .16s,box-shadow .16s}
+.eq-actions button.compact-edit-action svg,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon) svg{width:23px!important;height:23px!important;display:block}
+.eq-actions button.compact-edit-action:hover,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon):hover{background:var(--p100)!important;border-color:var(--p400)!important;color:var(--p700)!important;box-shadow:0 3px 10px #56329b14}
+.eq-actions button.compact-edit-action:focus-visible,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon):focus-visible{outline:2px solid var(--p400);outline-offset:2px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
