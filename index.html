@@ -23941,6 +23941,13 @@ document.addEventListener('pointerdown',event=>{if(!event.target.closest('.rm-op
 <style>
 .rm-sort-row{cursor:pointer;touch-action:pan-y}.rm-sort-row .rm-grip{cursor:grab;touch-action:none;padding:8px 4px;align-self:stretch;display:grid;place-items:center}.rm-sort-row .rm-grip:active{cursor:grabbing}.rm-sort-row:has(>button:hover),.rm-sort-row:has(.rm-options:hover){background:var(--surf);border-color:#ebe5f7;box-shadow:none}.rm-options{display:grid;min-width:240px}.rm-options button{text-align:left;border-radius:7px}.rm-options button:hover{background:var(--p100)}.rm-sort-row:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
 </style>
+<script>
+const renderEmojiCenterBeforeRecentTimeHover=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforeRecentTimeHover();document.querySelectorAll('#s-emoji-center .ec-last-used[title]').forEach(label=>{const date=label.title;if(!date)return;label.removeAttribute('title');label.dataset.dateTooltip=date;label.tabIndex=0;label.setAttribute('aria-label',label.textContent+', '+date);label.setAttribute('onmouseenter','showBoardDateTooltip(this)');label.setAttribute('onmouseleave','hideBoardDateTooltip()');label.setAttribute('onfocus','showBoardDateTooltip(this)');label.setAttribute('onblur','hideBoardDateTooltip()');});};
+</script>
+<style>
+.ec-last-used[data-date-tooltip]{cursor:default;transition:color .15s}.ec-last-used[data-date-tooltip]:hover{color:var(--p700)}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
