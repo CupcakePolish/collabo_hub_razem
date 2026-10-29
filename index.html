@@ -23401,6 +23401,30 @@ renderAboutPlatform();
 .msg-reaction-count,.board-reaction-type-count{font-size:14px!important;font-weight:500!important;color:#6e717c!important}
 .portfolio-reaction-chip:hover,.portfolio-reaction-chip.me:hover,.msg-reaction-chip:hover,.msg-reaction-chip.me:hover,.board-reaction-types>button:hover,.board-reaction-types>button.on:hover,.portfolio-reaction-buttons .board-reaction-trigger:hover{background:#fff!important}
 </style>
+<script>
+const platformMapBeforeSoftEdges=platformMapHTML;
+platformMapHTML=function(){const host=document.createElement('div');host.innerHTML=platformMapBeforeSoftEdges();host.querySelector('header aside')?.remove();host.querySelectorAll('.map-card-arrow').forEach(el=>el.remove());for(const kind of ['emotions','guides','rules','register']){const art=host.querySelector('.'+kind+' .map-card-art');if(art)art.innerHTML='<img src="assets/about/map-'+kind+'.png" alt="">';}return host.innerHTML;};
+renderAboutPlatform();
+</script>
+<style>
+#s-about .about-platform-new{max-width:1560px;margin:0 auto;padding:30px clamp(28px,4.8vw,90px) 32px}
+#s-about .about-platform-copy{padding-left:22px;padding-right:12px}
+.platform-map{padding:26px 26px 24px;margin-top:22px;overflow:hidden}
+.platform-map header{display:block;min-height:112px}
+.platform-map header>div{position:relative;z-index:2;max-width:720px}
+.platform-map header p{max-width:540px}
+.platform-map::before{inset:170px 0 0;background-size:cover;background-position:center center;opacity:.48;filter:blur(.6px);mask-image:linear-gradient(to bottom,transparent 0%,#000 22%,#000 82%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 22%,#000 82%,transparent 100%)}
+.platform-map::after{content:'';position:absolute;inset:165px 0 0;z-index:-1;pointer-events:none;background:linear-gradient(to right,#faf8ff 0%,transparent 10%,transparent 90%,#faf8ff 100%)}
+.platform-map-paths{padding:32px 4% 18px;gap:42px 13%;min-height:340px}
+.platform-map-card{gap:16px;padding:14px 20px;min-height:140px;background:linear-gradient(120deg,#fff9fff5,#f5e9fff5)}
+.platform-map-card.guides{background:linear-gradient(120deg,#f0f2fff5,#eaf7fff5)}.platform-map-card.rules{background:linear-gradient(120deg,#fffbe8f5,#fff6e6f5)}.platform-map-card.register{background:linear-gradient(120deg,#effaf9f5,#e3f7f0f5)}
+.platform-map-card .map-card-art,.platform-map-card.emotions .map-card-art{display:block;flex:0 0 112px;transform:none;filter:none}
+.map-card-art img{display:block;width:112px;height:112px;object-fit:contain;mix-blend-mode:multiply;mask-image:radial-gradient(ellipse 65% 65% at center,#000 50%,transparent 83%);-webkit-mask-image:radial-gradient(ellipse 65% 65% at center,#000 50%,transparent 83%)}
+.map-card-copy h3{font-size:16px}.map-card-copy p{font-size:12px}
+@media(min-width:1600px){.platform-map-paths{min-height:360px}.platform-map-card{min-height:146px}.map-card-copy h3{font-size:17px}.map-card-copy p{font-size:12px}}
+@media(max-width:1050px){#s-about .about-platform-new{padding-left:28px;padding-right:28px}.platform-map-paths{gap:28px 5%;padding-left:0;padding-right:0}.platform-map-card{padding:14px;gap:10px}.platform-map-card .map-card-art,.platform-map-card.emotions .map-card-art{flex-basis:80px}.map-card-art img{width:80px;height:90px}.platform-map header{min-height:130px}}
+@media(max-width:700px){#s-about .about-platform-new{padding:24px 16px}.platform-map{padding:22px 14px}.platform-map header{min-height:0;margin-bottom:20px}.platform-map h2{font-size:25px}.platform-map::before{top:220px}.platform-map-paths{padding-top:12px;gap:18px}.platform-map-card{min-height:132px}.platform-map-card .map-card-art,.platform-map-card.emotions .map-card-art{flex-basis:90px}.map-card-art img{width:90px;height:100px}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
