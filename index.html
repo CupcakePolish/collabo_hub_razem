@@ -23256,6 +23256,38 @@ invitationCompactSummary=function(idea,inv){
 .inv-created-calendar{width:18px;height:18px;flex:0 0 18px;color:var(--txs)}
 .team-invitation-card>summary:has(.inv-summary-state:hover,.inv-summary-state:focus-visible,.inv-team-summary-time:hover,.inv-team-summary-time:focus-within){background:var(--surf)!important;box-shadow:none!important}
 </style>
+<script>
+const invitationSummaryBeforeStatusTimeline=invitationCompactSummary;
+function invitationStatusEvent(inv){
+ const label=invitationStatusLabel(inv);
+ if(label==='Przyjęte')return {label,prefix:'Zaproszenie przyjęte',stamp:inv.acceptedAt||inv.joinedAt||inv.statusChangedAt,icon:'check'};
+ if(label==='Odrzucone')return {label,prefix:'Zaproszenie odrzucone',stamp:inv.declinedAt||inv.rejectedAt||inv.statusChangedAt,icon:'ban'};
+ if(label==='Anulowane')return {label,prefix:'Zaproszenie anulowane',stamp:inv.cancelledAt||inv.statusChangedAt,icon:'cross'};
+ if(label==='Wygasło')return {label,prefix:'Zaproszenie wygasło',stamp:inv.expiresAt||inv.statusChangedAt,icon:'hourglass'};
+ return {label,prefix:label==='Oczekuje na odpowiedź'?'Zaproszenie wysłane':label,stamp:inv.statusChangedAt||inv.sentAt||inv.createdAt||inv.date,icon:'clock'};
+}
+invitationCompactSummary=function(idea,inv){
+ const host=document.createElement('div');host.innerHTML='<details>'+invitationSummaryBeforeStatusTimeline(idea,inv)+'</details>';
+ host.querySelector('.inv-team-summary-time')?.remove();
+ const badge=host.querySelector('.inv-summary-state'),state=invitationStatusEvent(inv);
+ if(badge){
+ const paths={check:'<path d="m5 12 4 4L19 6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/>',cross:'<path d="m6 6 12 12M18 6 6 18"/>',hourglass:'<path d="M6 3h12M6 21h12M7 3c0 6 10 12 10 18M17 3c0 6-10 12-10 18"/>'};
+ badge.innerHTML='<span class="inv-status-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+paths[state.icon]+'</svg></span><span>'+escHtml(state.label)+'</span>';
+ const date=state.stamp?new Date(state.stamp):null;
+ const tooltip=state.prefix+(date&&Number.isFinite(date.getTime())?': '+date.toLocaleString('pl-PL',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}):' — data nie została zapisana');
+ badge.dataset.dateTooltip=tooltip;badge.setAttribute('aria-label',tooltip);badge.tabIndex=0;
+ badge.setAttribute('onmouseenter','showBoardDateTooltip(this)');badge.setAttribute('onmouseleave','hideBoardDateTooltip()');badge.setAttribute('onfocus','showBoardDateTooltip(this)');badge.setAttribute('onblur','hideBoardDateTooltip()');
+ }
+ return host.querySelector('details').innerHTML;
+};
+</script>
+<style>
+.team-invitation-card>summary>.inv-summary-state{margin-left:auto!important;display:inline-flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;border:1px solid var(--bdr);border-radius:999px;font-weight:600;white-space:nowrap}
+.team-invitation-card>summary>.inv-summary-state.waiting{background:linear-gradient(110deg,#faf7ff,#f5efff);border-color:#eee6ff;color:var(--p700)}
+.inv-status-symbol{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#eee5ff}
+.inv-status-symbol svg{width:23px;height:23px}
+.inv-summary-state.accepted .inv-status-symbol{background:#d9f5e5}.inv-summary-state.rejected .inv-status-symbol,.inv-summary-state.expired .inv-status-symbol{background:#e8e8ef}.inv-summary-state.cancelled .inv-status-symbol{background:#ffe4e7}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
