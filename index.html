@@ -23840,6 +23840,13 @@ renderEmojiCenter=function(){renderEmojiCenterBeforePackSearch();if(emojiCollect
 @media(max-width:1250px){.ecc-packs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.ecc-packs-grid{grid-template-columns:1fr}}
 </style>
+<style>
+.ecc-packs-grid .ecc-pack,.ecc-packs-grid .ecc-pack:nth-child(3n+2),.ecc-packs-grid .ecc-pack:nth-child(3n){background:var(--surf);background-image:none}
+.ecc-pack-body>p{display:none}
+.ecc-pack.open .ecc-pack-preview,.ecc-pack.ecc-search-open .ecc-pack-preview{display:none}
+.ecc-pack.open .ecc-pack-heading,.ecc-pack.ecc-search-open .ecc-pack-heading{gap:8px}
+.ecc-pack.open .ecc-pack-body,.ecc-pack.ecc-search-open .ecc-pack-body{padding-top:0}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
