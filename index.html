@@ -23908,6 +23908,19 @@ emojiCollectionComposerHTML=function(){const host=document.createElement('div');
 const renderEmojiCenterBeforeSavedSourceSearch=renderEmojiCenter;
 renderEmojiCenter=function(){renderEmojiCenterBeforeSavedSourceSearch();if(emojiCollectionDraft&&eccSourceScope==='saved'&&emojiCollectionSearch){const input=document.querySelector('.ecc-library-center>.ecc-search');if(input)eccPackSearch(input);}};
 </script>
+<script>
+let pendingEmojiCollectionExit=null;
+function confirmEmojiCollectionExit(action){if(!emojiCollectionDraft){action();return;}pendingEmojiCollectionExit=action;appModal('<h3>Odrzucić tworzoną kolekcję?</h3><p>Obecny postęp nie zostanie zapisany.</p><div class="app-modal-actions"><button class="vbtn" onclick="pendingEmojiCollectionExit=null;closeAppModal()">Kontynuuj tworzenie</button><button class="vbtn voted-yes" onclick="discardEmojiCollectionAndContinue()">Odrzuć i przejdź</button></div>');}
+function discardEmojiCollectionAndContinue(){const action=pendingEmojiCollectionExit;pendingEmojiCollectionExit=null;emojiCollectionDraft=null;emojiCollectionDragEnd(false);closeAppModal();action?.();}
+const emojiCenterSetTabBeforeCollectionExitGuard=emojiCenterSetTab;
+emojiCenterSetTab=function(tab){if(emojiCollectionDraft)return confirmEmojiCollectionExit(()=>emojiCenterSetTabBeforeCollectionExitGuard(tab));return emojiCenterSetTabBeforeCollectionExitGuard(tab);};
+const emojiCenterOpenCollectionBeforeExitGuard=emojiCenterOpenCollection;
+emojiCenterOpenCollection=function(id){if(emojiCollectionDraft)return confirmEmojiCollectionExit(()=>emojiCenterOpenCollectionBeforeExitGuard(id));return emojiCenterOpenCollectionBeforeExitGuard(id);};
+const emojiCancelCollectionBeforeExitGuard=emojiCancelCollection;
+emojiCancelCollection=function(){if(emojiCollectionDraft)return confirmEmojiCollectionExit(()=>emojiCancelCollectionBeforeExitGuard());return emojiCancelCollectionBeforeExitGuard();};
+const goBeforeCollectionExitGuard=go;
+go=function(name,...args){if(emojiCollectionDraft&&name!=='emoji-center')return confirmEmojiCollectionExit(()=>goBeforeCollectionExitGuard(name,...args));return goBeforeCollectionExitGuard(name,...args);};
+</script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
