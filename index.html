@@ -23149,6 +23149,18 @@ renderFinishedInvitations=function(rows){const wrapper=document.createElement('d
 .inv-summary-person{display:inline-flex;align-items:center;gap:10px;min-width:0}.inv-summary-person .inv-face{width:42px;height:42px}.inv-summary-person>span:last-child{display:grid;gap:4px}.inv-summary-person small{font-size:10px;color:var(--txs)}.inv-summary-person button{border:0;background:transparent;padding:0;font:700 13px 'DM Sans',sans-serif;color:var(--txt);text-align:left;cursor:pointer}.inv-summary-person button:hover{color:var(--p700);text-decoration:underline;text-underline-offset:3px}.inv-summary-arrow{color:#a79ab7;font-size:21px}.inv-summary-supporters{display:grid;gap:5px;margin-left:auto;min-width:90px}.inv-summary-supporters>small{font-size:10px;color:var(--txs)}.inv-summary-support-faces{display:flex;align-items:center}.inv-summary-support-faces .inv-face{width:28px;height:28px;margin-left:-3px}.inv-summary-state{font-size:11px;color:var(--p700);background:var(--p50);border-radius:20px;padding:7px 10px}.inv-extra-inviters{color:var(--p700);font-size:11px}
 </style>
 
+
+<script>
+function normalizeVotingFilterArrows(){document.querySelectorAll('#s-voting .pv-filter-section,#team-workspace-votes-catalog .team-catalog-filter-section').forEach(section=>{const summary=section.querySelector(':scope>summary');if(!summary||summary.dataset.sharedArrowReady)return;summary.dataset.sharedArrowReady='true';summary.querySelectorAll(':scope>svg,:scope>span').forEach(el=>el.remove());const arrow=document.createElement('span');arrow.className='voting-shared-filter-chevron';arrow.setAttribute('aria-hidden','true');arrow.textContent='⌃';summary.append(arrow);});}
+new MutationObserver(normalizeVotingFilterArrows).observe(document.body,{childList:true,subtree:true});normalizeVotingFilterArrows();
+</script>
+<style>
+:is(#s-voting,#team-workspace-votes-catalog) :is(.pv-filter-section,.team-catalog-filter-section)>summary>.voting-shared-filter-chevron{display:inline-block;flex:0 0 18px;width:18px;text-align:center;font-size:17px;font-weight:500;color:var(--txs);transition:transform .16s ease;transform:rotate(180deg)}
+:is(#s-voting,#team-workspace-votes-catalog) :is(.pv-filter-section,.team-catalog-filter-section)[open]>summary>.voting-shared-filter-chevron{transform:rotate(0deg)}
+:is(#s-voting,#team-workspace-votes-catalog) :is(.pv-filter-section,.team-catalog-filter-section)::details-content{interpolate-size:allow-keywords;overflow:clip;block-size:0;opacity:0;transition:block-size .22s ease,opacity .16s ease,content-visibility .22s;transition-behavior:allow-discrete}
+:is(#s-voting,#team-workspace-votes-catalog) :is(.pv-filter-section,.team-catalog-filter-section)[open]::details-content{block-size:auto;opacity:1}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
