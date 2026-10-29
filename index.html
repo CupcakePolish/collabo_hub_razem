@@ -23391,6 +23391,16 @@ renderAboutPlatform();
 @media(max-width:1000px){.platform-map-paths{gap:24px 5%;padding:24px 0}.map-card-art{flex-basis:60px;font-size:45px}.platform-map h2{font-size:27px}.platform-map header aside{display:none}.map-center-sign{display:none}}
 @media(max-width:700px){.platform-map{padding:20px 15px}.platform-map-paths{grid-template-columns:1fr;gap:16px}.platform-map h2{font-size:26px}.platform-map-card{min-height:132px}.platform-map-empty{padding-right:60px!important}}
 </style>
+<style>
+/* Shared reaction chips: generous emoji, readable count, neutral idle surface. */
+.portfolio-reaction-chip,.portfolio-reaction-chip.me,.msg-reaction-chip,.msg-reaction-chip.me,.board-reaction-types>button,.board-reaction-types>button.on,.portfolio-reaction-buttons .board-reaction-trigger{background:#e5e6e8!important;color:#6e717c!important;border:0!important;box-shadow:none!important;border-radius:7px!important;transition:background .14s ease}
+.portfolio-reaction-chip{font-size:25px!important;line-height:1.15;min-height:34px;padding:4px 7px;gap:5px}
+.portfolio-reaction-chip span:not(.reaction-thanks){font-size:14px!important;line-height:1.2;font-weight:500}
+.portfolio-reaction-chip .reaction-thanks{font-size:14px;line-height:.85}
+.msg-reaction-chip,.board-reaction-types>button{font-size:24px!important;line-height:1.2!important}
+.msg-reaction-count,.board-reaction-type-count{font-size:14px!important;font-weight:500!important;color:#6e717c!important}
+.portfolio-reaction-chip:hover,.portfolio-reaction-chip.me:hover,.msg-reaction-chip:hover,.msg-reaction-chip.me:hover,.board-reaction-types>button:hover,.board-reaction-types>button.on:hover,.portfolio-reaction-buttons .board-reaction-trigger:hover{background:#fff!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
