@@ -23776,6 +23776,18 @@ renderEmojiCenter();
 #s-emoji-center .ec-hero{align-items:start}
 #s-emoji-center .ec-hero>div{padding-top:8px}
 </style>
+<script>
+const openBoardComposerEmojiBeforeFocusLock=openBoardComposerEmoji;
+openBoardComposerEmoji=function(button,event){button.classList.add('emoji-open');return openBoardComposerEmojiBeforeFocusLock(button,event);};
+const openExpandedMessageReactionBeforeComposerLock=openExpandedMessageReaction;
+openExpandedMessageReaction=function(anchor,...args){if(anchor?.closest('.board-post-modal-composer'))anchor.classList.add('emoji-open');return openExpandedMessageReactionBeforeComposerLock(anchor,...args);};
+const closeEmojiPanelBeforeComposerUnlock=closeEmojiPanel;
+closeEmojiPanel=function(panel,...args){const anchor=panel?._emojiAnchor;const result=closeEmojiPanelBeforeComposerUnlock(panel,...args);anchor?.classList.remove('emoji-open');return result;};
+// Keep textarea focus while clicking its tools; the portal search can take focus after the lock is set.
+document.addEventListener('pointerdown',event=>{const button=event.target.closest('.board-post-comment-tools button');if(button&&button.closest('.board-post-modal-composer'))event.preventDefault();},true);
+const composerEmojiLockObserver=new MutationObserver(()=>{document.querySelectorAll('.board-post-modal-composer .emoji-open').forEach(anchor=>{if(![...document.querySelectorAll('.emoji-panel.on')].some(panel=>panel._emojiAnchor===anchor))anchor.classList.remove('emoji-open');});});
+composerEmojiLockObserver.observe(document.body,{childList:true,subtree:true});
+</script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
