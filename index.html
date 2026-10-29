@@ -23452,6 +23452,24 @@ renderAboutPlatform();
 <style>
 .platform-map-card.emotions .map-card-art img,.platform-map-card.rules .map-card-art img,.platform-map-card.guides .map-card-art img,.platform-map-card.register .map-card-art img{mask-image:none;-webkit-mask-image:none;mix-blend-mode:normal;object-fit:contain}
 </style>
+<style>
+/* Place each destination directly on its clearing in the supplied transparent map. */
+.platform-map::before,.platform-map::after{display:none!important}
+.platform-map header{min-height:0;margin-bottom:8px}
+.platform-map-paths{display:block;position:relative;aspect-ratio:2040/777;min-height:0!important;padding:0!important;margin:12px -15px 0;background:url('assets/about/community-map-hq.png') center/100% 100% no-repeat}
+.platform-map-paths .map-center-sign{display:none}
+.platform-map-paths .platform-map-card{position:absolute;box-sizing:border-box;min-height:0!important;height:24%;padding:10px 14px;gap:12px;border-radius:22px;box-shadow:0 7px 16px #8c76af12,inset 0 0 0 5px #ffffff50}
+.platform-map-paths .platform-map-card.emotions{left:11%;top:25%;width:33%}
+.platform-map-paths .platform-map-card.guides{left:65%;top:26%;width:28%}
+.platform-map-paths .platform-map-card.rules{left:13%;top:61%;width:32%}
+.platform-map-paths .platform-map-card.register{left:66%;top:62%;width:28%}
+.platform-map-paths .platform-map-card .map-card-art{flex:0 0 25%;height:100%;display:grid;place-items:center}
+.platform-map-paths .map-card-art img{width:100%;height:100%;max-height:100px;object-fit:contain}
+.platform-map-paths .map-card-copy h3{font-size:clamp(12px,1.05vw,17px);margin:0 0 6px}
+.platform-map-paths .map-card-copy p{font-size:clamp(9px,.72vw,12px);line-height:1.45}
+@media(max-width:1100px) and (min-width:701px){.platform-map-paths{aspect-ratio:2.35}.platform-map-paths .platform-map-card{height:26%;padding:8px;gap:7px}.platform-map-paths .platform-map-card.emotions{left:8%;width:38%}.platform-map-paths .platform-map-card.guides{left:63%;width:33%}.platform-map-paths .platform-map-card.rules{left:10%;width:36%}.platform-map-paths .platform-map-card.register{left:64%;width:33%}.platform-map-paths .map-card-copy p{font-size:9px}.platform-map-paths .map-card-copy h3{font-size:12px}}
+@media(max-width:700px){.platform-map-paths{display:grid;grid-template-columns:1fr;aspect-ratio:auto;margin:18px 0 0;padding:14px 0!important;gap:16px;background-size:auto 100%;background-position:center}.platform-map-paths .platform-map-card:is(.emotions,.guides,.rules,.register){position:relative;left:auto;top:auto;width:100%;height:auto;min-height:130px!important;padding:14px;gap:14px}.platform-map-paths .platform-map-card .map-card-art{flex:0 0 90px;height:100px}.platform-map-paths .map-card-copy h3{font-size:16px}.platform-map-paths .map-card-copy p{font-size:12px}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
