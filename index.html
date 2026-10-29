@@ -23192,6 +23192,22 @@ renderFinishedInvitations=function(rows){const wrapper=document.createElement('d
 .idea-participant-tile:has(.idea-participant-more:hover),.idea-participant-tile:has(.idea-participant-more:focus-visible),.idea-participant-tile:has(.idea-participant-menu:hover){border-color:var(--bdr)!important;box-shadow:none!important;transform:none!important}
 </style>
 
+
+<script>
+function personAvatarHasVisibleName(avatar){const name=avatar.dataset.personName||avatar.getAttribute('aria-label')||'';if(!name)return false;const person=avatar.closest('.inv-summary-person,.finished-invite-person,.pv-voter-person,.inv-people-list button,.idea-participant-tile>header,.board-person-card-head,.profile-post-header,.team-board-post-header');return !!person&&person.textContent.includes(name);}
+const showInvitationAvatarLabelBeforeVisibleName=showInvitationAvatarLabel;
+showInvitationAvatarLabel=function(avatar){if(personAvatarHasVisibleName(avatar)){hideInvitationAvatarLabel();return;}showInvitationAvatarLabelBeforeVisibleName(avatar);};
+const personInteractionSelector='.inv-summary-person button,.inv-summary-person .inv-face,.finished-invite-person button,.finished-invite-person .inv-face,.idea-participant-name,.board-person-card-name,.pv-electorate-person-name,.board-post-person-trigger,.team-board-author-name,.profile-post-author';
+document.addEventListener('pointerover',event=>{const person=event.target.closest(personInteractionSelector);if(!person)return;const avatar=person.matches('.inv-face')?person:null;if(avatar&&personAvatarHasVisibleName(avatar)){hideInvitationAvatarLabel();hideChatAvatarHoverLabel();}const card=person.closest('.team-invitation-card,.idea-participant-tile,.pv-card,.ic,.tp-board-post,.profile-wall-post,.member-card');if(card)card.classList.add('person-action-hover');},true);
+document.addEventListener('pointerout',event=>{const person=event.target.closest(personInteractionSelector);if(!person||person.contains(event.relatedTarget))return;const card=person.closest('.team-invitation-card,.idea-participant-tile,.pv-card,.ic,.tp-board-post,.profile-wall-post,.member-card');if(card&&!event.relatedTarget?.closest?.(personInteractionSelector))card.classList.remove('person-action-hover');},true);
+</script>
+<style>
+:is(.inv-summary-person button,.finished-invite-person button,.finished-invite-person>b,.inv-people-list b,.idea-participant-name,.board-person-card-name,.pv-electorate-person-name,.board-post-person-trigger b,.team-board-author-name,.profile-post-author),:is(.inv-summary-person button,.finished-invite-person button,.idea-participant-name,.board-person-card-name,.pv-electorate-person-name,.board-post-person-trigger b,.team-board-author-name,.profile-post-author):hover{color:var(--txt)!important;font-weight:700!important}
+.team-invitation-card.person-action-hover>summary,.team-invitation-card>summary:has(.inv-summary-person button:hover),.team-invitation-card>summary:has(.inv-summary-person .inv-face:hover){background:var(--surf)!important;box-shadow:none!important}
+.person-action-hover:is(.idea-participant-tile,.pv-card,.ic,.tp-board-post,.profile-wall-post,.member-card){transform:none!important;box-shadow:none!important;border-color:var(--bdr)!important}
+.inv-summary-person:has(button) .inv-face::after,.finished-invite-person:has(button) .inv-face::after{content:none!important;display:none!important}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
