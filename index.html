@@ -23161,6 +23161,32 @@ new MutationObserver(normalizeVotingFilterArrows).observe(document.body,{childLi
 :is(#s-voting,#team-workspace-votes-catalog) :is(.pv-filter-section,.team-catalog-filter-section)[open]::details-content{block-size:auto;opacity:1}
 </style>
 
+
+<script>
+const invitationPolicyBeforeExpiry=invitationPolicy;
+invitationPolicy=function(idea){return {expiryDays:30,...invitationPolicyBeforeExpiry(idea)};};
+const renderInvitationPolicyBeforeExpiry=renderInvitationPolicySettings;
+renderInvitationPolicySettings=function(idea){return renderInvitationPolicyBeforeExpiry(idea).replace('<div class="inv-policy-checks">',`<label class="inv-expiry-setting">Czas na odpowiedź na zaproszenie (dni)<input id="inv-policy-expiryDays-${idea.id}" type="number" min="1" max="365" value="${invitationPolicy(idea).expiryDays}"><small>Po tym czasie zaproszenie bez odpowiedzi wygasa. Nowy limit dotyczy nowych zaproszeń.</small></label><div class="inv-policy-checks">`);};
+const saveInvitationPolicyBeforeExpiry=saveInvitationPolicy;
+saveInvitationPolicy=function(id){const idea=ideas.find(i=>i.id===id);if(!idea||!canManageProjectMembers(idea))return;const days=Number(document.getElementById('inv-policy-expiryDays-'+id)?.value);if(!Number.isInteger(days)||days<1||days>365)return toast('Czas na odpowiedź musi wynosić od 1 do 365 dni.','warn');saveInvitationPolicyBeforeExpiry(id);idea.invitationPolicy={...invitationPolicy(idea),expiryDays:days};touchPrivateIdeaDraft(idea)||queuePersistence();};
+const deliverProtocolInvitationBeforeExpiry=deliverProtocolInvitation;
+deliverProtocolInvitation=function(idea,inv){deliverProtocolInvitationBeforeExpiry(idea,inv);inv.expiresAt=inv.sentAt+Number(inv.policy?.expiryDays||invitationPolicy(idea).expiryDays)*86400000;};
+const reconcileInvitationProtocolsBeforeExpiry=reconcileInvitationProtocols;
+reconcileInvitationProtocols=function(idea,now=Date.now()){let changed=reconcileInvitationProtocolsBeforeExpiry(idea,now);if(!idea||isPrivateIdeaDraft(idea))return changed;(idea.pendingInvites||[]).slice().forEach(inv=>{if(inv.kind!=='project'||inv.status!=='waiting'||inv.acceptedAt)return;const start=Number(inv.sentAt||inv.createdAt);if(!start)return;const expiry=Number(inv.expiresAt)||start*1+Number(inv.policy?.expiryDays||30)*86400000;if(now<expiry)return;inv.expiresAt=expiry;inv.status='expired';inv.statusChangedAt=expiry;inv.resolved=true;const history=idea.invitationHistory||(idea.invitationHistory=[]);if(!history.some(r=>r.id===inv.id))history.push({...inv});idea.pendingInvites=idea.pendingInvites.filter(r=>r!==inv);changed=true;});return changed;};
+const invitationStatusLabelBeforeFinalStatuses=invitationStatusLabel;
+invitationStatusLabel=function(inv,now=Date.now()){if(['joined','accepted'].includes(inv.status)||inv.joinedAt||inv.status===undefined&&inv.resolved)return 'Przyjęte';if(['declined','rejected','blocked'].includes(inv.status))return 'Odrzucone';if(inv.status==='cancelled')return 'Anulowane';if(inv.status==='expired')return 'Wygasło';if(inv.resolved)return 'Przyjęte';if(!inv.status||inv.status==='waiting')return 'Oczekuje na odpowiedź';return invitationStatusLabelBeforeFinalStatuses(inv,now);};
+const invitationCompactSummaryBeforeNoSupport=invitationCompactSummary;
+invitationCompactSummary=function(idea,inv){const wrapper=document.createElement('div');wrapper.innerHTML='<details>'+invitationCompactSummaryBeforeNoSupport(idea,inv)+'</details>';wrapper.querySelector('.inv-summary-supporters')?.remove();const state=wrapper.querySelector('.inv-summary-state');if(state){const label=invitationStatusLabel(inv);state.classList.add(label==='Przyjęte'?'accepted':label==='Odrzucone'?'rejected':label==='Anulowane'?'cancelled':label==='Wygasło'?'expired':'waiting');}return wrapper.querySelector('details').innerHTML;};
+function invitationSupportHistoryHTML(inv){return `<section class="inv-expanded-supporters"><h4>Popierają</h4>${(inv.supporters||[]).map(n=>`<span class="finished-invite-person">${invitationAvatarHTML(n)}<button onclick="openInvitationPerson('${escAttr(n)}')">${escHtml(n)}</button></span>`).join('')||'<small>Brak zapisanych osób popierających.</small>'}</section>`;}
+const renderTeamInvitationBeforeExpandedSupport=renderTeamInvitationCard;
+renderTeamInvitationCard=function(idea,inv){const html=renderTeamInvitationBeforeExpandedSupport(idea,inv);return html.replace('<section class="team-invitation-skills">',invitationSupportHistoryHTML(inv)+'<section class="team-invitation-skills">');};
+const renderFinishedBeforeRestoredSupport=renderFinishedInvitations;
+renderFinishedInvitations=function(rows){const wrapper=document.createElement('div');wrapper.innerHTML=renderFinishedBeforeRestoredSupport(rows);wrapper.querySelectorAll('.finished-invitation-collapse').forEach((el,index)=>{const row=rows[index],aside=el.querySelector('.finished-invite-grid aside');if(aside&&row)aside.insertAdjacentHTML('afterbegin',invitationSupportHistoryHTML(row.inv));});return wrapper.innerHTML;};
+</script>
+<style>
+.inv-summary-state.accepted{background:#e4f6ec;color:#27805f}.inv-summary-state.rejected,.inv-summary-state.expired{background:#f0eef5;color:#787284}.inv-summary-state.cancelled{background:#ffedf0;color:#ad4050}.inv-summary-state.waiting{background:#f2eafb;color:#7447ac}.inv-expanded-supporters{margin-bottom:16px}.inv-expanded-supporters h4{font-size:14px;margin:10px 0}.inv-expanded-supporters small{font-size:12px;color:var(--txs)}.inv-expanded-supporters button{border:0;background:none;font:inherit;color:inherit;cursor:pointer}.inv-expanded-supporters button:hover{color:var(--p700);text-decoration:underline}.inv-expiry-setting{display:grid;gap:8px;margin:16px 0;max-width:420px}.inv-expiry-setting input{padding:10px;border:1px solid var(--bdr);border-radius:10px;font:inherit;background:var(--surf);color:var(--txt)}.inv-expiry-setting small{font-size:11px;color:var(--txs)}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
