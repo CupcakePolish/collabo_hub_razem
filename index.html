@@ -23860,6 +23860,25 @@ renderEmojiCenter();
 .ec-recommended-copy footer .ec-collection-save-count{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1.4;color:var(--txs)}
 .ec-collection-save-count svg{width:17px;height:17px;display:block;flex:none}
 </style>
+<script>
+function arrangeCollectionExpansion(grid,panel,index,cardSelector){if(!grid||!panel)return;const cards=[...grid.querySelectorAll(':scope>'+cardSelector)];const width=grid.getBoundingClientRect().width,style=getComputedStyle(grid),columns=style.gridTemplateColumns.split(' ').filter(Boolean).length||1;const after=Math.min(cards.length-1,Math.ceil((index+1)/columns)*columns-1);cards[after]?.after(panel);}
+function separateEmojiPackExpansion(){const grid=document.querySelector('.ecc-packs-grid');if(!grid)return;const card=grid.querySelector('.ecc-pack.open');if(!card)return;const cards=[...grid.children],index=cards.indexOf(card),body=card.querySelector('.ecc-pack-body');if(!body)return;const panel=document.createElement('section');panel.className='ecc-pack-expansion-panel';panel.innerHTML='<header><div><h3>'+escHtml(card.querySelector('b')?.textContent||'Kolekcja')+'</h3><small>'+escHtml(card.querySelector('.ecc-pack-heading small')?.textContent||'')+'</small></div><button aria-label="Zwiń kolekcję" onclick="eccTogglePack(\''+eccOpenPack+'\')">⌃</button></header>';panel.append(body);card.classList.add('ecc-pack-selected');card.classList.remove('open');arrangeCollectionExpansion(grid,panel,index,'.ecc-pack');}
+const renderEmojiCenterBeforeStableExpansion=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforeStableExpansion();separateEmojiPackExpansion();if(emojiCollectionDraft||emojiQuickDraft||!emojiCenterCollection)return;const row=EMOJI_CENTER_COLLECTIONS.find(c=>c.id===emojiCenterCollection),content=document.querySelector('#s-emoji-center .ec-main-content');if(!row||!content)return;const section=document.createElement('section');section.className='ec-panel';section.innerHTML='<header><h2>'+emojiCenterSharedIcon('collections')+' Kolekcje</h2></header><div class="ec-collections ec-browse-expanding">'+EMOJI_CENTER_COLLECTIONS.map(emojiCenterCard).join('')+'</div>';const grid=section.querySelector('.ec-collections'),panel=document.createElement('section');panel.className='ecc-pack-expansion-panel';panel.innerHTML='<header><div><h3>'+escHtml(row.name)+'</h3><small>'+row.emoji.length+' emotikon · '+escHtml(row.author||'CollaboHub')+'</small></div><button aria-label="Zwiń kolekcję" onclick="emojiCenterCollection=\'\';renderEmojiCenter()">⌃</button></header><div class="ec-library-grid">'+row.emoji.map(emojiCenterTile).join('')+'</div>';content.replaceChildren(section);const index=EMOJI_CENTER_COLLECTIONS.indexOf(row);grid.children[index]?.classList.add('ec-collection-selected');arrangeCollectionExpansion(grid,panel,index,'.ec-collection');};
+</script>
+<style>
+.ecc-pack-selected,.ec-collection-selected{border-color:var(--p400)!important;background:var(--p100)!important}
+.ecc-pack-expansion-panel{grid-column:1/-1;min-width:0;padding:16px;border:1px solid var(--p400);border-radius:13px;background:var(--surf);box-sizing:border-box}
+.ecc-pack-expansion-panel>header{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:12px}.ecc-pack-expansion-panel h3{font:700 14px 'DM Sans',sans-serif;margin:0 0 6px}.ecc-pack-expansion-panel header small{color:var(--txs);font-size:11px}.ecc-pack-expansion-panel header button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--p700);font-size:20px;cursor:pointer}.ecc-pack-expansion-panel header button:hover{background:var(--p100)}
+.ecc-pack-expansion-panel .ecc-pack-body{display:block!important;padding:0!important}.ecc-pack-expansion-panel .ecc-resource-grid{max-height:none}.ecc-pack-selected .ecc-pack-preview{display:flex!important}.ec-browse-expanding{align-items:start}
+</style>
+<script>
+const renderEmojiCenterBeforePassiveRecents=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforePassiveRecents();document.querySelectorAll('#s-emoji-center .ec-panel').forEach(panel=>{if(!panel.querySelector('h2')?.textContent.includes('Ostatnio używane'))return;panel.querySelectorAll('button.ec-emoji').forEach(button=>{const tile=document.createElement('div');tile.className=button.className+' ec-recent-static';while(button.firstChild)tile.append(button.firstChild);button.replaceWith(tile);});});};
+</script>
+<style>
+.ec-emoji.ec-recent-static,.ec-emoji.ec-recent-static:hover{cursor:default;transform:none;background:linear-gradient(#fff,#fdfbff);transition:none}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
