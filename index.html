@@ -23621,6 +23621,22 @@ emojiQuickEditorHTML=function(){const host=document.createElement('div');host.in
 .eq-actions button.compact-edit-action:hover,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon):hover{background:var(--p100)!important;border-color:var(--p400)!important;color:var(--p700)!important;box-shadow:0 3px 10px #56329b14}
 .eq-actions button.compact-edit-action:focus-visible,.profile-own-actions :is(.profile-save-icon,.profile-cancel-icon):focus-visible{outline:2px solid var(--p400);outline-offset:2px}
 </style>
+<script>
+function emojiLastUsedTimes(){try{return JSON.parse(localStorage.getItem('collabohub-emoji-last-used:'+MY_NAME)||'{}')||{};}catch{return {};}}
+function recordEmojiLastUsed(emoji){const times=emojiLastUsedTimes();times[emoji]=Date.now();localStorage.setItem('collabohub-emoji-last-used:'+MY_NAME,JSON.stringify(times));}
+const useEmojiBeforeTimeTracking=useEmoji;
+useEmoji=function(emoji){recordEmojiLastUsed(emoji);return useEmojiBeforeTimeTracking(emoji);};
+const rememberMessageReactionBeforeTimeTracking=rememberMessageReaction;
+rememberMessageReaction=function(emoji){recordEmojiLastUsed(emoji);return rememberMessageReactionBeforeTimeTracking(emoji);};
+function emojiLastUsedLabel(stamp,now=Date.now()){if(!stamp)return 'Brak daty';const diff=Math.max(0,now-Number(stamp)),minutes=Math.floor(diff/60000);if(minutes<1)return 'przed chwilą';const current=new Date(now),date=new Date(Number(stamp)),day=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()),days=Math.round((day(current)-day(date))/86400000);if(days===1)return 'wczoraj';if(days>=2)return days+' dni';if(minutes<60)return minutes+' min';return Math.floor(minutes/60)+' godz.';}
+const renderEmojiCenterBeforeRecentDates=renderEmojiCenter;
+renderEmojiCenter=function(){renderEmojiCenterBeforeRecentDates();const host=document.getElementById('s-emoji-center'),times=emojiLastUsedTimes();host?.querySelectorAll('.ec-panel').forEach(panel=>{if(!panel.querySelector('h2')?.textContent.includes('Ostatnio używane'))return;panel.querySelectorAll('.ec-emoji').forEach(button=>{const emoji=button.getAttribute('aria-label'),stamp=times[emoji],symbol=document.createElement('span');symbol.className='ec-recent-symbol';while(button.firstChild)symbol.append(button.firstChild);button.append(symbol);const label=document.createElement('small');label.className='ec-last-used';label.textContent=emojiLastUsedLabel(stamp);if(stamp)label.title=new Date(stamp).toLocaleString('pl-PL');button.append(label);});});};
+renderEmojiCenter();
+</script>
+<style>
+.ec-panel:has(.ec-last-used) .ec-emoji{height:76px;grid-template-rows:1fr auto;padding:7px 3px 6px;gap:4px}
+.ec-recent-symbol{display:grid;place-items:center;line-height:1}.ec-last-used{font:400 10px/1.3 'DM Sans',sans-serif;color:var(--txs);white-space:nowrap}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
