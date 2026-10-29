@@ -23847,6 +23847,19 @@ renderEmojiCenter=function(){renderEmojiCenterBeforePackSearch();if(emojiCollect
 .ecc-pack.open .ecc-pack-heading,.ecc-pack.ecc-search-open .ecc-pack-heading{gap:8px}
 .ecc-pack.open .ecc-pack-body,.ecc-pack.ecc-search-open .ecc-pack-body{padding-top:0}
 </style>
+<script>
+const recommendedEmojiCollectionBeforeSix=recommendedEmojiCollectionHTML;
+recommendedEmojiCollectionHTML=function(row){const host=document.createElement('div');host.innerHTML=recommendedEmojiCollectionBeforeSix(row);const preview=host.querySelector('.ec-recommended-emojis');if(preview){const emojis=[...new Set([...(row.featured||[]),...(row.emoji||[])])].slice(0,6);preview.innerHTML=emojis.map(e=>'<span>'+reactionLabelHTML(e)+'</span>').join('');}
+const author=host.querySelector('.ec-collection-author');if(author&&(row.author||'CollaboHub')==='CollaboHub')author.textContent='CollaboHub';
+const count=host.querySelector('.ec-recommended-copy footer small');if(count){const total=(emojiCollectionSaves()[row.id]||[]).length;count.className='ec-collection-save-count';count.innerHTML=emojiCenterSharedIcon('profile')+'<span>'+total+'</span>';count.setAttribute('aria-label',total+' osób zapisało');count.tabIndex=0;count.dataset.dateTooltip='Osób zapisało';count.setAttribute('onmouseenter','showBoardDateTooltip(this)');count.setAttribute('onmouseleave','hideBoardDateTooltip()');count.setAttribute('onfocus','showBoardDateTooltip(this)');count.setAttribute('onblur','hideBoardDateTooltip()');}return host.innerHTML;};
+renderEmojiCenter();
+</script>
+<style>
+.ec-recommended-emojis{grid-template-columns:repeat(3,1fr);width:112px;flex-basis:112px;gap:5px}.ec-recommended-emojis>span{height:34px}
+.ec-recommended-copy .ec-collection-author{font-size:12px;line-height:1.4;min-height:20px}
+.ec-recommended-copy footer .ec-collection-save-count{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1.4;color:var(--txs)}
+.ec-collection-save-count svg{width:17px;height:17px;display:block;flex:none}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
