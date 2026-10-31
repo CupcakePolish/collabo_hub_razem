@@ -24110,6 +24110,16 @@ eccUpload=async function(input){const file=input.files?.[0];if(!file||!['image/p
 const reactionFilesReady=migrateReactionFilesToIndexedDB().catch(error=>{textReactionStorageError(error);});
 function textReactionStorageError(error){console.warn('Reaction asset storage migration could not complete:',error?.name||'storage error');}
 </script>
+<style>
+/* Only the deliberately positioned card may open. Legacy CSS :hover cards
+   otherwise appear at their parent offset before/alongside the positioned one. */
+body .board-person-hover-target:not(.board-person-hover-open)>.board-person-hover-card,
+body .board-person-hover-target:not(.board-person-hover-open):hover>.board-person-hover-card,
+body .board-person-hover-target:not(.board-person-hover-open):focus-within>.board-person-hover-card,
+body .board-person-hover-target.discover-author:not(.board-person-hover-open):has(.discover-post-author b:hover)>.board-person-hover-card,
+body .board-person-hover-target.post-modal-author:not(.board-person-hover-open):has(.board-post-person-trigger b:hover)>.board-person-hover-card{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+body:has(>#pv-person-card-portal) .pv-author>.board-person-hover-card{display:none!important;visibility:hidden!important;pointer-events:none!important}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
