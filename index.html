@@ -24120,6 +24120,21 @@ body .board-person-hover-target.discover-author:not(.board-person-hover-open):ha
 body .board-person-hover-target.post-modal-author:not(.board-person-hover-open):has(.board-post-person-trigger b:hover)>.board-person-hover-card{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
 body:has(>#pv-person-card-portal) .pv-author>.board-person-hover-card{display:none!important;visibility:hidden!important;pointer-events:none!important}
 </style>
+<script>
+function annotatePostReactionChips(html,reactions){const host=document.createElement('div');host.innerHTML=html;const entries=Object.entries(reactions||{}).filter(([,r])=>Number(r?.n||0)>0);host.querySelectorAll('.board-reaction-types>button,.msg-reaction-chip').forEach((button,index)=>{const entry=entries[index];if(!entry)return;const [emoji,row]=entry;button.dataset.reactionHoverEmoji=emoji;button.dataset.reactionHoverUsers=JSON.stringify(reactionUsers(row));button.dataset.reactionHoverCount=Number(row.n||0);button.removeAttribute('title');});return host.innerHTML;}
+const renderBoardReactionTypesBeforePeopleHover=renderBoardReactionTypes;
+renderBoardReactionTypes=function(reactions,...args){return annotatePostReactionChips(renderBoardReactionTypesBeforePeopleHover(reactions,...args),reactions);};
+const renderReactionSummaryBeforePeopleHover=renderReactionSummary;
+renderReactionSummary=function(reactions,...args){return annotatePostReactionChips(renderReactionSummaryBeforePeopleHover(reactions,...args),reactions);};
+function hidePostReactionPeopleHover(){document.getElementById('post-reaction-people-tooltip')?.remove();}
+function showPostReactionPeopleHover(button){hidePostReactionPeopleHover();let names=[];try{names=JSON.parse(button.dataset.reactionHoverUsers||'[]');}catch{}const emoji=button.dataset.reactionHoverEmoji,count=Number(button.dataset.reactionHoverCount||0),other=Math.max(0,count-names.length),text=names.join(', ')+(other?(names.length?' i ':'')+other+' '+plural(other,['osoba','osoby','osób']):'');const tip=document.createElement('div');tip.id='post-reaction-people-tooltip';tip.setAttribute('role','tooltip');tip.innerHTML='<div>'+reactionLabelHTML(emoji)+'</div><p>'+escHtml(text||'Brak zapisanych nazwisk')+'<br>zareagował(a): '+escHtml(emoji==='dzięki'?'dzięki':emoji)+'</p><small>(kliknij, aby zobaczyć reakcje)</small>';document.body.append(tip);const a=button.getBoundingClientRect(),r=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-r.width-8,a.left+a.width/2-r.width/2))+'px';tip.style.top=(a.top-r.height-10>=8?a.top-r.height-10:a.bottom+10)+'px';}
+document.addEventListener('pointerover',event=>{const button=event.target.closest('[data-reaction-hover-emoji]');if(button&&!button.contains(event.relatedTarget))showPostReactionPeopleHover(button);});
+document.addEventListener('pointerout',event=>{const button=event.target.closest('[data-reaction-hover-emoji]');if(button&&!button.contains(event.relatedTarget))hidePostReactionPeopleHover();});
+document.addEventListener('focusin',event=>{const button=event.target.closest('[data-reaction-hover-emoji]');if(button)showPostReactionPeopleHover(button);});document.addEventListener('focusout',hidePostReactionPeopleHover);document.addEventListener('pointerdown',hidePostReactionPeopleHover);addEventListener('scroll',hidePostReactionPeopleHover,true);addEventListener('resize',hidePostReactionPeopleHover);
+</script>
+<style>
+#post-reaction-people-tooltip{position:fixed;z-index:2147483550;width:max-content;max-width:min(310px,calc(100vw - 24px));box-sizing:border-box;padding:17px 20px;border-radius:9px;background:#111;color:white;text-align:center;box-shadow:0 6px 24px #0003;pointer-events:none;font:14px/1.45 'DM Sans',sans-serif}#post-reaction-people-tooltip>div{font-size:37px;line-height:1.2}#post-reaction-people-tooltip p{margin:12px 0 8px}#post-reaction-people-tooltip small{color:#bcbcc4;font-size:12px}#post-reaction-people-tooltip .reaction-thanks{font-size:30px}#post-reaction-people-tooltip img{width:55px;height:55px;object-fit:contain}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
