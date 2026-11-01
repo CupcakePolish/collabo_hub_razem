@@ -24589,6 +24589,12 @@ const resourceChatMountBeforeBubbleMatch=mountResourceSharedChat;
 mountResourceSharedChat=function(force=false){resourceChatMountBeforeBubbleMatch(force);const host=document.querySelector('.irc-host[data-mounted]');if(!host)return;host.querySelectorAll('.irc-author,.irc-stamp').forEach(label=>label.remove());host.querySelectorAll('.dc-message-avatar').forEach(avatar=>{const name=avatar.dataset.personName;if(!name)return;avatar.removeAttribute('title');avatar.dataset.dateTooltip=name;avatar.onmouseenter=()=>showBoardDateTooltip(avatar);avatar.onmouseleave=hideBoardDateTooltip;avatar.onfocus=()=>showBoardDateTooltip(avatar);avatar.onblur=hideBoardDateTooltip;});};
 </script>
 
+
+<style id="resource-header-outline-actions">
+.irw .irw-head{display:flex;flex-direction:row;align-items:flex-start;gap:20px}.irw .irw-head>div:first-child{flex:1;min-width:0}.irw .irw-head-actions{display:flex;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:8px;margin-left:auto;align-self:flex-start}.irw .irw-head-actions .irw-btn,.irw .irw-head-actions .irw-btn.primary{display:flex;justify-content:center;box-sizing:border-box;min-height:38px;width:100%;background:var(--surf);border:1px solid var(--p200);color:var(--p700);box-shadow:none;transition:background-color .15s,border-color .15s}.irw .irw-head-actions .irw-btn:hover,.irw .irw-head-actions .irw-btn.primary:hover{background:var(--p100);border-color:var(--p300);color:var(--p700)}.irw .irw-head-actions .irw-btn:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
+@media(max-width:550px){.irw .irw-head{flex-wrap:wrap;gap:12px}.irw .irw-head>div:first-child{flex-basis:100%}.irw .irw-head-actions{flex-direction:row;justify-content:flex-end;flex-wrap:wrap;margin-left:auto}.irw .irw-head-actions .irw-btn{width:auto;flex:0 0 auto}}
+</style>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
