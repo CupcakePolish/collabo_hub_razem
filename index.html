@@ -24265,6 +24265,22 @@ const discussionToggleFollowBeforeIcon=discussionToggleFollow;
 discussionToggleFollow=function(key,button){const on=discussionToggleFollowBeforeIcon(key,button);if(button?.classList.contains('idc-follow-replies')){button.innerHTML=discussionStarIcon(on);button.setAttribute('aria-label',on?'Przestań obserwować odpowiedzi':'Obserwuj odpowiedzi');}return on;};
 </script>
 
+
+<style id="discussion-action-hover-style">
+#s-idea.on .idw .dc-message::before,#s-idea.on .idw .dc-message::after,#s-idea.on .idw .dc-message-avatar:not([data-person-name])::after{content:none!important;display:none!important}
+#s-idea.on .idw .dc-message-row{transition:background-color .15s ease;border-radius:8px}#s-idea.on .idw .dc-message-row:hover,#s-idea.on .idw .dc-message-row:focus-within{background:var(--p050,#f5f1fb)}
+#s-idea.on .idw .idc-message-actions .idc-open-replies,#s-idea.on .idw .idc-message-actions .idc-follow-replies,#s-idea.on .idw .idc-add-reaction,#s-idea.on .idw .idc-reactions .portfolio-reaction-chip{transition:background-color .15s ease,color .15s ease,box-shadow .15s ease;cursor:pointer}
+#s-idea.on .idw .idc-message-actions .idc-open-replies{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:30px;height:30px;box-sizing:border-box;padding:5px!important;border-radius:8px;background:var(--surf2);color:var(--txs)}#s-idea.on .idw .idc-message-actions .idc-open-replies svg{width:18px;height:18px}
+#s-idea.on .idw .idc-message-actions .idc-follow-replies{width:30px;height:30px;border-radius:8px}
+#s-idea.on .idw .idc-message-actions .idc-open-replies:hover,#s-idea.on .idw .idc-message-actions .idc-follow-replies:hover,#s-idea.on .idw .idc-add-reaction:hover,#s-idea.on .idw .idc-reactions .portfolio-reaction-chip:hover{background:var(--p100)!important;color:var(--p700)!important;box-shadow:inset 0 0 0 1px var(--p200)}
+#s-idea.on .idw .idc-message-actions button:focus-visible,#s-idea.on .idw .idc-reactions button:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#s-idea.on .idw .dc-message-row,#s-idea.on .idw .idc-message-actions button{transition:none}}
+</style>
+<script id="discussion-icon-reply-script">
+const discussionReplyIconFormatBefore=formatIdeaWorkspaceConversation;
+formatIdeaWorkspaceConversation=function(host,c){discussionReplyIconFormatBefore(host,c);host.querySelectorAll('.idc-open-replies').forEach(button=>{const label=button.textContent.trim()||'Odpowiedz w wątku',icon=button.querySelector('svg');button.setAttribute('aria-label',label);button.title=label;if(icon)button.replaceChildren(icon);});};
+</script>
+
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
