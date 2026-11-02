@@ -24764,6 +24764,9 @@ const invitationActionBeforePositions=invitationTeamAction;
 invitationTeamAction=function(id,ref,action){if(action==='support')return changeInvitationTeamPosition(id,ref,'yes');return invitationActionBeforePositions(id,ref,action);};
 </script>
 
+<style id="invitation-summary-content-spacing">
+.team-invitation-card[open]>.team-invitation-body{padding-top:16px}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
