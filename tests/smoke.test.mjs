@@ -423,6 +423,24 @@ test('opposite lifecycle votes can coexist and open the matching decision', () =
   assert.deepEqual(opened,[votes[0].id,votes[1].id,votes[0].id]);
 });
 
+test('project decisions put open votes first and use precise creation time within each group', () => {
+  const source=html.slice(html.indexOf('function ideaDecisionTimestamp('),html.indexOf('function toggleIdeaDecisionDropdown('));
+  const sort=new Function(`
+    const boardDateFromValue=value=>value?new Date('2026-11-06T00:00:00Z'):null;
+    ${source}
+    return filterIdeaDecisionRows;
+  `)();
+  const date='2026-11-06',early=Date.parse(date+'T09:00:00Z'),late=Date.parse(date+'T10:00:00Z');
+  const idea={votes:[
+    {id:`v${late}`,prop:'Dodać kompetencję: Bazy danych',createdAt:date,open:true},
+    {id:'closed',createdAt:late+1000,open:false},
+    {id:'older',createdAt:String(early),open:true}
+  ]};
+  assert.deepEqual(sort(idea,{}).map(v=>v.id),[`v${late}`,'older','closed']);
+  assert.deepEqual(sort(idea,{sort:'oldest'}).map(v=>v.id),['older',`v${late}`,'closed']);
+  assert.deepEqual(sort(idea,{status:'closed'}).map(v=>v.id),['closed']);
+});
+
 test('project ballot records a choice without prompting for a reason', () => {
   const source=html.match(/function resourceDiscussionEventVote\([^\n]+\n[\s\S]*?\n}/)[0];
   const result=new Function(`
