@@ -4763,11 +4763,11 @@ html.theme-dark :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-filter-sideba
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-kind-icon svg{width:19px;height:19px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-title{font-size:17px;font-weight:700;letter-spacing:-.01em}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-desc{margin:0 0 15px;font-size:14px;line-height:1.6;color:var(--txm);font-weight:400}
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge{padding:6px 13px;border-color:var(--p200);background:var(--p50);color:var(--p700);font-size:12px;font-weight:700}
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge.status-completed{background:#f5f4f8;border-color:#e3e0e9;color:#5f596b}
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge.status-evaluation{background:var(--p100);border-color:var(--p200);color:var(--p800)}
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge.status-evaluation_completed{background:#edf7f0;border-color:#cfe8d7;color:#277044}
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge.status-archived{background:#f3f2f5;border-color:#dfdce4;color:#696473}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge{padding:0 13px;border-color:var(--idea-status-border);background:var(--idea-status-bg);color:var(--idea-status-text);font-size:12px;font-weight:700}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges:has(.status-completed){--idea-status-bg:#f5f4f8;--idea-status-border:#e3e0e9;--idea-status-text:#5f596b}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges:has(.status-evaluation){--idea-status-bg:var(--p100);--idea-status-text:var(--p800)}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges:has(.status-evaluation_completed){--idea-status-bg:#edf7f0;--idea-status-border:#cfe8d7;--idea-status-text:#277044}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges:has(.status-archived){--idea-status-bg:#f3f2f5;--idea-status-border:#dfdce4;--idea-status-text:#696473}
 :is(#s-ideas,#team-workspace-ideas-catalog) .match-flag{padding:5px 10px;background:var(--p50);border-color:var(--p100);font-size:12px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-variant-origin{margin:0 0 15px;color:var(--p700);font-size:12px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .rtag{padding:5px 10px!important;border-radius:999px!important;font-size:12px!important}
@@ -8280,7 +8280,7 @@ function renderIdeaCatalogCard(idea){
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
         <div class="ic-badges">
           ${isMatch?'<span class="match-flag">dopasowane</span>':''}
-          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${isPrivateIdeaDraft(idea)?'Prywatny szkic':archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span><button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
+          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${!archived&&lifecycle==='in_progress'&&!isPrivateIdeaDraft(idea)?'<span aria-hidden="true">'+IC.clock+'</span>':''}${isPrivateIdeaDraft(idea)?'Prywatny szkic':archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span><button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
         </div>
       </div>
       <div class="ic-desc">${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</div>
@@ -21291,7 +21291,16 @@ input:is([type="search"],[placeholder*="Szukaj"],[placeholder*="szukaj"],[placeh
 @media(min-width:1180px){.social-profile-columns{grid-template-columns:minmax(260px,320px) minmax(0,1fr) minmax(250px,310px);gap:20px}}@media(max-width:650px){.social-profile-main{padding:14px;min-height:450px}.profile-identity-avatar{width:112px;height:112px}.profile-empty-illustrated{min-height:340px}.profile-identity-card{padding:20px}}
 </style>
 <style id="idea-quick-follow-style">
-:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge{border-radius:9px!important}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges{display:flex;align-items:center;gap:8px}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;padding:6px;border:1px solid var(--p200);border-radius:9px;background:var(--surf);color:var(--p700);cursor:pointer;transition:background .15s,border-color .15s}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow svg{width:19px;height:19px;fill:none}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow:hover,:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow.on{background:var(--p100);border-color:var(--p400)}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow.on svg{fill:currentColor}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges{display:flex;align-items:center;gap:8px;--idea-control-height:34px;--idea-status-border:var(--p200);--idea-status-bg:var(--p50);--idea-status-text:var(--p700)}
+:is(#s-ideas,#team-workspace-ideas-catalog) :is(.idea-status-badge,.idea-quick-follow){box-sizing:border-box;height:var(--idea-control-height);border-radius:10px!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge{display:inline-flex;align-items:center;gap:6px}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-status-badge svg{display:block;width:16px;height:16px}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow{display:grid;place-items:center;flex:0 0 46px;width:46px;padding:0;border:1px solid var(--p200);background:var(--surf);color:var(--p700);cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow svg{width:19px;height:19px;fill:none}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow:hover{background:var(--p100);border-color:var(--p400)}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow.on{background:var(--idea-status-bg);border-color:var(--idea-status-border);color:var(--idea-status-text)}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow.on svg{fill:currentColor}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-quick-follow:focus-visible{outline:2px solid var(--p400);outline-offset:2px}
 </style>
 <style id="profile-card-hover-fix">
 :is(#s-profile,#s-profile-me) :is(.social-team-link,.social-profile-aside .profile-competency-card){cursor:pointer;transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease;border:1px solid var(--bdr)!important;border-radius:12px!important}
