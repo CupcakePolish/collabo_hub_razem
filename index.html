@@ -6335,13 +6335,6 @@ html.theme-dark #s-profile-me .mp-composer-field{color:var(--txm)}
   </div>
 </div>
 
-<!-- VOTE SUBPAGE -->
-<div id="s-vote" class="screen">
-  <div class="vote-page" id="vote-page-body"></div>
-</div>
-
-
-
 <!-- FULL REGISTER -->
 <div id="s-register" class="screen">
   <div class="ph"><div class="ph-inner"><button class="back-link" id="register-back" type="button">← Wróć do projektu</button><div class="eyebrow">Pełny rejestr projektu</div><h1 id="register-title">Rejestr</h1><p>Każde zdarzenie jest wyszukiwalne: decyzje, role, zadania, dokumenty, pliki, punkty i zmiany treści.</p></div></div>
@@ -8378,9 +8371,21 @@ function openIdea(id,preserveScroll=false,opts={}){
   idea.viewTab=idea.viewTab||'przeglad';
   if(idea.viewTab==='pliki')idea.viewTab='dokumenty';
   if(idea.viewTab==='teamy')idea.viewTab='zespol';
-  if(!opts.fromRoute){const context=parseAppRoute(),scoped=context.kind==='team'&&teamProjects(projectTeams.find(t=>t.id===context.teamId)||{}).some(i=>i.id===idea.id),hash=scoped?teamHash(context.teamId,'ideas')+'/'+ideaHash(idea).slice(1):ideaHash(idea);setAppHash(hash,opts.replaceRoute!==undefined?opts.replaceRoute:isCurrentIdeaRoute(id));}
+  if(!opts.fromRoute){
+    const context=parseAppRoute();
+    const scoped=context.kind==='team'&&teamProjects(projectTeams.find(t=>t.id===context.teamId)||{}).some(i=>i.id===idea.id);
+    const keepVote=opts.replaceRoute===undefined&&context.kind==='vote'&&context.ideaId===id&&idea.viewTab==='glosowania'&&ideaDecisionState(id).selected===context.voteId;
+    const hash=keepVote?voteHash(id,context.voteId):ideaHash(idea);
+    setAppHash(scoped?teamHash(context.teamId,'ideas')+'/'+hash.slice(1):hash,opts.replaceRoute!==undefined?opts.replaceRoute:isCurrentIdeaRoute(id));
+  }
   idea.files=idea.files||[];idea.discussion=idea.discussion||[];idea.tasks=idea.tasks||[];idea.votes=idea.votes||[];idea.meetings=idea.meetings||[];
   const reconciledVotes=reconcileOpenVotes(idea);
+  if(opts.voteId){
+    const state=ideaDecisionState(id);
+    if(!filterIdeaDecisionRows(idea,state).some(v=>v.id===opts.voteId)){
+      Object.assign(state,{query:'',area:'',status:'all'});
+    }
+  }
   if(reconcileInvitationProtocols(idea))queuePersistence();
   if(reconciledVotes)toast(`Domknięto ${reconciledVotes} ${plural(reconciledVotes,['zawieszoną decyzję','zawieszone decyzje','zawieszonych decyzji'])} i zastosowano jej wynik.`,'ok');
   const auth=authorOf(idea);
@@ -10093,11 +10098,12 @@ function isDecisionOpen(idea,key){idea._openDecisionKeys=idea._openDecisionKeys|
 function toggleDecisionCard(ideaId,key){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea._openDecisionKeys=idea._openDecisionKeys||{};idea._openDecisionKeys[key]=!idea._openDecisionKeys[key];openIdea(ideaId,true);}
 let _decisionFocus=null;
 function openDecisionFocus(ideaId,type,key){
+  if(type==='vote')return openVote(ideaId,key);
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
-  const item=type==='proposal'?(idea.proposals||[]).find(x=>x.pid===key):(idea.votes||[]).find(x=>x.id===key);if(!item)return;
-  const source=type==='proposal'?decisionSourceForProposal(item):decisionSourceForVote(item);
+  const item=(idea.proposals||[]).find(x=>x.pid===key);if(!item)return;
+  const source=decisionSourceForProposal(item);
   _decisionFocus={ideaId,type,key};
-  const content=type==='proposal'?renderProposal(ideaId,item):renderVoteCard(ideaId,item,true);
+  const content=renderProposal(ideaId,item);
   appModal(`<div class="decision-focus-shell"><header class="decision-focus-head"><div><div class="decision-focus-origin">Zakładka: ${source}</div><div class="decision-focus-context">${type==='proposal'?'Propozycja':'Głosowanie'} · ${escHtml(idea.title)}</div></div><button type="button" class="decision-focus-close" aria-label="Zamknij" onclick="closeAppModal()">×</button></header><main class="decision-focus-body">${content}</main></div>`,'decision-focus-modal');
 }
 function refreshDecisionFocus(){if(_decisionFocus)openDecisionFocus(_decisionFocus.ideaId,_decisionFocus.type,_decisionFocus.key);}
@@ -11415,18 +11421,18 @@ function cancelFragProposal(ideaId){const i=ideas.find(x=>x.id===ideaId);if(i){i
 
 function openVote(ideaId,voteId,preserveScroll=false,opts={}){
   const idea=ideas.find(i=>i.id===ideaId);
-  const v=idea?.votes.find(x=>x.id===voteId);
-  if(!v) return;
-  v.thread=v.thread||[];
-  const thread=v.thread.map(c=>renderComment(c,ideaId,0)).join('');
-  document.getElementById('vote-page-body').innerHTML=`
-    <button class="back-link" onclick="returnToIdea(${ideaId},'glosowania')">← Wróć do pomysłu: ${escHtml(idea.title.slice(0,50))}${idea.title.length>50?'…':''}</button>
-    ${renderVoteCard(ideaId,v,true)}
-    <div class="sc-title" style="margin:26px 0 12px">Dyskusja wokół tego głosowania</div>
-    ${thread||'<div style="font-size:13px;color:var(--txf);margin-bottom:8px">Brak komentarzy w tej dyskusji.</div>'}
-    ${commentBox('vote-'+v.id,`addVoteThreadComment(${ideaId},'${v.id}')`,'Komentarz do tej propozycji...')}`;
-  if(!opts.fromRoute)setAppHash(voteHash(ideaId,voteId),false);
-  go('vote',null,null,{preserveScroll,fromRoute:true});
+  if(!idea?.votes?.some(v=>v.id===voteId))return;
+  if(draftEditSession&&guardDraftExit(()=>openVote(ideaId,voteId,preserveScroll,opts)))return;
+  if(!canOpenPrivateIdeaDraft(idea))return openIdea(ideaId,preserveScroll,opts);
+
+  const state=ideaDecisionState(ideaId);
+  state.selected=voteId;
+  state.tab='preview';
+  idea.viewTab='glosowania';
+  idea.openDoc=null;
+  idea.invitationPage=false;
+  if(!opts.fromRoute)setAppHash(voteHash(ideaId,voteId),!!opts.replaceRoute);
+  openIdea(ideaId,preserveScroll,{fromRoute:true,voteId});
 }
 function addVoteThreadComment(ideaId,voteId){
   const idea=ideas.find(i=>i.id===ideaId);
@@ -12671,9 +12677,7 @@ function toggleReasonSupporters(ideaId,vid,rid){
   refreshVoteView(ideaId,vid);
 }
 function refreshVoteView(ideaId,vid){
-  if(_decisionFocus&&_decisionFocus.ideaId===ideaId&&_decisionFocus.type==='vote'&&_decisionFocus.key===vid) openDecisionFocus(ideaId,'vote',vid);
-  else if(document.getElementById('s-vote').classList.contains('on')) openVote(ideaId,vid,true);
-  else openIdea(ideaId,true);
+  openIdea(ideaId,true);
 }
 function activeParticipants(idea){
   // W tej wersji nie rozróżniamy aktywnych/nieaktywnych: liczą się wszyscy obecni w idei.
@@ -24813,7 +24817,12 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 <script id="idea-decisions-modern-script">
 const ideaDecisionWorkspace={};
 function ideaDecisionState(id){return ideaDecisionWorkspace[id]||(ideaDecisionWorkspace[id]={selected:'',tab:'preview'});}
-function selectIdeaDecision(id,vid,tab='preview'){const state=ideaDecisionState(id);state.selected=vid;state.tab=tab;openIdea(id,true);}
+function selectIdeaDecision(id,vid,tab='preview'){
+  const route=parseAppRoute();
+  if(tab==='preview'&&route.kind==='vote'&&route.ideaId===id)return openVote(id,vid,true,{replaceRoute:true});
+  const state=ideaDecisionState(id);
+  state.selected=vid;state.tab=tab;openIdea(id,true);
+}
 function ideaDecisionIcon(v){const name=v.roleData?.role||v.newMaterial?.name||v.newRole?.role||'',term=dictionaryEntries().find(t=>t.id===v.roleData?.termId||t.name===name);return term?.category==='competency'?dictionarySkillIcon(term.name):term?resourceDictionaryPicture(term):resourcePolishIcon('team');}
 function ideaDecisionCounts(idea,v){ensureVoteModeSnapshot(idea,v);const ballots=ensureVoteBallots(idea,v),eligible=voteParticipants(idea,v).length,yes=Number(v.yes)||0,no=Number(v.no)||0,abstain=Number(v.abstain)||0;return {ballots,eligible,yes,no,abstain,total:yes+no+abstain,required:voteQuorumNeeded(idea,v)};}
 function renderIdeaDecisionBallot(idea,v){const c=ideaDecisionCounts(idea,v),own=c.ballots[MY_NAME],allowed=v.open&&canCurrentUserVote(idea,v),pct=n=>c.eligible?Math.min(100,n/c.eligible*100):0;return `<section class="idc-ballot"><div class="idc-ballot-heading"><span class="idc-visual" style="width:42px;height:42px">${resourcePolishIcon('team')}</span><div><h3>Głosowanie: proponowana zmiana</h3><p>Czy popierasz tę propozycję?</p></div><div class="idc-quorum"><span>${escHtml(voteTimeInfo(v).label)}</span><span>${c.total>=c.required?'Kworum osiągnięte':'Kworum nieosiągnięte'}</span><span>Wymagane: ${c.required} z ${c.eligible} (${Math.round(pct(c.required))}%) <button class="inv-secondary" aria-label="Pokaż uprawnionych do głosowania" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}','eligible')">☷</button></span></div></div><div class="idc-turnout" role="img" aria-label="Zagłosowało ${c.total} z ${c.eligible}; kworum ${c.required}">${['yes','abstain','no'].map(key=>`<span class="${key}" style="width:${pct(c[key])}%"></span>`).join('')}<i style="left:${pct(c.required)}%"></i></div><div class="idc-vote-options">${[['yes','Za'],['abstain','Mam wątpliwości'],['no','Przeciw']].map(([key,label])=>`<div class="idc-vote-choice ${key} ${own===key?'selected':''}"><button class="idc-cast" aria-pressed="${own===key}"${allowed?'':' disabled'} onclick="resourceDiscussionEventVote(${idea.id},'${escAttr(v.id)}','${key}')">${key==='abstain'?resourcePolishIcon('info'):resourcePolishIcon(key)}${label}</button><button class="idc-count" aria-label="Pokaż głosy: ${label}" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}','${key}')">${c[key]}</button></div>`).join('')}</div><p style="font-size:12px;color:var(--txs)">${v.open?own?'Twój głos jest zapisany.':'Wybierz stanowisko, aby oddać głos.':escHtml(voteVerdict(idea,v).replace(/<[^>]*>/g,''))}</p></section>`;}
@@ -24843,7 +24852,7 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 <script id="idea-decisions-filter-chat-script">
 function ideaDecisionNeedsAttention(idea,v){return !!v.open&&canCurrentUserVote(idea,v)&&!ensureVoteBallots(idea,v)[MY_NAME];}
 function filterIdeaDecisionRows(idea,state){const q=(state.query||'').trim().toLocaleLowerCase('pl'),rows=(idea.votes||[]).filter(v=>(!q||[v.prop,v.proposedBy,v.roleData?.task].join(' ').toLocaleLowerCase('pl').includes(q))&&(!state.area||decisionSourceForVote(v)===state.area)&&(!state.status||state.status==='all'||state.status==='active'&&v.open||state.status==='closed'&&!v.open||state.status==='attention'&&ideaDecisionNeedsAttention(idea,v)));return rows.sort((a,b)=>{const stamp=v=>parsePlDateTime(v.createdAt||v.date||'')?.getTime()||0;return state.sort==='oldest'?stamp(a)-stamp(b):stamp(b)-stamp(a);});}
-function setIdeaDecisionFilter(id,key,value){ideaDecisionState(id)[key]=value;openIdea(id,true);if(key==='query'){const input=document.getElementById('idc-search-'+id);input?.focus();input?.setSelectionRange(value.length,value.length);}}
+function setIdeaDecisionFilter(id,key,value){ideaDecisionState(id)[key]=value;openIdea(id,true,{replaceRoute:true});if(key==='query'){const input=document.getElementById('idc-search-'+id);input?.focus();input?.setSelectionRange(value.length,value.length);}}
 const decisionRenderBeforeFilters=renderIdeaDecisionsWorkspace;
 renderIdeaDecisionsWorkspace=function(idea){const state=ideaDecisionState(idea.id),rows=filterIdeaDecisionRows(idea,state),all=idea.votes;let html;if(!rows.length)html='<section class="idc-layout"><div class="idc-list"></div><article class="idc-detail"><p>Brak decyzji pasujących do filtrów.</p></article></section>';else{const selected=rows.find(v=>v.id===state.selected)||rows[0];state.selected=selected.id;const oldTab=state.tab;state.tab='preview';try{html=decisionRenderBeforeFilters({...idea,votes:rows});}finally{state.tab=oldTab;}}const toolbar=`<div class="idc-toolbar"><input id="idc-search-${idea.id}" type="search" placeholder="Szukaj decyzji…" aria-label="Szukaj decyzji" value="${escAttr(state.query||'')}" oninput="setIdeaDecisionFilter(${idea.id},'query',this.value)"><div class="idc-filter-row">${[['all','Wszystkie'],['attention','Do rozpatrzenia'],['active','Aktywne'],['closed','Zakończone']].map(([key,label])=>`<button class="${(state.status||'all')===key?'on':''}" onclick="setIdeaDecisionFilter(${idea.id},'status','${key}')">${label}</button>`).join('')}<select aria-label="Obszar decyzji" onchange="setIdeaDecisionFilter(${idea.id},'area',this.value)"><option value="">Obszar</option>${[...new Set((all||[]).map(decisionSourceForVote))].map(area=>`<option${state.area===area?' selected':''}>${escHtml(area)}</option>`).join('')}</select><select aria-label="Kolejność decyzji" onchange="setIdeaDecisionFilter(${idea.id},'sort',this.value)"><option value="newest">Najnowsze</option><option value="oldest"${state.sort==='oldest'?' selected':''}>Najstarsze</option></select></div></div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);header.querySelector('.idc-heading-copy')?.insertAdjacentHTML('beforeend',`<span class="idc-state">${!selected.open?'Zakończone':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':ensureVoteBallots(idea,selected)[MY_NAME]?'Oddano głos':'Aktywne'}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{const v=rows[index];if(v)card.insertAdjacentHTML('beforeend',`<span class="idc-list-status">${!v.open?'Zakończone':ideaDecisionNeedsAttention(idea,v)?'Do rozpatrzenia':ensureVoteBallots(idea,v)[MY_NAME]?'Oddano głos':'Aktywne'}</span>`);});return shell.innerHTML;};
 function ideaDecisionChatContact(id,vid){const idea=ideas.find(i=>i.id===id),vote=idea?.votes?.find(v=>v.id===vid);return vote?{key:'idea-decision:'+id+':'+encodeURIComponent(vid),type:'idea-decision',ideaId:id,voteId:vid,name:vote.prop||'Decyzja',ini:'D'}:null;}
