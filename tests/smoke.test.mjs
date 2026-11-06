@@ -393,17 +393,54 @@ test('pins and notifications moved from overview cards into complete header moda
   assert.match(html, /\.idea-centered-overview\{display:grid;grid-template-columns:minmax\(0,1fr\);align-items:start\}/);
 });
 
-test('project overview uses the lifecycle strip and requires a reason for stage votes', () => {
+test('project overview uses the lifecycle strip and starts stage votes without a reason', () => {
   assert.match(html, /function renderProjectOverviewTop\(idea,id\)\{return projectOverviewLifecycle\(idea,id\);\}/);
   assert.match(html, /class="idea-lifecycle-strip" aria-label="Etapy projektu"/);
   assert.match(html, /class="idea-lifecycle-arrow \$\{direction\} icon-only"[\s\S]*confirmProjectLifecycleVote/);
   assert.match(html, /class="idea-lifecycle-connectors">\$\{arrow\('forward'\)\}\$\{arrow\('back'\)\}/);
   assert.doesNotMatch(html, /<small>Przejdź dalej<\/small>/);
   assert.match(html, /\.idea-lifecycle-arrow\.icon-only\{width:100%;min-width:0;grid-template-columns:1fr;grid-template-rows:1fr;place-items:center/);
-  assert.match(html, /id="project-lifecycle-reason"/);
-  assert.match(html, /function submitProjectLifecycleVote\(ideaId,targetStatus\)[\s\S]*if\(!reason\)return toast\('Dodaj uzasadnienie zmiany etapu\.'/);
-  assert.match(html, /text:reason\|\|`Projekt powinien przejść do stanu/);
+  assert.doesNotMatch(html, /id="project-lifecycle-reason"/);
   assert.doesNotMatch(html, /<section class="idea-stage-summary"><h2>Etap projektu<\/h2>/);
+});
+
+test('opposite lifecycle votes can coexist and open the matching decision', () => {
+  const source=html.match(/function startProjectLifecycleVote\([^\n]+\n[\s\S]*?\n}/)[0];
+  const {votes,opened}=new Function(`
+    const idea={id:1,lifecycleStatus:'completed'},ideas=[idea],opened=[];
+    const Date={now:()=>1000},MY_NAME='Anna',TODAY='today',NOW_TIME=()=>'',DEADLINE=()=>'';
+    const isActiveProjectMember=()=>true,projectIsArchived=()=>false,projectLifecycleStatus=i=>i.lifecycleStatus;
+    const notifyVote=()=>{},maybeNotify=()=>{},queuePersistence=()=>{},openVote=(id,vid)=>opened.push(vid);
+    ${source}
+    startProjectLifecycleVote(1,'in_progress');
+    startProjectLifecycleVote(1,'evaluation');
+    startProjectLifecycleVote(1,'in_progress');
+    return {votes:idea.votes,opened};
+  `)();
+  assert.deepEqual(votes.map(v=>v.targetStatus),['in_progress','evaluation']);
+  assert.ok(votes.every(v=>v.open&&!v.reasons.length));
+  assert.notEqual(votes[0].id,votes[1].id);
+  assert.deepEqual(opened,[votes[0].id,votes[1].id,votes[0].id]);
+});
+
+test('project ballot records a choice without prompting for a reason', () => {
+  const source=html.match(/function resourceDiscussionEventVote\([^\n]+\n[\s\S]*?\n}/)[0];
+  const result=new Function(`
+    const idea={viewTab:'glosowania'},v={ballots:{}},MY_NAME='Anna',resourceDiscussionEventExpanded={};
+    const findVote=()=>({idea,v}),canCurrentUserVote=()=>true,ensureVoteBallots=()=>v.ballots;
+    const isVoteStance=choice=>['yes','no','abstain'].includes(choice),recorded=[];
+    let saves=0,refreshes=0;
+    const castStance=(idea,v,choice,reason)=>{v.ballots[MY_NAME]=choice;recorded.push({choice,reason});return true;};
+    const queuePersistence=()=>saves++,refreshVoteView=()=>refreshes++;
+    ${source}
+    resourceDiscussionEventVote(1,'vote','yes');
+    resourceDiscussionEventVote(1,'vote','yes');
+    resourceDiscussionEventVote(1,'vote','no');
+    return {recorded,saves,refreshes};
+  `)();
+  assert.deepEqual(result.recorded.map(({choice,reason})=>[choice,reason.text]),[['yes',''],['no','']]);
+  assert.equal(result.saves,2);
+  assert.equal(result.refreshes,2);
 });
 
 test('project products use their cards and metrics fit without a direction column', () => {
@@ -1069,19 +1106,31 @@ test('project invitations send individual messages and requested competencies on
 });
 
 function runInvitationProtocolScenario(scenario){
-  const names=['invitationPolicy','startInvitationProtocol','beginInvitationSend','notifyProtocolInvitation','deliverProtocolInvitation','createInvitationProtocolVote','finalizeProtocolMembership','resolveInvitationProtocolVote','reconcileInvitationProtocols','submitInvitationObjection','invitationTeamAction','toggleInvitationCoSkill'];
+  const names=['projectWorkLocked','invitationPolicy','startInvitationProtocol','beginInvitationSend','notifyProtocolInvitation','deliverProtocolInvitation','createInvitationProtocolVote','finalizeProtocolMembership','resolveInvitationProtocolVote','reconcileInvitationProtocols','submitInvitationObjection','invitationTeamAction','toggleInvitationCoSkill'];
   const source=names.map(name=>html.match(new RegExp('function '+name+'\\([^\\n]+'))[0]).join('\n');
   return new Function('source','scenario', `
     let now=1000,MY_NAME='Patrycja',TODAY='today',Date={now:()=>now};
     let members=[{id:2,name:'Anna',skills:['Grafika','Copywriting']}],ideas=[{id:1,title:'Pomysł',pendingInvites:[],votes:[],log:[],invitationPolicy:{sendMode:'reaction',sendHours:24,joinMode:'reaction',joinHours:48,objection:'vote'}}];
     let sent=[],joined=[];
     const idea=ideas[0],inv={id:'test',kind:'project',person:'Anna',by:'Patrycja',why:'Zapraszamy',requestedSkills:['Grafika']};idea.pendingInvites.push(inv);
+    const projectLifecycleStatus=idea=>idea.lifecycleStatus||'in_progress';
     const isPrivateIdeaDraft=()=>false,notifyDemoPerson=(...args)=>sent.push(args),notifyVote=()=>{},ensureVoteModeSnapshot=()=>{},DEADLINE=()=>'',NOW_TIME=()=>'',escHtml=s=>s,markProjectMember=(idea,name)=>joined.push(name),queuePersistence=()=>{},closeAppModal=()=>{},openIdea=()=>{},toast=()=>{},canManageProjectMembers=()=>MY_NAME!=='Obca';
     const pendingInviteByRef=(idea,ref)=>{const index=idea.pendingInvites.findIndex(inv=>inv.id===ref);return index<0?null:{inv:idea.pendingInvites[index],index};};
     const document={getElementById:()=>({value:'Mam uzasadnione zastrzeżenie'})};
     eval(source);return eval(scenario);
   `)(source,scenario);
 }
+
+test('invitation reconciliation pauses membership changes until the project reopens',()=>{
+  const result=runInvitationProtocolScenario(`
+    inv.status='join_reaction';inv.reactUntil=now;inv.acceptedSkills=['Copywriting'];
+    idea.lifecycleStatus='completed';const whileLocked=reconcileInvitationProtocols(idea,now);
+    const waiting=inv.status;
+    idea.lifecycleStatus='in_progress';const afterReopen=reconcileInvitationProtocols(idea,now);
+    ({whileLocked,waiting,afterReopen,joined});
+  `);
+  assert.deepEqual(result,{whileLocked:false,waiting:'join_reaction',afterReopen:true,joined:['Anna']});
+});
 
 test('invitation reaction windows keep membership separate and finalize once after expiry',()=>{
   const result=runInvitationProtocolScenario(`
