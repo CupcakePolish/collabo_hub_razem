@@ -8111,7 +8111,6 @@ function walkIdeaComments(rows,visit){
   (rows||[]).forEach(row=>{visit(row);walkIdeaComments(row.replies||row.odpowiedzi||[],visit);});
 }
 function ideaCommentCount(idea){let count=0;walkIdeaComments(allCommentRoots(idea),()=>count++);return count;}
-function ideaActivityEntryCount(idea){return (idea.log||[]).length;}
 function latestSubstantiveActivity(idea){
   const moments=[],add=(date,time='')=>{const parsed=ideaDateTime(date,time);if(parsed&&parsed.getTime()<=Date.now()+86400000)moments.push(parsed);};
   add(idea.date);
@@ -8292,7 +8291,6 @@ function renderIdeaCatalogCard(idea){
       </div>
       </div>
       <div class="ic-stats">
-        <div class="ic-stat" title="Wpisy aktywności: ${ideaActivityEntryCount(idea)}">${IC.log} <b>${ideaActivityEntryCount(idea)}</b></div>
         <div class="ic-stat" title="Data utworzenia: ${escAttr(createdLabel(idea.date))}">${IC.cal} <span class="meta-label">Utworzono ${escHtml(createdLabel(idea.date))}</span></div>
         <div class="ic-stat meta-activity" title="${escAttr(preciseActivityLabel(activity))}">${IC.clock} <span class="meta-label">Aktywność ${escHtml(polishRelative(activity).replace(/\s+temu$/,''))}</span></div>
         <div class="ic-stat" title="Uczestnicy projektu: ${participantsOf(idea).length}">${IC.users} <b>${participantsOf(idea).length}</b></div>
@@ -21346,19 +21344,19 @@ html.theme-dark :is(#s-ideas,#team-workspace-ideas-catalog) .ic:has(.idea-quick-
 </style>
 <style id="ideas-two-column-cards">
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px!important;align-items:stretch}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:160px minmax(0,1fr)!important;gap:18px;padding:22px!important;min-width:0}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:160px minmax(0,1fr)!important;gap:14px;padding:18px!important;min-width:0}
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-thumb{width:160px!important;height:180px!important;border-radius:13px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-thumb img{width:100%!important;height:100%!important;object-fit:cover}
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-content{display:flex;flex-direction:column;min-width:0}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ic-top{flex-direction:column;align-items:flex-start;gap:10px}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-top{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:6px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-title-wrap{width:100%;min-width:0}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-title{overflow-wrap:anywhere}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-badges{flex-wrap:wrap;max-width:100%}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ic-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ic-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;min-height:0;max-height:none;overflow:hidden}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-stats{margin-top:auto;padding-top:13px;gap:10px}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>:is(.draft-card,.empty){grid-column:1/-1}
 @container(max-width:950px){:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list{grid-template-columns:1fr}:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:160px minmax(0,1fr)!important}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-top{flex-direction:row;align-items:flex-start}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-title-wrap{flex:1}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-stats{margin-top:13px}}
-@container(max-width:600px){:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:120px minmax(0,1fr)!important;gap:14px;padding:18px!important}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-thumb{width:120px!important;height:140px!important}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-top{flex-direction:column}}
+@container(max-width:600px){:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:120px minmax(0,1fr)!important;gap:12px;padding:14px!important}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-thumb{width:120px!important;height:140px!important}:is(#s-ideas,#team-workspace-ideas-catalog) .ic-top{flex-direction:column}}
 @container(max-width:380px){:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{grid-template-columns:1fr!important}:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-thumb{width:100%!important;height:180px!important}}
 </style>
 <style id="ideas-toolbar-alignment">
@@ -21556,7 +21554,7 @@ html.theme-dark input::selection,html.theme-dark textarea::selection{background:
 .global-nav #nl-resources svg[data-icon="resource-box"]{transform:scale(1.14);transform-origin:center}
 </style>
 <style id="idea-card-full-width-metadata">
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{row-gap:18px!important}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{row-gap:14px!important}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-stats{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:0!important;padding-top:14px!important;border-top:1px solid var(--bdr);min-width:0}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ic-footer{padding-bottom:5px;overflow:visible;min-height:max-content}
 :is(#s-ideas,#team-workspace-ideas-catalog) .cbar-roster .ros-tags{display:flex;flex-wrap:wrap;gap:7px;overflow:visible}
