@@ -24916,13 +24916,28 @@ function renderIdeaDecisionDeadline(v){
 }
 function renderIdeaDecisionBallot(idea,v){const c=ideaDecisionCounts(idea,v),own=c.ballots[MY_NAME],allowed=v.open&&canCurrentUserVote(idea,v),pct=n=>c.eligible?Math.min(100,n/c.eligible*100):0;return `<section class="idc-ballot"><div class="idc-ballot-heading"><span class="idc-visual" style="width:42px;height:42px">${resourcePolishIcon('team')}</span><div><h3>Głosowanie: proponowana zmiana</h3><p>Czy popierasz tę propozycję?</p></div></div><div class="idc-quorum">${renderIdeaDecisionDeadline(v)}<span aria-hidden="true">·</span>${renderIdeaQuorumIndicator(c)}<span aria-hidden="true">·</span><span>${c.total}/${c.eligible} głosów</span><button type="button" class="inv-secondary" aria-label="Pokaż uprawnionych do głosowania" title="Kworum: ${c.required} z ${c.eligible}" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}','eligible')">☷</button></div><div class="idc-turnout" role="img" aria-label="Zagłosowało ${c.total} z ${c.eligible}; kworum ${c.required}">${['yes','abstain','no'].map(key=>`<span class="${key}" style="width:${pct(c[key])}%"></span>`).join('')}<i style="left:${pct(c.required)}%"></i></div><div class="idc-vote-options">${[['yes','Za'],['abstain','Mam wątpliwości'],['no','Przeciw']].map(([key,label])=>`<div class="idc-vote-choice ${key} ${own===key?'selected':''}"><button class="idc-cast" aria-pressed="${own===key}"${allowed?'':' disabled'} onclick="resourceDiscussionEventVote(${idea.id},'${escAttr(v.id)}','${key}')">${key==='abstain'?resourcePolishIcon('info'):resourcePolishIcon(key)}${label}</button><button class="idc-count" aria-label="Pokaż głosy: ${label}" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}','${key}')">${c[key]}</button></div>`).join('')}</div>${v.open&&own?'':`<p style="font-size:12px;color:var(--txs)">${v.open?'Wybierz stanowisko, aby oddać głos.':escHtml(voteVerdict(idea,v).replace(/<[^>]*>/g,''))}</p>`}${allowed?`<div class="demo-strip"><span class="demo-strip-label">Demo wyniku</span><button type="button" class="demo-btn ok" onclick="demoConsensus(${idea.id},'${escAttr(v.id)}')">✓ Konsensus demo</button><button type="button" class="demo-btn no" onclick="demoObjection(${idea.id},'${escAttr(v.id)}')">✗ Odmowa demo</button></div>`:''}</section>`;}
 function showIdeaDecisionPeople(id,vid,choice){const {idea,v}=findVote(id,vid);if(!idea||!v)return;const ballots=ensureVoteBallots(idea,v),names=voteParticipants(idea,v).filter(name=>choice==='eligible'||ballots[name]===choice);appModal(`<h3>${choice==='eligible'?'Uprawnieni do głosowania':{yes:'Za',no:'Przeciw',abstain:'Mam wątpliwości'}[choice]}</h3>${names.map(name=>`<div class="pv-voter-person">${platformVoteAuthorAvatar(name)}<b>${escHtml(name)}</b></div>`).join('')||'<p>Brak zapisanych osób.</p>'}`);}
+function renderIdeaDecisionCompetencyName(role,name){
+  const terms=dictionaryEntries().filter(term=>term.category==='competency');
+  const termId=role.termId||needPrimaryCapability(role).termId;
+  const term=terms.find(entry=>entry.id===termId)
+    ||terms.find(entry=>entry.name.toLocaleLowerCase('pl')===platformCompetencyName(name).trim().toLocaleLowerCase('pl'));
+  if(!term)return escHtml(name);
+  const href='#dictionary/'+encodeURIComponent(term.id);
+  return `<span class="idc-competency-hover">
+    <a class="idc-competency-link" href="${href}">${escHtml(term.name)}</a>
+    <span class="idc-competency-popover">
+      <span class="idc-competency-popover-head"><span class="idc-visual" aria-hidden="true">${dictionarySkillIcon(term.name)}</span><a class="idc-competency-link" href="${href}">${escHtml(term.name)}</a></span>
+      <span class="idc-competency-definition">${escHtml(term.definition||'Brak opisu w słowniku.')}</span>
+    </span>
+  </span>`;
+}
 function renderIdeaDecisionPreview(idea,v){
   if(v.roleData){
     const role=v.roleData,name=needPrimaryCapability(role).name,required=Math.max(1,Number(role.min||role.max)||1);
     return `<h3>Proponowana kompetencja</h3>
       <article class="idc-competency-preview">
         <span class="idc-visual" aria-hidden="true">${ideaCompetencyTileIcon(name)}</span>
-        <div class="idc-competency-copy"><strong>${escHtml(name)}</strong><p>${escHtml(role.task||'Nie podano opisu.')}</p></div>
+        <div class="idc-competency-copy"><strong>${renderIdeaDecisionCompetencyName(role,name)}</strong><p>${escHtml(role.task||'Nie podano opisu.')}</p></div>
         <span class="need-status missing" aria-label="Obsada: 0 z ${required} potrzebnych osób">0/${required}</span>
       </article>`;
   }
@@ -24955,6 +24970,13 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-competency-copy{min-width:0;overflow-wrap:anywhere}
 .idc-competency-copy strong{display:block;font-size:15px;line-height:1.35}
 .idc-competency-copy p{margin:3px 0 0;color:var(--txs);white-space:pre-wrap}
+.idc-competency-hover{position:relative;display:inline-block;max-width:100%}
+.idc-competency-link{color:var(--p700);text-decoration:underline;text-decoration-color:var(--p300);text-underline-offset:3px}
+.idc-competency-link:is(:hover,:focus-visible){color:var(--p800);text-decoration-color:currentColor}
+.idc-competency-popover{display:none;position:absolute;z-index:20;top:100%;left:0;box-sizing:border-box;width:min(320px,calc(100vw - 120px));padding:14px;border:1px solid var(--bdr);border-radius:14px;background:var(--surf);box-shadow:0 12px 30px #30204026}
+.idc-competency-hover:is(:hover,:focus-within) .idc-competency-popover{display:grid;gap:9px}
+.idc-competency-popover-head{display:flex;align-items:center;gap:10px}
+.idc-competency-definition{max-height:40dvh;overflow:auto;color:var(--txm);font-size:13px;font-weight:400;line-height:1.5;white-space:pre-wrap}
 .idc-competency-preview .need-status{align-self:center}
 </style>
 <script id="idea-decisions-filter-chat-script">
