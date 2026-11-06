@@ -292,15 +292,12 @@ test('discover post editing reuses the full composer and marks edited posts', ()
 });
 
 test('team catalog toolbar keeps search and create action together', () => {
-  assert.match(html, /class="teams-catalog-tools"[\s\S]*id="teams-search"[\s\S]*class="teams-create-button"[^>]*onclick="startGlobalTeamForm\(\)"/);
+  assert.match(html, /class="teams-catalog-tools"[\s\S]*id="teams-search"[\s\S]*class="catalog-add-button" aria-label="Utwórz zespół" onclick="startGlobalTeamForm\(\)"><svg/);
   assert.match(html, /class="teams-results-toolbar"/);
-  assert.match(html, /\.teams-create-button\{[\s\S]*white-space:nowrap/);
-  assert.match(html, /\.teams-create-button\{[\s\S]*border:2px solid #cbb8ee[\s\S]*background:#fff[\s\S]*color:#57329f/);
 });
 
 test('add idea still starts the existing private-draft flow', () => {
-  assert.match(html, /class="ideas-add-button" onclick="beginNewIdea\(\)"/);
-  assert.match(html, /:is\(#s-ideas,#team-workspace-ideas-catalog\) \.ideas-add-button\{[\s\S]*border:2px solid #cbb8ee[\s\S]*background:#fff[\s\S]*color:#57329f/);
+  assert.match(html, /class="catalog-add-button" aria-label="Dodaj pomysł" onclick="beginNewIdea\(\)"><svg/);
   assert.doesNotMatch(html, /<button[^>]*class="btn-add"[^>]*onclick="beginNewIdea\(\)"/);
   assert.match(html, /ideas-search-row/);
   assert.match(html, /function beginNewIdea\(\)/);
