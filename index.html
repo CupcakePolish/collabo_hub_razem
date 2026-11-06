@@ -24879,10 +24879,10 @@ function renderIdeaDecisionPreview(idea,v){
   if(v.roleData){
     const role=v.roleData,name=needPrimaryCapability(role).name,required=Math.max(1,Number(role.min||role.max)||1);
     return `<h3>Proponowana kompetencja</h3>
-      <article class="idea-competency-row idc-competency-preview need-missing">
-        <div class="idea-competency-tile-top"><span class="idea-competency-tile-icon">${ideaCompetencyTileIcon(name)}</span></div>
-        <div class="idea-competency-copy"><strong>${escHtml(name)}</strong><p>${escHtml(role.task||'Nie podano opisu.')}</p></div>
-        <div class="idea-competency-actions"><span class="need-status missing" aria-label="Obsada: 0 z ${required} potrzebnych osób">0/${required}</span></div>
+      <article class="idc-competency-preview">
+        <span class="idc-visual" aria-hidden="true">${ideaCompetencyTileIcon(name)}</span>
+        <div class="idc-competency-copy"><strong>${escHtml(name)}</strong><p>${escHtml(role.task||'Nie podano opisu.')}</p></div>
+        <span class="need-status missing" aria-label="Obsada: 0 z ${required} potrzebnych osób">0/${required}</span>
       </article>`;
   }
   const before=currentVoteText(idea,v),after=proposedVoteText(idea,v);if(before&&after)return `<h3>Porównanie przed i po</h3><div class="vote-change-compare"><section class="vote-change-side"><h4>Obecna wersja (przed zmianą)</h4>${mdRender(before)}</section><section class="vote-change-side new"><h4>Proponowana wersja (po zmianie)</h4>${mdRender(after)}</section></div>`;return renderVoteContent(idea,v);}
@@ -24908,8 +24908,13 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-dropdown .discover-dropdown-menu{left:0;right:auto;box-sizing:border-box;max-width:calc(100vw - 45px);background:var(--surf);border-color:var(--bdr)}
 .idc-dropdown .discover-dropdown-menu button{color:var(--txt)}
 .idc-dropdown .discover-dropdown-menu button:is(.on,:hover){background:var(--p100);color:var(--p700)}
-.idc-content .idc-competency-preview{width:100%;box-sizing:border-box;min-height:0;overflow-wrap:anywhere}
-.idc-competency-preview .idea-competency-actions{margin-top:0!important;padding-top:0!important;min-height:0}
+.idc-content .idc-competency-preview{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:12px;padding:12px;margin-top:6px;border:1px solid var(--bdr);border-radius:16px;background:var(--surf)}
+.idc-competency-preview .idc-visual{width:44px;height:44px;border-radius:11px}
+.idc-competency-preview .idc-visual svg{width:26px;height:26px}
+.idc-competency-copy{min-width:0;overflow-wrap:anywhere}
+.idc-competency-copy strong{display:block;font-size:15px;line-height:1.35}
+.idc-competency-copy p{margin:3px 0 0;color:var(--txs);white-space:pre-wrap}
+.idc-competency-preview .need-status{align-self:center}
 </style>
 <script id="idea-decisions-filter-chat-script">
 function ideaDecisionNeedsAttention(idea,v){return !!v.open&&canCurrentUserVote(idea,v)&&!ensureVoteBallots(idea,v)[MY_NAME];}
