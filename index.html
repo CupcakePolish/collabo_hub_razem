@@ -7259,7 +7259,7 @@ function renderPlatformVoteDiscussion(v){const c=platformVoteChatContact(v);retu
 function setupPlatformVoteDiscussion(v){const host=document.getElementById('pv-discussion-chat');if(!host)return;const c=platformVoteChatContact(v);prepareTeamVoteDiscussionChrome(host);setupDiscoverComposer(host,c,platformVoteChatUI);enhanceChatControls(host,c,platformVoteChatUI);finishChatConversation(host,c,platformVoteChatUI);stylePlatformVoteInlineDiscussion(host,c);}
 function platformVoteChoiceIcon(kind){const path=kind==='yes'?'<path d="M7 10v11H3V10Zm0 0 4-7c2-1 3 1 2 4l-1 3h7a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 2H7"/>':kind==='no'?'<path d="M7 14V3H3v11Zm0 0 4 7c2 1 3-1 2-4l-1-3h7a2 2 0 0 0 2-2l-2-7a2 2 0 0 0-2-2H7"/>':'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4 2c-1 .6-1.5 1-1.5 3m0 3h.01"/>';return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;}
 let platformAuthorCardTimer=null;
-function hidePlatformAuthorCard(){clearTimeout(platformAuthorCardTimer);platformAuthorCardTimer=setTimeout(()=>{const card=document.getElementById('pv-person-card-portal');if(card&&(card.matches(':hover')||card.contains(document.activeElement)))return;card?.remove();},500);}
+function hidePlatformAuthorCard(immediate=false){clearTimeout(platformAuthorCardTimer);if(immediate===true){document.getElementById('pv-person-card-portal')?.remove();return;}platformAuthorCardTimer=setTimeout(()=>{const card=document.getElementById('pv-person-card-portal');if(card&&(card.matches(':hover')||card.contains(document.activeElement)))return;card?.remove();},500);}
 function showPlatformAuthorCard(anchor,name){clearTimeout(platformAuthorCardTimer);const open=()=>{document.getElementById('pv-person-card-portal')?.remove();const shell=document.createElement('div');shell.innerHTML=boardPersonHoverCardHTML(name);const card=shell.firstElementChild;if(!card)return;card.id='pv-person-card-portal';card.classList.add('pv-person-card-portal');card.onmouseenter=()=>clearTimeout(platformAuthorCardTimer);card.onmouseleave=hidePlatformAuthorCard;card.onpointerenter=()=>clearTimeout(platformAuthorCardTimer);card.onpointerleave=hidePlatformAuthorCard;card.onfocusin=()=>clearTimeout(platformAuthorCardTimer);card.onfocusout=event=>{if(!card.contains(event.relatedTarget))hidePlatformAuthorCard();};document.body.append(card);const a=anchor.getBoundingClientRect(),r=card.getBoundingClientRect();card.style.setProperty('--board-person-card-left',Math.max(12,Math.min(innerWidth-r.width-12,a.left+(a.width-r.width)/2))+'px');const below=a.bottom+r.height+2<innerHeight;card.classList.toggle('pv-card-above',!below);card.style.setProperty('--board-person-card-top',(below?a.bottom+2:Math.max(12,a.top-r.height-2))+'px');};platformAuthorCardTimer=setTimeout(open,700);}
 function platformVoteAuthorAvatar(name){const person=personProfileByName(name);return `<span class="board-person-hover-target pv-author"><button type="button" class="pv-author-avatar" aria-label="Profil: ${escAttr(name)}" onmouseenter="showPlatformAuthorCard(this,'${escAttr(name)}')" onmouseleave="hidePlatformAuthorCard()" onfocus="showPlatformAuthorCard(this,'${escAttr(name)}')" onblur="hidePlatformAuthorCard()" onclick="openMember(${Number(person?.id)||0})">${memberAvatarContent(name)}</button>${boardPersonHoverCardHTML(name)}</span>`;}
 function uploadNewPlatformProposalIcon(field){const file=field.files?.[0];if(!file)return;if(file.size>2*1024*1024)return toast('Wybierz obraz do 2 MB.','warn');const reader=new FileReader();reader.onload=async()=>{newPlatformProposalDraft.icon=await compactCompetencyIcon(reader.result);renderNewPlatformProposal();};reader.readAsDataURL(file);}
@@ -17079,6 +17079,7 @@ function actionModal({sideTitle='',sideText='',steps=[],title='',intro='',body='
 }
 function closeAppModal(){
   const modal=document.getElementById('app-modal');
+  if(modal?.classList.contains('idc-electorate-modal'))hidePlatformAuthorCard(true);
   if(modal?.classList.contains('board-post-discussion-modal')){boardPostModalCurrent=null;boardReactionDetailsState=null;boardPostCommentComposer={key:'',replyId:'',replyAuthor:'',replyDepth:0,editId:''};boardPostCommentAttachments=[];boardPostCommentAttachmentKey='';boardPostModalScrollRestore=null;boardExpandedCommentThreads.clear();}
   if(modal?.classList.contains('project-pin-modal')||modal?.classList.contains('project-pin-cancel-modal'))projectPinPickerState=null;
   if(modal?.classList.contains('project-pins-center-modal'))projectPinsModalIdeaId=null;
@@ -24880,17 +24881,24 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-quorum-indicator{position:relative;display:inline-grid;place-items:center;padding:2px;border:0;border-radius:6px;background:transparent;cursor:pointer}
 .idc-quorum-indicator img{display:block;object-fit:contain}
 .idc-quorum-indicator:not(.reached) img{filter:grayscale(1);opacity:.68}
+.idc-quorum-indicator.not-passing img{filter:hue-rotate(255deg) saturate(1.4)}
 :is(.idc-quorum-indicator,.idc-deadline):is(:hover,:focus-visible)::after{content:attr(data-tooltip);position:absolute;z-index:2;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:max-content;padding:4px 8px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--txt);box-shadow:0 3px 12px #20142b22;pointer-events:none}
 .idc-deadline{position:relative;display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid var(--bdr);border-radius:999px;background:var(--surf2);white-space:nowrap;cursor:pointer}
 .idc-deadline svg{width:15px;height:15px;flex:none}
 .idc-deadline:is(:hover,:focus-visible)::after{left:0;transform:none;max-width:min(280px,calc(100vw - 72px));white-space:normal}
+.idc-quorum-indicator:is(:hover,:focus-visible)::after{max-width:min(220px,calc(100vw - 72px));white-space:normal}
 .idc-quorum-indicator:is(:hover,:focus-visible){background:var(--p100)}
 #app-modal.idc-electorate-modal{width:min(600px,calc(100vw - 32px));max-width:none}
 .idc-electorate h3{padding-right:40px}
 .idc-electorate .pv-voter-modal-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
 .idc-electorate .pv-voter-modal-tabs button:hover{background:var(--p100);border-color:var(--p400)}
-.idc-electorate-people{max-height:45dvh;overflow:auto}
+.idc-electorate-people{max-height:45dvh;overflow:auto;scrollbar-gutter:stable;padding-inline-end:12px}
 .idc-electorate .pv-voter-person{padding:12px 0;border-bottom:1px solid var(--bdr)}
+.idc-electorate .pv-voter-person>.pv-author{flex:none}
+.idc-electorate .pv-author-avatar{width:40px;height:40px}
+.idc-electorate .pv-author-avatar img{width:100%;height:100%;object-fit:cover}
+.idc-electorate .pv-voter-person>.idc-electorate-name{min-width:0;font:700 14px/1.35 'DM Sans',sans-serif;overflow-wrap:anywhere}
+.idc-electorate button.idc-electorate-name:is(:hover,:focus-visible){color:var(--p700)!important;text-decoration:underline;text-underline-offset:3px}
 .idc-electorate .pv-electorate-stance.excluded{color:var(--txs)}
 @media(max-width:480px){.idc-electorate .pv-voter-modal-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:950px){.idc-layout{grid-template-columns:1fr}.idc-list{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}@media(max-width:600px){.idc-vote-options{grid-template-columns:1fr}.idc-detail{padding:15px}}
@@ -24908,8 +24916,13 @@ function ideaDecisionIcon(v){const name=v.roleData?.role||v.newMaterial?.name||v
 function ideaDecisionCounts(idea,v){ensureVoteModeSnapshot(idea,v);const ballots=ensureVoteBallots(idea,v),eligible=voteParticipants(idea,v).length,yes=Number(v.yes)||0,no=Number(v.no)||0,abstain=Number(v.abstain)||0;return {ballots,eligible,yes,no,abstain,total:yes+no+abstain,required:voteQuorumNeeded(idea,v)};}
 function renderIdeaQuorumIndicator(idea,v,counts){
   const reached=counts.total>=counts.required;
+  const result=reached?voteState(idea,v).kind:'';
+  const passing=result==='waiting'||result==='done';
+  const status=!reached?'Kworum nieosiągnięte':v.open
+    ?(passing?'Kworum osiągnięte. Propozycja obecnie przechodzi':'Kworum osiągnięte. Propozycja obecnie nie przechodzi')
+    :(passing?'Kworum osiągnięte. Propozycja przyjęta':'Kworum osiągnięte. Propozycja nieprzyjęta');
   const threshold=`≥ ${counts.required} ${plural(counts.required,['głos','głosy','głosów'])}`;
-  return `<button type="button" class="idc-quorum-indicator${reached?' reached':''}" aria-haspopup="dialog" aria-label="Pokaż uprawnionych do głosowania. ${reached?'Kworum osiągnięte':'Kworum nieosiągnięte'}. Wymagane: ${threshold}" data-tooltip="${threshold}" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}')"><img src="assets/quorum-hen.png" alt="" width="32" height="28"></button>`;
+  return `<button type="button" class="idc-quorum-indicator${reached?' reached':''}${reached&&!passing?' not-passing':''}" aria-haspopup="dialog" aria-label="Pokaż uprawnionych do głosowania. ${status}. Wymagane: ${threshold}" data-tooltip="${status} · ${threshold}" onclick="showIdeaDecisionPeople(${idea.id},'${escAttr(v.id)}')"><img src="assets/quorum-hen.png" alt="" width="32" height="28"></button>`;
 }
 function renderIdeaDecisionDeadline(v){
   const deadline=parsePlDateTime(v.deadline);
@@ -24941,6 +24954,7 @@ function showIdeaDecisionPeople(id,vid,choice='all'){
   if(!modal)return;
   const input=modal.querySelector('input'),list=modal.querySelector('.idc-electorate-people'),tabs=modal.querySelectorAll('[data-filter]');
   const render=()=>{
+    hidePlatformAuthorCard(true);
     tabs.forEach(tab=>{
       const selected=tab.dataset.filter===choice;
       tab.classList.toggle('on',selected);
@@ -24949,11 +24963,12 @@ function showIdeaDecisionPeople(id,vid,choice='all'){
     const query=input.value.trim().toLocaleLowerCase('pl');
     list.innerHTML=groups[choice].filter(name=>name.toLocaleLowerCase('pl').includes(query)).map(name=>{
       const key=stance(name),stamp=Number(v.ballotTimes?.[name]),person=personProfileByName(name);
-      const nameHTML=person?.id?`<button type="button" class="pv-electorate-person-name" onclick="closeAppModal();openMember(${Number(person.id)})">${escHtml(name)}</button>`:`<b>${escHtml(name)}</b>`;
+      const nameHTML=person?.id?`<button type="button" class="pv-electorate-person-name idc-electorate-name" data-person-name="${escAttr(name)}" onmouseenter="showPlatformAuthorCard(this,this.dataset.personName)" onmouseleave="hidePlatformAuthorCard()" onfocus="showPlatformAuthorCard(this,this.dataset.personName)" onblur="hidePlatformAuthorCard()" onclick="closeAppModal();openMember(${Number(person.id)})">${escHtml(name)}</button>`:`<b class="idc-electorate-name">${escHtml(name)}</b>`;
       return `<div class="pv-voter-person">${platformVoteAuthorAvatar(name)}${nameHTML}<div class="pv-electorate-stance ${key}"><b>${key==='pending'?'Brak głosu':key==='excluded'?'Poza kworum':labels[key]}</b>${stamp&&isVoteStance(key)?`<time datetime="${new Date(stamp).toISOString()}">${escHtml(platformVoteTimeAgo(stamp).replace(/\s+temu$/,''))}</time>`:''}</div></div>`;
     }).join('')||'<p class="pv-voters-empty">Brak osób pasujących do wybranych filtrów.</p>';
   };
   input.addEventListener('input',render);
+  list.addEventListener('scroll',()=>hidePlatformAuthorCard(true),{passive:true});
   tabs.forEach(tab=>tab.addEventListener('click',()=>{choice=tab.dataset.filter;render();}));
   render();
 }
