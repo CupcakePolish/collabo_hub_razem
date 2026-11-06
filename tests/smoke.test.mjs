@@ -1271,7 +1271,7 @@ test('invitation read receipts apply per viewer and only to visible message ids'
 
 
 test('opening a team chat marks incoming messages read on every page',()=>{
-  const source=html.slice(html.indexOf('function finishChatConversation('),html.indexOf(' const writeRows=',html.indexOf('function finishChatConversation(')))+'}';
+  const source=html.slice(html.indexOf('function voteDiscussionBallots('),html.indexOf(' const writeRows=',html.indexOf('function finishChatConversation(')))+'}';
   const result=new Function('source',`const MY_NAME='Adresat',rows=[{by:'Zespół',text:'Hej'},{by:'Adresat',text:'Moja'}];let saved=0;const document={visibilityState:'visible'},discoverChatMessages=()=>rows,persistChatMessages=()=>saved++;const list={querySelectorAll:()=>[]},win={querySelector:()=>list},host={querySelector:()=>win};eval(source);finishChatConversation(host,{type:'team'},{});finishChatConversation(host,{type:'team'},{});return {rows,saved};`)(source);
   assert.deepEqual(result.rows[0].readBy,['Adresat']);assert.equal(result.rows[1].readBy,undefined);assert.equal(result.saved,1);
 });
