@@ -25080,7 +25080,7 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 </script>
 
 <style>
-.idc-list-shell{background:var(--surf);padding:13px;border:1px solid var(--bdr);border-radius:16px;min-width:0}.idc-toolbar{margin:0 0 15px}.idc-toolbar input{width:100%;box-sizing:border-box;padding:11px 15px;border:1px solid var(--bdr);border-radius:20px;background:var(--surf2);color:var(--txt);font:inherit;font-size:13px}.idc-filter-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.idc-filter-row>button,.idc-filter-row .discover-dropdown-trigger{padding:7px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--txt);font:inherit;font-size:11px;cursor:pointer}.idc-filter-row>button.on{background:var(--p100);border-color:var(--p300);color:var(--p700)}.idc-list-shell .idc-list-card{padding:14px}.idc-detail-header-tools{display:flex;gap:10px;align-items:center}.idc-open-chat{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;padding:9px;background:var(--p100);color:var(--p700);cursor:pointer}.idc-open-chat svg{width:20px;height:20px}.idc-open-chat:hover{background:var(--p200)}.idc-detail .idc-state{margin-top:2px}.idc-list-status{font-size:10px;background:var(--p100);border-radius:20px;padding:5px 8px;color:var(--p700);white-space:nowrap;align-self:flex-start;margin-left:auto}.idc-list-card>span:nth-child(2){flex:1;min-width:0}
+.idc-list-shell{background:var(--surf);padding:13px;border:1px solid var(--bdr);border-radius:16px;min-width:0}.idc-toolbar{margin:0 0 15px}.idc-toolbar input{width:100%;box-sizing:border-box;padding:11px 15px;border:1px solid var(--bdr);border-radius:20px;background:var(--surf2);color:var(--txt);font:inherit;font-size:13px}.idc-filter-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.idc-filter-row>button,.idc-filter-row .discover-dropdown-trigger{padding:7px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--txt);font:inherit;font-size:11px;cursor:pointer}.idc-filter-row>button.on{background:var(--p100);border-color:var(--p300);color:var(--p700)}.idc-list-shell .idc-list-card{padding:14px}.idc-detail-header-tools{display:flex;gap:10px;align-items:center}.idc-open-chat{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;padding:9px;background:var(--p100);color:var(--p700);cursor:pointer}.idc-open-chat svg{width:20px;height:20px}.idc-open-chat:hover{background:var(--p200)}.idc-detail .idc-state{margin-top:2px}.idc-list-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--txs);white-space:nowrap;margin-left:auto}.idc-list-status svg,.idc-list-status img{width:15px;height:15px;object-fit:contain;flex:none}.idc-list-status img{filter:grayscale(1)}.idc-list-card>span:nth-child(2){flex:1;min-width:0}
 .idc-dropdown .discover-dropdown-trigger{height:auto;min-height:32px;gap:6px}
 .idc-dropdown .discover-dropdown-menu{left:0;right:auto;box-sizing:border-box;max-width:calc(100vw - 45px);background:var(--surf);border-color:var(--bdr)}
 .idc-dropdown .discover-dropdown-menu button{color:var(--txt)}
@@ -25099,12 +25099,18 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-competency-popover-head{display:flex;align-items:center;gap:10px}
 .idc-competency-definition{max-height:40dvh;overflow:auto;color:var(--txm);font-size:13px;font-weight:400;line-height:1.5;white-space:pre-wrap}
 .idc-competency-preview .need-status{align-self:center}
-.idc-list-card[data-ballot="yes"]{--idc-card-border:#9bc673}
-.idc-list-card[data-ballot="no"]{--idc-card-border:#e38091}
-.idc-list-card[data-ballot="abstain"]{--idc-card-border:#dcb359}
-.idc-list-card[data-ballot="none"]{--idc-card-border:color-mix(in srgb,var(--txs) 35%,var(--bdr))}
-.idc-list-card[data-ballot]{border-color:var(--idc-card-border)}
-.idc-list-card[data-ballot].on{background:var(--p050);box-shadow:0 0 0 1px var(--idc-card-border)}
+.idc-list-card[data-ballot="yes"]{--idc-live-border:#a6cfb3;--idc-history-border:#58836a}
+.idc-list-card[data-ballot="no"]{--idc-live-border:#e3adb7;--idc-history-border:#a95f6d}
+.idc-list-card[data-ballot="abstain"]{--idc-live-border:#e2c179;--idc-history-border:#a07a35}
+.idc-list-card[data-ballot="none"]{--idc-live-border:color-mix(in srgb,var(--txs) 35%,var(--bdr))}
+.idc-list-card[data-ballot]{position:relative;border:2px solid var(--idc-live-border)}
+.idc-list-card[data-result="accepted"]{--idc-result-border:#6a9a7e}
+.idc-list-card[data-result="rejected"]{--idc-result-border:#b97582}
+.idc-list-card[data-result="unresolved"]{--idc-result-border:#9f98ad}
+.idc-list-card[data-result]{border:2.5px solid var(--idc-result-border)}
+.idc-list-card[data-result]:not([data-ballot="none"])::after{content:"";position:absolute;inset:4px;border:1.5px solid var(--idc-history-border);border-radius:10px;pointer-events:none}
+.idc-list-card[data-ballot].on{background:var(--p050);box-shadow:none}
+.idc-list-card[data-vote-tooltip]:focus-visible::before{content:attr(data-vote-tooltip);position:absolute;z-index:4;left:8px;top:calc(100% + 4px);max-width:calc(100% - 16px);padding:5px 8px;border:1px solid var(--bdr);border-radius:7px;background:var(--surf);color:var(--txt);font-size:11px;pointer-events:none}
 .idc-list-shell .idc-list-card{gap:10px;padding:11px}
 .idc-list-card>.idc-visual{width:46px;height:46px}
 .idc-list-card>.idc-visual svg{width:28px;height:28px}
@@ -25154,6 +25160,16 @@ function renderIdeaDecisionDropdown(id,key,label,options,value,selectHandler='se
 }
 
 function setIdeaDecisionFilter(id,key,value){ideaDecisionState(id)[key]=value;openIdea(id,true,{replaceRoute:true});if(key==='query'){const input=document.getElementById('idc-search-'+id);input?.focus();input?.setSelectionRange(value.length,value.length);}}
+function ideaDecisionCardOutcome(idea,v){
+  if(v.open)return {label:ideaDecisionNeedsAttention(idea,v)?'Do rozpatrzenia':'Aktywne',icon:IC.clock,detail:'Głosowanie aktywne'};
+  if(voteWasAccepted(idea,v))return {key:'accepted',label:'Przyjęte',icon:IC.check,detail:'Głosowanie zakończone. Propozycja przyjęta'};
+  const hasQuorum=voteQuorumReached(idea,v);
+  if(v.expired||(!hasQuorum&&v.accepted!==false)){
+    const detail=hasQuorum?'Głosowanie zakończone. Nierozstrzygnięte':'Głosowanie zakończone. Nierozstrzygnięte — nie osiągnięto kworum';
+    return {key:'unresolved',label:'Nierozstrzygnięte',icon:'<img src="assets/quorum-egg.png" alt="">',detail};
+  }
+  return {key:'rejected',label:'Odrzucone',icon:'<span aria-hidden="true">✕</span>',detail:'Głosowanie zakończone. Propozycja odrzucona'};
+}
 const decisionRenderBeforeFilters=renderIdeaDecisionsWorkspace;
 renderIdeaDecisionsWorkspace=function(idea){const state=ideaDecisionState(idea.id),rows=filterIdeaDecisionRows(idea,state),all=idea.votes;let html;if(!rows.length)html='<section class="idc-layout"><div class="idc-list"></div><article class="idc-detail"><p>Brak decyzji pasujących do filtrów.</p></article></section>';else{const selected=rows.find(v=>v.id===state.selected)||rows[0];state.selected=selected.id;const oldTab=state.tab;state.tab='preview';try{html=decisionRenderBeforeFilters({...idea,votes:rows});}finally{state.tab=oldTab;}}const toolbar=`<div class="idc-toolbar"><input id="idc-search-${idea.id}" type="search" placeholder="Szukaj decyzji…" aria-label="Szukaj decyzji" value="${escAttr(state.query||'')}" oninput="setIdeaDecisionFilter(${idea.id},'query',this.value)"><div class="idc-filter-row">${[['all','Wszystkie'],['attention','Do rozpatrzenia'],['active','Aktywne'],['closed','Zakończone']].map(([key,label])=>`<button class="${(state.status||'all')===key?'on':''}" onclick="setIdeaDecisionFilter(${idea.id},'status','${key}')">${label}</button>`).join('')}${renderIdeaDecisionDropdown(idea.id,'area','Obszar decyzji',[['','Obszar'],...[...new Set((all||[]).map(decisionSourceForVote))].map(area=>[area,area])],state.area)}
 ${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Najnowsze'],['oldest','Najstarsze']],state.sort)}</div></div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);const detailStatus=!selected.open?'Zakończone':ensureVoteBallots(idea,selected)[MY_NAME]?'':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':'Aktywne';if(detailStatus)header.querySelector('.idc-heading-copy')?.insertAdjacentHTML('beforeend',`<span class="idc-state">${detailStatus}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{
@@ -25162,9 +25178,14 @@ ${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Na
   const own=ensureVoteBallots(idea,v)[MY_NAME];
   const stance=isVoteStance(own)?own:'none';
   card.dataset.ballot=stance;
-  card.setAttribute('aria-description',({yes:'Twój głos: za',no:'Twój głos: przeciw',abstain:'Twój głos: mam wątpliwości',none:'Nie oddano głosu'})[stance]);
-  const status=!v.open?'Zakończone':ideaDecisionNeedsAttention(idea,v)?'Do rozpatrzenia':'Aktywne';
-  card.querySelector('.idc-list-meta')?.insertAdjacentHTML('beforeend',`<span class="idc-list-status">${status}</span>`);
+  const outcome=ideaDecisionCardOutcome(idea,v);
+  if(outcome.key)card.dataset.result=outcome.key;
+  const ownLabel={yes:'Twój głos: za',no:'Twój głos: przeciw',abstain:'Twój głos: mam wątpliwości',none:'Nie oddano głosu'}[stance];
+  const description=outcome.detail+' · '+ownLabel;
+  card.title=description;
+  card.dataset.voteTooltip=description;
+  card.setAttribute('aria-description',description);
+  card.querySelector('.idc-list-meta')?.insertAdjacentHTML('beforeend',`<span class="idc-list-status"><span aria-hidden="true">${outcome.icon}</span>${outcome.label}</span>`);
 });return shell.innerHTML;};
 function ideaDecisionChatContact(id,vid){const idea=ideas.find(i=>i.id===id),vote=idea?.votes?.find(v=>v.id===vid);return vote?{key:'idea-decision:'+id+':'+encodeURIComponent(vid),type:'idea-decision',ideaId:id,voteId:vid,name:vote.prop||'Decyzja',ini:'D'}:null;}
 const teamContactBeforeIdeaDecisions=teamDiscussionContactFromKey;
