@@ -21407,9 +21407,10 @@ html.theme-dark :is(#s-ideas,#team-workspace-ideas-catalog) .ic:has(.idea-quick-
 .draft-preview-mode .idea-photo-change,.draft-preview-mode .st-kebab-wrap,.draft-preview-mode .draft-phase-add-tile{display:none!important}
 </style>
 <style id="lifecycle-bidirectional-arrows">
-.idea-lifecycle-connectors{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;align-self:stretch;justify-self:center;width:44px}
+.idea-lifecycle-step{justify-self:center;width:max-content;max-width:100%}
+.idea-lifecycle-connectors{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;align-self:center;justify-self:center;width:44px}
 .idea-lifecycle-connectors .idea-lifecycle-arrow.icon-only{display:grid;place-items:center;width:32px;min-width:32px;height:24px;padding:0}
-.idea-lifecycle-connectors .idea-lifecycle-arrow>span{font-size:22px;line-height:1;text-align:center}
+.idea-lifecycle-connectors .idea-lifecycle-arrow>span{display:flex;align-items:center;justify-content:center;height:100%;font-size:22px;line-height:1;text-align:center}
 .idea-lifecycle-connectors .idea-lifecycle-arrow.inactive{color:var(--txf);opacity:.55;cursor:default;background:transparent}
 .idea-lifecycle-step.done>span{background:var(--p700);border-color:var(--p700);color:#fff}
 .idea-lifecycle-step.done>b{color:var(--txm);font-weight:600}.idea-lifecycle-step>span svg{width:17px;height:17px}
