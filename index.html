@@ -9010,7 +9010,22 @@ function setProjectLifecycleStatus(ideaId,status){
   queuePersistence();openIdea(ideaId,true);toast(labels[status]+'.','ok');
 }
 function confirmProjectLifecycleVote(ideaId,targetStatus){
-  startProjectLifecycleVote(ideaId,targetStatus);
+  const idea=ideas.find(row=>row.id===ideaId);
+  if(!idea||!isActiveProjectMember(idea))return toast('Tylko uczestnik projektu może zaproponować zmianę etapu.','warn');
+  if(projectIsArchived(idea))return toast('Najpierw reaktywuj projekt z Archiwum.','warn');
+  const labels={in_progress:'W realizacji',completed:'Zakończony',evaluation:'Ocena',evaluation_completed:'Oceniony'};
+  const current=projectLifecycleStatus(idea);
+  if(!labels[targetStatus]||current===targetStatus)return;
+  const existing=(idea.votes||[]).find(v=>v.open&&v.kind==='project-lifecycle'&&v.targetStatus===targetStatus);
+  if(existing)return openVote(ideaId,existing.id);
+  const forward=Object.keys(labels).indexOf(targetStatus)>Object.keys(labels).indexOf(current);
+  appModal(`<div class="lifecycle-vote-modal">
+    <span class="lifecycle-vote-kicker">Zmiana etapu projektu</span>
+    <h3>Rozpocząć głosowanie?</h3>
+    <p>Zmiana etapu na „${labels[targetStatus]}” wymaga decyzji zespołu. Po potwierdzeniu rozpocznie się głosowanie. Etap zmieni się po przyjęciu propozycji.</p>
+    <div class="lifecycle-vote-transition"><span>${labels[current]}</span><b aria-hidden="true">${forward?'→':'←'}</b><span class="target">${labels[targetStatus]}</span></div>
+    <div class="app-modal-actions"><button type="button" class="vbtn" onclick="closeAppModal()">Anuluj</button><button type="button" class="vbtn voted-yes" onclick="closeAppModal();startProjectLifecycleVote(${ideaId},'${targetStatus}')">Rozpocznij głosowanie</button></div>
+  </div>`,'project-lifecycle-confirm-modal');
 }
 function startProjectLifecycleVote(ideaId,requestedTarget='',reason=''){
   const idea=ideas.find(row=>row.id===ideaId);if(!idea||!isActiveProjectMember(idea))return toast('Tylko uczestnik projektu może zaproponować zmianę stanu.','warn');
