@@ -17164,8 +17164,23 @@ function updateStats(){
 let _lastToastAt=0;
 function toast(msg,type=''){_lastToastAt=Date.now();const host=document.getElementById('toast-host');if(!host){console.log(msg);return;}const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;host.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(8px)';setTimeout(()=>el.remove(),220)},3800);}
 function notifyVote(idea){if(Date.now()-_lastToastAt<250)return;toast('Głosowanie utworzone — jest w sekcji „Decyzje". Zostajesz w tym widoku.','ok');}
+function installBoardPostEmoji(composer){
+ const tools=composer?.querySelector('.tbp-tools');if(!tools||tools.querySelector('.board-post-emoji'))return;
+ const button=document.createElement('button');button.type='button';button.className='board-post-emoji';button.title='Emotikony i GIF-y';button.setAttribute('aria-label','Emotikony i GIF-y');button.setAttribute('aria-haspopup','dialog');
+ button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 14.5a4.5 4.5 0 0 0 8 0"/><circle cx="8.5" cy="9" r=".8" fill="currentColor"/><circle cx="15.5" cy="9" r=".8" fill="currentColor"/></svg>';
+ button.onmousedown=event=>event.preventDefault();button.onclick=event=>openBoardPostEmoji(button,event);tools.prepend(button);
+}
+function openBoardPostEmoji(button,event){
+ event?.preventDefault();event?.stopPropagation();const input=button.closest('.tbp-composer')?.querySelector('#mb-inp-team-board-post-body');if(!input)return;
+ const existing=[...document.querySelectorAll('.emoji-panel.on')].find(panel=>panel._emojiAnchor===button);if(existing){closeEmojiPanel(existing);return;}
+ const start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+ openExpandedMessageReaction(button,value=>{
+  if(!input.isConnected)return;const text=value.startsWith('gif:')?'[[gif:'+value.slice(4)+']]':value;
+  input.focus({preventScroll:true});input.setRangeText(text,start,end,'end');input.dispatchEvent(new Event('input',{bubbles:true}));
+ });
+}
 function normalizeBoardPostComposer(box){
-  const composer=box.querySelector('.tbp-composer');if(!composer||composer.classList.contains('discover-composer-shell'))return;
+  const composer=box.querySelector('.tbp-composer');installBoardPostEmoji(composer);if(!composer||composer.classList.contains('discover-composer-shell'))return;
   composer.classList.add('discover-composer-shell');
   const header=composer.querySelector('.tbp-composer-head');header?.classList.add('discover-composer-head');
   const title=header?.querySelector('h3');if(title){const heading=document.createElement('h2');heading.textContent=title.textContent==='Nowy wpis'?'Utwórz post':title.textContent;title.replaceWith(heading);}
