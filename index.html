@@ -13414,10 +13414,29 @@ function renderCollapsedBoardText(raw){return `<div class="board-text-preview">$
 function toggleBoardTextPreview(button){const text=button.previousElementSibling,expanded=button.getAttribute('aria-expanded')!=='true';text.classList.toggle('expanded',expanded);button.setAttribute('aria-expanded',String(expanded));button.textContent=expanded?'Pokaż mniej':'Pokaż więcej';}
 /* Rich references retain the existing portable mention format in saved posts. */
 function boardReferenceParts(raw){
- const refs=[],text=String(raw||'').replace(/@\[([^\]]+)\]\((#[^)]+)\)/g,(_,label,href)=>{if(!refs.some(row=>row.href===href&&row.label===label))refs.push({label,href});return '';});
+ const refs=[],text=String(raw||'').replace(/@\[([^\]]+)\]\((#[^)]+)\)(?:<!--board-ref:([^>]*?)-->)?/g,(_,label,href,meta)=>{
+  let needs=[];try{const data=JSON.parse(decodeURIComponent(meta||''));if(Array.isArray(data.needs))needs=data.needs.filter(name=>typeof name==='string');}catch{}
+  const existing=refs.find(row=>row.href===href&&row.label===label);if(existing)existing.needs=[...new Set([...(existing.needs||[]),...needs])];else refs.push({label,href,...(needs.length?{needs}: {})});return '';
+ });
  return {text:text.trim(),refs};
 }
-function boardComposerValue(input){return [input?.value||'',...(input?.boardRefs||[]).map(ref=>`@[${ref.label}](${ref.href})`)].filter(Boolean).join('\n').trim();}
+function boardComposerValue(input){return [input?.value||'',...(input?.boardRefs||[]).map(ref=>`@[${ref.label}](${ref.href})${ref.needs?.length?'<!--board-ref:'+encodeURIComponent(JSON.stringify({needs:ref.needs}))+'-->':''}`)].filter(Boolean).join('\n').trim();}
+function boardReferenceIdeaNeeds(idea){
+ const groups=new Map();
+ (idea?.roleRequirements||[]).forEach(role=>{const name=String(needPrimaryCapability(role)?.name||role.role||'Kompetencja'),group=groups.get(name)||{name,needed:0,filled:0};group.needed+=Number(role.min||1);group.filled+=(role.filledBy||[]).length;groups.set(name,group);});
+ return [...groups.values()].filter(row=>row.filled<row.needed);
+}
+function boardReferenceNeedPicker(ref,index){
+ const item=resolveBoardReference(ref);if(item?.kind!=='project')return '';
+ const idea=ideas.find(row=>String(row.id)===String(item.ideaId)),needs=boardReferenceIdeaNeeds(idea);
+ return `<fieldset class="board-reference-need-picker"><legend>Wyróżnij poszukiwane potrzeby</legend>${needs.length?`<div>${needs.map((need,needIndex)=>`<label><input type="checkbox" ${ref.needs?.includes(need.name)?'checked':''} onchange="toggleBoardReferenceNeed(${index},${needIndex},this.checked)"><span>${escHtml(need.name)} <small>${need.filled}/${need.needed}</small></span></label>`).join('')}</div>`:'<small>Ten pomysł nie ma teraz nieobsadzonych potrzeb.</small>'}</fieldset>`;
+}
+function toggleBoardReferenceNeed(index,needIndex,checked){
+ const input=document.getElementById('mb-inp-team-board-post-body'),ref=input?.boardRefs?.[index],item=ref&&resolveBoardReference(ref),idea=ideas.find(row=>String(row.id)===String(item?.ideaId)),need=boardReferenceIdeaNeeds(idea)[needIndex];if(!ref||!need)return;
+ ref.needs=[...new Set(checked?[...(ref.needs||[]),need.name]:(ref.needs||[]).filter(name=>name!==need.name))];
+ renderBoardComposerReferences(input);
+ const checkbox=input.closest('.tbp-composer')?.querySelectorAll('.board-reference-edit')[index]?.querySelectorAll('.board-reference-need-picker input')[needIndex];checkbox?.focus({preventScroll:true});
+}
 function hydrateBoardReferences(){
  const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;
  const parsed=boardReferenceParts(input.value);input.boardRefs=input.boardRefs||[];
@@ -13427,7 +13446,7 @@ function hydrateBoardReferences(){
 }
 function renderBoardComposerReferences(input){
  let preview=input.closest('.tbp-composer')?.querySelector('.board-reference-preview');if(!preview){preview=document.createElement('div');preview.className='board-reference-preview';input.parentElement.append(preview);}
- preview.innerHTML=(input.boardRefs||[]).map((ref,index)=>`<div class="board-reference-edit">${renderBoardReference(ref,true)}<button type="button" class="board-reference-remove" aria-label="Usuń powiązanie: ${escAttr(ref.label)}" onclick="removeBoardReference(${index})">×</button></div>`).join('');
+ preview.innerHTML=(input.boardRefs||[]).map((ref,index)=>`<div class="board-reference-edit">${renderBoardReference(ref,true)}${boardReferenceNeedPicker(ref,index)}<button type="button" class="board-reference-remove" aria-label="Usuń powiązanie: ${escAttr(ref.label)}" onclick="removeBoardReference(${index})">×</button></div>`).join('');
 }
 function removeBoardReference(index){const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;input.boardRefs.splice(index,1);renderBoardComposerReferences(input);}
 function resolveBoardReference(ref){
@@ -13437,12 +13456,13 @@ function renderBoardReference(ref,preview=false){
  if(['#odkrywaj','#discover','#platform'].includes(ref.href)){const entry=dictionaryEntries().find(row=>row.name===ref.label);if(entry)ref={...ref,href:'#dictionary/'+encodeURIComponent(entry.id)};}
  const safe=safeUserUrl(ref.href,'link');if(!safe)return '';
  const item=resolveBoardReference(ref),kind=item?.kind||'link',meta=GLOBAL_SEARCH_META[kind],label=meta?.singular||'Powiązany element';
- let icon=teamBoardMentionIcon(kind),description=item?.subtitle||'',ballot='';
+ let icon=teamBoardMentionIcon(kind),description=item?.subtitle||'',ballot='',needsHTML='';
  if(kind==='member'){const person=members.find(row=>String(row.id)===String(item.memberId));if(person)icon=memberAvatarContent(person.name,person.ini||memberInitials(person.name));}
- if(kind==='project'){const idea=ideas.find(row=>String(row.id)===String(item.ideaId));if(idea){description=idea.desc||description;if(idea.image&&safeUserUrl(idea.image,'image'))icon=`<img src="${escAttr(idea.image)}" alt="">`;}}
- if(kind==='resource'&&item.scope==='catalog'){const resource=catalogResources.find(row=>String(row.id)===String(item.resourceId));if(resource)description=resource.description||resource.desc||description;}
+ if(kind==='project'){const idea=ideas.find(row=>String(row.id)===String(item.ideaId));if(idea){description=idea.desc||description;const photo=ideaCatalogPhoto(idea);if(photo)icon=`<img src="${escAttr(photo)}" alt="">`;const selected=boardReferenceIdeaNeeds(idea).filter(need=>ref.needs?.includes(need.name));needsHTML=selected.length?`<span class="board-reference-needs">${selected.map(need=>`<span>${escHtml(need.name)} <b>${need.filled}/${need.needed}</b></span>`).join('')}</span>`:'';}}
+ if(kind==='resource'&&item.scope==='catalog'){const resource=catalogResources.find(row=>String(row.id)===String(item.resourceId));if(resource){description=resource.description||resource.desc||description;const photo=safeUserUrl(resource.photo||'','image');icon=photo?`<img src="${escAttr(photo)}" alt="">`:catalogResourceIcon(resource.typeKey);}}
+ if(kind==='team'){const team=projectTeams.find(row=>String(row.id)===String(item.teamId));if(team)icon=teamBoardAvatar(team);}
  if(kind==='vote'&&item.ideaId){const idea=ideas.find(row=>String(row.id)===String(item.ideaId)),vote=idea?.votes?.find(row=>String(row.id)===String(item.targetId));if(vote){const mine=vote.ballots?.[MY_NAME]||vote.myVote,enabled=!preview&&canCurrentUserVote(idea,vote);ballot=`<div class="board-reference-ballot" role="group" aria-label="Szybkie głosowanie">${[['yes','Za','green'],['abstain','Mam wątpliwości','amber'],['no','Przeciw','red']].map(([choice,title,color])=>`<button type="button" class="${color}${mine===choice?' selected':''}" aria-pressed="${mine===choice}" ${enabled?'':'disabled'} onclick="castBoardReferenceVote(this,decodeURIComponent('${encodeURIComponent(String(idea.id)).replace(/'/g,'%27')}'),decodeURIComponent('${encodeURIComponent(String(vote.id)).replace(/'/g,'%27')}'),'${choice}')">${title} <b>${Number(vote[choice]||0)}</b></button>`).join('')}</div><small class="board-reference-state">${vote.open?(enabled?'Wybierz stanowisko':preview?'Podgląd głosowania':'Głosowanie aktywne · nie możesz oddać głosu'):'Głosowanie zakończone'}</small>`;}}
- return `<article class="board-reference-card" data-reference-href="${escAttr(ref.href)}" data-reference-label="${escAttr(ref.label)}"><a class="board-reference-link" href="${escAttr(safe)}"><span class="board-reference-icon">${icon}</span><span class="board-reference-content"><small>${escHtml(label)}</small><strong>${escHtml(item?.title||ref.label)}</strong>${description?`<span>${escHtml(description)}</span>`:''}</span><span aria-hidden="true">↗</span></a>${ballot}</article>`;
+ return `<article class="board-reference-card" data-reference-href="${escAttr(ref.href)}" data-reference-label="${escAttr(ref.label)}"><a class="board-reference-link" href="${escAttr(safe)}"><span class="board-reference-icon">${icon}</span><span class="board-reference-content"><small>${escHtml(label)}</small><strong>${escHtml(item?.title||ref.label)}</strong>${description?`<span>${escHtml(description)}</span>`:''}${needsHTML}</span></a>${ballot}</article>`;
 }
 function castBoardReferenceVote(button,ideaId,voteId,choice){
  const idea=ideas.find(row=>String(row.id)===ideaId),vote=idea?.votes?.find(row=>String(row.id)===voteId);if(!vote||!['yes','abstain','no'].includes(choice))return;
@@ -13450,6 +13470,7 @@ function castBoardReferenceVote(button,ideaId,voteId,choice){
  queuePersistence();document.querySelectorAll('.board-reference-card').forEach(card=>{if(card.dataset.referenceHref===`#idea/${encodeURIComponent(ideaId)}/decyzje/glosowanie/${encodeURIComponent(voteId)}`){const ref={href:card.dataset.referenceHref,label:card.dataset.referenceLabel};card.outerHTML=renderBoardReference(ref,!!card.closest('.board-reference-preview'));}});
 }
 const boardReferenceStyle=document.createElement('style');boardReferenceStyle.textContent=`
+.board-reference-need-picker{border:0;border-top:1px solid var(--bdr,#e4dfed);margin:-12px 0 12px;padding:14px 16px;background:var(--surf,#faf9fd);border-radius:0 0 18px 18px}.board-reference-need-picker legend{float:left;width:100%;margin-bottom:10px;font-size:12px;font-weight:700;color:var(--txs,#757286)}.board-reference-need-picker>div{display:flex;flex-wrap:wrap;gap:8px;clear:both}.board-reference-need-picker label{display:flex!important;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--bdr,#e4dfed);border-radius:12px;cursor:pointer;font-size:13px!important}.board-reference-need-picker label:has(:checked){border-color:var(--p500,#9670ce);background:var(--p050,#f4effb)}.board-reference-need-picker input{width:15px!important;height:15px!important;margin:0!important;accent-color:var(--p700,#6441a7)}.board-reference-need-picker small{color:var(--txs,#757286)}.board-reference-needs{display:flex!important;flex-wrap:wrap;gap:6px;margin-top:8px;overflow:visible!important}.board-reference-needs>span{display:inline-flex;gap:6px;padding:5px 9px;border:1px solid var(--bdr,#e4dfed);border-radius:99px;background:var(--p050,#f4effb);font-size:12px;color:var(--p800,#51338b)}
 .board-reference-card{border:1px solid var(--border,#e4dfed);border-radius:18px;background:var(--card,#fff);margin:12px 0;overflow:hidden;text-align:left;white-space:normal;font-size:14px;line-height:1.45}
 .board-reference-link{display:flex;align-items:center;gap:14px;padding:16px;color:var(--text,#242634)!important;text-decoration:none!important;transition:background .18s}
 .board-reference-link:hover,.board-reference-link:focus-visible{background:var(--purple-light,#f4effb)}
