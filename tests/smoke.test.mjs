@@ -956,7 +956,7 @@ test('team board post composer supports rich media and categorized platform ment
   assert.match(html, /buildGlobalSearchIndex\(\)/);
   assert.match(html, /function insertTeamBoardMention\(index\)/);
   assert.match(html, /function renderTeamBoardText\(raw\)/);
-  assert.match(html, /class="tp-board-mention"/);
+  assert.match(html, /class="board-reference-card"/);
   assert.match(html, /function previewTeamBoardPostImage\(input\)/);
   assert.match(html, /function previewTeamBoardPostDocuments\(input\)/);
   assert.match(html, /const BOARD_POST_MAX_IMAGES=4/);
@@ -1464,8 +1464,10 @@ test('dictionary mentions route to their entry and legacy Wrocław mentions are 
  const hrefSource=html.match(/function teamBoardMentionHref\([^\n]+/)[0],href=new Function(hrefSource+';return teamBoardMentionHref;')();assert.equal(href({kind:'dictionary',dictionaryId:'city-wroclaw'}),'#dictionary/city-wroclaw');
  const parser=html.match(/function parseAppRoute\([^]*?\n\}/)[0],parse=new Function('SCREEN_ROUTES','safeRoutePart',parser+';return parseAppRoute;')({},decodeURIComponent);
  assert.deepEqual(parse(href({kind:'dictionary',dictionaryId:'city-wroclaw'})),{kind:'dictionary',dictionaryId:'city-wroclaw'});
- const source=html.match(/function renderTeamBoardText\([^]*?\n\}/)[0],render=new Function('mdRender','safeUserUrl','escAttr','escHtml','dictionaryEntries',source+';return renderTeamBoardText;')(x=>x,x=>x,x=>x,x=>x,()=>[{id:'city-wroclaw',name:'Wrocław'}]);
+ const source=['boardReferenceParts','renderTeamBoardText','resolveBoardReference','renderBoardReference'].map(name=>html.match(new RegExp('function '+name+'\\([^]*?\\n\\}'))[0]).join('\n');
+ const render=new Function('mdRender','safeUserUrl','escAttr','escHtml','dictionaryEntries','buildGlobalSearchIndex','GLOBAL_SEARCH_META','teamBoardMentionIcon',source+';return renderTeamBoardText;')(x=>x,x=>x,x=>x,x=>x,()=>[{id:'city-wroclaw',name:'Wrocław'}],()=>[],{},()=>'<svg></svg>');
  assert.ok(render('@[Wrocław](#odkrywaj)').includes('href="#dictionary/city-wroclaw"'));assert.ok(render('@[Pomysł](#idea/1)').includes('href="#idea/1"'));
+ assert.ok(render('@[Pomysł](#idea/1)').includes('class="board-reference-card"'));assert.ok(!render('@[Pomysł](#idea/1)').includes('@['));
 });
 
 test('team profile pill selections preserve multiple cities and derive the legacy work mode',()=>{

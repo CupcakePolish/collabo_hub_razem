@@ -7459,7 +7459,7 @@ function openProjectParticipantBoardComposer(ideaId,name,postId=''){
   renderTeamBoardComposerPreview();setTimeout(()=>document.getElementById(post.title?'mb-inp-team-board-post-body':'team-board-post-title')?.focus(),30);
 }
 function saveProjectParticipantBoardPost(ideaId,name,postId=''){
-  const idea=ideas.find(row=>row.id===Number(ideaId));if(!idea||!isActiveProjectMember(idea))return;const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=String(document.getElementById('mb-inp-team-board-post-body')?.value||'').trim(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row}));if(!title&&!text&&!images.length&&!documents.length)return toast('Dodaj treść, tytuł, zdjęcie albo dokument.','warn');
+  const idea=ideas.find(row=>row.id===Number(ideaId));if(!idea||!isActiveProjectMember(idea))return;const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=boardComposerValue(document.getElementById('mb-inp-team-board-post-body')),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row}));if(!title&&!text&&!images.length&&!documents.length)return toast('Dodaj treść, tytuł, zdjęcie albo dokument.','warn');
   idea.participantBoardPosts=idea.participantBoardPosts||[];const current=idea.participantBoardPosts.find(row=>row.target===name&&String(row.id)===String(postId));if(postId&&(!current||current.author!==MY_NAME))return;const persistenceSnapshot=captureBoardPublicationState(),values={target:name,projectId:idea.id,author:MY_NAME,title,text,image:images[0]||'',images,documents,date:current?.date||TODAY,time:current?.time||NOW_TIME(),createdAt:current?.createdAt||Date.now(),updatedAt:Date.now(),reactions:current?.reactions||{}};if(current)Object.assign(current,values);else idea.participantBoardPosts.push({id:'project-person-post-'+Date.now(),...values});if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();openProjectParticipantProfile(idea.id,name);toast(current?'Wpis został zaktualizowany.':'Wpis został opublikowany na tej tablicy.','ok');
 }
 function toggleProjectParticipantBoardReaction(ideaId,name,postId,emoji){
@@ -13412,9 +13412,60 @@ function teamBoardAvatar(t){const initials=String(t.name||'Nowy zespół').split
 function resizePostComposerText(input){if(!input?.closest('.tbp-composer'))return;input.style.height='72px';input.style.height=Math.max(72,input.scrollHeight)+'px';}
 function renderCollapsedBoardText(raw){return `<div class="board-text-preview">${renderTeamBoardText(raw)}</div><button type="button" class="board-text-expand" hidden aria-expanded="false" onclick="toggleBoardTextPreview(this)">Pokaż więcej</button>`;}
 function toggleBoardTextPreview(button){const text=button.previousElementSibling,expanded=button.getAttribute('aria-expanded')!=='true';text.classList.toggle('expanded',expanded);button.setAttribute('aria-expanded',String(expanded));button.textContent=expanded?'Pokaż mniej':'Pokaż więcej';}
-function renderTeamBoardText(raw){
-  return mdRender(raw).replace(/@\[([^\]]+)\]\((#[^)]+)\)/g,(_,label,href)=>{if(['#odkrywaj','#discover','#platform'].includes(href)){const entry=dictionaryEntries().find(item=>escHtml(item.name)===label);if(entry)href='#dictionary/'+encodeURIComponent(entry.id);}const safe=safeUserUrl(href,'link');return safe?`<a class="tp-board-mention" href="${escAttr(safe)}">@${label}</a>`:`@${label}`;});
+/* Rich references retain the existing portable mention format in saved posts. */
+function boardReferenceParts(raw){
+ const refs=[],text=String(raw||'').replace(/@\[([^\]]+)\]\((#[^)]+)\)/g,(_,label,href)=>{if(!refs.some(row=>row.href===href&&row.label===label))refs.push({label,href});return '';});
+ return {text:text.trim(),refs};
 }
+function boardComposerValue(input){return [input?.value||'',...(input?.boardRefs||[]).map(ref=>`@[${ref.label}](${ref.href})`)].filter(Boolean).join('\n').trim();}
+function hydrateBoardReferences(){
+ const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;
+ const parsed=boardReferenceParts(input.value);input.boardRefs=input.boardRefs||[];
+ parsed.refs.forEach(ref=>{if(!input.boardRefs.some(row=>row.href===ref.href&&row.label===ref.label))input.boardRefs.push(ref);});
+ if(parsed.refs.length)input.value=parsed.text;
+ renderBoardComposerReferences(input);
+}
+function renderBoardComposerReferences(input){
+ let preview=input.closest('.tbp-composer')?.querySelector('.board-reference-preview');if(!preview){preview=document.createElement('div');preview.className='board-reference-preview';input.parentElement.append(preview);}
+ preview.innerHTML=(input.boardRefs||[]).map((ref,index)=>`<div class="board-reference-edit">${renderBoardReference(ref,true)}<button type="button" class="board-reference-remove" aria-label="Usuń powiązanie: ${escAttr(ref.label)}" onclick="removeBoardReference(${index})">×</button></div>`).join('');
+}
+function removeBoardReference(index){const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;input.boardRefs.splice(index,1);renderBoardComposerReferences(input);}
+function resolveBoardReference(ref){
+ const rows=buildGlobalSearchIndex();return rows.find(item=>teamBoardMentionHref(item)===ref.href&&item.title===ref.label)||rows.find(item=>teamBoardMentionHref(item)===ref.href);
+}
+function renderBoardReference(ref,preview=false){
+ if(['#odkrywaj','#discover','#platform'].includes(ref.href)){const entry=dictionaryEntries().find(row=>row.name===ref.label);if(entry)ref={...ref,href:'#dictionary/'+encodeURIComponent(entry.id)};}
+ const safe=safeUserUrl(ref.href,'link');if(!safe)return '';
+ const item=resolveBoardReference(ref),kind=item?.kind||'link',meta=GLOBAL_SEARCH_META[kind],label=meta?.singular||'Powiązany element';
+ let icon=teamBoardMentionIcon(kind),description=item?.subtitle||'',ballot='';
+ if(kind==='member'){const person=members.find(row=>String(row.id)===String(item.memberId));if(person)icon=memberAvatarContent(person.name,person.ini||memberInitials(person.name));}
+ if(kind==='project'){const idea=ideas.find(row=>String(row.id)===String(item.ideaId));if(idea){description=idea.desc||description;if(idea.image&&safeUserUrl(idea.image,'image'))icon=`<img src="${escAttr(idea.image)}" alt="">`;}}
+ if(kind==='resource'&&item.scope==='catalog'){const resource=catalogResources.find(row=>String(row.id)===String(item.resourceId));if(resource)description=resource.description||resource.desc||description;}
+ if(kind==='vote'&&item.ideaId){const idea=ideas.find(row=>String(row.id)===String(item.ideaId)),vote=idea?.votes?.find(row=>String(row.id)===String(item.targetId));if(vote){const mine=vote.ballots?.[MY_NAME]||vote.myVote,enabled=!preview&&canCurrentUserVote(idea,vote);ballot=`<div class="board-reference-ballot" role="group" aria-label="Szybkie głosowanie">${[['yes','Za','green'],['abstain','Mam wątpliwości','amber'],['no','Przeciw','red']].map(([choice,title,color])=>`<button type="button" class="${color}${mine===choice?' selected':''}" aria-pressed="${mine===choice}" ${enabled?'':'disabled'} onclick="castBoardReferenceVote(this,decodeURIComponent('${encodeURIComponent(String(idea.id)).replace(/'/g,'%27')}'),decodeURIComponent('${encodeURIComponent(String(vote.id)).replace(/'/g,'%27')}'),'${choice}')">${title} <b>${Number(vote[choice]||0)}</b></button>`).join('')}</div><small class="board-reference-state">${vote.open?(enabled?'Wybierz stanowisko':preview?'Podgląd głosowania':'Głosowanie aktywne · nie możesz oddać głosu'):'Głosowanie zakończone'}</small>`;}}
+ return `<article class="board-reference-card" data-reference-href="${escAttr(ref.href)}" data-reference-label="${escAttr(ref.label)}"><a class="board-reference-link" href="${escAttr(safe)}"><span class="board-reference-icon">${icon}</span><span class="board-reference-content"><small>${escHtml(label)}</small><strong>${escHtml(item?.title||ref.label)}</strong>${description?`<span>${escHtml(description)}</span>`:''}</span><span aria-hidden="true">↗</span></a>${ballot}</article>`;
+}
+function castBoardReferenceVote(button,ideaId,voteId,choice){
+ const idea=ideas.find(row=>String(row.id)===ideaId),vote=idea?.votes?.find(row=>String(row.id)===voteId);if(!vote||!['yes','abstain','no'].includes(choice))return;
+ if(!castStance(idea,vote,choice,{joined:false,text:'',quick:true}))return;
+ queuePersistence();document.querySelectorAll('.board-reference-card').forEach(card=>{if(card.dataset.referenceHref===`#idea/${encodeURIComponent(ideaId)}/decyzje/glosowanie/${encodeURIComponent(voteId)}`){const ref={href:card.dataset.referenceHref,label:card.dataset.referenceLabel};card.outerHTML=renderBoardReference(ref,!!card.closest('.board-reference-preview'));}});
+}
+const boardReferenceStyle=document.createElement('style');boardReferenceStyle.textContent=`
+.board-reference-card{border:1px solid var(--border,#e4dfed);border-radius:18px;background:var(--card,#fff);margin:12px 0;overflow:hidden;text-align:left;white-space:normal;font-size:14px;line-height:1.45}
+.board-reference-link{display:flex;align-items:center;gap:14px;padding:16px;color:var(--text,#242634)!important;text-decoration:none!important;transition:background .18s}
+.board-reference-link:hover,.board-reference-link:focus-visible{background:var(--purple-light,#f4effb)}
+.board-reference-icon{display:grid;place-items:center;flex:0 0 54px;height:54px;border-radius:14px;background:#f4effb;color:#6441a7;overflow:hidden}.board-reference-icon svg{width:30px;height:30px}.board-reference-icon img{width:100%;height:100%;object-fit:cover}
+.board-reference-content{display:grid;gap:3px;min-width:0;flex:1}.board-reference-content small,.board-reference-state{color:var(--muted,#757286);font-size:12px}.board-reference-content strong{font-size:16px}.board-reference-content>span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted,#757286)}
+.board-reference-ballot{display:flex;gap:8px;padding:0 16px 10px;flex-wrap:wrap}.board-reference-ballot button{flex:1;padding:9px;border:1px solid currentColor;border-radius:12px;background:transparent;font:inherit;cursor:pointer;transition:background .18s,transform .18s}.board-reference-ballot button:hover:enabled{transform:translateY(-1px);background:#f4effb}.board-reference-ballot .green{color:#54813f}.board-reference-ballot .amber{color:#a56d0f}.board-reference-ballot .red{color:#ad4158}.board-reference-ballot .selected{box-shadow:inset 0 0 0 1px currentColor;background:#f6f4f8}.board-reference-ballot button:disabled{cursor:default;opacity:.65}.board-reference-state{display:block;padding:0 16px 12px}.board-reference-edit{position:relative}.board-reference-edit .board-reference-link{padding-right:46px}.board-reference-remove{position:absolute;right:10px;top:12px;width:28px;height:28px;border:0;border-radius:50%;background:#f0ebf7;color:#65459c;cursor:pointer}.board-reference-preview{width:100%}.board-text-preview:has(.board-reference-card){max-height:none!important;-webkit-line-clamp:unset!important;display:block!important;overflow:visible!important}
+`;document.head.append(boardReferenceStyle);
+// Modal hydration also covers edits where text is assigned immediately after opening.
+const originalBoardReferenceAppModal=appModal;
+appModal=function(...args){const result=originalBoardReferenceAppModal(...args);queueMicrotask(hydrateBoardReferences);return result;};
+
+function renderTeamBoardText(raw){
+  const parts=boardReferenceParts(raw);
+  return mdRender(parts.text)+parts.refs.map(ref=>renderBoardReference(ref)).join('');
+}
+
 function teamBoardPostImages(post){
   const rows=Array.isArray(post?.images)&&post.images.length?post.images:[post?.image];
   return rows.map(src=>safeUserUrl(src||'','image')).filter(Boolean);
@@ -13693,6 +13744,7 @@ async function previewTeamBoardPostDocuments(input){
 function removeTeamBoardPostImage(index){teamBoardComposerImages.splice(Number(index),1);renderTeamBoardComposerPreview();}
 function removeTeamBoardPostDocument(index){teamBoardComposerDocuments.splice(Number(index),1);renderTeamBoardComposerPreview();}
 function renderTeamBoardComposerPreview(){
+  hydrateBoardReferences();
   const box=document.getElementById('team-board-post-preview'),docs=document.getElementById('team-board-document-preview');if(!box)return;
   const hasImage=teamBoardComposerImages.length>0,hasDocuments=teamBoardComposerDocuments.length>0,media=box.closest('.tbp-media'),grid=box.closest('.tbp-compose-grid'),hasMedia=hasImage||hasDocuments;
   box.classList.toggle('has-image',hasImage);media?.classList.toggle('has-media',hasMedia);media?.classList.toggle('has-image',hasImage);media?.classList.toggle('has-documents',hasDocuments);grid?.classList.toggle('has-media',hasMedia);box.innerHTML=hasImage?`<div class="tbp-selected-gallery" data-count="${teamBoardComposerImages.length}">${teamBoardComposerImages.map((src,index)=>`<div><img src="${escAttr(src)}" alt="Podgląd zdjęcia ${index+1}"><button type="button" onclick="removeTeamBoardPostImage(${index})" aria-label="Usuń zdjęcie ${index+1}">×</button></div>`).join('')}</div>`:'';
@@ -13734,12 +13786,20 @@ window.addEventListener('resize',()=>positionTeamBoardMentionPicker());
 function setTeamBoardMentionCategory(category){teamBoardMentionCategory=TEAM_BOARD_MENTION_CATEGORIES.some(row=>row.id===category)?category:'project';renderTeamBoardMentionPicker();}
 function handleTeamBoardMention(input){const pop=document.getElementById('team-board-mention-pop');if(!pop)return;const hide=()=>{pop.classList.remove('on');pop.innerHTML='';teamBoardMentionResults=[];teamBoardMentionQuery='';};const before=input.value.slice(0,input.selectionStart),match=before.match(/(?:^|\s)@([^@\n]*)$/),query=match?.[1]||'';if(!match||/^\[[^\]]+\]\(#[^)]+\)/.test(query)){hide();return;}if(!pop.classList.contains('on'))teamBoardMentionCategory='project';teamBoardMentionQuery=query.trim();renderTeamBoardMentionPicker(true);}
 function openTeamBoardMentionPicker(){const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;input.focus();const start=input.selectionStart??input.value.length,end=input.selectionEnd??start,prefix=input.value.slice(0,start)&&!/\s$/.test(input.value.slice(0,start))?' @':'@';input.value=input.value.slice(0,start)+prefix+input.value.slice(end);const caret=start+prefix.length;input.setSelectionRange(caret,caret);teamBoardMentionCategory='project';handleTeamBoardMention(input);}
-function insertTeamBoardMention(index){const item=teamBoardMentionResults[index],input=document.getElementById('mb-inp-team-board-post-body'),pop=document.getElementById('team-board-mention-pop');if(!item||!input)return;const pos=input.selectionStart,before=input.value.slice(0,pos),start=before.lastIndexOf('@');if(start<0)return;const label=String(item.title||'Element').replace(/[\[\]()]/g,'').trim(),href=teamBoardMentionHref(item),token=`@[${label}](${href}) `;input.value=input.value.slice(0,start)+token+input.value.slice(pos);const caret=start+token.length;input.focus();input.setSelectionRange(caret,caret);if(pop){pop.classList.remove('on');pop.innerHTML='';}teamBoardMentionResults=[];}
+function insertTeamBoardMention(index){
+ const item=teamBoardMentionResults[index],input=document.getElementById('mb-inp-team-board-post-body'),pop=document.getElementById('team-board-mention-pop');if(!item||!input)return;
+ hydrateBoardReferences();const pos=input.selectionStart,start=input.value.slice(0,pos).lastIndexOf('@');if(start<0)return;
+ const ref={label:String(item.title||'Element').replace(/[\[\]()]/g,''),href:teamBoardMentionHref(item)};
+ if(!input.boardRefs.some(row=>row.href===ref.href&&row.label===ref.label))input.boardRefs.push(ref);
+ input.value=input.value.slice(0,start)+input.value.slice(pos);input.focus();input.setSelectionRange(start,start);renderBoardComposerReferences(input);
+ pop?.classList.remove('on');teamBoardMentionResults=[];
+}
+
 function insertTeamBoardExternalLink(){const input=document.getElementById('mb-inp-team-board-post-body');if(!input)return;const raw=window.prompt('Wklej adres strony (https://…)');if(raw===null)return;const href=safeUserUrl(raw,'link');if(!href||!/^https?:\/\//i.test(href))return toast('Wpisz pełny adres zaczynający się od https://','warn');const start=input.selectionStart??input.value.length,end=input.selectionEnd??start,label=input.value.slice(start,end)||'link',token=`[${label}](${href})`;input.value=input.value.slice(0,start)+token+input.value.slice(end);input.focus();input.setSelectionRange(start,start+token.length);}
 function openTeamBoardPostMenu(teamId,postId){const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;const welcome=postId==='welcome';appModal(`<h3>Opcje wpisu</h3><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal();openTeamBoardPostModal('${escAttr(teamId)}','${escAttr(postId)}')">Edytuj wpis</button>${welcome?`<button class="vbtn" onclick="closeAppModal();toggleTeamWelcomePin('${escAttr(teamId)}')">${t.welcomePinned===false?'Przypnij wpis':'Odepnij wpis'}</button>`:`<button class="vbtn tp-danger-action" onclick="deleteTeamBoardPost('${escAttr(teamId)}','${escAttr(postId)}')">Usuń wpis</button>`}</div>`,'team-board-post-menu-modal');}
 async function saveTeamBoardPost(teamId,postId='',status='published'){
   const t=projectTeams.find(row=>String(row.id)===String(teamId));if(!t||!teamAcceptedMembers(t).includes(MY_NAME))return;
-  const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=String(document.getElementById('mb-inp-team-board-post-body')?.value||'').trim(),audience=document.getElementById('team-board-post-audience')?.value||'team';if(!text)return toast('Dodaj treść wpisu.','warn');
+  const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),text=boardComposerValue(document.getElementById('mb-inp-team-board-post-body')),audience=document.getElementById('team-board-post-audience')?.value||'team';if(!text)return toast('Dodaj treść wpisu.','warn');
   const persistenceSnapshot=captureBoardPublicationState(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'';let savedPostId=postId;
   if(postId==='welcome'){t.boardWelcomeTitle=title;t.boardWelcomeText=text;t.boardWelcomeImage=image;t.boardWelcomeImages=images;t.boardWelcomeDocuments=documents;t.boardWelcomeStatus=status;t.boardWelcomeAudience=audience;t.boardWelcomeBy=t.boardWelcomeBy||MY_NAME;savedPostId='welcome';}
   else{t.boardPosts=t.boardPosts||[];const current=t.boardPosts.find(row=>String(row.id)===String(postId)),newId=current?.id||'tbp'+Date.now(),changes={title,text,image,images,documents,status,audience,date:current?.date||TODAY,time:current?.time||NOW_TIME(),createdAt:current?.createdAt||Date.now(),by:current?.by||MY_NAME,reactions:current?.reactions||{},comments:current?.comments||[],savedBy:current?.savedBy||[]};if(current)Object.assign(current,changes);else t.boardPosts.push({id:newId,...changes});savedPostId=newId;}
@@ -18658,7 +18718,7 @@ function openDiscoverComposerModal(options={}){
   setTimeout(()=>document.getElementById(ideaMention?'mb-inp-team-board-post-body':'team-board-post-title')?.focus(),30);
 }
 function publishDiscoverPost(){
-  const input=document.getElementById('mb-inp-team-board-post-body'),text=String(input?.value||'').trim();if(!text){toast('Napisz treść wpisu.','warn');input?.focus();return;}
+  const input=document.getElementById('mb-inp-team-board-post-body'),text=boardComposerValue(input);if(!text){toast('Napisz treść wpisu.','warn');input?.focus();return;}
   const title=String(document.getElementById('team-board-post-title')?.value||'').trim(),images=teamBoardComposerImages.map(src=>safeUserUrl(src,'image')).filter(Boolean),documents=teamBoardComposerDocuments.map(row=>({...row})),image=images[0]||'',editingPost=discoverComposerEditingId?discoverPosts.find(row=>String(row.id)===String(discoverComposerEditingId)):null,persistenceSnapshot=captureBoardPublicationState();
   if(discoverComposerProfilePostEditingId){const member=members.find(row=>row.id===discoverComposerProfileTargetId),post=member?.profileFeed?.find(row=>String(row.id)===String(discoverComposerProfilePostEditingId));if(!member||!post||post.by!==MY_NAME)return;Object.assign(post,{title,text,image,images,documents,editedAt:Date.now()});if(member.name===MY_NAME&&myProfile?.name===MY_NAME)myProfile.profileFeed=cloneDemoValue(member.profileFeed);if(!commitBoardPublication(persistenceSnapshot))return;closeAppModal();discoverComposerProfilePostEditingId='';if(member.name===MY_NAME)renderMyProfile();else if(currentMemberProfileId===member.id)openMember(member.id,{fromRoute:true});toast('Wpis został zaktualizowany.','ok');return;}
   if(editingPost){
