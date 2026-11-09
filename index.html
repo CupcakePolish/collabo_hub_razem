@@ -5717,10 +5717,33 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
   <main class="resource-catalog-page" id="resource-catalog-page"></main>
 </div>
 
+<div id="s-resource-new" class="screen resource-detail-screen">
+  <main class="resource-page" id="resource-create-page"></main>
+</div>
+
 <!-- ORGANIZATION RESOURCE DETAIL -->
 <div id="s-resource" class="screen resource-detail-screen">
   <main class="resource-page" id="resource-page"></main>
 </div>
+
+<style>
+#s-resource-new{box-sizing:border-box;min-height:100dvh;padding-right:82px;background:var(--surf2)}
+.catalog-resource-form{display:grid;grid-template-columns:minmax(0,2fr) minmax(230px,1fr);gap:24px;width:min(1180px,100%);margin:0 auto;padding:24px;box-sizing:border-box}
+.catalog-resource-fields,.catalog-resource-photo{min-width:0;padding:22px;border:1px solid var(--bdr);border-radius:16px;background:var(--surf)}
+.catalog-resource-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.catalog-resource-fields h2,.catalog-resource-full{grid-column:1/-1}
+.catalog-resource-form h2{margin:0;font-size:18px}
+.catalog-resource-field{display:grid;align-content:start;gap:7px;min-width:0;font-size:13px;color:var(--txm)}
+.catalog-resource-field :is(input,textarea,select){box-sizing:border-box;width:100%;min-width:0;margin:0}
+.catalog-resource-photo{display:grid;align-content:start;gap:18px}
+.catalog-resource-photo>img{width:100%;max-height:260px;object-fit:contain;border-radius:12px}
+.catalog-resource-photo-empty{display:grid;place-items:center;min-height:150px;background:var(--p050);border-radius:12px;color:var(--p700)}
+.catalog-resource-photo-empty svg{width:70px;height:70px}
+.catalog-resource-photo p{font-size:13px;color:var(--txs)}
+.catalog-resource-actions{grid-column:1/-1;display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px}
+@media(max-width:800px){.catalog-resource-form{grid-template-columns:1fr}.catalog-resource-fields{padding:16px}}
+@media(max-width:480px){.catalog-resource-form{padding:14px;gap:14px}.catalog-resource-fields{grid-template-columns:1fr}}
+</style>
 
 <!-- MEMBERS -->
 <div id="s-members" class="screen">
@@ -10025,7 +10048,7 @@ function cancelDraftExit(){draftExitAction=null;closeAppModal();}
 function resolveDraftExit(save){if(save){if(saveDraftEdits(false)===false)return;}else discardDraftEdits(false);const action=draftExitAction;draftExitAction=null;draftEditSession=null;closeAppModal();action?.();}
 window.addEventListener('beforeunload',event=>{if(draftEditsDirty()){event.preventDefault();event.returnValue='';}});
 
-function beginNewIdea(){const idea=createBlankPrivateIdeaDraft();ideas.push(idea);queuePersistence();renderDraftCount();if(typeof openTeamWorkspaceIdea==='function')openTeamWorkspaceIdea(t.id,idea.id);else openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);}
+function beginNewIdea(){const idea=createBlankPrivateIdeaDraft();ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);setTimeout(()=>document.getElementById('draft-idea-title-'+idea.id)?.focus(),80);}
 function openIdeaDraft(id){const row=ideaDrafts.find(item=>item.id===id);if(!row)return;const d=normalizeWizardDraft(row.draft),f=d.fields||{},idea=createBlankPrivateIdeaDraft();idea.title=String(f.title||'');idea.desc=String(f.desc||'');idea.fields.cel.text=String(f.cel||'');idea.fields.skutki.text=String(f.skutki||'');idea.skillsNeeded=(d.skills||[]).map(r=>({skill:canonicalProjectCapabilityName(r.skill),why:String(r.why||''),minLvl:1,filled:false,date:TODAY})).filter(r=>r.skill);idea.roleRequirements=idea.skillsNeeded.map(r=>({role:r.skill,task:r.why,min:1,max:'',exclusive:false,skills:[{name:r.skill,lvl:1}],filledBy:[],status:'open'}));idea._preparedInviteNames=d.invited||[];idea._inviteCommonMessage=d.inviteCommonMessage||DEFAULT_INVITE_MESSAGE;idea._invitePersonalizations=d.invitePersonalizations||{};ideaDrafts=ideaDrafts.filter(item=>item.id!==id);ideas.push(idea);queuePersistence();renderDraftCount();openIdea(idea.id);}
 function requestDeletePrivateIdeaDraft(id){const idea=ideas.find(i=>i.id===id&&isPrivateIdeaDraft(i));if(!idea)return;appModal(`<h3>Usunąć szkic?</h3><p>Szkic „${escHtml(idea.title||'Pomysł bez tytułu')}” zostanie usunięty bez możliwości cofnięcia.</p><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn draft-delete-confirm" onclick="deletePrivateIdeaDraft(${id})">Usuń bezpowrotnie</button></div>`);}
 function deletePrivateIdeaDraft(id){ideas=ideas.filter(i=>!(i.id===id&&isPrivateIdeaDraft(i)));closeAppModal();queuePersistence();renderIdeas();toast('Szkic został usunięty.','ok');}
@@ -13949,7 +13972,7 @@ function openTeam(teamId,opts={}){
   const draftActions=!mine?'':editing?`<button class="team-profile-save-icon" title="${!t.draft&&people.length>1?'Wyślij zmianę do głosowania':'Zapisz zmiany'}" aria-label="${!t.draft&&people.length>1?'Wyślij zmianę do głosowania':'Zapisz zmiany'}" onclick="saveTeamProfileEdit('${escAttr(t.id)}')">${draftHeaderIcon('save')}</button><button class="team-profile-cancel-icon" title="Anuluj zmiany" aria-label="Anuluj zmiany" onclick="cancelTeamProfileEdit('${escAttr(t.id)}')">${draftHeaderIcon('discard')}</button>${t.draft?`<button class="tp-button tp-danger-action" onclick="confirmDeleteTeamDraft('${escAttr(t.id)}')">Usuń szkic</button>`:''}`:t.draft?`<button class="tp-edit-link" onclick="startTeamProfileEdit('${escAttr(t.id)}')">⚙ Edytuj szkic</button><button class="tp-button tp-publish-quiet" onclick="confirmPublishGlobalTeam('${escAttr(t.id)}')">Opublikuj zespół</button><button class="tp-button tp-danger-action" onclick="confirmDeleteTeamDraft('${escAttr(t.id)}')">Usuń szkic</button>`:`<button type="button" class="tp-edit-link team-profile-gear" onclick="startTeamProfileEdit('${escAttr(t.id)}')" title="Edytuj zespół" aria-label="Edytuj zespół">${profileGearIcon()}</button>`;
   const joinDetails=editing?`<div class="tp-inline-join"><label>Miejsce zamieszkania<input id="team-draft-residence" value="${escAttr(editModel.joinResidence||'')}" placeholder="np. Wrocław albo bez wymogu"></label><label>Zasady zespołu<input id="team-draft-rules" value="${escAttr(editModel.joinRules||'Akceptacja przy dołączeniu')}" placeholder="np. Akceptacja przy dołączeniu"></label></div>`:`<dl class="tp-info"><dt>Tryb pracy i miejsce</dt><dd>${escHtml(mode)}${t.location&&t.location!=='Online'?` · ${escHtml(t.location)}`:''}</dd>${t.joinResidence?`<dt>Miejsce zamieszkania</dt><dd>${escHtml(t.joinResidence)}</dd>`:''}<dt>Zasady zespołu</dt><dd>${escHtml(t.joinRules||'Akceptacja przy dołączeniu')}</dd><dt>Przyjmowanie członków</dt><dd>Po akceptacji zespołu</dd></dl>`;
   const wantedContent=editing?`<div class="tp-edit-requirements">${wanted.map((row,index)=>`<span>${escHtml(row)}<button type="button" aria-label="Usuń ${escAttr(row)}" onclick="removeTeamDraftRequirement('${escAttr(t.id)}',${index})">×</button></span>`).join('')}<div><input id="team-draft-new-requirement" placeholder="Dodaj wymaganie" onkeydown="if(event.key==='Enter'){event.preventDefault();addTeamDraftRequirement('${escAttr(t.id)}')}"><button class="tp-button" type="button" onclick="addTeamDraftRequirement('${escAttr(t.id)}')">Dodaj</button></div></div>`:`<div class="tp-chips">${chipList(wanted)||'<p class="tp-empty">Możesz dołączyć bez konkretnej kompetencji.</p>'}</div>`;
-  document.getElementById('team-profile-body').innerHTML=`${draftEditor}<section class="tp-hero${editing?' is-editing':''}"><div class="tp-hero-main">${teamAvatarBox}<div class="tp-identity"><div class="tp-title-row">${heroTitle}<div class="team-profile-status-row">${!t.draft?'<span class="tp-active-pill">Aktywny</span>':'<span class="tp-draft-pill">Prywatny szkic</span>'}${!editing?heroMode:''}</div></div>${heroDescription}<div class="tp-hero-meta">${editing?heroMode:''}${teamMetadataHTML(t,people.length)}</div></div></div><div class="tp-hero-actions">${draftActions}${membershipAction}</div><nav class="tp-tabs" aria-label="Sekcje zespołu"><button class="${teamProfileTab==='board'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','board')">Tablica</button><button class="${teamProfileTab==='members'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','members')">Członkowie</button><button class="${teamProfileTab==='ideas'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','ideas')">Pomysły</button><button class="${teamProfileTab==='discussions'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','discussions')">Dyskusje</button><button class="${teamProfileTab==='meetings'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','meetings')">Spotkania</button><button class="${teamProfileTab==='votes'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','votes')">Głosowania</button><button class="${teamProfileTab==='rules'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','rules')">Zasady</button><button class="${teamProfileTab==='register'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','register')">Rejestr</button></nav></section>
+  document.getElementById('team-profile-body').innerHTML=`${draftEditor}<section class="tp-hero${editing?' is-editing':''}"><div class="tp-hero-main">${editing?`<div class="team-profile-edit-top">${teamAvatarBox}<div class="tp-edit-controls">${draftActions}</div></div>`:teamAvatarBox}<div class="tp-identity"><div class="tp-title-row">${heroTitle}<div class="team-profile-status-row">${!t.draft?'<span class="tp-active-pill">Aktywny</span>':'<span class="tp-draft-pill">Prywatny szkic</span>'}${!editing?heroMode:''}</div></div>${heroDescription}<div class="tp-hero-meta">${editing?heroMode:''}${teamMetadataHTML(t,people.length)}</div></div></div><div class="tp-hero-actions">${editing?'':draftActions}${membershipAction}</div><nav class="tp-tabs" aria-label="Sekcje zespołu"><button class="${teamProfileTab==='board'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','board')">Tablica</button><button class="${teamProfileTab==='members'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','members')">Członkowie</button><button class="${teamProfileTab==='ideas'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','ideas')">Pomysły</button><button class="${teamProfileTab==='discussions'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','discussions')">Dyskusje</button><button class="${teamProfileTab==='meetings'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','meetings')">Spotkania</button><button class="${teamProfileTab==='votes'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','votes')">Głosowania</button><button class="${teamProfileTab==='rules'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','rules')">Zasady</button><button class="${teamProfileTab==='register'?'on':''}" onclick="setTeamProfileTab('${escAttr(t.id)}','register')">Rejestr</button></nav></section>
     ${teamProfileTab==='board'?renderTeamBoard(t,mine):''}<div class="tp-page-grid tp-hidden" id="tp-overview"><main class="tp-main-column"><section class="tp-card tp-goal-card"><div class="tp-section-head"><h2><i>◎</i> Cel zespołu</h2></div><p>${editing?'Edytuj cel bezpośrednio w nagłówku zespołu.':escHtml(t.desc||'Cel zespołu nie został jeszcze opisany.')}</p><a href="#tp-projects">Zobacz pomysły zespołu →</a></section><section class="tp-card" id="tp-discussion"><div class="tp-section-head"><h2><i>♧</i> Tablica zespołu</h2>${mine?`<button class="tp-button" onclick="${action('openTeamAnnouncementModal',t.id)}">${IC.plus} Dodaj ogłoszenie</button>`:''}</div>${composer}${discussion||'<p class="tp-empty">Nie ma jeszcze wpisów. To dobre miejsce na pierwszą aktualizację zespołu.</p>'}</section><section class="tp-card" id="tp-projects"><div class="tp-section-head"><h2>Pomysły i projekty zespołu</h2><span class="tp-count">${projects.length}</span></div>${projectCards||'<p class="tp-empty">Ten zespół nie jest jeszcze przypisany do projektu.</p>'}${mine&&options?`<details class="tp-details"><summary>Zgłoś zespół do projektu</summary><label for="team-project-target-${escAttr(t.id)}">Wybierz projekt</label><select class="fsel" id="team-project-target-${escAttr(t.id)}">${options}</select><button class="tp-button" onclick="${action('submitTeamToProjectFromProfile',t.id)}">Zgłoś zespół</button></details>`:''}</section><section class="tp-card"><div class="tp-section-head"><h2>Ogłoszenia zespołu</h2></div>${announcements}</section><section class="tp-card"><div class="tp-section-head"><h2>Portfolio współpracy</h2></div>${(t.portfolio||[]).map(teamPortfolioItemHTML).join('')||'<p class="tp-empty">Tutaj pojawią się wspólne realizacje zespołu.</p>'}</section></main><aside class="tp-right-column"><section class="tp-card tp-join-card" id="tp-rules"><div class="tp-section-head"><h2><i>♙</i> Warunki dołączenia</h2></div>${joinDetails}${!editing?`<details class="tp-details"><summary>Przeczytaj wszystkie zasady</summary>${rules}</details>`:''}</section><section class="tp-card"><div class="tp-section-head"><h2><i>☆</i> Poszukiwane kompetencje</h2></div>${wantedContent}<p class="tp-meta">Mile widziane — możesz dołączyć także bez nich.</p></section></aside></div>
     <div class="tp-tab-pane${teamProfileTab==='members'?' on':''}"><div class="tp-page-grid"><main class="tp-main-column"><section class="tp-card" id="tp-members"><div class="tp-section-head"><h2><i>♧</i> Członkowie</h2><span class="tp-count">${people.length}</span></div><div class="tp-people">${memberCards||'<p class="tp-empty">Zespół nie ma jeszcze członków.</p>'}</div>${pendingCards?`<details class="tp-details"><summary>Zgłoszenia do rozpatrzenia (${t.pendingMembers.length})</summary>${pendingCards}</details>`:''}</section></main><aside class="tp-right-column"><section class="tp-card"><div class="tp-section-head"><h2>Kompetencje zespołu</h2></div><div class="tp-chips">${chipList(skills)||'<p class="tp-empty">Członkowie nie dodali jeszcze kompetencji.</p>'}</div></section></aside></div></div>
     <div class="tp-tab-pane${teamProfileTab==='ideas'?' on':''}">${renderTeamIdeasTab(t,mine)}</div>
@@ -18020,10 +18043,84 @@ function renderResourceCatalog(){
 }
 function openCatalogTypesInfo(){appModal(`<h3>Typy zasobów</h3><p>Na start katalog korzysta z trzech prostych typów: sprzętu ogrodowego, multimediów i przestrzeni. Nazwy pochodzą ze wspólnego słownika CollaboHuba.</p><div class="app-modal-actions"><button class="vbtn voted-yes" onclick="closeAppModal()">Rozumiem</button></div>`);}
 function openCatalogHelp(){appModal(`<h3>Jak działa katalog?</h3><p>Wybierz zasób, sprawdź jego stan i opiekuna, a następnie zarezerwuj termin. Każda rezerwacja i zmiana stanu pojawia się w historii zasobu.</p><div class="app-modal-actions"><button class="vbtn voted-yes" onclick="closeAppModal()">Gotowe</button></div>`);}
-function openCatalogResourceForm(){appModal(`<h3>Dodaj zasób</h3><p>Nowy zasób pojawi się w katalogu jako dostępny.</p><label>Nazwa<input id="catalog-new-name" class="finp" placeholder="Np. Aparat fotograficzny"></label><label>Typ<select id="catalog-new-type" class="fsel"><option value="media">Sprzęt multimedialny</option><option value="garden">Sprzęt ogrodowy</option><option value="space">Przestrzeń</option><option value="service">Usługa</option></select></label><label>Lokalizacja<input id="catalog-new-location" class="finp" value="Wrocław — biuro"></label><div class="app-modal-actions"><button class="vbtn" onclick="closeAppModal()">Anuluj</button><button class="vbtn voted-yes" onclick="saveCatalogResource()">Dodaj zasób</button></div>`);}
+let catalogResourceDraft=null,catalogResourceDraftOwner='';
+function catalogResourceDraftKey(){return 'collabohub-new-resource-'+currentUserSubject();}
+function currentCatalogResourceDraft(){
+  const owner=currentUserSubject();
+  if(catalogResourceDraft&&catalogResourceDraftOwner===owner)return catalogResourceDraft;
+  let saved;
+  try{saved=JSON.parse(localStorage.getItem(catalogResourceDraftKey())||'null');}catch{}
+  catalogResourceDraftOwner=owner;
+  catalogResourceDraft={name:'',brand:'',code:'',typeKey:'media',location:'',locationDetail:'',description:'',quantity:1,condition:'Dobry',power:'',accessories:'',features:'',tags:'',photo:'',...saved};
+  return catalogResourceDraft;
+}
+function openCatalogResourceForm(){go('resource-new');}
+function captureCatalogResourceDraft(){
+  const form=document.getElementById('catalog-resource-form'),draft=currentCatalogResourceDraft();
+  if(!form)return draft;
+  for(const element of form.elements){
+    if(element.name&&element.type!=='file')draft[element.name]=element.value;
+  }
+  try{localStorage.setItem(catalogResourceDraftKey(),JSON.stringify(draft));}catch{}
+  return draft;
+}
+async function uploadCatalogResourcePhoto(input){
+  const file=input.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')||file.size>2000000){input.value='';return toast('Wybierz zdjęcie do 2 MB.','warn');}
+  const draft=captureCatalogResourceDraft(),owner=currentUserSubject();
+  input.disabled=true;
+  document.getElementById('catalog-resource-publish').disabled=true;
+  try{
+    const photo=await fileAsData(file);
+    if(draft!==catalogResourceDraft||owner!==currentUserSubject())return;
+    draft.photo=photo;
+    captureCatalogResourceDraft();
+    renderCatalogResourceForm();
+  }catch{toast('Nie udało się odczytać zdjęcia. Wybierz plik ponownie.','warn');}
+  finally{
+    if(input.isConnected)input.disabled=false;
+    const submit=document.getElementById('catalog-resource-publish');
+    if(submit)submit.disabled=false;
+  }
+}
+function renderCatalogResourceForm(){
+  const host=document.getElementById('resource-create-page');
+  if(!host)return;
+  const draft=currentCatalogResourceDraft();
+  const field=(key,label,placeholder='',type='text')=>`<label class="catalog-resource-field" for="catalog-new-${key}"><span>${label}</span><input class="finp" id="catalog-new-${key}" name="${key}" type="${type}" value="${escAttr(draft[key]??'')}" placeholder="${escAttr(placeholder)}"${['name','location'].includes(key)?' required maxlength="200"':''}${key==='quantity'?' min="1" step="1" required':''}></label>`;
+  host.innerHTML=`<header class="resource-detail-header"><nav class="resource-breadcrumb" aria-label="Ścieżka"><button type="button" onclick="captureCatalogResourceDraft();go('resources')">Zasoby</button><span>›</span><b>Dodaj zasób</b></nav><div class="resource-detail-title"><div><h1>Dodaj zasób</h1><p>Opisz zasób i podaj informacje potrzebne do korzystania z niego.</p></div></div></header>
+    <form id="catalog-resource-form" class="catalog-resource-form" oninput="captureCatalogResourceDraft()" onchange="captureCatalogResourceDraft()" onsubmit="event.preventDefault();saveCatalogResource()">
+      <section class="catalog-resource-fields"><h2>Informacje o zasobie</h2>
+        ${field('name','Nazwa zasobu','Np. Aparat fotograficzny')}
+        <label class="catalog-resource-field" for="catalog-new-typeKey"><span>Rodzaj zasobu</span><select class="fsel" id="catalog-new-typeKey" name="typeKey">${Object.entries(CATALOG_RESOURCE_CATEGORIES).map(([key,meta])=>`<option value="${key}"${draft.typeKey===key?' selected':''}>${escHtml(meta.label)}</option>`).join('')}</select></label>
+        ${field('brand','Marka / model')}${field('code','Oznaczenie / numer inwentarzowy')}
+        <label class="catalog-resource-field catalog-resource-full" for="catalog-new-description"><span>Opis zasobu</span><textarea class="ft" id="catalog-new-description" name="description" rows="5" maxlength="6000" placeholder="Co to za zasób i do czego może się przydać?">${escHtml(draft.description)}</textarea></label>
+        ${field('location','Lokalizacja','Miasto lub miejsce przechowywania')}${field('locationDetail','Szczegóły lokalizacji','Np. biuro, pomieszczenie, odbiór')}
+        ${field('quantity','Liczba dostępnych sztuk','','number')}${field('condition','Stan zasobu')}
+        ${field('power','Zasilanie / wymagania techniczne')}${field('accessories','Akcesoria i wyposażenie')}
+        ${field('features','Cechy zasobu','Oddziel przecinkami')}${field('tags','Tagi','Oddziel przecinkami')}
+      </section>
+      <aside class="catalog-resource-photo"><h2>Zdjęcie zasobu</h2>${draft.photo?`<img src="${escAttr(draft.photo)}" alt="Wybrane zdjęcie zasobu">`:`<div class="catalog-resource-photo-empty" aria-hidden="true">${catalogResourceIcon(draft.typeKey)}</div>`}
+        <label class="catalog-resource-field" for="catalog-new-photo"><span>Dodaj zdjęcie</span><input id="catalog-new-photo" type="file" accept="image/*" onchange="uploadCatalogResourcePhoto(this)"><small>Plik graficzny do 2 MB.</small></label>
+        <p>Opiekun zasobu: <b>${escHtml(MY_NAME)}</b></p>
+      </aside>
+      <footer class="catalog-resource-actions"><button type="button" class="vbtn" onclick="captureCatalogResourceDraft();go('resources')">Wróć do katalogu</button><button type="submit" id="catalog-resource-publish" class="vbtn voted-yes">Dodaj zasób</button></footer>
+    </form>`;
+}
 function saveCatalogResource(){
-  const name=(document.getElementById('catalog-new-name')?.value||'').trim(),typeKey=document.getElementById('catalog-new-type')?.value||'media',location=(document.getElementById('catalog-new-location')?.value||'').trim();if(!name||!location)return toast('Podaj nazwę i lokalizację zasobu.','warn');
-  const meta=CATALOG_RESOURCE_CATEGORIES[typeKey]||CATALOG_RESOURCE_CATEGORIES.media,id='resource-'+Date.now();catalogResources.push({id,name,brand:'',code:'NOWY',type:meta.label,typeKey,category:meta.label,categoryKey:typeKey,location,locationDetail:location,status:'available',statusLabel:typeKey==='space'?'Dostępna':'Dostępny',owner:MY_NAME,addedBy:MY_NAME,quantity:'1 / 1 szt.',features:['Nowy zasób'],tags:['wspólny'],description:'Nowy zasób organizacji. Uzupełnij opis, zasady korzystania i dane techniczne.',photo:'',condition:'Do uzupełnienia',review:'—',power:'—',accessories:'—',updated:TODAY,nextBooking:'Brak rezerwacji'});closeAppModal();resetResourceCatalogFilters();toast('Zasób dodany do katalogu.','ok');
+  const draft=captureCatalogResourceDraft(),form=document.getElementById('catalog-resource-form');
+  if(!form||!form.reportValidity())return;
+  const name=draft.name.trim(),location=draft.location.trim(),quantity=Number(draft.quantity),meta=CATALOG_RESOURCE_CATEGORIES[draft.typeKey];
+  if(!name||!location||!meta||!Number.isInteger(quantity)||quantity<1)return toast('Podaj nazwę, lokalizację i poprawną liczbę sztuk.','warn');
+  if(form.querySelector('input[type="file"]')?.disabled)return;
+  const id='resource-'+Date.now(),split=value=>String(value||'').split(',').map(part=>part.trim()).filter(Boolean);
+  catalogResources.unshift({id,name,brand:draft.brand.trim(),code:draft.code.trim(),type:meta.label,typeKey:draft.typeKey,category:meta.label,categoryKey:draft.typeKey,location,locationDetail:draft.locationDetail.trim()||location,status:'available',statusLabel:draft.typeKey==='space'?'Dostępna':'Dostępny',owner:MY_NAME,addedBy:MY_NAME,quantity:`${quantity} / ${quantity} szt.`,features:split(draft.features),tags:split(draft.tags),description:draft.description.trim(),photo:draft.photo,condition:draft.condition.trim(),review:'—',power:draft.power.trim()||'—',accessories:draft.accessories.trim()||'—',updated:TODAY,createdAt:new Date().toISOString(),nextBooking:'Brak rezerwacji'});
+  try{localStorage.removeItem(catalogResourceDraftKey());}catch{}
+  catalogResourceDraft=null;
+  queuePersistence();
+  openCatalogResource(id);
+  toast('Zasób dodany do katalogu.','ok');
 }
 function resourceHash(id){return `#resources/${encodeURIComponent(id)}`;}
 function openCatalogResource(id,opts={}){const resource=catalogResources.find(row=>row.id===id);if(!resource)return go('resources');catalogResourceDetailId=id;catalogResourceDetailTab='overview';catalogReviewFilter='resource';catalogReviewSort='newest';if(!opts.fromRoute)setAppHash(resourceHash(id),false);go('resource',null,null,{fromRoute:true});renderCatalogResourceDetail();}
@@ -18116,7 +18213,7 @@ function saveCatalogResourceEdit(id){const resource=catalogResources.find(row=>r
 async function shareCatalogResource(id){const url=location.href.split('#')[0]+resourceHash(id);try{await navigator.clipboard.writeText(url);toast('Link do zasobu skopiowany.','ok');}catch{toast('Skopiuj adres z paska przeglądarki.','warn');}}
 
 const SCREEN_ROUTES=Object.freeze({
-  discover:'discover',search:'search',ideas:'ideas',members:'members',resources:'resources',teams:'teams',platform:'platform',voting:'voting','dictionary-new':'dictionary/new','voting-new':'voting/new',
+  discover:'discover',search:'search',ideas:'ideas',members:'members',resources:'resources','resource-new':'resources/new',teams:'teams',platform:'platform',voting:'voting','dictionary-new':'dictionary/new','voting-new':'voting/new',
   'emoji-center':'about/emoji-center',guides:'about/guides','platform-rules':'about/platform-rules','platform-register':'about/platform-register','profile-me':'profile',about:'about',watch:'watch',submit:'submit'
 });
 const IDEA_TAB_ROUTES=Object.freeze({
@@ -18229,7 +18326,7 @@ function go(name,btn,nlId,opts={}){
   else if(name==='discover') document.getElementById('nl-discover')?.classList.add('on');
   else if(name==='ideas'||name==='idea'||name==='idea-person') document.getElementById('nl-ideas')?.classList.add('on');
   else if(name==='members') document.getElementById('nl-members')?.classList.add('on');
-  else if(name==='resources'||name==='resource') document.getElementById('nl-resources')?.classList.add('on');
+  else if(name==='resources'||name==='resource'||name==='resource-new') document.getElementById('nl-resources')?.classList.add('on');
   else if(name==='teams'||name==='team-profile') document.getElementById('nl-teams')?.classList.add('on');
   else if(name==='voting') document.getElementById('nl-voting')?.classList.add('on');
   else if(name==='dictionary-new')document.getElementById('nl-platform')?.classList.add('on');
@@ -18242,6 +18339,7 @@ function go(name,btn,nlId,opts={}){
   if(name==='members') renderMembers();
   if(name==='resources') renderResourceCatalog();
   if(name==='resource') renderCatalogResourceDetail();
+  if(name==='resource-new')renderCatalogResourceForm();
   if(name==='teams') renderTeams();
   if(name==='dictionary-new')renderNewDictionaryEntry();
   if(name==='voting-new')renderNewPlatformProposal();
@@ -18654,7 +18752,7 @@ function buildPersistentData(){
   saveActiveDemoAccountState();
   return {
     ideas:ideas.map(idea=>draftEditSession&&idea.id===draftEditSession.id?draftEditSession.saved:idea),members:persistentMembersSnapshot(),projectTeams,discoverPosts,myPoints,profilePointsResetVersion,demoAccounts,activeDemoAccountId,
-    teamVotesCleanupVersion,resourceLibraryDocuments,
+    teamVotesCleanupVersion,resourceLibraryDocuments,catalogResources,
     deletedBoardPostIds:[...deletedBoardPostIds],
     myProfile,platformSkills,platformRoles,platformDecisions,
     notifications,wizardDraft,ideaDrafts,activeWizardDraftId,
@@ -18694,6 +18792,7 @@ function applyPersistentData(data){
   if(Array.isArray(data.members))members=demoPerspectiveProfiles(data.members);
   teamVotesCleanupVersion=Number(data.teamVotesCleanupVersion)||0;
   if(Array.isArray(data.resourceLibraryDocuments))resourceLibraryDocuments=data.resourceLibraryDocuments;
+  if(Array.isArray(data.catalogResources))catalogResources.splice(0,catalogResources.length,...data.catalogResources.filter(row=>row&&typeof row.id==='string'&&typeof row.name==='string'));
   if(Array.isArray(data.projectTeams))projectTeams=data.projectTeams.filter(row=>String(row?.id)!=='tm-green');
   if(Array.isArray(data.discoverPosts))discoverPosts=data.discoverPosts.filter(row=>String(row?.id)!=='discover-demo-2').map(row=>String(row?.id)==='discover-demo-1'&&!String(row?.text||'').includes('@[')?{...row,text:`${String(row.text||'').trim()} @[Ustawa ograniczająca możliwości Marszałka Sejmu](#idea/1)`.trim()}:row);
   deletedBoardPostIds=new Set([...LEGACY_REMOVED_BOARD_POST_IDS,...(Array.isArray(data.deletedBoardPostIds)?data.deletedBoardPostIds.map(String):[])]);
@@ -22973,7 +23072,15 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 </style>
 <style id="team-profile-pill-editor-style">
 #s-team-profile .team-profile-identity.is-editing{position:relative}
-#s-team-profile .team-profile-identity.is-editing .tp-hero-actions{position:absolute!important;top:22px!important;right:18px!important;left:auto!important;width:auto!important;margin:0!important;display:flex!important;gap:6px!important}
+#s-team-profile .team-profile-edit-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+#s-team-profile .team-profile-edit-top .tp-avatar{margin:0!important}
+#s-team-profile .tp-edit-controls{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;min-width:0}
+#s-team-profile .tp-edit-controls>button{display:grid;place-items:center;width:34px;height:34px;padding:6px;border:1px solid var(--bdr);border-radius:9px;background:var(--surf);color:var(--txt);cursor:pointer}
+#s-team-profile .tp-edit-controls>button svg{width:20px;height:20px}
+#s-team-profile .tp-edit-controls>button:hover{background:var(--p100);color:var(--p700)}
+#s-team-profile .tp-edit-controls>.tp-danger-action{width:auto;height:auto;min-height:34px;flex:0 0 100%;padding:6px 9px;font:600 12px/1.4 'DM Sans',sans-serif}
+#s-team-profile .team-profile-identity.is-editing>.tp-hero-actions:empty{display:none!important}
+#s-team-profile .team-profile-identity.is-editing .tp-hero-actions{position:static!important;inset:auto!important;width:100%!important;margin:16px 0 0!important;display:flex!important;align-items:center;flex-wrap:wrap;gap:8px!important}
 #s-team-profile .team-profile-identity.is-editing .tp-hero-actions>button{display:grid;place-items:center;width:32px;height:32px;padding:5px;border:0;border-radius:8px;background:transparent;color:var(--txt);cursor:pointer}
 #s-team-profile .team-profile-identity.is-editing .tp-hero-actions>button svg{width:24px;height:24px}.team-profile-save-icon:hover,.team-profile-cancel-icon:hover{background:var(--p100)!important}
 #s-team-profile .team-profile-identity .tp-avatar-edit{overflow:visible!important}#s-team-profile .team-profile-identity .tp-avatar-edit>img{border-radius:50%}
@@ -23025,7 +23132,14 @@ renderTeamMeetings=function(t){if(selectedTeamMeetingPage?.id===String(t.id))ret
 #s-team-profile .team-three-columns .team-profile-identity .tp-identity>p{font-size:12px!important}
 #s-team-profile .team-three-columns .team-profile-identity .tp-avatar{width:100px!important;height:100px!important;flex-basis:100px!important}
 #s-team-profile .team-three-columns .team-profile-identity .team-compact-metadata{gap:10px;flex-wrap:wrap}
-#s-team-profile .team-three-columns .team-profile-identity.is-editing .tp-hero-actions{top:14px!important;right:10px!important;gap:0!important}
+#s-team-profile .team-three-columns .team-profile-identity.is-editing .tp-hero-actions{position:static!important;inset:auto!important;width:100%!important;margin-top:16px!important;gap:8px!important;display:flex!important;align-items:center;flex-wrap:wrap}
+#s-team-profile .team-profile-identity.is-editing .tp-hero-actions>.tp-danger-action{display:inline-flex;flex:0 0 100%;width:100%;height:auto;min-height:36px;margin-top:4px;padding:8px 12px}
+#s-team-profile .team-profile-identity.is-editing label.tp-avatar-edit{position:relative;display:grid!important;place-items:center;font:700 30px/1 'DM Sans',sans-serif}
+#s-team-profile .team-profile-identity.is-editing label.tp-avatar-edit>input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+#s-team-profile .team-profile-identity.is-editing .tp-avatar-edit>.team-photo-camera{position:absolute;right:-5px;bottom:-5px;top:auto;left:auto}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-title{box-sizing:border-box;width:100%;min-width:0;font:700 21px/1.3 'DM Sans',sans-serif}
+#s-team-profile .team-profile-identity.is-editing .tp-inline-description{box-sizing:border-box;width:100%;min-height:120px;font:400 14px/1.5 'DM Sans',sans-serif}
+
 #s-team-profile .team-three-columns .team-profile-identity.is-editing .tp-inline-title{font-size:21px}
 #s-team-profile .team-three-columns .tp-board-feed{width:100%!important;max-width:none!important;margin:0!important}
 #s-team-profile .team-three-columns .board-feed-toolbar{grid-template-columns:minmax(0,1fr)!important}.team-three-columns .board-feed-controls{justify-self:end}
