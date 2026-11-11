@@ -375,7 +375,7 @@ test('project header metadata is uniform and aligned with the top of its photo',
   assert.match(html, /onclick="openProjectNotificationCenter\(\$\{ideaId\},'list'\)"/);
   assert.match(html, /class="project-header-counter"/);
   assert.match(html, /class="project-head-action joined" data-tooltip="W projekcie"/);
-  assert.match(html, /class="project-header-more-menu"><button type="button" class="project-variant-action"[^>]*>[^<]*Utwórz wariant/);
+  assert.match(html, /class="project-head-action icon-only project-context-action project-variant-action" data-tooltip="Utwórz wariant"/);
 });
 
 test('pins and notifications moved from overview cards into complete header modals', () => {
