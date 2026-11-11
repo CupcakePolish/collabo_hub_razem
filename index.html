@@ -8297,6 +8297,9 @@ function renderIdeaCatalogCard(idea){
     const lifecycle=projectLifecycleStatus(idea);
     const activity=latestSubstantiveActivity(idea);
     const photo=ideaCatalogPhoto(idea);
+    const created=ideaDateTime(idea.date);
+    const participantCount=participantsOf(idea).length;
+    const metadata=(icon,value,description)=>`<span class="ic-stat idea-card-meta" tabindex="0" aria-label="${escAttr(description)}" data-meta-tooltip="${escAttr(description)}"><span aria-hidden="true">${icon}</span><span aria-hidden="true">${escHtml(String(value))}</span></span>`;
     const roles=idea.roleRequirements||[];
     const rosterSummary = roles.length ? `<div class="ros-tags">${compactRoleTags(idea)}</div>` : '';
     return `<a class="ic s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
@@ -8306,7 +8309,7 @@ function renderIdeaCatalogCard(idea){
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
         <div class="ic-badges">
           ${isMatch?'<span class="match-flag">dopasowane</span>':''}
-          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${!archived&&lifecycle==='in_progress'&&!isPrivateIdeaDraft(idea)?'<span aria-hidden="true">'+IC.clock+'</span>':''}${isPrivateIdeaDraft(idea)?'Prywatny szkic':archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span><button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
+
         </div>
       </div>
       <div class="ic-desc">${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</div>
@@ -8315,11 +8318,13 @@ function renderIdeaCatalogCard(idea){
         <div class="cbar-roster">${rosterSummary}</div>
         <div class="cbar-track"><div class="cbar-fill" style="width:${pct}%"></div></div>
       </div>
-      </div>
-      <div class="ic-stats">
-        <div class="ic-stat" title="Data utworzenia: ${escAttr(createdLabel(idea.date))}">${IC.cal} <span class="meta-label">Utworzono ${escHtml(createdLabel(idea.date))}</span></div>
-        <div class="ic-stat meta-activity" title="${escAttr(preciseActivityLabel(activity))}">${IC.clock} <span class="meta-label">Aktywność ${escHtml(polishRelative(activity).replace(/\s+temu$/,''))}</span></div>
-        <div class="ic-stat" title="Uczestnicy projektu: ${participantsOf(idea).length}">${IC.users} <b>${participantsOf(idea).length}</b></div>
+        <div class="ic-stats">
+          <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${!archived&&lifecycle==='in_progress'&&!isPrivateIdeaDraft(idea)?'<span aria-hidden="true">'+IC.clock+'</span>':''}${isPrivateIdeaDraft(idea)?'Prywatny szkic':archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span>
+          ${metadata(IC.clock,polishRelative(activity).replace(/\s+temu$/,''),preciseActivityLabel(activity))}
+          ${metadata(IC.users,participantCount,'Uczestnicy projektu: '+participantCount)}
+          ${metadata(IC.cal,created?polishRelative(created).replace(/\s+temu$/,''):'—',created?'Data utworzenia: '+createdLabel(idea.date):'Brak daty utworzenia')}
+          <button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
+        </div>
       </div>
       ${archived?`<div class="archive-strip"><div class="archive-strip-copy"><b>Projekt w archiwum</b>${escHtml(projectArchiveReason(idea))}</div><button type="button" class="archive-reactivate" onclick="event.preventDefault();event.stopPropagation();requestReactivateArchivedProject(${idea.id})">Reaktywuj projekt</button></div>`:''}
     </a>`;
@@ -25701,6 +25706,32 @@ document.addEventListener('click',event=>{
 @media(max-width:650px){
   #s-idea.on .idw .idw-layout,#s-idea.on .idw .idw-layout:has(.idc-replies){grid-template-columns:minmax(112px,34%) minmax(0,1fr)!important}
   #s-idea .idw-project-breadcrumb .doc-breadcrumb{flex-wrap:wrap}
+}
+</style>
+<style>
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .idea-card-thumb{
+  width:100%!important;height:auto!important;aspect-ratio:1;align-self:start;overflow:hidden
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-desc{
+  -webkit-line-clamp:6!important;line-height:1.55;margin-top:8px
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats{
+  display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;
+  margin:14px 0 0!important;padding-top:10px!important;border-top:1px solid var(--bdr)
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic :is(.idea-status-badge,.ros-tags .rtag){
+  background:var(--surf2)!important;border-color:var(--bdr)!important;color:var(--txm)!important
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats .idea-quick-follow{margin-left:auto}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-meta{
+  position:relative;display:inline-flex;align-items:center;gap:5px;color:var(--txs)
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-meta>span:first-child{display:inline-flex}
+:is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-meta:is(:hover,:focus-visible)::after{
+  content:attr(data-meta-tooltip);position:absolute;z-index:4;bottom:calc(100% + 8px);right:0;
+  width:max-content;max-width:220px;white-space:normal;pointer-events:none;
+  padding:7px 10px;border-radius:8px;background:var(--txt);color:var(--surf);
+  font:600 12px/1.4 'DM Sans',sans-serif
 }
 </style>
 <script id="app-ready-script">
