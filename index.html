@@ -5699,8 +5699,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
         <div class="ph-idea-text">
           <div class="eyebrow" id="idea-eyebrow"></div>
           <h1 id="idea-ph-title" class="project-title"></h1>
-          <div class="idea-title-meta" id="idea-title-meta"></div>
-          <div class="ph-idea-actions" id="idea-hero-actions"></div>
+          <div class="idea-header-tools-row">
+            <div class="ph-idea-actions" id="idea-hero-actions"></div>
+            <div class="idea-title-meta" id="idea-title-meta"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -25786,6 +25788,13 @@ document.addEventListener('click',event=>{
   box-shadow:none!important;color:var(--p700)
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats .idea-quick-follow:hover{color:var(--p900)}
+</style>
+<style>
+#s-idea>.ph .idea-project-photo{flex:0 0 clamp(90px,10vw,130px);width:clamp(90px,10vw,130px)}
+#s-idea .idea-header-tools-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;margin-top:14px}
+#s-idea .idea-header-tools-row .ph-idea-actions{margin:0}
+#s-idea .idea-header-tools-row .idea-title-meta{margin:0 0 0 auto;justify-content:flex-end}
+@media(max-width:650px){#s-idea .idea-header-tools-row .idea-title-meta{margin-left:0;justify-content:flex-start}}
 </style>
 <script id="app-ready-script">
 (()=>{
