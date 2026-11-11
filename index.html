@@ -25907,6 +25907,12 @@ new MutationObserver(sizeInvitationConversations).observe(document.body,{childLi
 </script>
 
 <script>
+document.addEventListener('click',event=>{
+  if(!discoverChatUI.expanded||!document.querySelector('.dc-rail.expanded'))return;
+  if(event.composedPath().some(node=>node instanceof Element&&node.matches('.dc-rail,.top-communicator,.irw-resource-menu')))return;
+  discoverChatUI.expanded=false;
+  renderDiscoverChats();
+});
 function toggleTopCommunicator(){discoverChatUI.expanded=!discoverChatUI.expanded;renderDiscoverChats();if(!document.getElementById('discover-chats')){go('watch');renderDiscoverChats();}saveDiscoverChatView();}
 function closeTopAccountMenu(){document.getElementById('demo-account-menu')?.classList.remove('on');document.getElementById('demo-account-current')?.setAttribute('aria-expanded','false');}
 function openTopAccountSettings(){closeTopAccountMenu();appModal(`<h3>Ustawienia</h3><div class="top-settings-actions"><button type="button" class="inv-secondary" onclick="closeAppModal();go('profile-me')">Profil i dane konta</button><button type="button" class="inv-secondary" onclick="toggleTheme()">Przełącz tryb jasny / ciemny</button></div>`,'top-account-modal');}
