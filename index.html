@@ -8794,6 +8794,7 @@ function openIdea(id,preserveScroll=false,opts={}){
   }
   const showIdeaBreadcrumb=true;
   if(showIdeaBreadcrumb&&!ideaBreadcrumb)ideaBreadcrumb=renderIdeaBreadcrumb(idea,null,false);
+  document.getElementById('idea-ph').classList.toggle('idea-overview-header',idea.viewTab==='przeglad');
   const headerBreadcrumb=document.getElementById('idea-header-breadcrumb');if(headerBreadcrumb)headerBreadcrumb.innerHTML=ideaBreadcrumb;
   if(idea.viewTab==='teamy')idea.viewTab='zespol';
   let tabContent={przeglad:tabPrzeglad,zespol:tabZespol,budzet:tabBudzet,zadania:tabZadania,spotkania:tabSpotkania,dokumenty:tabDokumenty,glosowania:tabGlosowania,dyskusja:tabDyskusja,ocena:tabOcena,ustawienia:tabUstawienia,rejestr:tabRejestr}[idea.viewTab];
@@ -25788,6 +25789,9 @@ document.addEventListener('click',event=>{
 #s-idea .idea-header-tools-row .ph-idea-actions{margin:0}
 #s-idea .idea-header-tools-row .idea-title-meta{margin:0 0 0 auto;justify-content:flex-end}
 @media(max-width:650px){#s-idea .idea-header-tools-row .idea-title-meta{margin-left:0;justify-content:flex-start}}
+</style>
+<style>
+#s-idea>#idea-ph:not(.idea-overview-header) .ph-idea{display:none!important}
 </style>
 <script id="app-ready-script">
 (()=>{
