@@ -8426,13 +8426,25 @@ function openIdea(id,preserveScroll=false,opts={}){
   renderIdeaProjectPhoto(idea);
   const ideaMeta=document.getElementById('idea-title-meta');
   if(ideaMeta){
-    const lifecycle=projectLifecycleStatus(idea),statusLabel={in_progress:'W toku',completed:'Zakończony',evaluation:'Ocena',evaluation_completed:'Ocena zakończona'}[lifecycle]||'W toku';
-    const people=participantsOf(idea).length,lastLog=idea.log?.length?idea.log[idea.log.length-1]:null;
-    const activityDate=lastLog?.date||idea.date||'',activityLabel=[lastLog?.time,dmyDate(activityDate)].filter(Boolean).join(' · ');
-    const baseMeta=isPrivateIdeaDraft(idea)
-      ?''
-      :`<span class="idea-meta-status">Status: ${escHtml(statusLabel)}</span>`;
-    ideaMeta.innerHTML=`${platformChangeProjectHeader(idea)}${baseMeta}<button type="button" class="idea-meta-item" onclick="openIdeaTeamMembers(${id})">${IC.users}<span>Zespół: <b>${people} ${plural(people,['osoba','osoby','osób'])}</b></span></button>${lastLog?`<button type="button" class="idea-meta-item idea-meta-activity" onclick="openLatestProjectActivity(${id})" title="Otwórz ostatni wpis w rejestrze">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></button>`:`<span class="idea-meta-item">${IC.clock}<span>Ostatnia aktywność: <b>${escHtml(activityLabel||'brak')}</b></span></span>`}<span class="idea-meta-item" title="${escAttr(ideaSubmissionExactDate(idea))}">${IC.cal}<span>Zgłoszono ${escHtml(ideaSubmissionRelativeTime(idea))}</span></span><span class="idea-meta-item"><button type="button" onclick="openMember(${Number(auth.id)||99})">Autor: ${escHtml(auth.name)}</button></span>`;
+    const lifecycle=projectLifecycleStatus(idea);
+    const statusLabel={in_progress:'W toku',completed:'Zakończony',evaluation:'Ocena',evaluation_completed:'Ocena zakończona'}[lifecycle]||'W toku';
+    const people=participantsOf(idea).length;
+    const activity=latestSubstantiveActivity(idea);
+    const activityText=polishRelative(activity).replace(/\s+temu$/,'');
+    const created=ideaSubmissionTimestamp(idea)||ideaDateTime(idea.date)?.getTime();
+    const creationText=created?polishRelative(new Date(created)).replace(/\s+temu$/,''):'—';
+    const creationTooltip=created?'Data utworzenia: '+new Intl.DateTimeFormat('pl-PL',{dateStyle:'long'}).format(created):'Brak daty utworzenia';
+    const activityTooltip=escAttr(preciseActivityLabel(activity));
+    const status=isPrivateIdeaDraft(idea)?'':`<span class="idea-meta-status">${IC.clock}${escHtml(statusLabel)}</span>`;
+    const author=`<span class="idea-meta-item board-person-hover-target"><button type="button" class="idea-meta-author" aria-label="Autor: ${escAttr(auth.name)}" onclick="openMember(${Number(auth.id)||99})">${IC.role}<span>${escHtml(auth.name)}</span></button>${boardPersonHoverCardHTML(auth.name)}</span>`;
+    const activityItem=idea.log?.length
+      ?`<button type="button" class="idea-meta-item idea-meta-activity idea-header-tooltip" aria-label="${activityTooltip}" data-meta-tooltip="${activityTooltip}" onclick="openLatestProjectActivity(${id})">${IC.clock}${escHtml(activityText)}</button>`
+      :`<span class="idea-meta-item idea-header-tooltip" tabindex="0" aria-label="${activityTooltip}" data-meta-tooltip="${activityTooltip}">${IC.clock}${escHtml(activityText)}</span>`;
+    ideaMeta.innerHTML=`${platformChangeProjectHeader(idea)}${status}
+      <button type="button" class="idea-meta-item" aria-label="Zespół: ${people} ${plural(people,['osoba','osoby','osób'])}" onclick="openIdeaTeamMembers(${id})">${IC.users}${people} ${plural(people,['osoba','osoby','osób'])}</button>
+      ${activityItem}
+      <span class="idea-meta-item idea-header-tooltip" tabindex="0" aria-label="${escAttr(creationTooltip)}" data-meta-tooltip="${escAttr(creationTooltip)}">${IC.cal}${escHtml(creationText)}</span>
+      ${author}`;
   }
   {const isF=followedIdeas.has(id);
    const ha=document.getElementById('idea-hero-actions');
@@ -9423,7 +9435,7 @@ function renderProjectHeaderActions(idea,ideaId,isFollowed=followedIdeas.has(ide
   const custom=isFollowed&&projectUsesCustomNotifications(ideaId);
   const share=canShareIdeaOnMyBoard(idea)?`<button type="button" class="project-head-action share-board" data-tooltip="Na tablicę" aria-label="Udostępnij na tablicy" onclick="shareIdeaOnMyBoard(${ideaId})">${projectHeaderShareIcon()}</button>`:'';
   const pinCount=projectUnseenPinCount(idea),notificationCount=projectNotifications(idea).filter(row=>row.unread).length;
-  return `<div class="project-header-actions"><button type="button" class="project-head-action icon-only watch-project${isFollowed?' eye-active':''}" data-tooltip="${isFollowed?'Przestań obserwować':'Obserwuj projekt'}" aria-label="${isFollowed?'Przestań obserwować':'Obserwuj projekt'}" aria-pressed="${isFollowed}" onclick="toggleProjectFollowMenu(event,${ideaId})">${projectHeaderEyeIcon(isFollowed)}${custom?'<span class="custom-notification-dot"></span>':''}</button>${share}<button type="button" class="project-head-action icon-only project-context-action project-pins-action" data-tooltip="Przypięte" aria-label="Otwórz przypięte informacje${pinCount?` — ${pinCount} nowych`:''}" onclick="openProjectPinsCenter(${ideaId})">${projectHeaderPinIcon()}${projectHeaderCounter(pinCount)}</button><button type="button" class="project-head-action icon-only project-context-action project-notifications-action" data-tooltip="Powiadomienia" aria-label="Otwórz powiadomienia${notificationCount?` — ${notificationCount} nieprzeczytanych`:''}" onclick="openProjectNotificationCenter(${ideaId},'list')">${projectHeaderNotificationIcon()}${projectHeaderCounter(notificationCount)}</button>${projectHeaderMembershipButton(idea,ideaId)}<button type="button" class="project-head-action icon-only project-context-action project-variant-action" data-tooltip="Wariant" aria-label="Utwórz wariant" onclick="saveAsTemplate(${ideaId})">${projectHeaderCopyIcon()}</button>${projectInvitationButton(ideaId)}${projectHeaderFollowPopover(idea,isFollowed)}${projectHeaderMembershipPopover(idea)}</div>`;
+  return `<div class="project-header-actions"><button type="button" class="project-head-action icon-only watch-project${isFollowed?' eye-active':''}" data-tooltip="${isFollowed?'Przestań obserwować':'Obserwuj projekt'}" aria-label="${isFollowed?'Przestań obserwować':'Obserwuj projekt'}" aria-pressed="${isFollowed}" onclick="toggleProjectFollowMenu(event,${ideaId})">${projectHeaderEyeIcon(isFollowed)}${custom?'<span class="custom-notification-dot"></span>':''}</button>${share}<button type="button" class="project-head-action icon-only project-context-action project-pins-action" data-tooltip="Przypięte" aria-label="Otwórz przypięte informacje${pinCount?` — ${pinCount} nowych`:''}" onclick="openProjectPinsCenter(${ideaId})">${projectHeaderPinIcon()}${projectHeaderCounter(pinCount)}</button><button type="button" class="project-head-action icon-only project-context-action project-notifications-action" data-tooltip="Powiadomienia" aria-label="Otwórz powiadomienia${notificationCount?` — ${notificationCount} nieprzeczytanych`:''}" onclick="openProjectNotificationCenter(${ideaId},'list')">${projectHeaderNotificationIcon()}${projectHeaderCounter(notificationCount)}</button>${projectHeaderMembershipButton(idea,ideaId)}<details class="project-header-more"><summary class="project-head-action icon-only" aria-label="Więcej opcji"><span aria-hidden="true">•••</span></summary><div class="project-header-more-menu"><button type="button" class="project-variant-action" onclick="this.closest('details').open=false;saveAsTemplate(${ideaId})">${projectHeaderCopyIcon()} Utwórz wariant</button></div></details>${projectInvitationButton(ideaId)}${projectHeaderFollowPopover(idea,isFollowed)}${projectHeaderMembershipPopover(idea)}</div>`;
 }
 function closeProjectHeaderPopover(ideaId){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
@@ -25742,6 +25754,33 @@ document.addEventListener('click',event=>{
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-title{overflow-wrap:anywhere}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-stats{grid-column:1/-1}
+</style>
+<style>
+#s-idea>.ph .ph-idea{
+  padding:18px;align-items:center;gap:22px;
+  background:var(--surf);border:1px solid var(--bdr);border-radius:22px
+}
+#s-idea .ph-idea-text{min-width:0;flex:1}
+#s-idea .idea-project-photo{height:auto;aspect-ratio:1;align-self:center}
+#s-idea .idea-title-meta{gap:9px 14px;color:var(--txm);font-size:14px}
+#s-idea .idea-title-meta .idea-meta-status{gap:6px;padding:5px 9px;border-radius:11px;background:var(--p050);color:var(--p700)}
+#s-idea .idea-title-meta :is(.idea-meta-status,.idea-meta-item) .mi{width:17px;height:17px;margin:0;color:inherit}
+#s-idea .idea-title-meta .idea-meta-item+.idea-meta-item{border-left:1px solid var(--bdr);padding-left:14px}
+#s-idea .idea-meta-author{display:inline-flex;align-items:center;gap:6px}
+#s-idea .idea-header-tooltip{position:relative}
+#s-idea .idea-header-tooltip:is(:hover,:focus-visible)::after{
+  content:attr(data-meta-tooltip);position:absolute;z-index:100;bottom:calc(100% + 7px);left:0;
+  width:max-content;max-width:240px;white-space:normal;pointer-events:none;
+  padding:7px 10px;border-radius:8px;background:var(--txt);color:var(--surf);font:600 12px/1.4 'DM Sans',sans-serif
+}
+#s-idea .project-header-more{position:relative}
+#s-idea .project-header-more summary{list-style:none;cursor:pointer}
+#s-idea .project-header-more summary::-webkit-details-marker{display:none}
+#s-idea .project-header-more-menu{position:absolute;left:0;top:calc(100% + 6px);z-index:25;padding:5px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);box-shadow:0 6px 20px #21163522}
+#s-idea .project-header-more-menu button{display:flex;align-items:center;gap:8px;white-space:nowrap;padding:8px 10px;border:0;border-radius:7px;background:transparent;color:var(--txt);font:inherit;cursor:pointer}
+#s-idea .project-header-more-menu button:hover{background:var(--p050);color:var(--p700)}
+#s-idea .project-header-more-menu svg{width:16px;height:16px}
+@media(max-width:650px){#s-idea>.ph .ph-idea{padding:14px;gap:12px}#s-idea .idea-title-meta{font-size:12px}}
 </style>
 <script id="app-ready-script">
 (()=>{
