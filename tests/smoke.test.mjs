@@ -487,7 +487,7 @@ test('idea team tab focuses on individual competencies and people', () => {
   assert.match(html, /<small>Dostępność<\/small>/);
   assert.match(html, /<small>Głosowania<\/small>/);
   assert.match(html, /<small>Spotkania<\/small>/);
-  assert.match(html, /<small>Ostatnia aktywność w pomyśle<\/small>/);
+  assert.match(html, /fact\(IC\.clock,'Ostatnia aktywność',relative\(activity\),preciseActivityLabel\(activity\)\)/);
   assert.match(html, /function projectVoteGavelIcon\(\)[\s\S]*projectQuorumGavelIcon/);
   assert.match(html, /\.project-vote-gavel \.idea-quorum-gavel-icon\{[^}]*quorum-gavel\.png/);
   const participantCard = html.match(/function renderIdeaParticipantsCard\(idea,ideaId\)\{([\s\S]*?)\n\}/)?.[1] || '';
