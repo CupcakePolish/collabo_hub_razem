@@ -8385,6 +8385,30 @@ function renderIdeaBreadcrumb(idea,d=null,previewMode=false){
 }
 
 
+let ideaDecisionListObserver;
+function fitIdeaDecisionList(list,previousList,previousScroll){
+  ideaDecisionListObserver?.disconnect();
+  ideaDecisionListObserver=null;
+  if(!list||list.children.length<=4)return;
+
+  const cards=Array.from(list.children).slice(0,4);
+  list.classList.add('idc-scroll-list');
+  list.tabIndex=0;
+  list.setAttribute('role','region');
+  list.setAttribute('aria-label','Lista decyzji');
+  const fit=()=>{
+    const first=cards[0].getBoundingClientRect();
+    const fourth=cards[3].getBoundingClientRect();
+    if(fourth.height)list.style.maxHeight=Math.ceil(fourth.bottom-first.top)+'px';
+  };
+  fit();
+  if(previousList?.firstElementChild?.getAttribute('onclick')===cards[0].getAttribute('onclick')){
+    list.scrollTop=previousScroll;
+  }
+  ideaDecisionListObserver=new ResizeObserver(fit);
+  cards.forEach(card=>ideaDecisionListObserver.observe(card));
+}
+
 function openIdea(id,preserveScroll=false,opts={}){
   if(draftEditSession&&id!==draftEditSession.id&&guardDraftExit(()=>openIdea(id,preserveScroll,opts)))return;
   const documentWindowScroll=preserveScroll&&document.querySelector('.doc-fullscreen')?{top:window.scrollY,left:window.scrollX}:null;
@@ -8803,6 +8827,8 @@ function openIdea(id,preserveScroll=false,opts={}){
 
   if(idea.viewTab==='zespol'&&idea.invitationPage&&canManageProjectMembers(idea))tabContent=renderProjectInvitePage(idea);
   const isFollowed=followedIdeas.has(id);
+  const previousDecisionList=document.querySelector('#idea-body .idc-list-shell > .idc-list');
+  const previousDecisionScroll=previousDecisionList?.scrollTop||0;
   document.getElementById('idea-body').innerHTML=`
     <div class="idea-main">
       ${idea.viewTab==='przeglad'?renderProjectOverviewTop(idea,id):''}
@@ -8835,6 +8861,7 @@ function openIdea(id,preserveScroll=false,opts={}){
     </div>`;
 
   document.getElementById('s-idea')?.classList.remove('discussion-workspace-active');
+  fitIdeaDecisionList(document.querySelector('#idea-body .idc-list-shell > .idc-list'),previousDecisionList,previousDecisionScroll);
 
   applyProjectAccessPolicy(idea,document.getElementById('idea-hero-actions'));
   applyProjectAccessPolicy(idea,document.getElementById('idea-body'));
@@ -25792,6 +25819,14 @@ document.addEventListener('click',event=>{
 </style>
 <style>
 #s-idea>#idea-ph:not(.idea-overview-header) .ph-idea{display:none!important}
+</style>
+<style>
+#s-idea .idc-list-shell>.idc-scroll-list{
+  grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable;
+  scrollbar-color:transparent transparent
+}
+#s-idea .idc-list-shell>.idc-scroll-list:is(:hover,:focus-within){scrollbar-color:var(--p300) transparent}
 </style>
 <script id="app-ready-script">
 (()=>{
