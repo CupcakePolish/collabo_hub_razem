@@ -5587,7 +5587,14 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <header class="search-results-main-head">
         <div><h1>Wyniki wyszukiwania</h1><div class="search-results-summary" id="search-results-summary"></div></div>
         <div class="search-results-view-tools">
-          <label>Sortuj:<select id="global-search-sort" aria-label="Sortowanie wyników" onchange="setGlobalSearchPageSort(this.value)"><option value="relevance">Najbardziej trafne</option><option value="title">Nazwa A–Z</option><option value="type">Typ treści</option></select></label>
+          <details class="search-sort" id="global-search-sort" onkeydown="if(event.key==='Escape'&&this.open){this.open=false;this.querySelector('summary').focus();event.stopPropagation();}">
+            <summary>Sortuj: <strong id="search-sort-label">Najbardziej trafne</strong><span aria-hidden="true">⌄</span></summary>
+            <div class="search-sort-options" role="group" aria-label="Sortowanie wyników">
+              <button type="button" data-sort="relevance" onclick="setGlobalSearchPageSort(this.dataset.sort)">Najbardziej trafne</button>
+              <button type="button" data-sort="title" onclick="setGlobalSearchPageSort(this.dataset.sort)">Nazwa A–Z</button>
+              <button type="button" data-sort="type" onclick="setGlobalSearchPageSort(this.dataset.sort)">Typ treści</button>
+            </div>
+          </details>
           <div class="search-view-toggle" role="group" aria-label="Sposób wyświetlania">
             <button type="button" data-search-view="grid" onclick="setGlobalSearchPageView('grid')" aria-label="Widok kafelków" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></button>
             <button type="button" class="on" data-search-view="list" onclick="setGlobalSearchPageView('list')" aria-label="Widok listy" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M6 6h12M6 12h12M6 18h12"/></svg></button>
@@ -17547,7 +17554,7 @@ function globalSearchPageResultCard(item,query,featured=false){
  const tags=item.kind==='dictionary'?globalSearchDictionaryTags(entity):globalSearchResultTags(item);
  const tagsHTML=tags.length?`<div class="search-entity-tags">${tags.map(tag=>`<span>${globalSearchHighlight(tag,query)}</span>`).join('')}</div>`:'';
  const relation=item.kind==='dictionary'?`<div class="search-entity-relations"><button type="button" onclick="searchGlobalRelated(decodeURIComponent('${encodeURIComponent(item.title).replace(/'/g,'%27')}'));setGlobalSearchPageFilter('resource')">${globalSearchFilterIcon('resource')} Powiązane zasoby</button><button type="button" onclick="searchGlobalRelated(decodeURIComponent('${encodeURIComponent(item.title).replace(/'/g,'%27')}'));setGlobalSearchPageFilter('project')">${globalSearchFilterIcon('project')} Powiązane pomysły</button></div>`:'';
- return `<article class="search-entity-card"><button type="button" class="search-entity-visual" aria-label="Otwórz: ${escAttr(item.title)}" onclick="openGlobalSearchResult(${index})">${globalSearchVisual(item)}</button><div class="search-entity-copy"><div class="search-entity-type">${escHtml(type)}${subtype?` <span>· ${escHtml(subtype)}</span>`:''}</div><button class="search-entity-title" type="button" onclick="openGlobalSearchResult(${index})">${globalSearchHighlight(item.title,query)}</button><p>${globalSearchHighlight(description,query)}</p>${metadata}${tagsHTML}${relation}</div><button type="button" class="search-result-open" onclick="openGlobalSearchResult(${index})">Otwórz <span aria-hidden="true">→</span></button></article>`;
+ return `<article class="search-entity-card"><span class="search-entity-visual" aria-hidden="true">${globalSearchVisual(item)}</span><div class="search-entity-copy"><div class="search-entity-type">${escHtml(type)}${subtype?` <span>· ${escHtml(subtype)}</span>`:''}</div><button class="search-entity-title" type="button" onclick="openGlobalSearchResult(${index})">${globalSearchHighlight(item.title,query)}</button><p>${globalSearchHighlight(description,query)}</p>${metadata}${tagsHTML}${relation}</div></article>`;
 }
 function globalSearchDictionaryTags(entity){return [...new Set([...(Array.isArray(entity?.tags)?entity.tags:[]),...(Array.isArray(entity?.relatedTerms)?entity.relatedTerms:[])].filter(value=>typeof value==='string'))].slice(0,4);}
 function toggleGlobalSearchType(kind){if(kind==='all')globalSearchTypeSelection.clear();else if(globalSearchTypeSelection.has(kind))globalSearchTypeSelection.delete(kind);else globalSearchTypeSelection.add(kind);globalSearchPageFilter='all';renderGlobalSearchPage(globalSearchPageQuery);document.querySelector('[data-search-filter="'+kind+'"]')?.focus({preventScroll:true});}
@@ -17590,11 +17597,14 @@ function setGlobalSearchPageFilter(filter){
   renderGlobalSearchPage(globalSearchPageQuery);
 }
 function setGlobalSearchWithinQuery(value){globalSearchWithinQuery=String(value||'');renderGlobalSearchPage(globalSearchPageQuery);}
-function setGlobalSearchPageSort(value){globalSearchPageSort=['relevance','title','type'].includes(value)?value:'relevance';renderGlobalSearchPage(globalSearchPageQuery);}
+function setGlobalSearchPageSort(value){
+  const menu=document.getElementById('global-search-sort');
+  if(menu){menu.open=false;menu.querySelector('summary')?.focus();}
+  globalSearchPageSort=['relevance','title','type'].includes(value)?value:'relevance';renderGlobalSearchPage(globalSearchPageQuery);}
 function setGlobalSearchPageView(value){globalSearchPageView=value==='grid'?'grid':'list';document.querySelectorAll('[data-search-view]').forEach(button=>{const selected=button.dataset.searchView===globalSearchPageView;button.classList.toggle('on',selected);button.setAttribute('aria-pressed',String(selected));});renderGlobalSearchPage(globalSearchPageQuery);}
 function resetGlobalSearchFilters(){
   globalSearchTypeSelection.clear();globalSearchAvailability.clear();globalSearchLocation.clear();globalSearchPageFilter='all';globalSearchWithinQuery='';globalSearchPageSort='relevance';globalSearchPageView='list';
-  const within=document.getElementById('search-within-results-input'),sort=document.getElementById('global-search-sort');if(within)within.value='';if(sort)sort.value='relevance';
+  const within=document.getElementById('search-within-results-input'),sort=document.getElementById('global-search-sort');if(within)within.value='';if(sort)sort.open=false;
   renderGlobalSearchPage(globalSearchPageQuery);
 }
 function globalSearchRelatedQueries(query,items){
@@ -17619,7 +17629,14 @@ function renderGlobalSearchSidePanels(query,items){
 function renderGlobalSearchPage(query=''){
   const within=document.getElementById('search-within-results-input'),sort=document.getElementById('global-search-sort'),list=document.getElementById('search-results-list'),summary=document.getElementById('search-results-summary'),filters=document.getElementById('global-search-page-filters');
   if(!list)return;
-  globalSearchPageQuery=String(query||'').trim();if(within&&within.value!==globalSearchWithinQuery)within.value=globalSearchWithinQuery;if(sort)sort.value=globalSearchPageSort;
+  globalSearchPageQuery=String(query||'').trim();if(within&&within.value!==globalSearchWithinQuery)within.value=globalSearchWithinQuery;if(sort){
+    const options=sort.querySelectorAll('[data-sort]');
+    options.forEach(option=>{
+      const selected=option.dataset.sort===globalSearchPageSort;
+      option.setAttribute('aria-pressed',String(selected));
+      if(selected)document.getElementById('search-sort-label').textContent=option.textContent;
+    });
+  }
   const all=runGlobalSearch(globalSearchPageQuery),withinNeedle=registerMatchText(globalSearchWithinQuery);let filtered=all.filter(item=>globalSearchFacetMatch(item)&&(!withinNeedle||item.search.includes(withinNeedle)));
   if(globalSearchPageSort==='title')filtered.sort((a,b)=>a.title.localeCompare(b.title,'pl'));else if(globalSearchPageSort==='type')filtered.sort((a,b)=>(GLOBAL_SEARCH_META[a.kind]?.singular||a.kind).localeCompare(GLOBAL_SEARCH_META[b.kind]?.singular||b.kind,'pl')||a.title.localeCompare(b.title,'pl'));
   globalSearchResults=filtered;globalSearchResults.forEach((item,index)=>item.resultIndex=index);
@@ -25521,6 +25538,34 @@ persistChatMessages=function(c,messages){if(c.type!=='idea-decision')return pers
   #s-search .search-results-list{grid-row:4}
 }
 </style>
+<style>
+#s-search .search-results-main{grid-template-columns:minmax(0,1fr) auto}
+#s-search .search-results-view-tools{grid-row:1;grid-column:2;align-self:center;flex-wrap:nowrap}
+#s-search .search-results-main-head>div:first-child{grid-column:1;align-self:center}
+#s-search .search-results-list{grid-column:1/-1;grid-row:2}
+#s-search .search-sort{position:relative;z-index:2;font-size:12px}
+#s-search .search-sort summary{display:flex;align-items:center;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;white-space:nowrap;border:1px solid var(--bdr);border-radius:12px;background:var(--surf)}
+#s-search .search-sort summary::-webkit-details-marker{display:none}
+#s-search .search-sort-options{position:absolute;top:calc(100% + 6px);right:0;min-width:100%;padding:5px;border:1px solid var(--bdr);border-radius:12px;background:var(--surf);box-shadow:0 8px 24px #452f6726}
+#s-search .search-sort-options button{display:block;width:100%;height:auto;padding:9px 10px;text-align:left;white-space:nowrap;border:0;border-radius:8px;background:transparent;color:var(--txt);font:inherit}
+#s-search .search-sort-options button:hover,#s-search .search-sort-options button[aria-pressed=true]{background:var(--p050);color:var(--p700)}
+#s-search .search-entity-card{position:relative;grid-template-columns:76px minmax(0,1fr);cursor:pointer}
+#s-search .search-entity-title::after{content:'';position:absolute;inset:0;border-radius:20px}
+#s-search .search-entity-title:focus-visible::after{outline:2px solid var(--p500);outline-offset:2px}
+#s-search .search-entity-relations button{position:relative;z-index:1}
+@media(max-width:1250px){#s-search .search-entity-card{grid-template-columns:60px minmax(0,1fr)}}
+@media(max-width:760px){
+  #s-search .search-results-main{grid-template-columns:minmax(0,1fr)}
+  #s-search .search-results-view-tools{grid-row:3;grid-column:1}
+  #s-search .search-results-list{grid-row:4}
+}
+</style>
+<script>
+document.addEventListener('click',event=>{
+  const menu=document.getElementById('global-search-sort');
+  if(menu?.open&&!menu.contains(event.target))menu.open=false;
+});
+</script>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
