@@ -8302,9 +8302,8 @@ function renderIdeaCatalogCard(idea){
     const metadata=(icon,value,description)=>`<span class="ic-stat idea-card-meta" tabindex="0" aria-label="${escAttr(description)}" data-meta-tooltip="${escAttr(description)}"><span aria-hidden="true">${icon}</span><span aria-hidden="true">${escHtml(String(value))}</span></span>`;
     const roles=idea.roleRequirements||[];
     const rosterSummary = roles.length ? `<div class="ros-tags">${compactRoleTags(idea)}</div>` : '';
-    return `<a class="ic s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
-      <div class="idea-card-thumb">${photo?`<img src="${escAttr(photo)}" alt="Zdjęcie pomysłu: ${escAttr(displayTitle)}">`:`<span>${escHtml((displayTitle||'P').slice(0,1).toUpperCase())}</span>`}</div>
-      <div class="idea-card-content">
+    const compact=String(idea.desc||'').trim().length<=80&&!variant&&!compactRoleTags(idea);
+    return `<a class="ic${compact?' idea-card-compact':''} s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
       <div class="ic-top">
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
         <div class="ic-badges">
@@ -8312,19 +8311,21 @@ function renderIdeaCatalogCard(idea){
 
         </div>
       </div>
+      <div class="idea-card-thumb">${photo?`<img src="${escAttr(photo)}" alt="Zdjęcie pomysłu: ${escAttr(displayTitle)}">`:`<span>${escHtml((displayTitle||'P').slice(0,1).toUpperCase())}</span>`}</div>
+      <div class="idea-card-content">
       <div class="ic-desc">${escHtml(idea.desc||'Opis nie został jeszcze dodany.')}</div>
       ${variant?`<div class="idea-variant-origin">${ideaKindIcon(true)}<span>Wariant pomysłu „${escHtml(variant.source?.title||displayTitle)}”, utworzony ${escHtml(shortDate(variant.date))} przez ${escHtml(auth.name)}.</span></div>`:''}
       <div class="ic-footer">
         <div class="cbar-roster">${rosterSummary}</div>
         <div class="cbar-track"><div class="cbar-fill" style="width:${pct}%"></div></div>
       </div>
-        <div class="ic-stats">
+      </div>
+      <div class="ic-stats">
           <span class="badge idea-status-badge status-${archived?'archived':lifecycle}">${!archived&&lifecycle==='in_progress'&&!isPrivateIdeaDraft(idea)?'<span aria-hidden="true">'+IC.clock+'</span>':''}${isPrivateIdeaDraft(idea)?'Prywatny szkic':archived?'Archiwum':escHtml(ideaPhaseLabel(idea))}</span>
           ${metadata(IC.clock,polishRelative(activity).replace(/\s+temu$/,''),preciseActivityLabel(activity))}
           ${metadata(IC.users,participantCount,'Uczestnicy projektu: '+participantCount)}
           ${metadata(IC.cal,created?polishRelative(created).replace(/\s+temu$/,''):'—',created?'Data utworzenia: '+createdLabel(idea.date):'Brak daty utworzenia')}
           <button type="button" class="idea-quick-follow${followedIdeas.has(idea.id)?' on':''}" aria-label="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'} pomysł" data-tooltip="${followedIdeas.has(idea.id)?'Przestań obserwować':'Zaobserwuj'}" aria-pressed="${followedIdeas.has(idea.id)}" onclick="toggleIdeaQuickFollow(event,${idea.id})" onkeydown="event.stopPropagation()">${profileStarIcon()}</button>
-        </div>
       </div>
       ${archived?`<div class="archive-strip"><div class="archive-strip-copy"><b>Projekt w archiwum</b>${escHtml(projectArchiveReason(idea))}</div><button type="button" class="archive-reactivate" onclick="event.preventDefault();event.stopPropagation();requestReactivateArchivedProject(${idea.id})">Reaktywuj projekt</button></div>`:''}
     </a>`;
@@ -25713,7 +25714,7 @@ document.addEventListener('click',event=>{
   width:100%!important;height:auto!important;aspect-ratio:1;align-self:start;overflow:hidden
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-desc{
-  -webkit-line-clamp:6!important;line-height:1.55;margin-top:8px
+  -webkit-line-clamp:4!important;line-height:1.55;margin-top:0
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats{
   display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;
@@ -25733,6 +25734,20 @@ document.addEventListener('click',event=>{
   padding:7px 10px;border-radius:8px;background:var(--txt);color:var(--surf);
   font:600 12px/1.4 'DM Sans',sans-serif
 }
+</style>
+<style>
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list{align-items:start}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{align-self:start;min-height:0}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-top{
+  grid-column:1/-1;min-width:0;margin:0;gap:8px
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-title{overflow-wrap:anywhere}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-stats{grid-column:1/-1}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact{
+  grid-template-columns:minmax(0,1fr)!important;width:min(100%,320px);justify-self:start;box-sizing:border-box
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact>.idea-card-thumb{max-width:160px}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact .ic-footer{display:none}
 </style>
 <script id="app-ready-script">
 (()=>{
