@@ -5663,19 +5663,10 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       </section>
 
     </aside>
-    <main class="ideas-catalog-main"><header class="ideas-catalog-heading"><div class="ideas-hero-art" aria-hidden="true"><img src="assets/ideas-watering.png" alt="" width="780" height="260"></div><div class="eyebrow">Pomysły</div><h1>Pomysły</h1><p>Propozycje działań, projektów i inicjatyw, które możemy rozwijać razem.<br>Dodawaj, komentuj, wspieraj i pomagaj je realizować.</p></header>
+    <main class="ideas-catalog-main"><header class="ideas-catalog-heading"><div class="ideas-hero-art" aria-hidden="true"></div><div class="eyebrow">Pomysły</div><h1>Pomysły</h1><p>Propozycje działań, projektów i inicjatyw, które możemy rozwijać razem.<br>Dodawaj, komentuj, wspieraj i pomagaj je realizować.</p></header>
       <div class="ideas-search-row">
         <div class="search-wrap"><input id="idea-search" aria-label="Szukaj propozycji" placeholder="Szukaj pomysłów po nazwie, opisie, tagach lub autorze…" oninput="searchQ=this.value;renderIdeas()" /></div>
         <button type="button" class="catalog-add-button" aria-label="Dodaj pomysł" onclick="beginNewIdea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>
-      </div>
-      <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
-      <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
-        <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></svg>Wszystkie</button>
-        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-4.5 3.3-6.5 7.5-6.5s6.7 2 7.5 6.5"/></svg>Dla mnie</button>
-        <button class="tab" id="tab-followed" onclick="switchTab('followed',this,'tab-followed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>Obserwowane</button><button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5ZM14 3v5h5M8 12h8M8 16h6"/></svg>Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
-      </div>
-      <div class="ideas-results-toolbar">
-        <b id="idea-results-count">0 propozycji</b>
         <div class="idea-filter-dropdown idea-sort-dropdown">
           <button type="button" class="idea-filter-select" id="idea-sort-button" onclick="toggleIdeaFilterMenu('sort',event)">Sortuj: <b id="idea-sort-label">Ostatnia aktywność ↓</b><span>⌄</span></button>
           <div class="idea-filter-menu idea-sort-menu" id="idea-sort-menu">
@@ -5684,6 +5675,13 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
             <div class="idea-menu-heading">Zaangażowanie</div><button onclick="setIdeaListChoice('sort','entries-desc')">Najwięcej wpisów aktywności</button><button onclick="setIdeaListChoice('sort','people-desc')">Najwięcej uczestników</button><button onclick="setIdeaListChoice('sort','comments-desc')">Najwięcej komentarzy</button>
           </div>
         </div>
+      </div>
+      <div class="search-hint">np. „grafik", „klimat", „ustawa", nazwisko autora</div>
+      <div class="ideas-scope-tabs" aria-label="Zakres pomysłów">
+        <button class="tab on" id="tab-all" onclick="switchTab('all',this,'tab-all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></svg>Wszystkie</button>
+        <button class="tab" id="tab-for-me" title="Na podstawie Twoich kompetencji i potrzeb projektów" onclick="switchTab('for-me',this,'tab-for-me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-4.5 3.3-6.5 7.5-6.5s6.7 2 7.5 6.5"/></svg>Dla mnie</button>
+        <button class="tab" id="tab-followed" onclick="switchTab('followed',this,'tab-followed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>Obserwowane</button><button class="tab" id="tab-drafts" onclick="switchTab('drafts',this,'tab-drafts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5ZM14 3v5h5M8 12h8M8 16h6"/></svg>Moje szkice <span class="for-me-count" id="drafts-tab-count"></span></button>
+        <b id="idea-results-count" aria-live="polite">0 propozycji</b>
       </div>
       <div class="ideas-list" id="ideas-list"></div>
     </main>
@@ -5846,13 +5844,15 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
       <div class="teams-catalog-tools">
         <label class="members-main-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="teams-search" aria-label="Szukaj zespołów" placeholder="Szukaj zespołów… (nazwa, opis, kompetencje…)" oninput="teamSearchQ=this.value;renderTeams()"></label>
         <button type="button" class="catalog-add-button" aria-label="Utwórz zespół" onclick="startGlobalTeamForm()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>
-      </div>
-      <div class="teams-results-toolbar"><div class="members-result-count" id="teams-result-count"></div><span class="teams-sort-caption">Sortuj według:</span>
+        <div class="resource-inline-controls">
         <div class="members-sort teams-sort" id="teams-sort">
-          <button type="button" class="members-sort-trigger" onclick="toggleTeamSort(event)"><b id="teams-sort-label">Ostatnia aktywność</b><svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
+          <button type="button" class="members-sort-trigger" onclick="toggleTeamSort(event)">Sortuj: <b id="teams-sort-label">Ostatnia aktywność</b><svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
           <div class="members-sort-menu" id="teams-sort-menu"></div>
         </div>
+          <div id="teams-view-switch"></div>
+        </div>
       </div>
+      <div class="teams-results-toolbar"><div class="members-result-count" id="teams-result-count"></div></div>
       <div class="teams-catalog-grid" id="teams-list"></div>
     </main>
   </div>
@@ -5883,7 +5883,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
           <span aria-hidden="true">⌕</span>
           <input id="dictionary-search" type="search" placeholder="Szukaj w słowniku — nazwa, definicja, kategoria..." oninput="setDictionarySearch(this.value)">
         </label>
-        <button class="dictionary-propose" type="button" onclick="openDictionaryProposal()">＋ Zaproponuj pojęcie</button>
+        <button type="button" class="catalog-add-button" aria-label="Zaproponuj pojęcie" onclick="openDictionaryProposal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button><div class="resource-inline-controls" id="dictionary-inline-controls"></div>
       </div>
       <div id="platform-body"></div>
     </main>
@@ -7261,7 +7261,7 @@ function renderPlatformVotes(){
  let rulesVotesChanged=false;platformVoteRows().forEach(v=>{if(v.status==='active'&&v.endsAt&&Date.now()>=new Date(v.endsAt)){evaluatePlatformVote(v);rulesVotesChanged=true;}});if(rulesVotesChanged)savePlatformVoteRows(platformVoteRows());
  syncPlatformChangeWorkflow();
  const state=platformVoteView,all=platformVoteRows().filter(v=>!v.removedFromList),rows=all.filter(v=>(state.section==='implemented'?v.platformChangePhase==='result'&&v.accepted:state.section==='settings'?!!v.settingsChange:state.section==='platform'?v.kind==='platform-change'&&!v.settingsChange:v.kind!=='platform-change'&&!v.settingsChange)&&(state.section==='settings'?v.status===(state.settingsTab==='history'?'closed':'active'):state.section==='implemented'||(state.section==='platform'?(!v.platformChangePhase&&(!state.phase||platformChangePhaseKey(v)===state.phase)):!state.status||v.status===state.status))&&(!state.category||platformVoteCategory(v)===state.category)&&(!state.changeKind||platformVoteChangeKinds(v).includes(state.changeKind))&&(`${v.title} ${v.category} ${v.proposed}`.toLocaleLowerCase('pl').includes(state.query.toLocaleLowerCase('pl')))),selected=rows.find(v=>v.id===state.selected)||(state.section==='platform'?all.find(v=>v.id===state.selected&&v.kind==='platform-change'&&!v.settingsChange):null)||rows[0];
- host.innerHTML=`<div class="pv-catalog"><aside class="pv-filter-sidebar">${renderPlatformVoteFilters(all)}</aside><main class="pv-main"><header class="pv-head"><div class="pv-heading-copy"><div class="eyebrow">Wspólne decyzje</div><h1>Głosowania platformowe</h1><p>Tutaj decydujemy o zmianach w słowniku i kompetencjach platformy, takich jak definicje, opisy i grafiki ikon.</p></div>${renderPlatformVoteArt()}</header><div class="pv-search-toolbar"><label class="pv-filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" placeholder="Szukaj po tytule lub opisie…" value="${escAttr(state.query)}" aria-label="Szukaj głosowań" oninput="updatePlatformVoteSearch(this)"></label><button type="button" class="inv-primary" onclick="go('voting-new')">+ Zaproponuj zmianę</button></div>${state.editing?renderPlatformVoteForm():''}<div class="pv-toolbar"><div class="pv-tabs">${[['dictionary','Słownik'],['platform','Zmiany platformowe'],['settings','Ustawienia']].map(([key,label])=>`<button class="${state.section===key?'on':''}" onclick="setPlatformVoteView('section','${key}')">${label} ${key==='settings'?'':`<small>${all.filter(v=>key==='implemented'?v.platformChangePhase==='result'&&v.accepted:key==='platform'?v.kind==='platform-change'&&!v.settingsChange:v.kind!=='platform-change'&&!v.settingsChange).length}</small>`}</button>`).join('')}</div></div><div class="pv-layout"><div class="pv-list">${rows.length?rows.map(v=>`<button class="pv-card ${selected?.id===v.id?'on':''}" onclick="setPlatformVoteView('selected','${escAttr(v.id)}')"><span class="pv-icon">${platformVoteOriginalIcon(v)}</span><div>${v.kind==='platform-change'?'':`<small>${escHtml(v.category)}</small>`}<h3>${escHtml(v.title)}</h3><p>${escHtml(v.proposed)}</p><span class="pv-status ${v.status}">${state.section==='platform'?platformChangePhaseLabel(platformChangePhaseKey(v)):platformVoteStatusLabel(v.status)}</span><footer>${escHtml(v.author)} · ${escHtml(v.date)}</footer></div></button>`).join(''):'<div class="pv-empty"><i class="platform-vote-gavel"></i><h3>Nie ma jeszcze głosowań</h3><p>Zaproponuj zmianę, aby rozpocząć rozmowę o rozwoju platformy.</p></div>'}</div><section class="pv-detail">${selected?renderPlatformVoteDetail(selected):'<div class="pv-empty"><h3>Miejsce na szczegóły zmiany</h3><p>Wybierz propozycję, aby porównać opisy i oddać głos.</p></div>'}</section></div></main></div>`;
+ host.innerHTML=`<div class="pv-catalog"><aside class="pv-filter-sidebar">${renderPlatformVoteFilters(all)}</aside><main class="pv-main"><header class="pv-head"><div class="pv-heading-copy"><div class="eyebrow">Wspólne decyzje</div><h1>Głosowania platformowe</h1><p>Tutaj decydujemy o zmianach w słowniku i kompetencjach platformy, takich jak definicje, opisy i grafiki ikon.</p></div>${renderPlatformVoteArt()}</header><div class="pv-search-toolbar"><label class="pv-filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" placeholder="Szukaj po tytule lub opisie…" value="${escAttr(state.query)}" aria-label="Szukaj głosowań" oninput="updatePlatformVoteSearch(this)"></label><button type="button" class="catalog-add-button" aria-label="Zaproponuj zmianę" onclick="go('voting-new')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button></div>${state.editing?renderPlatformVoteForm():''}<div class="pv-toolbar"><div class="pv-tabs">${[['dictionary','Słownik'],['platform','Zmiany platformowe'],['settings','Ustawienia']].map(([key,label])=>`<button class="${state.section===key?'on':''}" onclick="setPlatformVoteView('section','${key}')">${label} ${key==='settings'?'':`<small>${all.filter(v=>key==='implemented'?v.platformChangePhase==='result'&&v.accepted:key==='platform'?v.kind==='platform-change'&&!v.settingsChange:v.kind!=='platform-change'&&!v.settingsChange).length}</small>`}</button>`).join('')}</div></div><div class="pv-layout"><div class="pv-list">${rows.length?rows.map(v=>`<button class="pv-card ${selected?.id===v.id?'on':''}" onclick="setPlatformVoteView('selected','${escAttr(v.id)}')"><span class="pv-icon">${platformVoteOriginalIcon(v)}</span><div>${v.kind==='platform-change'?'':`<small>${escHtml(v.category)}</small>`}<h3>${escHtml(v.title)}</h3><p>${escHtml(v.proposed)}</p><span class="pv-status ${v.status}">${state.section==='platform'?platformChangePhaseLabel(platformChangePhaseKey(v)):platformVoteStatusLabel(v.status)}</span><footer>${escHtml(v.author)} · ${escHtml(v.date)}</footer></div></button>`).join(''):'<div class="pv-empty"><i class="platform-vote-gavel"></i><h3>Nie ma jeszcze głosowań</h3><p>Zaproponuj zmianę, aby rozpocząć rozmowę o rozwoju platformy.</p></div>'}</div><section class="pv-detail">${selected?renderPlatformVoteDetail(selected):'<div class="pv-empty"><h3>Miejsce na szczegóły zmiany</h3><p>Wybierz propozycję, aby porównać opisy i oddać głos.</p></div>'}</section></div></main></div>`;
  if(state.section==='settings'){const layout=host.querySelector('.pv-layout');layout.insertAdjacentHTML('beforebegin',renderPlatformSettingsTabs());if(!state.settingsTab||state.settingsTab==='current'){layout.outerHTML=renderPlatformRulesSettings();host.querySelector('.pv-search-toolbar').hidden=true;if(platformRulesDraft)renderPlatformRulesSummary();}else{layout.classList.add('pv-settings-vote-layout');if(selected&&state.tab==='discussion')setupPlatformVoteDiscussion(selected);}}else if(selected&&state.tab==='discussion')setupPlatformVoteDiscussion(selected);
 }
 let newPlatformProposalDraft=null;
@@ -13940,7 +13940,16 @@ function renderTeamFilterSidebar(teams){
   Object.entries(teamFilterSections).forEach(([key,open])=>document.getElementById(`team-filter-title-${key}`)?.setAttribute('aria-expanded',String(open)));
   const clear=document.getElementById('teams-clear-filters');if(clear)clear.disabled=!teamSkillFilters.length&&!teamModeFilters.length&&!teamLocationFilters.length&&!teamSkillSearchQ&&!teamSearchQ;
 }
+let teamCatalogView='grid';
+function setTeamCatalogView(view){
+  teamCatalogView=view==='list'?'list':'grid';
+  renderTeams();
+  document.querySelector('#teams-view-switch .on')?.focus();
+}
 function renderTeams(){
+  const switchHost=document.getElementById('teams-view-switch');
+  if(switchHost)switchHost.innerHTML=resourceCatalogViewSwitch(teamCatalogView,'setTeamCatalogView');
+  document.getElementById('teams-list')?.classList.toggle('list-view',teamCatalogView==='list');
   const teams=ensureIdeaTeams({});renderTeamFilterSidebar(teams);
   const q=String(teamSearchQ||document.getElementById('teams-search')?.value||'').toLowerCase().trim();
   let list=teams.filter(t=>{
@@ -18174,7 +18183,7 @@ function resourceLibraryEntries(){
 }
 function openResourceLibraryItem(index){resourceLibraryRows[index]?.open();}
 async function uploadResourceLibraryDocuments(input){const previous=resourceLibraryDocuments.slice();for(const file of [...(input.files||[])]){if(file.size>BOARD_POST_DOCUMENT_FILE_LIMIT){toast('Dokument jest za duży. Limit pliku to 900 KB.','warn');continue;}const data=await fileAsData(file);if(data)resourceLibraryDocuments.push({name:file.name,type:file.type,data,size:file.size,by:MY_NAME,createdAt:Date.now()});}input.value='';if(!persistNow()){resourceLibraryDocuments=previous;return;}renderResourceCatalog();}
-function resourceCatalogViewSwitch(){return `<div class="members-view-toggle resource-modern-view" aria-label="Sposób wyświetlania">${[['grid','Kafelki','<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>'],['list','Lista','<path d="M5 6h14M5 12h14M5 18h14"/>']].map(([view,label,path])=>`<button type="button" class="${resourceCatalogState.view===view?'on':''}" aria-label="${label}" aria-pressed="${resourceCatalogState.view===view}" onclick="setResourceCatalogView('${view}')"><svg viewBox="0 0 24 24">${path}</svg></button>`).join('')}</div>`;}
+function resourceCatalogViewSwitch(currentView=resourceCatalogState.view,setView='setResourceCatalogView'){return `<div class="members-view-toggle resource-modern-view" aria-label="Sposób wyświetlania">${[['grid','Kafelki','<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>'],['list','Lista','<path d="M5 6h14M5 12h14M5 18h14"/>']].map(([view,label,path])=>`<button type="button" class="${currentView===view?'on':''}" aria-label="${label}" aria-pressed="${currentView===view}" onclick="${setView}('${view}')"><svg viewBox="0 0 24 24">${path}</svg></button>`).join('')}</div>`;}
 function catalogFilteredResources(){
   const q=resourceCatalogState.query.trim().toLocaleLowerCase('pl-PL');
   const rows=catalogResources.filter(resource=>((resourceCatalogState.section||'all')==='all'||resourceGroup(resource)===resourceCatalogState.section)&&(!q||[resource.name,resource.brand,resource.code,resource.type,resource.category,resource.location,resource.description,resource.owner,...resource.features].join(' ').toLocaleLowerCase('pl-PL').includes(q))&&(resourceCatalogState.scope==='all'||(resourceCatalogState.scope==='mine'?resource.owner===MY_NAME:resource.status===resourceCatalogState.scope))&&(resourceCatalogState.type==='all'||resource.typeKey===resourceCatalogState.type)&&(resourceCatalogState.status==='all'||resource.status===resourceCatalogState.status)&&(resourceCatalogState.location==='all'||resource.location===resourceCatalogState.location)&&(resourceCatalogState.category==='all'||resource.categoryKey===resourceCatalogState.category)&&(resourceCatalogState.condition==='all'||resource.condition===resourceCatalogState.condition));
@@ -19195,17 +19204,25 @@ function dictionarySkillIcon(name){const approved=approvedCompetencyIcon(name);i
  return `<span class="dictionary-row-icon competency"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg></span>`;
 }
 
+let dictionaryCatalogView='list';
+function setDictionaryCatalogView(view){
+  dictionaryCatalogView=view==='grid'?'grid':'list';
+  renderPlatform();
+  document.querySelector('#dictionary-inline-controls .on')?.focus();
+}
 function renderPlatform(){
   const body=document.getElementById('platform-body');if(!body)return;
   document.getElementById('s-platform').classList.remove('competency-open');
+  const controls=document.getElementById('dictionary-inline-controls');
+  if(controls)controls.innerHTML=`<div class="dictionary-sort-wrap"><button class="dictionary-sort-button" onclick="toggleDictionarySort(event)">Sortuj: ${dictionarySort==='points'?'Najwięcej punktów':dictionarySort==='az'?'A–Z':'Z–A'} ⌄</button><div id="dictionary-sort-menu" class="dictionary-sort-menu"><button onclick="setDictionarySort('points')">${dictionarySort==='points'?'✓ ':''}Najwięcej punktów</button><button onclick="setDictionarySort('az')">${dictionarySort==='az'?'✓ ':''}A–Z</button><button onclick="setDictionarySort('za')">${dictionarySort==='za'?'✓ ':''}Z–A</button></div></div>${resourceCatalogViewSwitch(dictionaryCatalogView,'setDictionaryCatalogView')}`;
   const all=dictionaryEntries(),filtered=dictionaryFilteredEntries();
   renderDictionarySidebar(all);
   const pages=Math.max(1,Math.ceil(filtered.length/dictionaryPageSize));dictionaryPage=Math.min(dictionaryPage,pages);
   const rows=filtered.slice((dictionaryPage-1)*dictionaryPageSize,dictionaryPage*dictionaryPageSize);
   const pageButtons=Array.from({length:pages},(_,i)=>i+1).slice(0,9).map(p=>`<button class="dictionary-page${p===dictionaryPage?' active':''}" onclick="setDictionaryPage(${p})">${p}</button>`).join('');
-  body.innerHTML=`<div class="dictionary-list-toolbar"><strong>Łącznie ${filtered.length} ${filtered.length===1?'pojęcie':'pojęć'}</strong><div class="dictionary-sort-wrap"><span>Sortuj według:</span><button class="dictionary-sort-button" onclick="toggleDictionarySort(event)">${dictionarySort==='points'?'Najwięcej punktów':dictionarySort==='az'?'A–Z':'Z–A'} ⌄</button><div id="dictionary-sort-menu" class="dictionary-sort-menu"><button onclick="setDictionarySort('points')">${dictionarySort==='points'?'✓ ':''}Najwięcej punktów</button><button onclick="setDictionarySort('az')">${dictionarySort==='az'?'✓ ':''}A–Z</button><button onclick="setDictionarySort('za')">${dictionarySort==='za'?'✓ ':''}Z–A</button></div></div></div>
+  body.innerHTML=`<div class="dictionary-list-toolbar"><strong>Łącznie ${filtered.length} ${filtered.length===1?'pojęcie':'pojęć'}</strong></div>
     <div class="dictionary-table">
-    <div class="dictionary-rows">${rows.length?rows.map(dictionaryRow).join(''):'<div class="dictionary-empty"><strong>Brak pojęć pasujących do filtrów</strong><span>Zmień filtry albo wyszukiwaną frazę.</span></div>'}</div></div>
+    <div class="dictionary-rows ${dictionaryCatalogView==='grid'?'grid-view':''}">${rows.length?rows.map(dictionaryRow).join(''):'<div class="dictionary-empty"><strong>Brak pojęć pasujących do filtrów</strong><span>Zmień filtry albo wyszukiwaną frazę.</span></div>'}</div></div>
     ${pages>1?`<div class="dictionary-pagination"><button onclick="setDictionaryPage(${Math.max(1,dictionaryPage-1)})">‹</button>${pageButtons}<button onclick="setDictionaryPage(${Math.min(pages,dictionaryPage+1)})">›</button><span>${dictionaryPageSize} na stronę</span></div>`:''}`;
   const input=document.getElementById('dictionary-search');if(input&&input.value!==dictionarySearch)input.value=dictionarySearch;
 }
@@ -25566,6 +25583,27 @@ document.addEventListener('click',event=>{
   if(menu?.open&&!menu.contains(event.target))menu.open=false;
 });
 </script>
+<style>
+#s-teams .teams-catalog-tools,#s-platform .dictionary-toolbar,#s-ideas .ideas-search-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px
+}
+#s-teams .teams-catalog-tools .members-main-search,#s-platform .dictionary-search-wrap,#s-ideas .ideas-search-row .search-wrap{width:100%;min-width:0;margin:0}
+#s-teams .teams-sort,#s-ideas .ideas-search-row .idea-sort-dropdown{margin:0}
+#s-teams .teams-sort .members-sort-trigger,#s-platform .dictionary-sort-button,#s-ideas #idea-sort-button{min-height:43px;border:1px solid var(--bdr);border-radius:11px;background:var(--surf);color:var(--txt)}
+#s-ideas #idea-results-count{margin-left:auto;align-self:center;white-space:nowrap;color:var(--txs);font-size:13px}
+#s-teams #teams-list.list-view{grid-template-columns:1fr}
+#s-platform .dictionary-rows.grid-view{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#s-platform .dictionary-rows.grid-view .dictionary-row{grid-template-columns:minmax(0,1fr);margin:0;gap:12px}
+#s-platform .dictionary-rows.grid-view .dictionary-row>*{grid-column:auto;grid-row:auto;min-width:0}
+#s-platform .dictionary-rows.grid-view .dictionary-card-metrics,#s-platform .dictionary-rows.grid-view .dictionary-card-status{border:0;padding-left:0}
+#s-platform .dictionary-rows.grid-view .dictionary-empty{grid-column:1/-1}
+#s-voting .pv-search-toolbar .catalog-add-button{justify-self:end}
+@container(max-width:760px){
+  #s-teams .teams-catalog-tools,#s-platform .dictionary-toolbar,#s-ideas .ideas-search-row{grid-template-columns:minmax(0,1fr) auto}
+  #s-teams .teams-catalog-tools>.resource-inline-controls,#s-platform #dictionary-inline-controls,#s-ideas .ideas-search-row>.idea-sort-dropdown{grid-column:1/-1;justify-self:end}
+}
+@container(max-width:480px){#s-platform .dictionary-rows.grid-view{grid-template-columns:1fr}}
+</style>
 <script id="app-ready-script">
 (()=>{
   const refreshVisibleView=()=>{
