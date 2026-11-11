@@ -8423,8 +8423,6 @@ function openIdea(id,preserveScroll=false,opts={}){
   renderIdeaProjectPhoto(idea);
   const ideaMeta=document.getElementById('idea-title-meta');
   if(ideaMeta){
-    const lifecycle=projectLifecycleStatus(idea);
-    const statusLabel={in_progress:'W toku',completed:'Zakończony',evaluation:'Ocena',evaluation_completed:'Ocena zakończona'}[lifecycle]||'W toku';
     const people=participantsOf(idea).length;
     const activity=latestSubstantiveActivity(idea);
     const activityText=polishRelative(activity).replace(/\s+temu$/,'');
@@ -8432,12 +8430,11 @@ function openIdea(id,preserveScroll=false,opts={}){
     const creationText=created?polishRelative(new Date(created)).replace(/\s+temu$/,''):'—';
     const creationTooltip=created?'Data utworzenia: '+new Intl.DateTimeFormat('pl-PL',{dateStyle:'long'}).format(created):'Brak daty utworzenia';
     const activityTooltip=escAttr(preciseActivityLabel(activity));
-    const status=isPrivateIdeaDraft(idea)?'':`<span class="idea-meta-status">${IC.clock}${escHtml(statusLabel)}</span>`;
-    const author=`<span class="idea-meta-item board-person-hover-target"><button type="button" class="idea-meta-author" aria-label="Autor: ${escAttr(auth.name)}" onclick="openMember(${Number(auth.id)||99})">${IC.role}<span>${escHtml(auth.name)}</span></button>${boardPersonHoverCardHTML(auth.name)}</span>`;
+    const author=`<span class="idea-meta-item"><button type="button" class="idea-meta-author" data-author="${escAttr(auth.name)}" aria-label="Autor: ${escAttr(auth.name)}" onmouseenter="showPlatformAuthorCard(this,this.dataset.author)" onmouseleave="hidePlatformAuthorCard()" onfocus="showPlatformAuthorCard(this,this.dataset.author)" onblur="hidePlatformAuthorCard()" onclick="hidePlatformAuthorCard(true);openMember(${Number(auth.id)||99})">${IC.role}<span>${escHtml(auth.name)}</span></button></span>`;
     const activityItem=idea.log?.length
       ?`<button type="button" class="idea-meta-item idea-meta-activity idea-header-tooltip" aria-label="${activityTooltip}" data-meta-tooltip="${activityTooltip}" onclick="openLatestProjectActivity(${id})">${IC.clock}${escHtml(activityText)}</button>`
       :`<span class="idea-meta-item idea-header-tooltip" tabindex="0" aria-label="${activityTooltip}" data-meta-tooltip="${activityTooltip}">${IC.clock}${escHtml(activityText)}</span>`;
-    ideaMeta.innerHTML=`${platformChangeProjectHeader(idea)}${status}
+    ideaMeta.innerHTML=`${platformChangeProjectHeader(idea)}
       <button type="button" class="idea-meta-item" aria-label="Zespół: ${people} ${plural(people,['osoba','osoby','osób'])}" onclick="openIdeaTeamMembers(${id})">${IC.users}${people} ${plural(people,['osoba','osoby','osób'])}</button>
       ${activityItem}
       <span class="idea-meta-item idea-header-tooltip" tabindex="0" aria-label="${escAttr(creationTooltip)}" data-meta-tooltip="${escAttr(creationTooltip)}">${IC.cal}${escHtml(creationText)}</span>
@@ -25760,13 +25757,14 @@ document.addEventListener('click',event=>{
 #s-idea .ph-idea-text{min-width:0;flex:1}
 #s-idea .idea-project-photo{height:auto;aspect-ratio:1;align-self:center}
 #s-idea .idea-title-meta{gap:9px 14px;color:var(--txm);font-size:14px}
+#s-idea .idea-title-meta :is(.idea-meta-item,.idea-meta-author){font:inherit;line-height:inherit}
 #s-idea .idea-title-meta .idea-meta-status{gap:6px;padding:5px 9px;border-radius:11px;background:var(--p050);color:var(--p700)}
 #s-idea .idea-title-meta :is(.idea-meta-status,.idea-meta-item) .mi{width:17px;height:17px;margin:0;color:inherit}
 #s-idea .idea-title-meta .idea-meta-item+.idea-meta-item{border-left:1px solid var(--bdr);padding-left:14px}
 #s-idea .idea-meta-author{display:inline-flex;align-items:center;gap:6px}
 #s-idea .idea-header-tooltip{position:relative}
 #s-idea .idea-header-tooltip:is(:hover,:focus-visible)::after{
-  content:attr(data-meta-tooltip);position:absolute;z-index:100;bottom:calc(100% + 7px);left:0;
+  content:attr(data-meta-tooltip);position:absolute;z-index:100;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);text-align:center;
   width:max-content;max-width:240px;white-space:normal;pointer-events:none;
   padding:7px 10px;border-radius:8px;background:var(--txt);color:var(--surf);font:600 12px/1.4 'DM Sans',sans-serif
 }
