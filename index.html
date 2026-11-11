@@ -8302,8 +8302,7 @@ function renderIdeaCatalogCard(idea){
     const metadata=(icon,value,description)=>`<span class="ic-stat idea-card-meta" tabindex="0" aria-label="${escAttr(description)}" data-meta-tooltip="${escAttr(description)}"><span aria-hidden="true">${icon}</span><span aria-hidden="true">${escHtml(String(value))}</span></span>`;
     const roles=idea.roleRequirements||[];
     const rosterSummary = roles.length ? `<div class="ros-tags">${compactRoleTags(idea)}</div>` : '';
-    const compact=String(idea.desc||'').trim().length<=80&&!variant&&!compactRoleTags(idea);
-    return `<a class="ic${compact?' idea-card-compact':''} s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
+    return `<a class="ic s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
       <div class="ic-top">
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
         <div class="ic-badges">
@@ -25743,11 +25742,6 @@ document.addEventListener('click',event=>{
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-title{overflow-wrap:anywhere}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-stats{grid-column:1/-1}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact{
-  grid-template-columns:minmax(0,1fr)!important;width:min(100%,320px);justify-self:start;box-sizing:border-box
-}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact>.idea-card-thumb{max-width:160px}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic.idea-card-compact .ic-footer{display:none}
 </style>
 <script id="app-ready-script">
 (()=>{
