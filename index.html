@@ -5690,6 +5690,7 @@ html.theme-dark #s-profile .member-profile-hero{background:#2a2538}
 
 <!-- IDEA DETAIL -->
 <div id="s-idea" class="screen">
+  <nav class="idea-section-nav" id="idea-section-nav" aria-label="Sekcje pomysłu"></nav>
   <div class="ph" id="idea-ph">
     <div class="ph-inner">
       <div class="idea-header-breadcrumb" id="idea-header-breadcrumb"></div>
@@ -8693,7 +8694,23 @@ function openIdea(id,preserveScroll=false,opts={}){
     {k:'ustawienia',label:'Ustawienia',cnt:projectModes(idea).length},
     {k:'rejestr',label:'Rejestr',cnt:(idea.log||[]).length},
   ];
-  const tabBar=TABS.map(t=>`<button class="itab${idea.viewTab===t.k?' on':''}" onclick="switchIdeaTab(${id},'${t.k}')">${t.label}</button>`).join('');
+  const sectionIcons={
+    przeglad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10H3zM10 20v-6h4v6"/></svg>',
+    zespol:IC.users,
+    budzet:catalogResourceIcon('resource'),
+    zadania:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg>',
+    spotkania:IC.cal,
+    dokumenty:IC.log,
+    glosowania:IC.gavel,
+    dyskusja:IC.chat,
+    ocena:IC.star,
+    ustawienia:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 4v4m8 2v4m-6 2v4"/></svg>',
+    rejestr:IC.coin
+  };
+  document.getElementById('idea-section-nav').innerHTML=TABS.map(section=>{
+    const active=idea.viewTab===section.k;
+    return `<button type="button" class="idea-section-link${active?' on':''}" ${active?'aria-current="page"':''} onclick="switchIdeaTab(${id},'${section.k}')"><span aria-hidden="true">${sectionIcons[section.k]}</span>${section.label}</button>`;
+  }).join('');
   idea.docs=idea.docs||[];
   let tabDokumenty='';
   let ideaBreadcrumb='';
@@ -8774,7 +8791,6 @@ function openIdea(id,preserveScroll=false,opts={}){
   const isFollowed=followedIdeas.has(id);
   document.getElementById('idea-body').innerHTML=`
     <div class="idea-main">
-      <div class="itabs">${tabBar}</div>
       ${idea.viewTab==='przeglad'?renderProjectOverviewTop(idea,id):''}
       ${tabContent}
     </div>
@@ -25607,6 +25623,44 @@ document.addEventListener('click',event=>{
 <style>
 #s-ideas .ideas-catalog-heading{min-height:0;margin-bottom:16px}
 .resource-catalog-main .resource-catalog-header{margin-bottom:16px}
+</style>
+<style>
+#s-idea.on:not(:has(.idw,.doc-fullscreen)){
+  display:grid;grid-template-columns:clamp(204px,17vw,260px) minmax(0,1fr);
+  grid-template-rows:auto 1fr;align-items:start;min-height:calc(100dvh - var(--global-nav-height))
+}
+#s-idea .idea-section-nav{
+  grid-column:1;grid-row:1/-1;position:sticky;top:var(--global-nav-height);
+  display:flex;flex-direction:column;gap:3px;box-sizing:border-box;
+  height:calc(100dvh - var(--global-nav-height));overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:transparent transparent;padding:24px 14px;
+  background:var(--surf);border-right:1px solid var(--bdr)
+}
+#s-idea .idea-section-nav:hover{scrollbar-color:var(--p300) transparent}
+#s-idea:has(.idw,.doc-fullscreen)>.idea-section-nav{display:none}
+#s-idea>.ph,#s-idea>#idea-body{grid-column:2;min-width:0}
+#s-idea>.ph{grid-row:1}
+#s-idea>#idea-body{grid-row:2}
+#s-idea .idea-section-link{
+  display:flex;align-items:center;gap:14px;position:relative;flex:none;
+  min-height:43px;width:100%;padding:9px 12px;border:0;border-radius:11px;
+  background:transparent;color:var(--txm);text-align:left;cursor:pointer;
+  font:650 14px/1.3 'DM Sans',sans-serif
+}
+#s-idea .idea-section-link>span{display:grid;place-items:center;flex:0 0 22px}
+#s-idea .idea-section-link svg{width:21px;height:21px}
+#s-idea .idea-section-link:hover{background:var(--p050);color:var(--p700)}
+#s-idea .idea-section-link.on{background:var(--p100);color:var(--p800);font-weight:750}
+#s-idea .idea-section-link.on::before{content:'';position:absolute;inset:5px auto 5px 0;width:3px;border-radius:4px;background:var(--p700)}
+#s-idea .idea-section-link:focus-visible{outline:2px solid var(--p500);outline-offset:-2px}
+#s-idea.on.discussion-workspace-active:not(:has(.idw,.doc-fullscreen)){grid-template-rows:1fr}
+#s-idea.discussion-workspace-active>#idea-body{grid-row:1}
+@media(max-width:900px){
+  #s-idea.on:not(:has(.idw,.doc-fullscreen)){display:flex;flex-direction:column;align-items:stretch}
+  #s-idea .idea-section-nav{order:-1;z-index:10;flex-direction:row;height:auto;padding:8px 12px;overflow:auto;border-right:0;border-bottom:1px solid var(--bdr)}
+  #s-idea .idea-section-link{width:auto;white-space:nowrap;gap:7px}
+  #s-idea .idea-section-link.on::before{inset:auto 8px 0;width:auto;height:2px}
+}
 </style>
 <script id="app-ready-script">
 (()=>{
