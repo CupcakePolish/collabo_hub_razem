@@ -8213,17 +8213,19 @@ function ideaKindIcon(variant=false){
 }
 function compactRoleTags(idea){
   const groups=new Map();
+  const skills=mySkillNames();
   (idea.roleRequirements||[]).forEach((r,idx)=>{
     const name=String(needPrimaryCapability(r)?.name||r.role||'Kompetencja').trim()||'Kompetencja';
-    const g=groups.get(name)||{name,min:0,filled:0,candidate:false};
+    const g=groups.get(name)||{name,min:0,filled:0,candidate:false, matches:false};
     g.min+=Number(r.min||1);
     g.filled+=(r.filledBy||[]).length;
     if(!roleStatus(r)&&roleCandidatesFor(idea,idx,r).length)g.candidate=true;
+    if(!roleStatus(r)&&skills.some(skill=>textNeedMatch(name,skill)))g.matches=true;
     groups.set(name,g);
   });
   return Array.from(groups.values()).filter(g=>g.filled<g.min).map(g=>{
     const state=g.candidate?'rt-candidate':'rt-miss';
-    return `<span class="rtag ${state}">${escHtml(g.name)} ${g.filled}/${g.min}</span>`;
+    return `<span class="rtag ${state}${g.matches?' rt-matches-user':''}"${g.matches?' title="Masz tę kompetencję"':''}>${escHtml(g.name)} ${g.filled}/${g.min}</span>`;
   }).join('');
 }
 
@@ -8292,7 +8294,6 @@ function renderIdeaCatalogCard(idea){
     const roleTotal=(idea.roleRequirements||[]).length;
     const rosterFilled=roleTotal-missingRoleCount(idea);
     const pct=roleTotal?Math.round((rosterFilled/roleTotal)*100):0;
-    const isMatch=ideaMatchesUser(idea);
     const archived=projectIsArchived(idea);
     const lifecycle=projectLifecycleStatus(idea);
     const activity=latestSubstantiveActivity(idea);
@@ -8302,13 +8303,9 @@ function renderIdeaCatalogCard(idea){
     const metadata=(icon,value,description)=>`<span class="ic-stat idea-card-meta" tabindex="0" aria-label="${escAttr(description)}" data-meta-tooltip="${escAttr(description)}"><span aria-hidden="true">${icon}</span><span aria-hidden="true">${escHtml(String(value))}</span></span>`;
     const roles=idea.roleRequirements||[];
     const rosterSummary = roles.length ? `<div class="ros-tags">${compactRoleTags(idea)}</div>` : '';
-    return `<a class="ic s-${idea.stage}${isMatch?' match':''}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
+    return `<a class="ic s-${idea.stage}" data-idea-id="${idea.id}" href="#idea/${idea.id}" aria-label="Otwórz pomysł: ${escAttr(displayTitle)}">
       <div class="ic-top">
         <div class="ic-title-wrap"><div class="ic-title">${escHtml(displayTitle)}</div></div>
-        <div class="ic-badges">
-          ${isMatch?'<span class="match-flag">dopasowane</span>':''}
-
-        </div>
       </div>
       <div class="idea-card-thumb">${photo?`<img src="${escAttr(photo)}" alt="Zdjęcie pomysłu: ${escAttr(displayTitle)}">`:`<span>${escHtml((displayTitle||'P').slice(0,1).toUpperCase())}</span>`}</div>
       <div class="idea-card-content">
@@ -25725,7 +25722,7 @@ document.addEventListener('click',event=>{
   width:100%!important;height:auto!important;aspect-ratio:1;align-self:start;overflow:hidden
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-desc{
-  -webkit-line-clamp:4!important;line-height:1.55;margin-top:0
+  -webkit-line-clamp:5!important;line-height:1.55;margin-top:0
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats{
   display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;
@@ -25740,7 +25737,7 @@ document.addEventListener('click',event=>{
 }
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-meta>span:first-child{display:inline-flex}
 :is(#s-ideas,#team-workspace-ideas-catalog) .idea-card-meta:is(:hover,:focus-visible)::after{
-  content:attr(data-meta-tooltip);position:absolute;z-index:4;bottom:calc(100% + 8px);right:0;
+  content:attr(data-meta-tooltip);position:absolute;z-index:4;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);text-align:center;
   width:max-content;max-width:220px;white-space:normal;pointer-events:none;
   padding:7px 10px;border-radius:8px;background:var(--txt);color:var(--surf);
   font:600 12px/1.4 'DM Sans',sans-serif
@@ -25748,7 +25745,7 @@ document.addEventListener('click',event=>{
 </style>
 <style>
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list{align-items:start}
-:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{align-self:start;min-height:0}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic{align-self:start;min-height:0;row-gap:9px!important}
 :is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic>.ic-top{
   grid-column:1/-1;min-width:0;margin:0;gap:8px
 }
@@ -25781,6 +25778,16 @@ document.addEventListener('click',event=>{
 #s-idea .project-header-more-menu button:hover{background:var(--p050);color:var(--p700)}
 #s-idea .project-header-more-menu svg{width:16px;height:16px}
 @media(max-width:650px){#s-idea>.ph .ph-idea{padding:14px;gap:12px}#s-idea .idea-title-meta{font-size:12px}}
+</style>
+<style>
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ros-tags .rt-matches-user{
+  background:var(--p100)!important;border-color:var(--p200)!important;color:var(--p700)!important
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats .idea-quick-follow{
+  width:32px;min-width:32px;padding:4px;border:0!important;background:transparent!important;
+  box-shadow:none!important;color:var(--p700)
+}
+:is(#s-ideas,#team-workspace-ideas-catalog) .ideas-list>.ic .ic-stats .idea-quick-follow:hover{color:var(--p900)}
 </style>
 <script id="app-ready-script">
 (()=>{
