@@ -7415,7 +7415,7 @@ function openParticipantWork(ideaId,name,tab){
       query:name,participant:name,selected:'',tab:'preview',status:'all',area:''
     });
   }
-  switchIdeaTab(ideaId,tab);
+  switchIdeaTab(ideaId,tab,{scrollToTop:true});
 }
 function renderIdeaParticipantsCard(idea,ideaId){
   const active=ensureProjectMembers(idea).filter(row=>row.status==='active');
@@ -7430,7 +7430,7 @@ function renderIdeaParticipantsCard(idea,ideaId){
     const relative=date=>date?polishRelative(date).replace(/\s+temu$/,'').replace(/(\d+) min$/,'$1 min.'):'—';
     const fact=(icon,label,value,tooltip)=>`<div class="idea-participant-fact participant-date" tabindex="0" data-tooltip="${escAttr(tooltip)}" aria-label="${escAttr(tooltip)}">${icon}<span><small>${label}</small><b>${escHtml(value)}</b></span></div>`;
     const work=(icon,label,value,tab)=>`<button type="button" class="idea-participant-fact participant-work" data-person="${escAttr(row.name)}" onclick="event.stopPropagation();openParticipantWork(${ideaId},this.dataset.person,'${tab}')">${icon}<span><small>${label}</small><b>${value}</b></span><i aria-hidden="true">›</i></button>`;
-    return `<article class="idea-participant-tile" title="Profil w pomyśle" role="button" tabindex="0" aria-label="Otwórz profil ${escAttr(row.name)} w tym pomyśle" onclick="openProjectParticipantProfile(${ideaId},'${escAttr(row.name)}')" onkeydown="if(event.target!==this)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectParticipantProfile(${ideaId},'${escAttr(row.name)}')}"><header><span class="idea-participant-avatar">${memberAvatarContent(row.name,member?.ini||memberInitials(row.name))}</span><div class="idea-participant-main"><div class="participant-identity"><button type="button" class="idea-participant-name" title="Profil ogólny" onmouseenter="this.closest('.idea-participant-tile').removeAttribute('title')" onmouseleave="this.closest('.idea-participant-tile').title='Profil w pomyśle'" onclick="event.stopPropagation();openMember(${Number(member?.id)||0})">${escHtml(row.name)}</button>${row.name!==MY_NAME?`<button type="button" class="idea-participant-follow ${followedMemberProfiles.has(Number(member?.id))?'on':''}" aria-label="Obserwuj profil ${escAttr(row.name)}" aria-pressed="${followedMemberProfiles.has(Number(member?.id))}" title="${followedMemberProfiles.has(Number(member?.id))?'Przestań obserwować':'Obserwuj'}" onclick="toggleIdeaParticipantFollow(this,'${escAttr(row.name)}',event)">${profileStarIcon()}</button>`:''}</div><p class="idea-participant-role">${escHtml(context.roleDescription)}</p><div class="participant-skills">${context.competencies.map(skill=>`<span>${escHtml(skill)}</span>`).join('')}</div></div><div class="idea-participant-actions"><span class="idea-participant-quorum ${quorum.counts?'in':'out'}" role="img" aria-label="${escAttr(quorum.reason)}" data-tooltip="${escAttr(quorum.reason)}">${projectQuorumGavelIcon()}</span>${chat}${menuButton}</div>${menu}</header><div class="idea-participant-facts">
+    return `<article class="idea-participant-tile" role="button" tabindex="0" aria-label="Otwórz profil ${escAttr(row.name)} w tym pomyśle" onclick="openProjectParticipantProfile(${ideaId},'${escAttr(row.name)}')" onkeydown="if(event.target!==this)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectParticipantProfile(${ideaId},'${escAttr(row.name)}')}"><header><span class="idea-participant-avatar">${memberAvatarContent(row.name,member?.ini||memberInitials(row.name))}</span><div class="idea-participant-main"><div class="participant-identity"><button type="button" class="idea-participant-name" title="Profil ogólny" onclick="event.stopPropagation();openMember(${Number(member?.id)||0})">${escHtml(row.name)}</button>${row.name!==MY_NAME?`<button type="button" class="idea-participant-follow ${followedMemberProfiles.has(Number(member?.id))?'on':''}" aria-label="Obserwuj profil ${escAttr(row.name)}" aria-pressed="${followedMemberProfiles.has(Number(member?.id))}" title="${followedMemberProfiles.has(Number(member?.id))?'Przestań obserwować':'Obserwuj'}" onclick="toggleIdeaParticipantFollow(this,'${escAttr(row.name)}',event)">${profileStarIcon()}</button>`:''}</div><p class="idea-participant-role">${escHtml(context.roleDescription)}</p><div class="participant-skills">${context.competencies.map(skill=>`<span>${escHtml(skill)}</span>`).join('')}</div></div><div class="idea-participant-actions"><span class="idea-participant-quorum ${quorum.counts?'in':'out'}" role="img" tabindex="0" aria-label="${escAttr(quorum.reason)}" data-tooltip="${escAttr(quorum.reason)}">${projectQuorumGavelIcon()}</span>${chat}${menuButton}</div>${menu}</header><div class="idea-participant-facts">
       ${fact(IC.users,'W zespole od',relative(joined),joined?'Data dołączenia: '+createdLabel(projectMemberJoinedText(idea,row)):'Brak daty dołączenia')}
       ${work(IC.check,'Zadania',tasks,'zadania')}
       ${work(projectVoteGavelIcon(),'Głosowania',votes.participated+' / '+votes.total,'glosowania')}
@@ -8911,10 +8911,10 @@ function openIdeaSafely(id){
 }
 
 function toggleTabInfo(id,tab){const idea=ideas.find(i=>i.id===id);if(!idea)return;idea._tabInfo=idea._tabInfo===tab?null:tab;openIdea(id,true);}
-function switchIdeaTab(id,tab){
+function switchIdeaTab(id,tab,{scrollToTop=false}={}){
   const idea=ideas.find(i=>i.id===id);
   if(!idea) return;
-  const y=window.scrollY;
+  const y=scrollToTop?0:window.scrollY;
   idea.viewTab=tab;idea.invitationPage=false;
   if(tab!=='dokumenty')idea.openDoc=null;
   openIdea(id,true,{replaceRoute:true});
@@ -25920,6 +25920,22 @@ document.addEventListener('click',event=>{
   #s-idea .idea-participant-avatar{width:46px;height:46px}
   #s-idea .idea-participant-actions{grid-column:2}
 }
+</style>
+<style>
+#s-idea .idea-participant-avatar{border:0}
+#s-idea .participant-identity{justify-content:flex-start}
+#s-idea .participant-identity .idea-participant-name{width:auto;flex:0 1 auto;min-width:0;text-align:left}
+#s-idea .participant-identity .idea-participant-follow{margin:0}
+#s-idea .participant-identity .idea-participant-follow:is(:hover,:focus-visible){background:var(--p100);color:var(--p800)}
+#s-idea .idea-participant-actions .idea-participant-quorum .idea-quorum-gavel-icon{width:19px;height:19px}
+#s-idea .idea-participant-tile .participant-work{background:transparent}
+#s-idea .idea-participant-tile .participant-work:is(:hover,:focus-visible){background:var(--p100)}
+#s-idea .idea-participant-tile:has(:is(.participant-date,.idea-participant-quorum):is(:hover,:focus-visible)){z-index:12}
+#s-idea .participant-date:is(:hover,:focus-visible)::after{bottom:calc(100% + 16px)}
+#s-idea .idea-participant-quorum::after{
+  right:auto;left:50%;text-align:center;white-space:normal;transform:translate(-50%,4px)
+}
+#s-idea .idea-participant-quorum:is(:hover,:focus-visible)::after{transform:translateX(-50%)}
 </style>
 <script id="app-ready-script">
 (()=>{
