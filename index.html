@@ -25592,8 +25592,19 @@ function ideaDecisionCardOutcome(idea,v){
   return {key:'rejected',label:'Odrzucone',icon:'<span aria-hidden="true">✕</span>',detail:'Głosowanie zakończone. Propozycja odrzucona'};
 }
 const decisionRenderBeforeFilters=renderIdeaDecisionsWorkspace;
-renderIdeaDecisionsWorkspace=function(idea){const state=ideaDecisionState(idea.id),rows=filterIdeaDecisionRows(idea,state),all=idea.votes;let html;if(!rows.length)html='<section class="idc-layout"><div class="idc-list"></div><article class="idc-detail"><p>Brak decyzji pasujących do filtrów.</p></article></section>';else{const selected=rows.find(v=>v.id===state.selected)||rows[0];state.selected=selected.id;const oldTab=state.tab;state.tab='preview';try{html=decisionRenderBeforeFilters({...idea,votes:rows});}finally{state.tab=oldTab;}}const toolbar=`<div class="idc-toolbar"><input id="idc-search-${idea.id}" type="search" placeholder="Szukaj decyzji…" aria-label="Szukaj decyzji" value="${escAttr(state.query||'')}" oninput="setIdeaDecisionFilter(${idea.id},'query',this.value)"><div class="idc-filter-row">${[['all','Wszystkie'],['attention','Do rozpatrzenia'],['active','Aktywne'],['closed','Zakończone']].map(([key,label])=>`<button class="${(state.status||'all')===key?'on':''}" onclick="setIdeaDecisionFilter(${idea.id},'status','${key}')">${label}</button>`).join('')}${renderIdeaDecisionDropdown(idea.id,'area','Obszar decyzji',[['','Obszar'],...[...new Set((all||[]).map(decisionSourceForVote))].map(area=>[area,area])],state.area)}
-${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Najnowsze'],['oldest','Najstarsze']],state.sort)}</div></div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);const inactive=selected.open&&!projectAllowsVote(idea,selected);const detailStatus=inactive?'Nieaktywne':!selected.open?'Zakończone':ensureVoteBallots(idea,selected)[MY_NAME]?'':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':'Aktywne';if(detailStatus)(selected.open&&!inactive?header.querySelector('.idc-heading-copy'):tools)?.insertAdjacentHTML(selected.open&&!inactive?'beforeend':'afterbegin',`<span class="idc-state${inactive?' idc-hover-label':''}" ${inactive?`tabindex="0" data-tooltip="${escAttr(ideaInactiveVoteReason)}" aria-label="${escAttr(ideaInactiveVoteReason)}"`:''}>${detailStatus}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{
+renderIdeaDecisionsWorkspace=function(idea){const state=ideaDecisionState(idea.id),rows=filterIdeaDecisionRows(idea,state),all=idea.votes;let html;if(!rows.length)html='<section class="idc-layout"><div class="idc-list"></div><article class="idc-detail"><p>Brak decyzji pasujących do filtrów.</p></article></section>';else{const selected=rows.find(v=>v.id===state.selected)||rows[0];state.selected=selected.id;const oldTab=state.tab;state.tab='preview';try{html=decisionRenderBeforeFilters({...idea,votes:rows});}finally{state.tab=oldTab;}}const statuses=[['attention','Do rozpatrzenia'],['active','Aktywne'],['closed','Zakończone']];
+const toolbar=`<div class="idc-toolbar">
+  <div class="idc-search-row">
+    <label class="idc-search-field">${catalogResourceIcon('search')}<input id="idc-search-${idea.id}" type="search" placeholder="Szukaj decyzji…" aria-label="Szukaj decyzji" value="${escAttr(state.query||'')}" oninput="setIdeaDecisionFilter(${idea.id},'query',this.value)"></label>
+    ${renderIdeaDecisionDropdown(idea.id,'area','Obszar decyzji',[['','Obszar'],...[...new Set((all||[]).map(decisionSourceForVote))].map(area=>[area,area])],state.area)}
+    ${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Najnowsze'],['oldest','Najstarsze']],state.sort)}
+  </div>
+  <div class="idc-filter-row idc-status-filters">${statuses.map(([key,label])=>{
+    const selected=state.status===key;
+    const count=filterIdeaDecisionRows(idea,{...state,status:key}).length;
+    return `<button type="button" class="${selected?'on':''}" aria-pressed="${selected}" onclick="setIdeaDecisionFilter(${idea.id},'status','${selected?'all':key}')"><span>${label}</span><b>${count}</b></button>`;
+  }).join('')}</div>
+</div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);const inactive=selected.open&&!projectAllowsVote(idea,selected);const detailStatus=inactive?'Nieaktywne':!selected.open?'Zakończone':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':'Aktywne';if(detailStatus)tools.insertAdjacentHTML('afterbegin',`<span class="idc-state${inactive?' idc-hover-label':''}" ${inactive?`tabindex="0" data-tooltip="${escAttr(ideaInactiveVoteReason)}" aria-label="${escAttr(ideaInactiveVoteReason)}"`:''}>${detailStatus}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{
   const v=rows[index];
   if(!v)return;
   const own=ensureVoteBallots(idea,v)[MY_NAME];
@@ -25869,7 +25880,7 @@ document.addEventListener('click',event=>{
 <style>
 #s-idea .idc-list-shell>.idc-scroll-list{
   grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;
-  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable;
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable;padding-inline-end:8px;
   scrollbar-color:transparent transparent
 }
 #s-idea .idc-list-shell>.idc-scroll-list:is(:hover,:focus-within){scrollbar-color:var(--p300) transparent}
@@ -25951,7 +25962,7 @@ document.addEventListener('click',event=>{
 .idc-detail .idc-cast{padding-block:10px}
 .idc-detail .idc-count{padding-block:4px;margin-block:5px}
 .idc-detail .idc-detail-header-tools{flex-wrap:wrap;justify-content:flex-end}
-.idc-detail .idc-detail-header-tools .idc-state{margin:0;white-space:nowrap}
+.idc-detail .idc-detail-header-tools .idc-state{display:inline-flex;align-items:center;min-height:36px;box-sizing:border-box;margin:0;padding:4px 11px;border-radius:999px;font-size:13px;white-space:nowrap}
 </style>
 <style>
 .idc-electorate .idc-electorate-people .pv-voter-person{
@@ -25972,6 +25983,19 @@ document.addEventListener('click',event=>{
   .idc-electorate .idc-electorate-people .idc-electorate-stance{grid-column:2}
   .idc-electorate .idc-electorate-people .idc-electorate-time{grid-column:3}
   .idc-electorate-egg{grid-column:4;grid-row:1/3;align-self:center}
+}
+</style>
+<style>
+.idc-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px}
+.idc-search-field{position:relative;min-width:0}
+.idc-search-field>svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--txs);pointer-events:none}
+.idc-toolbar .idc-search-field input{padding-inline-start:36px}
+.idc-filter-row.idc-status-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.idc-status-filters>button{display:flex;align-items:center;justify-content:space-between;gap:5px;text-align:left;min-width:0}
+.idc-status-filters>button b{flex:none;padding:2px 6px;border-radius:999px;background:var(--p100);font-size:11px}
+@media(max-width:580px){
+  .idc-search-row{grid-template-columns:1fr 1fr}
+  .idc-search-field{grid-column:1/-1}
 }
 </style>
 <script id="app-ready-script">
