@@ -25384,9 +25384,9 @@ function castIdeaDecisionVote(button,id,vid,choice){
     segment.animate([{width:previous[index]+'px'},{width:segment.style.width}],{duration:300,easing:'ease-out'});
   });
 }
-function renderIdeaDecisionBallot(idea,v){const c=ideaDecisionCounts(idea,v),own=c.ballots[MY_NAME],allowed=v.open&&canCurrentUserVote(idea,v),pct=n=>c.eligible?Math.min(100,n/c.eligible*100):0;return `<section class="idc-ballot"><div class="idc-ballot-heading"><h3>Głosowanie</h3><div class="idc-quorum">${renderIdeaDecisionDeadline(v)}${renderIdeaQuorumIndicator(idea,v,c)}</div></div><div class="idc-turnout" role="img" aria-label="Zagłosowało ${c.total} z ${c.eligible}; kworum ${c.required}">${['yes','abstain','no'].map(key=>`<span class="${key}" style="width:${pct(c[key])}%"></span>`).join('')}</div><div class="idc-vote-options">${[['yes','Za'],['abstain','Mam wątpliwości'],['no','Przeciw']].map(([key,label])=>`<div class="idc-vote-choice ${key} ${own===key?'selected':''}"><button class="idc-cast" aria-pressed="${own===key}"${allowed?'':' disabled'} onclick="castIdeaDecisionVote(this,${idea.id},'${escAttr(v.id)}','${key}')">${key==='abstain'?resourcePolishIcon('info'):resourcePolishIcon(key)}${label}</button><button class="idc-count" aria-label="Pokaż głosy: ${label}" onclick="openIdeaDecisionElectorate(this,'${key}')">${c[key]}</button></div>`).join('')}</div>${v.open&&own?'':`<p style="font-size:12px;color:var(--txs)">${v.open?'Wybierz stanowisko, aby oddać głos.':escHtml(voteVerdict(idea,v).replace(/<[^>]*>/g,''))}</p>`}${allowed?`<div class="demo-strip"><span class="demo-strip-label">Demo wyniku</span><button type="button" class="demo-btn ok" onclick="demoConsensus(${idea.id},'${escAttr(v.id)}')">✓ Konsensus demo</button><button type="button" class="demo-btn no" onclick="demoObjection(${idea.id},'${escAttr(v.id)}')">✗ Odmowa demo</button></div>`:''}${renderIdeaDecisionElectorate(idea,v)}</section>`;}
+function renderIdeaDecisionBallot(idea,v){const c=ideaDecisionCounts(idea,v),own=c.ballots[MY_NAME],allowed=v.open&&canCurrentUserVote(idea,v),pct=n=>c.eligible?Math.min(100,n/c.eligible*100):0;return `<section class="idc-ballot"><div class="idc-ballot-heading"><h3>Głosowanie</h3><div class="idc-quorum">${renderIdeaDecisionDeadline(v)}${renderIdeaQuorumIndicator(idea,v,c)}</div></div><div class="idc-turnout" role="img" aria-label="Zagłosowało ${c.total} z ${c.eligible}; kworum ${c.required}">${['yes','abstain','no'].map(key=>`<span class="${key}" style="width:${pct(c[key])}%"></span>`).join('')}</div><div class="idc-vote-options">${[['yes','Za'],['abstain','Mam wątpliwości'],['no','Przeciw']].map(([key,label])=>`<div class="idc-vote-choice ${key} ${own===key?'selected':''}"><button class="idc-cast" aria-pressed="${own===key}"${allowed?'':' disabled'} onclick="castIdeaDecisionVote(this,${idea.id},'${escAttr(v.id)}','${key}')">${key==='abstain'?resourcePolishIcon('info'):resourcePolishIcon(key)}${label}</button><button class="idc-count" aria-label="Pokaż głosy: ${label}" onclick="openIdeaDecisionElectorate(this,'${key}')">${c[key]}</button></div>`).join('')}</div>${v.open&&own?'':`<p style="font-size:12px;color:var(--txs)">${v.open?(allowed?'Wybierz stanowisko, aby oddać głos.':''):escHtml(voteVerdict(idea,v).replace(/<[^>]*>/g,''))}</p>`}${allowed?`<div class="demo-strip"><span class="demo-strip-label">Demo wyniku</span><button type="button" class="demo-btn ok" onclick="demoConsensus(${idea.id},'${escAttr(v.id)}')">✓ Konsensus demo</button><button type="button" class="demo-btn no" onclick="demoObjection(${idea.id},'${escAttr(v.id)}')">✗ Odmowa demo</button></div>`:''}${renderIdeaDecisionElectorate(idea,v)}</section>`;}
 function ideaDecisionEgg(eligible){
-  return `<img class="idc-quorum-egg${eligible?'':' excluded'}" src="assets/quorum-egg.png" alt="${eligible?'Liczy się do kworum':'Poza kworum'}" width="22" height="26">`;
+  return `<img class="idc-quorum-egg${eligible?'':' excluded'}" src="assets/quorum-egg.png" alt="${eligible?'Liczy się do kworum':'Nie liczy się do kworum'}" width="22" height="26">`;
 }
 function renderIdeaDecisionElectorate(idea,v){
   const ballots=ensureVoteBallots(idea,v),eligible=new Set(voteParticipants(idea,v));
@@ -25409,9 +25409,10 @@ function renderIdeaDecisionElectorate(idea,v){
         const counts=eligible.has(name),key=isVoteStance(ballots[name])?ballots[name]:'pending',stamp=Number(v.ballotTimes?.[name]),person=personProfileByName(name);
         const nameHTML=person?.id?`<button type="button" class="pv-electorate-person-name idc-electorate-name" data-person-name="${escAttr(name)}" onmouseenter="showPlatformAuthorCard(this,this.dataset.personName)" onmouseleave="hidePlatformAuthorCard()" onfocus="showPlatformAuthorCard(this,this.dataset.personName)" onblur="hidePlatformAuthorCard()" onclick="hidePlatformAuthorCard(true);openMember(${Number(person.id)})">${escHtml(name)}</button>`:`<b class="idc-electorate-name">${escHtml(name)}</b>`;
         return `<div class="pv-voter-person" data-name="${escAttr(name.toLocaleLowerCase('pl'))}" data-ballot="${key}" data-quorum="${counts?'included':'excluded'}">
-          ${platformVoteAuthorAvatar(name)}${nameHTML}${ideaDecisionEgg(counts)}
-          <span class="idc-electorate-stance ${counts?key:'excluded'}">${counts?labels[key]:'Nie liczy się do kworum'}</span>
-          <span class="idc-electorate-time">${stamp?`<time datetime="${new Date(stamp).toISOString()}">${IC.clock}${escHtml(platformVoteTimeAgo(stamp))}</time>`:'–'}</span>
+          ${platformVoteAuthorAvatar(name)}${nameHTML}
+          <span class="idc-electorate-stance ${key}">${labels[key]}</span>
+          <span class="idc-electorate-time">${key!=='pending'&&stamp?`<time datetime="${new Date(stamp).toISOString()}">${IC.clock}${escHtml(platformVoteTimeAgo(stamp).replace(/\s+temu$/,''))}</time>`:''}</span>
+          <span class="idc-electorate-egg idc-hover-label" tabindex="0" data-tooltip="${counts?'Liczy się do kworum':'Nie liczy się do kworum'}">${ideaDecisionEgg(counts)}</span>
         </div>`;
       }).join('')}
       <p class="pv-voters-empty"${names.length?' hidden':''}>Brak osób pasujących do wybranych filtrów.</p>
@@ -25578,7 +25579,9 @@ function renderIdeaDecisionDropdown(id,key,label,options,value,selectHandler='se
 }
 
 function setIdeaDecisionFilter(id,key,value){ideaDecisionState(id)[key]=value;if(key==='query')delete ideaDecisionState(id).participant;openIdea(id,true,{replaceRoute:true});if(key==='query'){const input=document.getElementById('idc-search-'+id);input?.focus();input?.setSelectionRange(value.length,value.length);}}
+const ideaInactiveVoteReason='Zmiana głosu jest zablokowana na obecnym etapie pomysłu. To głosowanie jest dostępne na etapie „W realizacji”.';
 function ideaDecisionCardOutcome(idea,v){
+  if(v.open&&!projectAllowsVote(idea,v))return {label:'Nieaktywne',icon:IC.lock,detail:ideaInactiveVoteReason};
   if(v.open)return {label:ideaDecisionNeedsAttention(idea,v)?'Do rozpatrzenia':'Aktywne',icon:IC.clock,detail:'Głosowanie aktywne'};
   if(voteWasAccepted(idea,v))return {key:'accepted',label:'Przyjęte',icon:IC.check,detail:'Głosowanie zakończone. Propozycja przyjęta'};
   const hasQuorum=voteQuorumReached(idea,v);
@@ -25590,7 +25593,7 @@ function ideaDecisionCardOutcome(idea,v){
 }
 const decisionRenderBeforeFilters=renderIdeaDecisionsWorkspace;
 renderIdeaDecisionsWorkspace=function(idea){const state=ideaDecisionState(idea.id),rows=filterIdeaDecisionRows(idea,state),all=idea.votes;let html;if(!rows.length)html='<section class="idc-layout"><div class="idc-list"></div><article class="idc-detail"><p>Brak decyzji pasujących do filtrów.</p></article></section>';else{const selected=rows.find(v=>v.id===state.selected)||rows[0];state.selected=selected.id;const oldTab=state.tab;state.tab='preview';try{html=decisionRenderBeforeFilters({...idea,votes:rows});}finally{state.tab=oldTab;}}const toolbar=`<div class="idc-toolbar"><input id="idc-search-${idea.id}" type="search" placeholder="Szukaj decyzji…" aria-label="Szukaj decyzji" value="${escAttr(state.query||'')}" oninput="setIdeaDecisionFilter(${idea.id},'query',this.value)"><div class="idc-filter-row">${[['all','Wszystkie'],['attention','Do rozpatrzenia'],['active','Aktywne'],['closed','Zakończone']].map(([key,label])=>`<button class="${(state.status||'all')===key?'on':''}" onclick="setIdeaDecisionFilter(${idea.id},'status','${key}')">${label}</button>`).join('')}${renderIdeaDecisionDropdown(idea.id,'area','Obszar decyzji',[['','Obszar'],...[...new Set((all||[]).map(decisionSourceForVote))].map(area=>[area,area])],state.area)}
-${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Najnowsze'],['oldest','Najstarsze']],state.sort)}</div></div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);const detailStatus=!selected.open?'Zakończone':ensureVoteBallots(idea,selected)[MY_NAME]?'':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':'Aktywne';if(detailStatus)(selected.open?header.querySelector('.idc-heading-copy'):tools)?.insertAdjacentHTML(selected.open?'beforeend':'afterbegin',`<span class="idc-state">${detailStatus}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{
+${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Najnowsze'],['oldest','Najstarsze']],state.sort)}</div></div>`;const shell=document.createElement('div');shell.innerHTML=html;const list=shell.querySelector('.idc-list');if(list){const wrapper=document.createElement('div');wrapper.className='idc-list-shell';list.before(wrapper);wrapper.innerHTML=toolbar;wrapper.append(list);}shell.querySelector('.idc-tabs')?.remove();const selected=(all||[]).find(v=>v.id===state.selected),header=shell.querySelector('.idc-detail>header');if(header&&selected){const tools=document.createElement('div');tools.className='idc-detail-header-tools';const author=header.querySelector(':scope>.pv-author');if(author)tools.append(author);tools.insertAdjacentHTML('beforeend',`<button class="idc-open-chat" aria-label="Otwórz rozmowę o decyzji" onclick="openIdeaDecisionChat(${idea.id},'${escAttr(selected.id)}')">${resourcePolishIcon('discussion')}</button>`);header.append(tools);const inactive=selected.open&&!projectAllowsVote(idea,selected);const detailStatus=inactive?'Nieaktywne':!selected.open?'Zakończone':ensureVoteBallots(idea,selected)[MY_NAME]?'':ideaDecisionNeedsAttention(idea,selected)?'Do rozpatrzenia':'Aktywne';if(detailStatus)(selected.open&&!inactive?header.querySelector('.idc-heading-copy'):tools)?.insertAdjacentHTML(selected.open&&!inactive?'beforeend':'afterbegin',`<span class="idc-state${inactive?' idc-hover-label':''}" ${inactive?`tabindex="0" data-tooltip="${escAttr(ideaInactiveVoteReason)}" aria-label="${escAttr(ideaInactiveVoteReason)}"`:''}>${detailStatus}</span>`);}shell.querySelectorAll('.idc-list-card').forEach((card,index)=>{
   const v=rows[index];
   if(!v)return;
   const own=ensureVoteBallots(idea,v)[MY_NAME];
@@ -25603,7 +25606,7 @@ ${renderIdeaDecisionDropdown(idea.id,'sort','Kolejność decyzji',[['newest','Na
   card.title=description;
   card.dataset.voteTooltip=description;
   card.setAttribute('aria-description',description);
-  card.querySelector('.idc-list-meta')?.insertAdjacentHTML('beforeend',`<span class="idc-list-status"><span aria-hidden="true">${outcome.icon}</span>${outcome.label}</span>`);
+  card.querySelector('.idc-list-meta')?.insertAdjacentHTML('beforeend',`<span class="idc-list-status${outcome.label==='Nieaktywne'?' idc-hover-label':''}" ${outcome.label==='Nieaktywne'?`data-tooltip="${escAttr(outcome.detail)}"`: ''}><span aria-hidden="true">${outcome.icon}</span>${outcome.label}</span>`);
 });return shell.innerHTML;};
 function ideaDecisionChatContact(id,vid){const idea=ideas.find(i=>i.id===id),vote=idea?.votes?.find(v=>v.id===vid);return vote?{key:'idea-decision:'+id+':'+encodeURIComponent(vid),type:'idea-decision',ideaId:id,voteId:vid,name:vote.prop||'Decyzja',ini:'D'}:null;}
 const teamContactBeforeIdeaDecisions=teamDiscussionContactFromKey;
@@ -25949,6 +25952,27 @@ document.addEventListener('click',event=>{
 .idc-detail .idc-count{padding-block:4px;margin-block:5px}
 .idc-detail .idc-detail-header-tools{flex-wrap:wrap;justify-content:flex-end}
 .idc-detail .idc-detail-header-tools .idc-state{margin:0;white-space:nowrap}
+</style>
+<style>
+.idc-electorate .idc-electorate-people .pv-voter-person{
+  grid-template-columns:36px minmax(0,1fr) auto minmax(0,64px) 22px;
+}
+.idc-electorate .idc-electorate-people :is(.idc-electorate-time,.idc-electorate-stance){grid-column:auto;grid-row:auto}
+.idc-electorate-egg{justify-self:end}
+.idc-hover-label{position:relative}
+.idc-hover-label:is(:hover,:focus-visible)::after{
+  content:attr(data-tooltip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  z-index:10;width:max-content;max-width:min(220px,70vw);white-space:normal;text-align:center;pointer-events:none;
+  padding:6px 9px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--txt);
+  box-shadow:0 3px 12px #20142b22;font:500 12px/1.4 'DM Sans',sans-serif
+}
+@media(max-width:600px){
+  .idc-electorate .idc-electorate-people .pv-voter-person{grid-template-columns:36px minmax(0,1fr) auto 22px}
+  .idc-electorate .idc-electorate-people .idc-electorate-name{grid-column:2/4}
+  .idc-electorate .idc-electorate-people .idc-electorate-stance{grid-column:2}
+  .idc-electorate .idc-electorate-people .idc-electorate-time{grid-column:3}
+  .idc-electorate-egg{grid-column:4;grid-row:1/3;align-self:center}
+}
 </style>
 <script id="app-ready-script">
 (()=>{
