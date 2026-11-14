@@ -25292,15 +25292,15 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-vote-choice:has(.idc-cast:enabled:is(:hover,:focus-visible)){background-color:color-mix(in srgb,currentColor 12%,var(--surf));border-color:currentColor}
 .idc-vote-choice:has(.idc-count:is(:hover,:focus-visible)) .idc-count{background-color:color-mix(in srgb,currentColor 16%,var(--surf));border-color:currentColor;color:inherit}
 .idc-ballot :is(.idc-cast,.idc-count):focus-visible{outline-offset:-3px!important}
-.idc-quorum-indicator{position:relative;display:inline-grid;place-items:center;padding:2px;border:0;border-radius:6px;background:transparent;cursor:help}
+.idc-quorum-indicator{position:relative;display:inline-grid;place-items:center;padding:2px;border:0;border-radius:6px;background:transparent;cursor:pointer}
 .idc-quorum-indicator img{display:block;object-fit:contain}
 .idc-quorum-indicator:not(.reached) img{filter:grayscale(1);opacity:.68}
 .idc-quorum-indicator.not-passing img{filter:hue-rotate(255deg) saturate(1.4)}
 :is(.idc-quorum-indicator,.idc-deadline):is(:hover,:focus-visible)::after{content:attr(data-tooltip);position:absolute;z-index:2;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:max-content;padding:4px 8px;border:1px solid var(--bdr);border-radius:8px;background:var(--surf);color:var(--txt);box-shadow:0 3px 12px #20142b22;pointer-events:none}
 .idc-deadline{position:relative;display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid var(--bdr);border-radius:999px;background:var(--surf2);white-space:nowrap;cursor:pointer}
 .idc-deadline svg{width:15px;height:15px;flex:none}
-.idc-deadline:is(:hover,:focus-visible)::after{left:0;transform:none;max-width:min(280px,calc(100vw - 72px));white-space:normal}
-.idc-quorum-indicator:is(:hover,:focus-visible)::after{max-width:min(220px,calc(100vw - 72px));white-space:normal}
+.idc-deadline:is(:hover,:focus-visible)::after{text-align:center;max-width:min(280px,calc(100vw - 72px));white-space:normal}
+.idc-quorum-indicator:is(:hover,:focus-visible)::after{text-align:center;max-width:min(220px,calc(100vw - 72px));white-space:normal}
 .idc-electorate{margin-top:16px;border:1px solid var(--p200);border-radius:14px;background:var(--surf)}
 .idc-electorate>summary{display:flex;align-items:center;gap:10px;padding:10px 12px;list-style:none;border-radius:13px;cursor:pointer}
 .idc-electorate>summary::-webkit-details-marker{display:none}
@@ -25524,7 +25524,7 @@ renderTeamInvitationCard=function(idea,inv){const shell=document.createElement('
 .idc-list-card[data-result]{border:2.5px solid var(--idc-result-border)}
 .idc-list-card[data-result]:not([data-ballot="none"])::after{content:"";position:absolute;inset:4px;border:1.5px solid var(--idc-history-border);border-radius:10px;pointer-events:none}
 .idc-list-card[data-ballot].on{background:var(--p050);box-shadow:none}
-.idc-list-card[data-vote-tooltip]:focus-visible::before{content:attr(data-vote-tooltip);position:absolute;z-index:4;left:8px;top:calc(100% + 4px);max-width:calc(100% - 16px);padding:5px 8px;border:1px solid var(--bdr);border-radius:7px;background:var(--surf);color:var(--txt);font-size:11px;pointer-events:none}
+.idc-list-card[data-vote-tooltip]:focus-visible::before{content:attr(data-vote-tooltip);position:absolute;z-index:4;left:50%;transform:translateX(-50%);text-align:center;width:max-content;top:calc(100% + 4px);max-width:calc(100% - 16px);padding:5px 8px;border:1px solid var(--bdr);border-radius:7px;background:var(--surf);color:var(--txt);font-size:11px;pointer-events:none}
 .idc-list-shell .idc-list-card{gap:10px;padding:11px}
 .idc-list-card>.idc-visual{width:46px;height:46px}
 .idc-list-card>.idc-visual svg{width:28px;height:28px}
