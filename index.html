@@ -9129,7 +9129,7 @@ function confirmProjectLifecycleVote(ideaId,targetStatus){
     <h3>Rozpocząć głosowanie?</h3>
     <p>Zmiana etapu na „${labels[targetStatus]}” wymaga decyzji zespołu. Po potwierdzeniu rozpocznie się głosowanie. Etap zmieni się po przyjęciu propozycji.</p>
     <div class="lifecycle-vote-transition"><span>${labels[current]}</span><b aria-hidden="true">${forward?'→':'←'}</b><span class="target">${labels[targetStatus]}</span></div>
-    <div class="app-modal-actions"><button type="button" class="vbtn" onclick="closeAppModal()">Anuluj</button><button type="button" class="vbtn voted-yes" onclick="closeAppModal();startProjectLifecycleVote(${ideaId},'${targetStatus}')">Rozpocznij głosowanie</button></div>
+    <div class="app-modal-actions"><button type="button" class="vbtn" onclick="closeAppModal()">Anuluj</button><button type="button" class="expected-results-add lifecycle-start-vote" onclick="closeAppModal();startProjectLifecycleVote(${ideaId},'${targetStatus}')">Rozpocznij głosowanie</button></div>
   </div>`,'project-lifecycle-confirm-modal');
 }
 function startProjectLifecycleVote(ideaId,requestedTarget='',reason=''){
@@ -12815,7 +12815,7 @@ function activeParticipants(idea){
   // W tej wersji nie rozróżniamy aktywnych/nieaktywnych: liczą się wszyscy obecni w idei.
   return participantsOf(idea);
 }
-function startRevokeRole(ideaId,idx){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea.roleRevokeIndex=(idea.roleRevokeIndex===idx?null:idx);openIdea(ideaId,true);setTimeout(()=>document.getElementById('role-revoke-why-'+ideaId)?.focus(),60);}
+function startRevokeRole(ideaId,idx){const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;idea.roleRevokeIndex=(idea.roleRevokeIndex===idx?null:idx);openIdea(ideaId,true);setTimeout(()=>document.getElementById('role-revoke-why-'+ideaId)?.focus({preventScroll:true}),60);}
 function cancelRevokeRole(ideaId){const idea=ideas.find(i=>i.id===ideaId);if(idea){idea.roleRevokeIndex=null;openIdea(ideaId,true);}}
 function submitRevokeRole(ideaId,idx){
   const idea=ideas.find(i=>i.id===ideaId);if(!idea)return;
@@ -25936,6 +25936,9 @@ document.addEventListener('click',event=>{
   right:auto;left:50%;text-align:center;white-space:normal;transform:translate(-50%,4px)
 }
 #s-idea .idea-participant-quorum:is(:hover,:focus-visible)::after{transform:translateX(-50%)}
+</style>
+<style>
+.project-lifecycle-confirm-modal .lifecycle-start-vote{justify-content:center;align-self:stretch;min-height:42px;height:auto}
 </style>
 <script id="app-ready-script">
 (()=>{
